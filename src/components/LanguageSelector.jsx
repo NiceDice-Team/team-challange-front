@@ -1,18 +1,23 @@
 'use client";';
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import useClickOutside from "@/utils/useClickOutside";
 export default function LanguageSelector() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState("English");
   const languages = [
-    { lan: "EN", id: 1 },
-    { lan: "UA", id: 2 },
+    { lan: "EN 🇬🇧", id: 1 },
+    { lan: "UA 🇺🇦", id: 2 },
   ];
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState(languages[0].lan);
   const dropdownRef = useRef(null);
 
+  useClickOutside(dropdownRef, () => {
+    setIsOpen(false);
+  });
+
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative " ref={dropdownRef}>
       <button
-        className="flex flex-row items-center gap-1"
+        className="flex flex-row items-center gap-1 hover:bg-gray-200 hover:text-blue-700 rounded-md px-1 transition duration-200"
         onClick={() => {
           setIsOpen(!isOpen);
         }}
@@ -39,7 +44,8 @@ export default function LanguageSelector() {
           {languages.map((language) => {
             return (
               <button
-                className={`w-full text-left hover:bg-gray-300 rounded-md p-1" key={language.id} ${
+                key={language.id}
+                className={`w-full text-left pl-1 hover:bg-gray-300 rounded-md transition duration-200 hover:shadow-md ${
                   language.lan === selectedLanguage ? "bg-gray-300" : ""
                 }`}
                 onClick={() => {
