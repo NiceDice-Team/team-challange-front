@@ -3,8 +3,8 @@ import React, { useState, useRef } from "react";
 import useClickOutside from "@/utils/useClickOutside";
 export default function LanguageSelector() {
   const languages = [
-    { lan: "EN 🇬🇧", id: 1 },
-    { lan: "UA 🇺🇦", id: 2 },
+    { lan: "EN", id: 1 }, //🇬🇧
+    { lan: "UA", id: 2 }, //🇺🇦
   ];
   const [isOpen, setIsOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(languages[0].lan);
