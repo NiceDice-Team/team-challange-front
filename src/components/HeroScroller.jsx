@@ -47,7 +47,7 @@ export default function HeroScroller() {
       const sectionWidth = scroller.clientWidth; // Width of each section
       scroller.scrollTo({ left: sectionWidth * nextIndex, behavior: "smooth" });
       setCurrentSection(nextIndex);
-    }, 2000);
+    }, 10000); // 10 seconds
     return () => {
       clearInterval(timer);
     };
