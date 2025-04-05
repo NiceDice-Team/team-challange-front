@@ -34,3 +34,18 @@ body {
     scrollbar-width: none;
   }
 }
+.group:hover .animate-animationCarousel,
+.group:hover .animate-infiniteScroll {
+  animation-play-state: paused;
+}
+@keyframes infiniteScroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+.animate-infiniteScroll {
+  animation: infiniteScroll 15s linear infinite;
+}
