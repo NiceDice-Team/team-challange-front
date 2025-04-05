@@ -4,8 +4,8 @@ import LanguageSelector from "./LanguageSelector";
 export default function Navbar() {
   return (
     <div className="flex flex-col">
-      <div className="flex flex-row items-center justify-between ">
-        <h1>BOARD GAMES</h1>
+      <div className="flex flex-row items-center justify-between gap-2 lg:gap-0">
+        <h1 className="text-wrap text-sm lg:text-md">BOARD GAMES</h1>
         <form className="flex flex-row p-1 max-w-lg flex-1 justify-between items-center border-2 border-[#494791] ">
           <input
             type="search"
@@ -24,7 +24,7 @@ export default function Navbar() {
             </svg>
           </button>
         </form>
-        <div className="flex flex-row gap-4">
+        <div className="flex flex-row gap-1 lg:gap-4">
           {/* Language Selector */}
           <LanguageSelector />
           {/* Profile Logo */}
@@ -48,13 +48,25 @@ export default function Navbar() {
               <path
                 d="M15 15H9M7.5 8.25V6.75C7.5 5.55653 7.97411 4.41193 8.81802 3.56802C9.66193 2.72411 10.8065 2.25 12 2.25C13.1935 2.25 14.3381 2.72411 15.182 3.56802C16.0259 4.41193 16.5 5.55653 16.5 6.75V8.25M3.75 8.25C3.55109 8.25 3.36032 8.32902 3.21967 8.46967C3.07902 8.61032 3 8.80109 3 9V19.125C3 20.5425 4.2075 21.75 5.625 21.75H18.375C19.7925 21.75 21 20.6011 21 19.1836V9C21 8.80109 20.921 8.61032 20.7803 8.46967C20.6397 8.32902 20.4489 8.25 20.25 8.25H3.75Z"
                 stroke="black"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
             </svg>
           </div>
         </div>
+      </div>
+      {/* Pagination list */}
+      <div className=" mt-6">
+        <ul className="flex flex-row text-sm flex-wrap gap-4 justify-center   uppercase  lg:text-lg lg:gap-14">
+          <li className="  cursor-pointer ">new arrivals</li>
+          <li className="  cursor-pointer ">bestsellers</li>
+          <li className="  cursor-pointer ">board games</li>
+          <li className="  cursor-pointer  text-red-500">sale</li>
+          <li className="  cursor-pointer ">comming soon</li>
+          <li className="  cursor-pointer ">reviews</li>
+          <li className="  cursor-pointer ">about</li>
+        </ul>
       </div>
     </div>
   );
