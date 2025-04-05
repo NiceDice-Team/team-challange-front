@@ -43,9 +43,9 @@ body {
     transform: translateX(0);
   }
   100% {
-    transform: translateX(-100%);
+    transform: translateX(-50%);
   }
 }
 .animate-infiniteScroll {
-  animation: infiniteScroll 15s linear infinite;
+  animation: infiniteScroll 5s linear infinite;
 }
