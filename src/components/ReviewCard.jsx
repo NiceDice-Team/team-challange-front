@@ -15,7 +15,7 @@ export default function ReviewCard({
   return (
     <article className=" bg-[#EEEEEE] p-5 shadow flex flex-col justify-between">
       {/* ─ Rating + Date ─────────────────────────────────── */}
-      <header className="mb-4 flex items-start justify-between">
+      <header className="mb-6 flex items-start justify-between">
         <div className="flex space-x-1 text-[#494791]">
           {Array.from({ length: 5 }).map((_, i) => (
             <svg key={i} viewBox="0 0 24 24" className={`h-5 w-5 ${i < rating ? "fill-current" : "fill-gray-500/70"}`}>
@@ -32,11 +32,11 @@ export default function ReviewCard({
       </header>
 
       {/* ─ Author row ────────────────────────────────────── */}
-      <div className="mb-4 flex items-center justify-between gap-2">
+      <div className="mb-4 flex items-center justify-between gap-2 flex-wrap">
         {avatarSrc && <Image src={avatarSrc} alt={name} width={40} height={40} className="rounded-full" />}
         <h3 className="font-semibold">{name}</h3>
         {aboutHref && aboutText && (
-          <Link href={aboutHref} className="ml-auto   decoration-2 underline-offset-2 hover:text-indigo-800">
+          <Link href={aboutHref} className=" ml-auto   decoration-2 underline-offset-2 hover:text-indigo-800">
             About&nbsp;<span className="underline">{aboutText}</span>
           </Link>
         )}
@@ -48,9 +48,9 @@ export default function ReviewCard({
 
       {/* ─ Thumbnail gallery (max 4) ─────────────────────── */}
       {images.length > 0 && (
-        <div className="flex justify-between gap-1">
+        <div className="flex gap-3">
           {images.slice(0, 4).map((src, idx) => (
-            <div key={idx} className="relative h-17 w-17 ">
+            <div key={idx} className="relative aspect-square flex-1">
               <Image
                 src={src}
                 alt={`review image ${idx + 1}`}
