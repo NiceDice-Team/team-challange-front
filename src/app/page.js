@@ -4,6 +4,7 @@ import HeroScroller from "@/components/HeroScroller";
 import Navbar from "@/components/Navbar";
 import NewArrivals from "@/components/NewArrivals";
 import PartnersScroller from "@/components/PartnersScroller";
+import ReviewSection from "@/components/ReviewSection";
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
         <div className=" h-14"> </div>
       </div>
       <NewArrivals />
+      <ReviewSection />
       <PartnersScroller />
       <About />
       <Footer />
