@@ -34,11 +34,21 @@ const demo = [
     name: "Benjamin L.",
     aboutHref: "/games/7wonders",
     aboutText: "7 Wonders",
-    title: "Great product",
+    title: "Fantastic product",
     body: "Great product. I love the fact that it is reversible. The only thing I would change is to have a more rigid material for the bag.",
     images: ["/700x700.svg", "/700x700.svg", "/700x700.svg", "/700x700.svg"],
   },
-  // …можеш додати ще елементи, їх має бути ≥ 3, щоб побачити стрілки
+  {
+    rating: 4,
+    date: "March 28, 2025",
+    avatarSrc: "/700x700.svg",
+    name: "Benjamin L.",
+    aboutHref: "/games/7wonders",
+    aboutText: "7 Wonders",
+    title: "Fantastic product",
+    body: "Great product. I love the fact that it is reversible. The only thing I would change is to have a more rigid material for the bag.",
+    images: ["/700x700.svg", "/700x700.svg", "/700x700.svg", "/700x700.svg"],
+  },
 ];
 
 // ─────────────── SVG‑кнопки лишаються без змін ───────────────
@@ -99,7 +109,7 @@ export default function ReviewSection({ reviews = [] }) {
   const next = () => setPage((p) => Math.min(maxPage, p + 1));
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-12  ">
+    <section className="mx-auto max-w-7xl  mb-25 ">
       {/* Heading + arrows */}
       <div className="mb-8 flex items-center justify-between">
         <h2 className="text-4xl font-semibold tracking-wide">REVIEWS FROM OUR CUSTOMERS</h2>
@@ -110,7 +120,7 @@ export default function ReviewSection({ reviews = [] }) {
       </div>
 
       {/* Grid */}
-      <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         {visible.map((review, idx) => (
           <ReviewCard key={idx} {...review} />
         ))}

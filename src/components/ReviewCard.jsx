@@ -13,7 +13,7 @@ export default function ReviewCard({
   images = [], // Up to 4 image URLs
 }) {
   return (
-    <article className=" bg-[#EEEEEE] p-6 shadow flex flex-col justify-between">
+    <article className=" bg-[#EEEEEE] p-5 shadow flex flex-col justify-between">
       {/* ─ Rating + Date ─────────────────────────────────── */}
       <header className="mb-4 flex items-start justify-between">
         <div className="flex space-x-1 text-[#494791]">
@@ -25,14 +25,14 @@ export default function ReviewCard({
         </div>
 
         {date && (
-          <time dateTime={date} className="text-sm text-gray-400">
+          <time dateTime={date} className="text-sm text-gray-500">
             {date}
           </time>
         )}
       </header>
 
       {/* ─ Author row ────────────────────────────────────── */}
-      <div className="mb-4 flex items-center gap-3">
+      <div className="mb-4 flex items-center justify-between gap-2">
         {avatarSrc && <Image src={avatarSrc} alt={name} width={40} height={40} className="rounded-full" />}
         <h3 className="font-semibold">{name}</h3>
         {aboutHref && aboutText && (
@@ -48,9 +48,9 @@ export default function ReviewCard({
 
       {/* ─ Thumbnail gallery (max 4) ─────────────────────── */}
       {images.length > 0 && (
-        <div className="grid grid-cols-4 gap-2">
+        <div className="flex justify-between gap-1">
           {images.slice(0, 4).map((src, idx) => (
-            <div key={idx} className="relative h-16 w-16 ">
+            <div key={idx} className="relative h-17 w-17 ">
               <Image
                 src={src}
                 alt={`review image ${idx + 1}`}
