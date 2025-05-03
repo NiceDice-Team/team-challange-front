@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import NewArrivals from "@/components/NewArrivals";
 import PartnersScroller from "@/components/PartnersScroller";
 import ReviewSection from "@/components/ReviewSection";
+import FeatureSection from "@/components/FeaturesSection";
 
 export default function Home() {
   return (
@@ -16,6 +17,8 @@ export default function Home() {
         <div className=" h-14"> </div>
       </div>
       <NewArrivals />
+
+      <FeatureSection />
       <ReviewSection />
       <BlogSection />
       <PartnersScroller />
