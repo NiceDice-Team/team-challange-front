@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import Placeholder from "../../public/700x700.svg";
+import pig_img from "../../public/pig.jpg";
 
 export default function NewArrivals() {
   // Caption helper function inside the main component
@@ -14,8 +15,8 @@ export default function NewArrivals() {
   );
 
   return (
-    <section className="mb-25">
-      <div className="flex gap-6">
+    <section className="mb-25 ">
+      <div className="flex gap-6 justify-center">
         <div className="w-[648px]">
           {/*  Left Card */}
           <Link href="/products/new-arrivals" className="flex h-[648px] flex-col">
@@ -43,7 +44,7 @@ export default function NewArrivals() {
             {/* Second Right Card */}
             <Link href="/products/sale" className="flex h-[312px] flex-1 flex-col">
               <div className="relative flex-grow overflow-hidden">
-                <Image src={Placeholder} alt="" fill className="object-cover" />
+                <Image src={pig_img} alt="" fill className="object-cover" />
               </div>
               <Caption label="SALE" />
             </Link>
