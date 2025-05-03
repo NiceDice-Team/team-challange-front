@@ -1,4 +1,5 @@
 import About from "@/components/About";
+import BlogSection from "@/components/BlogSection";
 import Footer from "@/components/Footer";
 import HeroScroller from "@/components/HeroScroller";
 import Navbar from "@/components/Navbar";
@@ -16,6 +17,7 @@ export default function Home() {
       </div>
       <NewArrivals />
       <ReviewSection />
+      <BlogSection />
       <PartnersScroller />
       <About />
       <Footer />
