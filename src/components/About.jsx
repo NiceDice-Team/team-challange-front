@@ -17,21 +17,21 @@ export default function About() {
       {/* Icons */}
       <div className="flex flex-row justify-around items-center w-full mb-10 text-center">
         <div className="flex flex-col items-center justify-center gap-2 max-w-3xs">
-          <Image src={DICE_IMG} alt="Dice icon" />
+          <Image width={64} height={64} src={DICE_IMG} alt="Dice icon" />
           <h3 className="text-lg lg:text-2xl">Wide Selection</h3>
           <p className="text-sm lg:text-lg text-pretty max-w-3xl text-[#848484]">
             From party games to deep strategy, we have something for everyone
           </p>
         </div>
         <div className="flex flex-col items-center justify-center gap-2 max-w-3xs">
-          <Image src={MEDAL_IMG} alt="Medal icon" />
+          <Image width={64} height={64} src={MEDAL_IMG} alt="Medal icon" />
           <h3 className="text-lg lg:text-2xl">High-Quality Games</h3>
           <p className="text-sm lg:text-lg text-pretty max-w-3xl text-[#848484]">
             We source directly from trusted manufacturers
           </p>
         </div>
         <div className="flex flex-col items-center justify-center gap-2 max-w-3xs">
-          <Image src={QUESTION_IMG} alt="Question marc icon" />
+          <Image width={64} height={64} src={QUESTION_IMG} alt="Question marc icon" />
           <h3 className="text-lg lg:text-2xl">Support</h3>
           <p className="text-sm lg:text-lg text-pretty max-w-3xl  text-[#848484]">
             Our team is here to help you find the perfect game
