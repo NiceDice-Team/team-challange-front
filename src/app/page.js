@@ -7,6 +7,7 @@ import NewArrivals from "@/components/NewArrivals";
 import PartnersScroller from "@/components/PartnersScroller";
 import ReviewSection from "@/components/ReviewSection";
 import FeatureSection from "@/components/FeaturesSection";
+import CommingSoonSection from "@/components/CommingSoonSection";
 
 export default function Home() {
   return (
@@ -17,7 +18,7 @@ export default function Home() {
         <div className=" h-14"> </div>
       </div>
       <NewArrivals />
-
+      <CommingSoonSection />
       <FeatureSection />
       <ReviewSection />
       <BlogSection />
