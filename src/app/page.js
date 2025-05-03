@@ -2,6 +2,7 @@ import About from "@/components/About";
 import Footer from "@/components/Footer";
 import HeroScroller from "@/components/HeroScroller";
 import Navbar from "@/components/Navbar";
+import NewArrivals from "@/components/NewArrivals";
 import PartnersScroller from "@/components/PartnersScroller";
 
 export default function Home() {
@@ -12,6 +13,7 @@ export default function Home() {
         <HeroScroller />
         <div className=" h-14"> </div>
       </div>
+      <NewArrivals />
       <PartnersScroller />
       <About />
       <Footer />

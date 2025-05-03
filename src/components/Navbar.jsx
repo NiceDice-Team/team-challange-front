@@ -1,5 +1,7 @@
 "use client";
 import LanguageSelector from "./LanguageSelector";
+import Image from "next/image";
+import Placeholder_Square from "../../public/700x700.svg";
 
 export default function Navbar() {
   return (
@@ -27,6 +29,7 @@ export default function Navbar() {
         <div className="flex flex-row gap-1 lg:gap-4">
           {/* Language Selector */}
           <LanguageSelector />
+
           {/* Profile Logo */}
           <div>
             <svg width="18" height="22" viewBox="0 0 18 22" fill="none">
@@ -67,6 +70,7 @@ export default function Navbar() {
           <li className="  cursor-pointer ">reviews</li>
           <li className="  cursor-pointer ">about</li>
         </ul>
+        <div className="h-px w-full bg-[#494791] mt-3"></div>
       </div>
     </div>
   );

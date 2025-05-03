@@ -12,7 +12,7 @@ export default function About() {
         We are passionate board game enthusiasts dedicated to bringing you the best tabletop experiences. Our store
         offers a carefully selected range of games, from timeless classics to the latest innovations. We believe in the
         power of board games to bring people together, spark creativity, and create unforgettable moments. Our goal is
-        to provide high-quality games for every type of player, whether you’re a beginner or a seasoned strategist.
+        to provide high-quality games for every type of player, whsther you’re a beginner or a seasoned strategist.
       </div>
       {/* Icons */}
       <div className="flex flex-row justify-around items-center w-full mb-10 text-center">
