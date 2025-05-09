@@ -69,7 +69,7 @@ export default function HeroScroller() {
   }
 
   return (
-    <div className="w-full flex-1 relative">
+    <div className="w-full flex-1 relative ">
       <button
         onClick={handleLeftClick}
         className={`absolute left-0 top-1/2 z-10  rounded-full  shadow-lg transition-all duration-200 p-1 ml-2 lg:p-2 lg:ml-4 ${

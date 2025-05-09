@@ -11,15 +11,16 @@ import CommingSoonSection from "@/components/CommingSoonSection";
 
 export default function Home() {
   return (
-    <div className="px-8 py-6  lg:py-6 lg:px-50  font-[family-name:var(--font-noto-sans)]">
-      <div className="h-dvh mb-10 flex flex-col gap-4">
+    <div className="py-6 lg:py-6 font-[family-name:var(--font-noto-sans)]">
+      <div className="h-dvh mb-10 flex flex-col gap-4 px-8  lg:px-50">
         <Navbar />
         <HeroScroller />
         <div className=" h-14"> </div>
       </div>
+      <FeatureSection />
       <NewArrivals />
       <CommingSoonSection />
-      <FeatureSection />
+
       <ReviewSection />
       <BlogSection />
       <PartnersScroller />

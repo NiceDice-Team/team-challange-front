@@ -21,7 +21,7 @@ const PARTNERS = [
 
 export default function PartnersScroller() {
   return (
-    <section className="w-full group flex flex-col gap-2 lg:gap-10">
+    <section className="w-full group flex flex-col gap-2 lg:gap-10 px-8  lg:px-50">
       <h2 className="uppercase text-lg lg:text-3xl">Our Trusted Brands & Partners</h2>
 
       <div
