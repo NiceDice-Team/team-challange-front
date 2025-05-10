@@ -1,8 +1,13 @@
 import { fetchAPI } from "./api";
 
 export const catalogServices = {
-  async getProducts() {
-    const response = await fetchAPI("/products");
-    return response;
+  async getCategories() {
+    try {
+      const response = await fetchAPI("categories/");
+      return response;
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      throw error;
+    }
   },
 };

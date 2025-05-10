@@ -1,18 +1,29 @@
 "use client";
 import { useState } from "react";
+import { catalogServices } from "@/services/catalogServices";
+import { useQuery } from "@tanstack/react-query";
 
 export default function FilterSideBar() {
+  const {
+    data: categories,
+    isLoading: categoriesLoading,
+    error: categoriesError,
+  } = useQuery({
+    queryKey: ["categories"],
+    queryFn: catalogServices.getCategories,
+  });
+
   const [selectedFilters, setSelectedFilters] = useState({
     featured: ["Featured"],
-    category: [],
+    game_type: [],
     audience: ["Audience"],
     brands: ["Brands"],
   });
 
-  const filterButton = (name, filter_type) => {
+  const filterShowButton = (filterShowButton_name, filter_type) => {
     return (
-      <div className="bg-[#C6C6E2] p-1.5 text-black text-sm flex justify-center items-center">
-        {name}
+      <div key={name} className="bg-[#C6C6E2] p-1.5 text-black text-sm flex justify-center items-center">
+        {filterShowButton_name}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-3 w-3 inline-block ml-1 cursor-pointer"
@@ -31,16 +42,51 @@ export default function FilterSideBar() {
       </div>
     );
   };
+  const filterButton = (category) => {
+    return (
+      <div key={category.id} className="flex items-center">
+        <input
+          checked={selectedFilters.game_type.includes(category.id)}
+          id={`checkbox-${category}`}
+          type="checkbox"
+          onChange={() => {
+            // Змінено з (prev) => на просто ()
+            setSelectedFilters((prev) => {
+              // Додано правильний доступ до попереднього стану
+              if (prev.game_type.includes(category.id)) {
+                return {
+                  ...prev,
+                  game_type: prev.game_type.filter((id) => id !== category.id),
+                };
+              } else {
+                return {
+                  ...prev,
+                  game_type: [...prev.game_type, category.id],
+                };
+              }
+            });
+          }}
+          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+        />
+        <label
+          htmlFor={`checkbox-${category.id}`}
+          className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+        >
+          {category.name}
+        </label>
+      </div>
+    );
+  };
 
   return (
     <section className="min-w-40 max-w-2xs mt-5">
-      <di className="flex flex-row justify-between items-center mb-4">
+      <div className="flex flex-row justify-between items-center mb-4">
         <h3 className="uppercase text-lg font-bold">Filters</h3>
         <button
           onClick={() => {
             setSelectedFilters({
               featured: [],
-              category: [],
+              game_type: [],
               audience: [],
               brands: [],
             });
@@ -49,24 +95,41 @@ export default function FilterSideBar() {
         >
           Clear all
         </button>
-      </di>
+      </div>
 
       <div className="flex flex-wrap gap-4">
-        {selectedFilters.featured.map((name) => filterButton(name, "featured"))}
-        {selectedFilters.category.map((name) => filterButton(name, "category"))}
-        {selectedFilters.audience.map((name) => filterButton(name, "audience"))}
-        {selectedFilters.brands.map((name) => filterButton(name, "brands"))}
+        {selectedFilters.featured.map((name) => filterShowButton(name, "featured"))}
+        {selectedFilters.game_type.map((name) => filterShowButton(name, "game_type"))}
+        {selectedFilters.audience.map((name) => filterShowButton(name, "audience"))}
+        {selectedFilters.brands.map((name) => filterShowButton(name, "brands"))}
       </div>
       <div className="border-t border-[#494791] my-5"></div>
       <h4 className="text-base font-semibold uppercase"> Featured</h4>
 
       <div className="border-t border-[#494791] my-5"></div>
+
+      {/*1. GAME TYPE CATEGORIES */}
       <h4 className="text-base font-semibold uppercase"> Game Type</h4>
+      <div className="mt-2">
+        {categoriesLoading ? (
+          <div className="text-sm text-gray-500">Loading categories...</div>
+        ) : categoriesError ? (
+          <div className="text-sm text-red-500">Error loading categories: {categoriesError.message}</div>
+        ) : categories && categories.length ? (
+          // Fix: return the result of mapping
+          categories.map((category) => filterButton(category))
+        ) : (
+          <div>No categories found</div>
+        )}
+      </div>
       <div className="border-t border-[#494791] my-5"></div>
+      {/*2. AUDIENCE CATEGORIES */}
       <h4 className="text-base font-semibold uppercase"> Audience</h4>
       <div className="border-t border-[#494791] my-5"></div>
+      {/*3. BRANDS CATEGORIES */}
       <h4 className="text-base font-semibold uppercase"> Brands</h4>
       <div className="border-t border-[#494791] my-5"></div>
+      {/*4. PRICE CATEGORIES */}
       <h4 className="text-base font-semibold uppercase"> Price</h4>
     </section>
   );

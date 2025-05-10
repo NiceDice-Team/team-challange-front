@@ -1,16 +1,11 @@
-const API_URL = process.env.BACKEND_URL;
+const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export async function fetchAPI(endpoint, options = {}) {
-  const defaultOptions = {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  };
+  const needsBody = options?.method && options.method !== "GET";
+  const headers = needsBody ? { "Content-Type": "application/json", ...(options.headers || {}) } : options.headers;
+  const url = new URL(endpoint, API_URL).toString();
 
-  const response = await fetch(`${API_URL}${endpoint}`, {
-    ...defaultOptions,
-    ...options,
-  });
+  const response = await fetch(url, { ...options, headers });
   if (!response.ok) {
     throw new Error(`Error accessing endpoint: ${response.statusText}`);
   }
