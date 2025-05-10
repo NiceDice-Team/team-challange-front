@@ -1,13 +1,15 @@
 "use client";
 import next from "next";
 import { useEffect, useState, useRef } from "react";
+import HERO_IMG from "../../public/HeroScroller.png";
+import Image from "next/image";
 
 export default function HeroScroller() {
   const scrollerData = [
-    { id: 1, color: "bg-amber-300" },
-    { id: 2, color: "bg-green-300" },
-    { id: 3, color: "bg-red-300" },
-    { id: 4, color: "bg-blue-300" },
+    { id: 1, image: HERO_IMG },
+    { id: 2, image: HERO_IMG },
+    { id: 3, image: HERO_IMG },
+    { id: 4, image: HERO_IMG },
   ];
   const [currentSection, setCurrentSection] = useState(0);
   const [isScrollable, setIsScrollable] = useState(true);
@@ -70,6 +72,17 @@ export default function HeroScroller() {
 
   return (
     <div className="w-full flex-1 relative ">
+      <div className="absolute bottom-10 right-20 z-10 bg-black/85 px-8 py-4  gap-4 max-w-96 text-pretty text-white">
+        <h3 className="uppercase text-base text-[#FF5F00] mb-4">New Arrivals</h3>
+        <h4 className=" text-xl mb-3">Heat: Pedal to the metal - The ultimate racing board game!</h4>
+        <p className="text-lg mb-3">
+          Experience the intensity of classic motorsport, where every turn, every decision, and every ounce of risk can
+          make or break your victory.
+        </p>
+        <button className="bg-white text-[#494791] p-4 px-8 text-base font-semibold uppercase hover:bg-[#FF5F00]/80 hover:text-white transition-all duration-150">
+          Buy now
+        </button>
+      </div>
       <button
         onClick={handleLeftClick}
         className={`absolute left-0 top-1/2 z-10  rounded-full  shadow-lg transition-all duration-200 p-1 ml-2 lg:p-2 lg:ml-4 ${
@@ -95,7 +108,11 @@ export default function HeroScroller() {
         className="w-full h-full flex flex-row flex-nowrap overflow-x-scroll snap-x snap-mandatory no-scrollbar "
       >
         {scrollerData.map((item) => {
-          return <div key={item.id} className={` shrink-0 w-full h-full snap-center snap-always ${item.color}`}></div>;
+          return (
+            <div key={item.id} className="shrink-0 w-full h-full snap-center snap-always relative">
+              <Image src={item.image} alt={`Slide ${item.id}`} fill className="object-cover" priority={item.id === 1} />
+            </div>
+          );
         })}
       </div>
     </div>
