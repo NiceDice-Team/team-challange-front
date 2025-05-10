@@ -1,9 +1,9 @@
 import React from "react";
 import BlogCard from "./BlogCard";
 
-import BLOG_IMG1 from "../../public/Blog/blog_1.png";
-import BLOG_IMG2 from "../../public/Blog/blog_2.png";
-import BLOG_IMG3 from "../../public/Blog/blog_3.png";
+import BLOG_IMG1 from "../../../public/Blog/blog_1.png";
+import BLOG_IMG2 from "../../../public/Blog/blog_2.png";
+import BLOG_IMG3 from "../../../public/Blog/blog_3.png";
 
 export default function BlogSection() {
   const blogPosts = [

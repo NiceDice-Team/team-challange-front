@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
-import HERO_IMG1 from "../../public/HeroScroller/HeroScroll1.png";
-import HERO_IMG2 from "../../public/HeroScroller/HeroScroll2.png";
-import HERO_IMG3 from "../../public/HeroScroller/HeroScroll3.png";
+import HERO_IMG1 from "../../../public/HeroScroller/HeroScroll3.png";
+import HERO_IMG2 from "../../../public/HeroScroller/HeroScroll3.png";
+import HERO_IMG3 from "../../../public/HeroScroller/HeroScroll3.png";
 import Image from "next/image";
 
 export default function HeroScroller() {

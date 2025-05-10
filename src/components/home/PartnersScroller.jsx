@@ -1,12 +1,12 @@
 import Image from "next/image";
-import CMON_IMG from "../../public/Brands/brand_1.png";
-import Ravensburger_IMG from "../../public/Brands/brand_2.png";
-import Mattel_IMG from "../../public/Brands/brand_3.png";
-import Hasbro_IMG from "../../public/Brands/brand_4.png";
-import Kosmos_IMG from "../../public/Brands/brand_5.png";
-import LuckyDuck_IMG from "../../public/Brands/brand_6.png";
-import FF_IMG from "../../public/Brands/brand_7.png";
-import Asmodee_IMG from "../../public/Brands/brand_8.png";
+import CMON_IMG from "../../../public/Brands/brand_1.png";
+import Ravensburger_IMG from "../../../public/Brands/brand_2.png";
+import Mattel_IMG from "../../../public/Brands/brand_3.png";
+import Hasbro_IMG from "../../../public/Brands/brand_4.png";
+import Kosmos_IMG from "../../../public/Brands/brand_5.png";
+import LuckyDuck_IMG from "../../../public/Brands/brand_6.png";
+import FF_IMG from "../../../public/Brands/brand_7.png";
+import Asmodee_IMG from "../../../public/Brands/brand_8.png";
 
 const PARTNERS = [
   { src: CMON_IMG, alt: "CMON", id: 1 },

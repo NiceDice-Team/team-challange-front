@@ -1,6 +1,6 @@
-import PUZZLE_IMG from "../../public//Features/puzzle.png";
-import PRIZE_IMG from "../../public/Features/prize.png";
-import CHAT_IMG from "../../public/Features/chat.png";
+import PUZZLE_IMG from "../../../public//Features/puzzle.png";
+import PRIZE_IMG from "../../../public/Features/prize.png";
+import CHAT_IMG from "../../../public/Features/chat.png";
 
 import Image from "next/image";
 

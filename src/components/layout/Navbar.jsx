@@ -1,7 +1,7 @@
 "use client";
 import LanguageSelector from "./LanguageSelector";
 import Image from "next/image";
-import Placeholder_Square from "../../public/700x700.svg";
+import Placeholder_Square from "../../../public/700x700.svg";
 
 export default function Navbar() {
   return (

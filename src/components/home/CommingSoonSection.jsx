@@ -1,8 +1,8 @@
-import placeholder from "../../public/700x700.svg";
-import GAME_IMG1 from "../../public/ComingSoon/Img1.png";
-import GAME_IMG2 from "../../public/ComingSoon/Img2.png";
-import GAME_IMG3 from "../../public/ComingSoon/Img3.png";
-import GAME_IMG4 from "../../public/ComingSoon/Img4.png";
+import placeholder from "../../../public/700x700.svg";
+import GAME_IMG1 from "../../../public/ComingSoon/Img1.png";
+import GAME_IMG2 from "../../../public/ComingSoon/Img2.png";
+import GAME_IMG3 from "../../../public/ComingSoon/Img3.png";
+import GAME_IMG4 from "../../../public/ComingSoon/Img4.png";
 import Image from "next/image";
 
 // Demo data

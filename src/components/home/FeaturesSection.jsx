@@ -1,6 +1,6 @@
-import ARROW_IMG from "../../public/Features/arrow.png";
-import LOCK_IMG from "../../public/Features/lock.png";
-import PHONE_IMG from "../../public/Features/phone.png";
+import ARROW_IMG from "../../../public/Features/arrow.png";
+import LOCK_IMG from "../../../public/Features/lock.png";
+import PHONE_IMG from "../../../public/Features/phone.png";
 
 import Image from "next/image";
 

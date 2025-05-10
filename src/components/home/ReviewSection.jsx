@@ -1,19 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import ReviewCard from "@/components/ReviewCard";
-import PERSON1_IMG from "../../public/Reviews/person1.png";
-import PERSON2_IMG from "../../public/Reviews/person2.png";
-import PERSON3_IMG from "../../public/Reviews/person3.png";
-import REVIEW_1_IMG1 from "../../public/Reviews/review1_1.png";
-import REVIEW_1_IMG2 from "../../public/Reviews/review1_2.png";
-import REVIEW_1_IMG3 from "../../public/Reviews/review1_3.png";
-import REVIEW_1_IMG4 from "../../public/Reviews/review1_4.png";
-import REVIEW_2_IMG1 from "../../public/Reviews/review2_1.png";
-import REVIEW_2_IMG2 from "../../public/Reviews/review2_2.png";
-import REVIEW_3_IMG1 from "../../public/Reviews/review3_1.png";
-import REVIEW_3_IMG2 from "../../public/Reviews/review3_2.png";
-import REVIEW_3_IMG3 from "../../public/Reviews/review3_3.png";
+import ReviewCard from "@/components/home/ReviewCard";
+import PERSON1_IMG from "../../../public/Reviews/person1.png";
+import PERSON2_IMG from "../../../public/Reviews/person2.png";
+import PERSON3_IMG from "../../../public/Reviews/person3.png";
+import REVIEW_1_IMG1 from "../../../public/Reviews/review1_1.png";
+import REVIEW_1_IMG2 from "../../../public/Reviews/review1_2.png";
+import REVIEW_1_IMG3 from "../../../public/Reviews/review1_3.png";
+import REVIEW_1_IMG4 from "../../../public/Reviews/review1_4.png";
+import REVIEW_2_IMG1 from "../../../public/Reviews/review2_1.png";
+import REVIEW_2_IMG2 from "../../../public/Reviews/review2_2.png";
+import REVIEW_3_IMG1 from "../../../public/Reviews/review3_1.png";
+import REVIEW_3_IMG2 from "../../../public/Reviews/review3_2.png";
+import REVIEW_3_IMG3 from "../../../public/Reviews/review3_3.png";
 
 // ─────────────────── DEMO DATA ───────────────────
 const demo = [

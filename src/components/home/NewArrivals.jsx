@@ -1,11 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
-import Placeholder from "../../public/700x700.svg";
-import pig_img from "../../public/pig.jpg";
-import NEW_GAME1_IMG from "../../public/New_Arrivals/New_arrivals_1.png";
-import NEW_GAME2_IMG from "../../public/New_Arrivals/New_arrivals_2.png";
-import NEW_GAME3_IMG from "../../public/New_Arrivals/New_arrivals_3.png";
-import NEW_GAME4_IMG from "../../public/New_Arrivals/New_arrivals_4.png";
+import Placeholder from "../../../public/700x700.svg";
+import pig_img from "../../../public/pig.jpg";
+import NEW_GAME1_IMG from "../../../public/New_Arrivals/New_arrivals_1.png";
+import NEW_GAME2_IMG from "../../../public/New_Arrivals/New_arrivals_2.png";
+import NEW_GAME3_IMG from "../../../public/New_Arrivals/New_arrivals_3.png";
+import NEW_GAME4_IMG from "../../../public/New_Arrivals/New_arrivals_4.png";
 
 export default function NewArrivals() {
   // Caption helper function inside the main component

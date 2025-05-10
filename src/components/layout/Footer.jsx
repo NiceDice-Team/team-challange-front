@@ -78,7 +78,7 @@ export default function Footer() {
         <h3 className="uppercase mb-2 font-bold">follow us</h3>
         <div className="flex flex-row gap-3">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <g clip-path="url(#clip0_220_832)">
+            <g clipPath="url(#clip0_220_832)">
               <path
                 d="M18.375 0H5.625C2.5184 0 0 2.5184 0 5.625V18.375C0 21.4816 2.5184 24 5.625 24H18.375C21.4816 24 24 21.4816 24 18.375V5.625C24 2.5184 21.4816 0 18.375 0Z"
                 fill="url(#paint0_radial_220_832)"
@@ -101,10 +101,10 @@ export default function Footer() {
                 gradientUnits="userSpaceOnUse"
                 gradientTransform="translate(6.375 25.8485) rotate(-90) scale(23.7858 22.1227)"
               >
-                <stop stop-color="#FFDD55" />
-                <stop offset="0.1" stop-color="#FFDD55" />
-                <stop offset="0.5" stop-color="#FF543E" />
-                <stop offset="1" stop-color="#C837AB" />
+                <stop stopColor="#FFDD55" />
+                <stop offset="0.1" stopColor="#FFDD55" />
+                <stop offset="0.5" stopColor="#FF543E" />
+                <stop offset="1" stopColor="#C837AB" />
               </radialGradient>
               <radialGradient
                 id="paint1_radial_220_832"
@@ -114,9 +114,9 @@ export default function Footer() {
                 gradientUnits="userSpaceOnUse"
                 gradientTransform="translate(-4.02009 1.72884) rotate(78.681) scale(10.6324 43.827)"
               >
-                <stop stop-color="#3771C8" />
-                <stop offset="0.128" stop-color="#3771C8" />
-                <stop offset="1" stop-color="#6600FF" stop-opacity="0" />
+                <stop stopColor="#3771C8" />
+                <stop offset="0.128" stopColor="#3771C8" />
+                <stop offset="1" stopColor="#6600FF" stopOpacity="0" />
               </radialGradient>
               <clipPath id="clip0_220_832">
                 <rect width="24" height="24" fill="white" />
@@ -124,7 +124,7 @@ export default function Footer() {
             </defs>
           </svg>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <g clip-path="url(#clip0_220_837)">
+            <g clipPath="url(#clip0_220_837)">
               <path
                 d="M17.7857 8.64166C19.5364 9.74607 21.6812 10.3959 23.9976 10.3959V6.46237C23.5592 6.46253 23.122 6.42214 22.6931 6.34188V9.43813C20.3768 9.43813 18.2323 8.78839 16.4812 7.68406V15.7113C16.4812 19.727 12.7922 22.9821 8.24201 22.9821C6.54422 22.9821 4.96613 22.5291 3.65527 21.7523C5.15144 23.1023 7.23794 23.9398 9.54622 23.9398C14.0968 23.9398 17.7858 20.6847 17.7858 16.6688V8.64166H17.7857ZM19.395 4.67322C18.5003 3.81062 17.9128 2.69586 17.7857 1.46342V0.95752H16.5494C16.8606 2.52389 17.9221 3.8621 19.395 4.67322ZM6.53326 18.6708C6.03332 18.0925 5.76309 17.3849 5.76436 16.6573C5.76436 14.8207 7.45166 13.3316 9.53338 13.3316C9.92127 13.3314 10.3069 13.384 10.6766 13.4874V9.46593C10.2445 9.41371 9.80848 9.39145 9.37262 9.39964V12.5297C9.00267 12.4263 8.61687 12.3737 8.2288 12.374C6.14717 12.374 4.45997 13.863 4.45997 15.6998C4.45997 16.9986 5.30329 18.1231 6.53326 18.6708Z"
                 fill="#FF004F"
@@ -145,7 +145,7 @@ export default function Footer() {
             </defs>
           </svg>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <g clip-path="url(#clip0_220_841)">
+            <g clipPath="url(#clip0_220_841)">
               <path
                 d="M24 12C24 5.37262 18.6274 0 12 0C5.37262 0 0 5.37262 0 12C0 17.9895 4.38825 22.954 10.125 23.8542V15.4688H7.07812V12H10.125V9.35625C10.125 6.34875 11.9166 4.6875 14.6576 4.6875C15.9705 4.6875 17.3438 4.92188 17.3438 4.92188V7.875H15.8306C14.3399 7.875 13.875 8.80003 13.875 9.74906V12H17.2031L16.6711 15.4688H13.875V23.8542C19.6117 22.954 24 17.9896 24 12Z"
                 fill="#1877F2"
