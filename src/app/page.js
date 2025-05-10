@@ -1,14 +1,14 @@
-import About from "@/components/About";
-import BlogSection from "@/components/BlogSection";
-import Footer from "@/components/Footer";
-import HeroScroller from "@/components/HeroScroller";
-import Navbar from "@/components/Navbar";
-import NewArrivals from "@/components/NewArrivals";
-import PartnersScroller from "@/components/PartnersScroller";
-import ReviewSection from "@/components/ReviewSection";
-import FeatureSection from "@/components/FeaturesSection";
-import FeatureSectionBottom from "@/components/FeatureSectionBottom";
-import CommingSoonSection from "@/components/CommingSoonSection";
+import About from "@/components/layout/About";
+import BlogSection from "@/components/home/BlogSection";
+import Footer from "@/components/layout/Footer";
+import HeroScroller from "@/components/home/HeroScroller";
+import Navbar from "@/components/layout/Navbar";
+import NewArrivals from "@/components/home/NewArrivals";
+import PartnersScroller from "@/components/home/PartnersScroller";
+import ReviewSection from "@/components/home/ReviewSection";
+import FeatureSection from "@/components/home/FeaturesSection";
+import FeatureSectionBottom from "@/components/home/FeatureSectionBottom";
+import CommingSoonSection from "@/components/home/CommingSoonSection";
 
 export default function Home() {
   return (
