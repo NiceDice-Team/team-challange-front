@@ -6,7 +6,6 @@ import HERO_IMG3 from "../../public/HeroScroller/HeroScroll3.png";
 import Image from "next/image";
 
 export default function HeroScroller() {
-  // Define the desired aspect ratio (1320:704)
   const aspectRatio = 1320 / 704;
 
   const scrollerData = [
@@ -144,13 +143,13 @@ export default function HeroScroller() {
       >
         {/* Dynamic info card */}
         <div
-          className={`absolute bottom-10 right-20 z-10 bg-black/85 px-8 py-6 max-w-md text-white transition-opacity duration-300 ${
+          className={`absolute bottom-10 right-20 z-10 bg-black/85 px-8 py-6 max-w-sm text-white transition-opacity duration-300 ${
             isCardVisible ? "opacity-100" : "opacity-0"
           }`}
         >
-          <h3 className="text-[#FF5F00] mb-4">{scrollerData[currentSection].category}</h3>
-          <h4 className="text-xl font-medium mb-3">{scrollerData[currentSection].title}</h4>
-          <p className="text-base mb-6">{scrollerData[currentSection].description}</p>
+          <h3 className="uppercase text-base text-[#FF5F00] mb-4">{scrollerData[currentSection].category}</h3>
+          <h4 className="text-xl mb-3">{scrollerData[currentSection].title}</h4>
+          <p className="text-lg mb-3">{scrollerData[currentSection].description}</p>
           <button className="bg-white text-slate-700 py-3 px-8 font-medium hover:bg-[#FF5F00]/80 hover:text-white transition-all duration-150">
             {scrollerData[currentSection].buttonText}
           </button>
