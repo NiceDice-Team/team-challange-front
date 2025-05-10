@@ -13,7 +13,7 @@ import CommingSoonSection from "@/components/CommingSoonSection";
 export default function Home() {
   return (
     <div className="py-6 lg:py-6 font-[family-name:var(--font-noto-sans)]">
-      <div className="h-dvh mb-10 flex flex-col gap-4 px-8  lg:px-50">
+      <div className="h-dvh  flex flex-col gap-4 px-8  lg:px-50">
         <Navbar />
         <HeroScroller />
         <div className=" h-14"> </div>
