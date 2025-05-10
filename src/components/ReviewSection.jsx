@@ -2,41 +2,53 @@
 
 import { useState } from "react";
 import ReviewCard from "@/components/ReviewCard";
+import PERSON1_IMG from "../../public/Reviews/person1.png";
+import PERSON2_IMG from "../../public/Reviews/person2.png";
+import PERSON3_IMG from "../../public/Reviews/person3.png";
+import REVIEW_1_IMG1 from "../../public/Reviews/review1_1.png";
+import REVIEW_1_IMG2 from "../../public/Reviews/review1_2.png";
+import REVIEW_1_IMG3 from "../../public/Reviews/review1_3.png";
+import REVIEW_1_IMG4 from "../../public/Reviews/review1_4.png";
+import REVIEW_2_IMG1 from "../../public/Reviews/review2_1.png";
+import REVIEW_2_IMG2 from "../../public/Reviews/review2_2.png";
+import REVIEW_3_IMG1 from "../../public/Reviews/review3_1.png";
+import REVIEW_3_IMG2 from "../../public/Reviews/review3_2.png";
+import REVIEW_3_IMG3 from "../../public/Reviews/review3_3.png";
 
 // ─────────────────── DEMO DATA ───────────────────
 const demo = [
   {
     rating: 5,
     date: "March 28, 2025",
-    avatarSrc: "/700x700.svg", // усе, що лежить у /public, звертаємо через абсолютний шлях
+    avatarSrc: PERSON1_IMG, // Updated to use the imported image
     name: "Daniel T.",
     aboutHref: "/games/catan",
     aboutText: "Catan",
     title: "Exquisite !",
     body: "Awesome product. Prepare yourself. This one does really big hugs to your gaming table. 36×60 inches. Awesome luxurious and sober table presence and fully reversible. A nice transport bag is already included in the package.",
-    images: ["/700x700.svg", "/700x700.svg", "/700x700.svg", "/700x700.svg"],
+    images: [REVIEW_1_IMG1, REVIEW_1_IMG2, REVIEW_1_IMG3, REVIEW_1_IMG4],
   },
   {
     rating: 4,
     date: "March 28, 2025",
-    avatarSrc: "/700x700.svg",
+    avatarSrc: PERSON2_IMG,
     name: "Benjamin L.",
     aboutHref: "/games/7wonders",
     aboutText: "7 Wonders",
     title: "Great product",
     body: "Great product. I love the fact that it is reversible. The only thing I would change is to have a more rigid material for the bag.",
-    images: ["/700x700.svg", "/700x700.svg", "/700x700.svg", "/700x700.svg"],
+    images: [REVIEW_2_IMG1, REVIEW_2_IMG2],
   },
   {
     rating: 4,
     date: "March 28, 2025",
-    avatarSrc: "/700x700.svg",
+    avatarSrc: PERSON3_IMG,
     name: "Benjamin L.",
     aboutHref: "/games/7wonders",
     aboutText: "7 Wonders",
     title: "Fantastic product",
     body: "Great product. I love the fact that it is reversible. The only thing I would change is to have a more rigid material for the bag.",
-    images: ["/700x700.svg", "/700x700.svg", "/700x700.svg", "/700x700.svg"],
+    images: [REVIEW_3_IMG1, REVIEW_3_IMG2, REVIEW_3_IMG3],
   },
   {
     rating: 4,
@@ -109,7 +121,7 @@ export default function ReviewSection({ reviews = [] }) {
   const next = () => setPage((p) => Math.min(maxPage, p + 1));
 
   return (
-    <section className="  mb-25 ">
+    <section className="  mb-25 px-8 lg:px-50">
       {/* Heading + arrows */}
       <div className="mb-8 flex items-center justify-between">
         <h2 className="text-4xl font-semibold tracking-wide">REVIEWS FROM OUR CUSTOMERS</h2>
