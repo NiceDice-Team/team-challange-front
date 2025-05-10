@@ -1,12 +1,12 @@
 import Image from "next/image";
-import CMON_IMG from "../../public/Partners/placeholder.svg";
-import Ravensburger_IMG from "../../public/Partners/placeholder.svg";
-import Mattel_IMG from "../../public/Partners/placeholder.svg";
-import Hasbro_IMG from "../../public/Partners/placeholder.svg";
-import Kosmos_IMG from "../../public/Partners/placeholder.svg";
-import LuckyDuck_IMG from "../../public/Partners/placeholder.svg";
-import FF_IMG from "../../public/Partners/placeholder.svg";
-import Asmodee_IMG from "../../public/Partners/placeholder.svg";
+import CMON_IMG from "../../public/Brands/brand_1.png";
+import Ravensburger_IMG from "../../public/Brands/brand_2.png";
+import Mattel_IMG from "../../public/Brands/brand_3.png";
+import Hasbro_IMG from "../../public/Brands/brand_4.png";
+import Kosmos_IMG from "../../public/Brands/brand_5.png";
+import LuckyDuck_IMG from "../../public/Brands/brand_6.png";
+import FF_IMG from "../../public/Brands/brand_7.png";
+import Asmodee_IMG from "../../public/Brands/brand_8.png";
 
 const PARTNERS = [
   { src: CMON_IMG, alt: "CMON", id: 1 },
@@ -39,7 +39,7 @@ export default function PartnersScroller() {
                 alt={partner.alt}
                 width={88}
                 height={88}
-                className="w-24 h-24 object-contain"
+                className=" object-contain"
                 priority={partner.id <= 4}
               />
             </div>
@@ -52,21 +52,21 @@ export default function PartnersScroller() {
         >
           {PARTNERS.map((partner) => (
             <div key={`${partner.id}-duplicate-1`} className="flex items-center justify-center">
-              <Image src={partner.src} alt={partner.alt} width={88} height={88} className="w-24 h-24 object-contain" />
+              <Image src={partner.src} alt={partner.alt} width={88} height={88} className=" object-contain" />
             </div>
           ))}
         </div>
 
-        <div
+        {/* <div
           aria-hidden="true"
           className="flex gap-16 items-center justify-center animate-infiniteScroll will-change-transform shrink-0 pr-16"
         >
           {PARTNERS.map((partner) => (
             <div key={`${partner.id}-duplicate-2`} className="flex items-center justify-center">
-              <Image src={partner.src} alt={partner.alt} width={88} height={88} className="w-24 h-24 object-contain" />
+              <Image src={partner.src} alt={partner.alt} width={88} height={88} className=" object-contain" />
             </div>
           ))}
-        </div>
+        </div> */}
       </div>
     </section>
   );
