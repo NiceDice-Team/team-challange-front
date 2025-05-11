@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
-import HERO_IMG1 from "../../../public/HeroScroller/HeroScroll3.png";
-import HERO_IMG2 from "../../../public/HeroScroller/HeroScroll3.png";
+import HERO_IMG1 from "../../../public/HeroScroller/HeroScroll1.png";
+import HERO_IMG2 from "../../../public/HeroScroller/HeroScroll2.png";
 import HERO_IMG3 from "../../../public/HeroScroller/HeroScroll3.png";
 import Image from "next/image";
 
@@ -133,12 +133,12 @@ export default function HeroScroller() {
   }
 
   return (
-    <div className="w-full h-full relative">
+    <section className="w-full h-full relative">
       {/* Aspect ratio container */}
       <div
         className="w-full relative overflow-hidden"
         style={{
-          paddingBottom: `${(1 / aspectRatio) * 100}%`, // Creates the aspect ratio
+          paddingBottom: `min(${(1 / aspectRatio) * 100}%, 80vh)`, // Creates the aspect ratio with max height
         }}
       >
         {/* Dynamic info card */}
@@ -197,6 +197,6 @@ export default function HeroScroller() {
           })}
         </div>
       </div>
-    </div>
+    </section>
   );
 }
