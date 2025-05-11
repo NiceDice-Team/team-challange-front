@@ -1,5 +1,7 @@
 import { fetchAPI } from "./api";
-import { getTokens } from "@/lib/tokenManager";
+import { getTokens, isAuthenticated } from "@/lib/tokenManager";
+import { getGuestToken } from "@/store/guestCart";
+import { cartServices } from "./cartServices";
 import type { CheckoutFormData, DeliveryOption } from "@/store/checkout";
 
 export interface PaymentMethod {
@@ -71,7 +73,7 @@ export const orderServices = {
     checkoutUserData,
     deliveryOptionId,
     paymentMethodId,
-    cartId = 0,
+    cartId,
     delivery_option = 0,
     payment_method = 0,
   }: {
@@ -83,6 +85,7 @@ export const orderServices = {
     payment_method?: number;
   }) {
     const { accessToken } = getTokens() || {};
+    const authenticated = isAuthenticated();
 
     const buildAddressString = (
       prefix: "shipping" | "billing"
@@ -131,15 +134,27 @@ export const orderServices = {
         .join(", ");
     };
 
-    const payload = {
+    const payload: Record<string, unknown> = {
       delivery_option,
       payment_method,
       shipping_address: buildAddressString("shipping"),
       billing_address: buildAddressString("billing"),
       delivery_option_id: deliveryOptionId ?? 0,
       payment_method_id: paymentMethodId ?? 0,
-      cart_id: cartId ?? 0,
     };
+
+    if (authenticated) {
+      payload.cart_id =
+        cartId ?? (await cartServices.getCartId());
+    } else {
+      const guestCartToken = getGuestToken();
+
+      if (!guestCartToken) {
+        throw new Error("Guest cart token not available");
+      }
+
+      payload.guest_cart_token = guestCartToken;
+    }
 
     const response = await fetchAPI("orders/", {
       method: "POST",

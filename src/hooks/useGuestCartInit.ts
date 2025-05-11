@@ -5,7 +5,11 @@ import {
   AUTH_TOKENS_CHANGED_EVENT,
   isAuthenticated,
 } from "@/lib/tokenManager";
-import { deleteGuestCart, ensureGuestCart } from "@/services/cartServices";
+import {
+  deleteGuestCart,
+  ensureGuestCart,
+  mergeGuestCartIntoUserCart,
+} from "@/services/cartServices";
 
 export function useGuestCartInit(): void {
   useEffect(() => {
@@ -16,9 +20,20 @@ export function useGuestCartInit(): void {
 
   useEffect(() => {
     const handleAuthTokensChanged = () => {
-      if (isAuthenticated()) {
-        void deleteGuestCart();
+      if (!isAuthenticated()) {
+        return;
       }
+
+      void (async () => {
+        try {
+          await mergeGuestCartIntoUserCart();
+        } catch (error) {
+          console.error("Failed to merge guest cart on login:", error);
+          return;
+        }
+
+        await deleteGuestCart();
+      })();
     };
 
     window.addEventListener(AUTH_TOKENS_CHANGED_EVENT, handleAuthTokensChanged);

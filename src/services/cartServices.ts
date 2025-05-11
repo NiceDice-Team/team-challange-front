@@ -89,6 +89,30 @@ export async function ensureGuestCart(): Promise<void> {
   useGuestCartStore.getState().setToken(response.token);
 }
 
+async function fetchGuestCartItemsByToken(token: string): Promise<CartItem[]> {
+  const response = await fetch(`${API_URL}cart/guest/`, {
+    headers: {
+      "Content-Type": "application/json",
+      "X-Guest-Token": token,
+    },
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch guest cart: ${response.status}`);
+  }
+
+  const text = await response.text();
+
+  if (!text) {
+    return [];
+  }
+
+  const apiItems = parseGuestCartListResponse(JSON.parse(text));
+
+  return apiItems.map(mapGuestCartItemToCartItem);
+}
+
 async function guestFetch<T = unknown>(
   endpoint: string,
 
@@ -149,12 +173,66 @@ async function guestFetch<T = unknown>(
   return JSON.parse(text) as T;
 }
 
+export async function mergeGuestCartIntoUserCart(): Promise<void> {
+  if (!hasValidAuthSession()) {
+    return;
+  }
+
+  const guestToken = getGuestToken();
+  let guestItems = useGuestCartStore.getState().items;
+
+  if (guestToken) {
+    try {
+      guestItems = await fetchGuestCartItemsByToken(guestToken);
+    } catch (error) {
+      console.error("Error fetching guest cart for merge:", error);
+    }
+  }
+
+  if (guestItems.length === 0) {
+    return;
+  }
+
+  try {
+    await cartServices.getCartId();
+  } catch (error) {
+    console.error("Error resolving user cart id for guest cart merge:", error);
+    throw error;
+  }
+
+  for (const item of guestItems) {
+    if (!item.product?.id || item.quantity <= 0) {
+      continue;
+    }
+
+    try {
+      await cartServices.addToCart(item.product.id, item.quantity);
+    } catch (error) {
+      console.error(
+        `Error merging guest cart item ${item.product.id}:`,
+        error,
+      );
+    }
+  }
+}
+
 export async function deleteGuestCart(): Promise<void> {
   const token = getGuestToken();
 
   if (token) {
     try {
-      await guestFetch("cart/guest/", { method: "DELETE" });
+      if (hasValidAuthSession()) {
+        await fetch(`${API_URL}cart/guest/`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Guest-Token": token,
+          },
+          cache: "no-store",
+        });
+      } else {
+        await guestFetch("cart/guest/", { method: "DELETE" });
+      }
     } catch (error) {
       console.error("Error deleting guest cart:", error);
     }
