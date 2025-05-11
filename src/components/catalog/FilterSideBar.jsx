@@ -33,7 +33,7 @@ export default function FilterSideBar() {
           onClick={() => {
             setSelectedFilters((prevFilters) => ({
               ...prevFilters,
-              [filter_type]: prevFilters[filter_type].filter((filter) => filter !== name),
+              [filter_type]: prevFilters[filter_type].filter((filter) => filter !== filterShowButton_name),
             }));
           }}
         >
@@ -98,10 +98,10 @@ export default function FilterSideBar() {
       </div>
 
       <div className="flex flex-wrap gap-4">
-        {selectedFilters.featured.map((name) => filterShowButton(name, "featured", 0))}
-        {selectedFilters.game_type.map((name) => filterShowButton(name, "game_type", 1))}
-        {selectedFilters.audience.map((name) => filterShowButton(name, "audience", 2))}
-        {selectedFilters.brands.map((name) => filterShowButton(name, "brands", 3))}
+        {selectedFilters.game_type.map((id) => {
+          const category = categories?.find((cat) => cat.id === id);
+          return filterShowButton(category ? category.name : id, "game_type", id);
+        })}
       </div>
       <div className="border-t border-[#494791] my-5"></div>
       <h4 className="text-base font-semibold uppercase"> Featured</h4>
