@@ -20,9 +20,9 @@ export default function FilterSideBar() {
     brands: ["Brands"],
   });
 
-  const filterShowButton = (filterShowButton_name, filter_type) => {
+  const filterShowButton = (filterShowButton_name, filter_type, index) => {
     return (
-      <div key={name} className="bg-[#C6C6E2] p-1.5 text-black text-sm flex justify-center items-center">
+      <div key={index} className="bg-[#C6C6E2] p-1.5 text-black text-sm flex justify-center items-center">
         {filterShowButton_name}
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -98,10 +98,10 @@ export default function FilterSideBar() {
       </div>
 
       <div className="flex flex-wrap gap-4">
-        {selectedFilters.featured.map((name) => filterShowButton(name, "featured"))}
-        {selectedFilters.game_type.map((name) => filterShowButton(name, "game_type"))}
-        {selectedFilters.audience.map((name) => filterShowButton(name, "audience"))}
-        {selectedFilters.brands.map((name) => filterShowButton(name, "brands"))}
+        {selectedFilters.featured.map((name) => filterShowButton(name, "featured", 0))}
+        {selectedFilters.game_type.map((name) => filterShowButton(name, "game_type", 1))}
+        {selectedFilters.audience.map((name) => filterShowButton(name, "audience", 2))}
+        {selectedFilters.brands.map((name) => filterShowButton(name, "brands", 3))}
       </div>
       <div className="border-t border-[#494791] my-5"></div>
       <h4 className="text-base font-semibold uppercase"> Featured</h4>
