@@ -1,6 +1,7 @@
 import axios from "axios";
 import axiosInstance from "@/lib/axiosInstance";
 import { buildApiUrl } from "@/config/api";
+import { mergeNoCacheHeaders } from "@/lib/noCacheHeaders";
 import { ApiRequestOptions } from "@/types/api";
 import { CreateProductReviewPayload, ProductReviewApi, ReviewListResponse } from "@/types/review";
 
@@ -47,10 +48,10 @@ const parseErrorResponse = async (response: Response): Promise<string> => {
 const fetchReviewPage = async (url: string, options: ApiRequestOptions = {}): Promise<ReviewListResponse> => {
   const response = await fetch(url, {
     method: "GET",
-    headers: {
+    headers: mergeNoCacheHeaders({
       "Content-Type": "application/json",
       ...options.headers,
-    },
+    }),
     signal: options.signal,
     cache: "no-store",
   });

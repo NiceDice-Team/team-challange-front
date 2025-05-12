@@ -12,6 +12,8 @@ import {
   isAuthenticated as hasValidAuthSession,
 } from "@/lib/tokenManager";
 
+import { mergeNoCacheHeaders } from "@/lib/noCacheHeaders";
+
 import { getGuestToken, useGuestCartStore } from "@/store/guestCart";
 
 import type { ApiRequestOptions } from "@/types/api";
@@ -91,10 +93,10 @@ export async function ensureGuestCart(): Promise<void> {
 
 async function fetchGuestCartItemsByToken(token: string): Promise<CartItem[]> {
   const response = await fetch(`${API_URL}cart/guest/`, {
-    headers: {
+    headers: mergeNoCacheHeaders({
       "Content-Type": "application/json",
       "X-Guest-Token": token,
-    },
+    }),
     cache: "no-store",
   });
 
@@ -131,13 +133,13 @@ async function guestFetch<T = unknown>(
   const response = await fetch(url, {
     method: options.method || "GET",
 
-    headers: {
+    headers: mergeNoCacheHeaders({
       "Content-Type": "application/json",
 
       "X-Guest-Token": token,
 
       ...options.headers,
-    },
+    }),
 
     body: options.body ? JSON.stringify(options.body) : null,
 
@@ -224,10 +226,10 @@ export async function deleteGuestCart(): Promise<void> {
       if (hasValidAuthSession()) {
         await fetch(`${API_URL}cart/guest/`, {
           method: "DELETE",
-          headers: {
+          headers: mergeNoCacheHeaders({
             "Content-Type": "application/json",
             "X-Guest-Token": token,
-          },
+          }),
           cache: "no-store",
         });
       } else {

@@ -8,6 +8,10 @@ jest.mock('../../config/api', () => ({
   API_BASE_URL: 'https://api.example.com',
 }));
 
+jest.mock('@/lib/tokenManager', () => ({
+  isAuthenticated: jest.fn(() => false),
+}));
+
 describe('API Service', () => {
   beforeEach(() => {
     (fetch as jest.Mock).mockClear();

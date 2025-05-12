@@ -17,6 +17,7 @@ import { PublicRoute } from "@/components/auth/RouteGuards";
 import { showCustomToast } from "@/components/shared/Toast";
 import { getTokens, setTokens } from "@/lib/tokenManager";
 import { API_BASE_URL } from "@/config/api";
+import { mergeNoCacheHeaders } from "@/lib/noCacheHeaders";
 
 function LoginPageContent() {
   const params = useSearchParams();
@@ -126,10 +127,14 @@ function LoginPageContent() {
     try {
       const response = await fetch(`${API_BASE_URL}users/token/`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: mergeNoCacheHeaders(
+          {
+            "Content-Type": "application/json",
+          },
+          { force: true },
+        ),
         body: JSON.stringify(requestBody),
+        cache: "no-store",
       });
 
       const res = await response.json();

@@ -1,5 +1,9 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
+import axios, { AxiosInstance } from "axios";
 import { getValidAccessToken } from "./tokenManager";
+import {
+  NO_CACHE_CONTROL_VALUE,
+  shouldAttachNoCacheHeaders,
+} from "./noCacheHeaders";
 import { API_CONFIG } from '@/config/api';
 
 const axiosInstance: AxiosInstance = axios.create(API_CONFIG);
@@ -12,6 +16,11 @@ axiosInstance.interceptors.request.use(
     } catch (error) {
       console.error("Error getting access token:", error);
     }
+
+    if (shouldAttachNoCacheHeaders()) {
+      config.headers.set("Cache-Control", NO_CACHE_CONTROL_VALUE);
+    }
+
     return config;
   },
   function (error) {

@@ -1,6 +1,7 @@
 import { jwtDecode } from "jwt-decode";
 import { getCookie, deleteCookie } from "@/utils/auth";
 import { API_ENDPOINTS, buildApiUrl } from '@/config/api';
+import { mergeNoCacheHeaders } from '@/lib/noCacheHeaders';
 import { AuthTokens } from '@/types/api';
 
 export const AUTH_TOKENS_CHANGED_EVENT = "auth-tokens-changed";
@@ -98,12 +99,16 @@ async function refreshAccessToken(): Promise<AuthTokens> {
       buildApiUrl(API_ENDPOINTS.tokenRefresh),
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: mergeNoCacheHeaders(
+          {
+            "Content-Type": "application/json",
+          },
+          { force: true },
+        ),
         body: JSON.stringify({
           refresh: refreshToken,
         }),
+        cache: "no-store",
       }
     );
 

@@ -9,6 +9,7 @@ import { CustomButton } from "../shared/CustomButton";
 import { useState } from "react";
 import { loginSchema, LoginFormState } from "@/lib/definitions";
 import { API_BASE_URL } from "@/config/api";
+import { mergeNoCacheHeaders } from "@/lib/noCacheHeaders";
 import { setTokens } from "@/lib/tokenManager";
 import { useRouter } from "next/navigation";
 
@@ -83,10 +84,14 @@ const CheckoutModal = ({
     try {
       const response = await fetch(`${API_BASE_URL}users/token/`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: mergeNoCacheHeaders(
+          {
+            "Content-Type": "application/json",
+          },
+          { force: true },
+        ),
         body: JSON.stringify(requestBody),
+        cache: "no-store",
       });
 
       const res = await response.json();

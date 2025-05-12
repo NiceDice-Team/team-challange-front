@@ -1,4 +1,5 @@
 import { API_BASE_URL } from '@/config/api';
+import { mergeNoCacheHeaders } from '@/lib/noCacheHeaders';
 import { ApiRequestOptions } from '@/types/api';
 
 export const API_URL: string = API_BASE_URL;
@@ -12,10 +13,10 @@ export async function fetchAPI<T = any>(
   const url = `${API_URL}${endpoint}`;
   const response = await fetch(url, {
     method: options.method || "GET",
-    headers: {
+    headers: mergeNoCacheHeaders({
       "Content-Type": "application/json",
       ...options.headers,
-    },
+    }),
     body: options.body ? JSON.stringify(options.body) : null,
     // Allow React Query to cancel in-flight requests when queries change
     signal: options.signal,

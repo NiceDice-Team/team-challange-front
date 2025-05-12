@@ -8,6 +8,7 @@ import {
   loginSchema,
 } from "../../lib/definitions";
 import { API_BASE_URL } from '@/config/api';
+import { mergeNoCacheHeaders } from '@/lib/noCacheHeaders';
 
 type ResponseType = {
   access?: string;
@@ -57,10 +58,14 @@ export async function signup(
   try {
     const response = await fetch(`${API_URL}users/register/`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: mergeNoCacheHeaders(
+        {
+          "Content-Type": "application/json",
+        },
+        { force: true },
+      ),
       body: JSON.stringify(requestBody),
+      cache: "no-store",
     });
 console.log('response signup', response);
     if (!response.ok) {
@@ -173,10 +178,14 @@ export async function signin(
   try {
     const response = await fetch(`${API_URL}users/token/`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: mergeNoCacheHeaders(
+        {
+          "Content-Type": "application/json",
+        },
+        { force: true },
+      ),
       body: JSON.stringify(requestBody),
+      cache: "no-store",
     });
 console.log('response signin',  response);
     const res = await response.json();

@@ -1,6 +1,28 @@
 import { NextResponse } from "next/server";
 import { jwtDecode } from "jwt-decode";
 
+const NO_CACHE_PAGE_HEADER = "no-store, no-cache, must-revalidate";
+
+const NO_CACHE_ROUTE_PREFIXES = [
+  "/login",
+  "/profile",
+  "/register",
+  "/forgot-password",
+  "/reset-password",
+  "/confirm-signup",
+];
+
+function isNoCacheRoute(pathname) {
+  return NO_CACHE_ROUTE_PREFIXES.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`),
+  );
+}
+
+function withNoCachePageHeaders(response) {
+  response.headers.set("Cache-Control", NO_CACHE_PAGE_HEADER);
+  return response;
+}
+
 function isTokenExpired(token) {
   if (!token) return true;
 
@@ -41,7 +63,7 @@ export default function middleware(request) {
     if (!isAuthenticated(request)) {
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("returnUrl", pathname);
-      return NextResponse.redirect(loginUrl);
+      return withNoCachePageHeaders(NextResponse.redirect(loginUrl));
     }
   }
 
@@ -51,7 +73,13 @@ export default function middleware(request) {
     }
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+
+  if (isNoCacheRoute(pathname) || isProtectedRoute) {
+    return withNoCachePageHeaders(response);
+  }
+
+  return response;
 }
 
 export const config = {
