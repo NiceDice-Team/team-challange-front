@@ -92,4 +92,24 @@ describe("useUrlFilters", () => {
       scroll: false,
     });
   });
+
+  test("sanitizes malicious categories query param in the URL", () => {
+    mockSearchParams = new URLSearchParams(
+      'categories=1"><script>alert(1)</script>&search=dice',
+    );
+
+    renderHook(() => useUrlFilters());
+
+    expect(mockReplace).toHaveBeenCalledWith("/catalog?search=dice", {
+      scroll: false,
+    });
+  });
+
+  test("parses valid categories as integers only", () => {
+    mockSearchParams = new URLSearchParams("categories=1,2");
+
+    const { result } = renderHook(() => useUrlFilters());
+
+    expect(result.current.selectedFilters.categories).toEqual([1, 2]);
+  });
 });
