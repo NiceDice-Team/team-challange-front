@@ -2,7 +2,7 @@
 import LanguageSelector from "./LanguageSelector";
 import MobileMenuOverlay from "./MobileMenuOverlay";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useUserStore } from "@/store/user";
 import { LogoIcon, ProfileIcon, CartIcon, BurgerMenuIcon, CloseIcon, SearchOutlineIcon } from "@/svgs/icons";
 import { useState, useEffect, useRef } from "react";
@@ -12,7 +12,11 @@ import { getTokens } from "@/lib/tokenManager";
 import decodeToken from "@/lib/decodeToken";
 import SearchBar from "@/components/shared/SearchBar";
 import { cn } from "@/lib/utils";
-import { navigationLinks } from "./navigationLinks";
+import {
+  getDesktopNavigationLinkClassName,
+  isNavigationLinkActive,
+  navigationLinks,
+} from "./navigationLinks";
 
 export default function Navbar({ isPagination = true, hideMobilePaginationChrome = false, enableMobileInlineSearch = true }) {
   const { userData } = useUserStore((state) => state);
@@ -23,7 +27,18 @@ export default function Navbar({ isPagination = true, hideMobilePaginationChrome
   const { itemCount } = useCartSummary();
   const { refreshToken } = getTokens();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [currentHash, setCurrentHash] = useState("");
   const mobileHeaderRef = useRef(null);
+
+  useEffect(() => {
+    const syncHash = () => setCurrentHash(window.location.hash);
+
+    syncHash();
+    window.addEventListener("hashchange", syncHash);
+
+    return () => window.removeEventListener("hashchange", syncHash);
+  }, [pathname]);
 
 
   useEffect(() => {
@@ -196,19 +211,26 @@ export default function Navbar({ isPagination = true, hideMobilePaginationChrome
         {isPagination && (
           <div className={cn("mt-4 sm:mt-5 md:mt-6", hideMobilePaginationChrome && "hidden sm:block")}>
             <ul className="hidden sm:flex flex-row flex-wrap justify-center gap-3 sm:gap-4 md:gap-6 lg:gap-10 xl:gap-14 text-xs sm:text-sm md:text-base lg:text-lg uppercase">
-              {navigationLinks.map((item) => (
-                <li key={item.label}>
-                  <Link
-                    href={item.href}
-                    className={cn(
-                      "transition-colors cursor-pointer",
-                      item.isSale ? "text-red-500 hover:text-red-600" : "hover:text-[#494791]"
-                    )}
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
+              {navigationLinks.map((item) => {
+                const isActive = isNavigationLinkActive(
+                  item.href,
+                  pathname,
+                  searchParams,
+                  currentHash,
+                );
+
+                return (
+                  <li key={item.label}>
+                    <Link
+                      href={item.href}
+                      aria-current={isActive ? "page" : undefined}
+                      className={getDesktopNavigationLinkClassName(item, isActive)}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
             <div className="bg-[#A4A3C8] mt-4 sm:mt-3 w-full h-px"></div>
           </div>

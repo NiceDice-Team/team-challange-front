@@ -2,8 +2,13 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
 import { ChevronDownIcon } from "@/svgs/icons";
-import { navigationLinks } from "./navigationLinks";
+import {
+  getMobileNavigationLinkClassName,
+  isNavigationLinkActive,
+  navigationLinks,
+} from "./navigationLinks";
 
 const languages = [
   { id: "en", label: "English" },
@@ -11,8 +16,20 @@ const languages = [
 ];
 
 export default function MobileMenuOverlay({ isOpen, topOffset = 0, onClose }) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(languages[0]);
+  const [currentHash, setCurrentHash] = useState("");
+
+  useEffect(() => {
+    const syncHash = () => setCurrentHash(window.location.hash);
+
+    syncHash();
+    window.addEventListener("hashchange", syncHash);
+
+    return () => window.removeEventListener("hashchange", syncHash);
+  }, [pathname]);
 
   useEffect(() => {
     if (!isOpen) return undefined;
@@ -69,21 +86,44 @@ export default function MobileMenuOverlay({ isOpen, topOffset = 0, onClose }) {
           <div className="h-px w-full bg-[var(--color-light-purple-2)]" />
 
           <nav aria-label="Mobile navigation">
-            <ul className="flex flex-col gap-6 px-4 text-[18px] leading-[22px] uppercase text-black">
-              {navigationLinks.map((item) => (
-                <li key={item.label}>
-                  {item.isSale ? (
-                    <Link href={item.href} className="flex items-center gap-3 text-[#494791]" onClick={handleClose}>
-                      <span className="block h-11 w-px bg-[#494791]" aria-hidden="true" />
-                      <span>{item.label}</span>
-                    </Link>
-                  ) : (
-                    <Link href={item.href} className="block" onClick={handleClose}>
-                      {item.label}
-                    </Link>
-                  )}
-                </li>
-              ))}
+            <ul className="flex flex-col gap-6 px-4 text-[18px] leading-[22px] uppercase">
+              {navigationLinks.map((item) => {
+                const isActive = isNavigationLinkActive(
+                  item.href,
+                  pathname,
+                  searchParams,
+                  currentHash,
+                );
+                const linkClassName = getMobileNavigationLinkClassName(item, isActive);
+
+                return (
+                  <li key={item.label}>
+                    {item.isSale ? (
+                      <Link
+                        href={item.href}
+                        aria-current={isActive ? "page" : undefined}
+                        className={linkClassName}
+                        onClick={handleClose}
+                      >
+                        <span
+                          className="block h-11 w-px bg-[#494791]"
+                          aria-hidden="true"
+                        />
+                        <span className="text-[#494791]">{item.label}</span>
+                      </Link>
+                    ) : (
+                      <Link
+                        href={item.href}
+                        aria-current={isActive ? "page" : undefined}
+                        className={linkClassName}
+                        onClick={handleClose}
+                      >
+                        {item.label}
+                      </Link>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </nav>
 
