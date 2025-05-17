@@ -1,4 +1,5 @@
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+// const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+const API_URL = "/api/";
 
 export async function fetchAPI(endoint, options = {}) {
   const url = `${API_URL}${endoint}`;
