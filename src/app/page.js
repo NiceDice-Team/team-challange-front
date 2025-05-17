@@ -1,14 +1,14 @@
-import About from "@/components/layout/About.jsx";
-import BlogSection from "@/components/home/BlogSection.jsx";
-import Footer from "@/components/layout/Footer.jsx";
-import HeroScroller from "@/components/home/HeroScroller.jsx";
-import Navbar from "@/components/layout/Navbar.jsx";
-import NewArrivals from "@/components/home/NewArrivals.jsx";
-import PartnersScroller from "@/components/home/PartnersScroller.jsx";
-import ReviewSection from "@/components/home/ReviewSection.jsx";
-import FeatureSection from "@/components/home/FeaturesSection.jsx";
-import FeatureSectionBottom from "@/components/home/FeatureSectionBottom.jsx";
-import CommingSoonSection from "@/components/home/CommingSoonSection.jsx";
+import About from "../components/layout/About.jsx";
+import BlogSection from "../components/home/BlogSection.jsx";
+import Footer from "../components/layout/Footer.jsx";
+import HeroScroller from "../components/home/HeroScroller.jsx";
+import Navbar from "../components/layout/Navbar.jsx";
+import NewArrivals from "../components/home/NewArrivals.jsx";
+import PartnersScroller from "../components/home/PartnersScroller.jsx";
+import ReviewSection from "../components/home/ReviewSection.jsx";
+import FeatureSection from "../components/home/FeaturesSection.jsx";
+import FeatureSectionBottom from "../components/home/FeatureSectionBottom.jsx";
+import CommingSoonSection from "../components/home/CommingSoonSection.jsx";
 
 export default function Home() {
   return (
