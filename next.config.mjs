@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   async rewrites() {
-    return [{ source: "/api/:path*", destination: "http://bgshop.work.gd:8000/api/:path*" }];
+    return [{ source: "/api/:path*", destination: "https://bgshop.work.gd:8000/api/:path*" }];
   },
 };
 
