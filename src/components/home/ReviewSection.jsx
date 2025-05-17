@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import ReviewCard from "@/components/home/ReviewCard";
+import ReviewCard from "../../components/home/ReviewCard.jsx";
 import PERSON1_IMG from "../../../public/Reviews/person1.png";
 import PERSON2_IMG from "../../../public/Reviews/person2.png";
 import PERSON3_IMG from "../../../public/Reviews/person3.png";

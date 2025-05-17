@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { catalogServices } from "@/services/catalogServices";
+import { catalogServices } from "../../services/catalogServices";
 import { useQuery } from "@tanstack/react-query";
 
 export default function FilterSideBar() {

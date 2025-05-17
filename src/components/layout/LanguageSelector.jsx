@@ -1,6 +1,6 @@
 'use client";';
 import React, { useState, useRef } from "react";
-import useClickOutside from "@/utils/useClickOutside";
+import useClickOutside from "../../utils/useClickOutside";
 export default function LanguageSelector() {
   const languages = [
     { lan: "EN", id: 1 }, //🇬🇧
