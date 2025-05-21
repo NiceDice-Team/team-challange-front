@@ -1,6 +1,8 @@
 import Image from "next/image";
 import React from "react";
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+
 const EmptyStarSvg = () => (
   <svg width="16" height="15" viewBox="0 0 16 15" fill="none">
     <path
@@ -127,81 +129,83 @@ export default function ProductCard({ product = {} }) {
   };
 
   return (
-    <article className="flex flex-col  max-w-60  ">
-      <div className="relative h-48 w-full mb-2">
-        {/* Image gallery container - hiding scrollbar */}
-        <div
-          ref={galleryRef}
-          className="flex overflow-x-scroll snap-x snap-mandatory h-full"
-          style={{
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-            WebkitOverflowScrolling: "touch",
-            "::-webkit-scrollbar": { display: "none" },
-          }}
-        >
-          {/* Individual images */}
-          <div className="min-w-full h-full flex-shrink-0 relative snap-center">
-            <Image src="/FirstPlaceholder.svg" alt={product?.name || "Product"} fill className="object-contain" />
-          </div>
-          <div className="min-w-full h-full flex-shrink-0 relative snap-center">
-            <Image src="/SecondPlaceholder.svg" alt={product?.name || "Product"} fill className="object-contain" />
-          </div>
-          <div className="min-w-full h-full flex-shrink-0 relative snap-center">
-            <Image src="/ThirdPlaceholder.svg" alt={product?.name || "Product"} fill className="object-contain" />
-          </div>
-          {/* Left click area */}
+    <Link href={`/product/${product.id}`}>
+      <article className="flex flex-col  max-w-60  ">
+        <div className="relative h-48 w-full mb-2">
+          {/* Image gallery container - hiding scrollbar */}
           <div
-            className="absolute left-0 top-0 w-1/4 h-full cursor-pointer z-10"
-            onClick={goToPrevImage}
-            aria-label="Previous image"
-          />
+            ref={galleryRef}
+            className="flex overflow-x-scroll snap-x snap-mandatory h-full"
+            style={{
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+              WebkitOverflowScrolling: "touch",
+              "::-webkit-scrollbar": { display: "none" },
+            }}
+          >
+            {/* Individual images */}
+            <div className="min-w-full h-full flex-shrink-0 relative snap-center">
+              <Image src="/FirstPlaceholder.svg" alt={product?.name || "Product"} fill className="object-contain" />
+            </div>
+            <div className="min-w-full h-full flex-shrink-0 relative snap-center">
+              <Image src="/SecondPlaceholder.svg" alt={product?.name || "Product"} fill className="object-contain" />
+            </div>
+            <div className="min-w-full h-full flex-shrink-0 relative snap-center">
+              <Image src="/ThirdPlaceholder.svg" alt={product?.name || "Product"} fill className="object-contain" />
+            </div>
+            {/* Left click area */}
+            <div
+              className="absolute left-0 top-0 w-1/4 h-full cursor-pointer z-10"
+              onClick={goToPrevImage}
+              aria-label="Previous image"
+            />
 
-          {/* Right click area */}
-          <div
-            className="absolute right-0 top-0 w-1/4 h-full cursor-pointer z-10"
-            onClick={goToNextImage}
-            aria-label="Next image"
-          />
+            {/* Right click area */}
+            <div
+              className="absolute right-0 top-0 w-1/4 h-full cursor-pointer z-10"
+              onClick={goToNextImage}
+              aria-label="Next image"
+            />
+          </div>
+
+          {/* Navigation lines */}
+          <div className="absolute bottom-2 left-0 right-0 flex justify-center space-x-0.5">
+            {[0, 1, 2].map((index) => (
+              <button
+                key={index}
+                onClick={() => scrollToImage(index)}
+                className={`w-20 h-1 transition-colors ${activeImage === index ? "bg-[#494791]" : "bg-gray-300"}`}
+                aria-label={`View image ${index + 1}`}
+              ></button>
+            ))}
+          </div>
         </div>
 
-        {/* Navigation lines */}
-        <div className="absolute bottom-2 left-0 right-0 flex justify-center space-x-0.5">
-          {[0, 1, 2].map((index) => (
-            <button
-              key={index}
-              onClick={() => scrollToImage(index)}
-              className={`w-20 h-1 transition-colors ${activeImage === index ? "bg-[#494791]" : "bg-gray-300"}`}
-              aria-label={`View image ${index + 1}`}
-            ></button>
-          ))}
+        {/* Product Card Details */}
+        <div className="flex flex-col">
+          <h3 className="text-lg font-bold text-gray-800">{(product?.name || "PRODUCT NAME").toUpperCase()}</h3>
+
+          {/* Stars and Reviews */}
+          <div className="flex items-center mt-1">
+            {renderStars()}
+            <span className="ml-1 text-sm">({product?.reviews?.length || 0})</span>
+          </div>
+
+          {/* Price */}
+          <p className="text-xl font-bold mt-2">{displayPrice}</p>
+
+          {/* Stock status */}
+          <p className={`flex flex-row flex-nowrap items-center gap-2 text-sm ${stockStyle}`}>
+            {stockCircle}
+            {stockMessage}
+          </p>
+
+          {/* Add to cart button */}
+          <button className="mt-4 w-full border-2 border-[#494791] text-[#494791] text-center py-2 text-base font-medium hover:bg-gray-100 transition">
+            ADD TO CART
+          </button>
         </div>
-      </div>
-
-      {/* Product Card Details */}
-      <div className="flex flex-col">
-        <h3 className="text-lg font-bold text-gray-800">{(product?.name || "PRODUCT NAME").toUpperCase()}</h3>
-
-        {/* Stars and Reviews */}
-        <div className="flex items-center mt-1">
-          {renderStars()}
-          <span className="ml-1 text-sm">({product?.reviews?.length || 0})</span>
-        </div>
-
-        {/* Price */}
-        <p className="text-xl font-bold mt-2">{displayPrice}</p>
-
-        {/* Stock status */}
-        <p className={`flex flex-row flex-nowrap items-center gap-2 text-sm ${stockStyle}`}>
-          {stockCircle}
-          {stockMessage}
-        </p>
-
-        {/* Add to cart button */}
-        <button className="mt-4 w-full border-2 border-[#494791] text-[#494791] text-center py-2 text-base font-medium hover:bg-gray-100 transition">
-          ADD TO CART
-        </button>
-      </div>
-    </article>
+      </article>
+    </Link>
   );
 }
