@@ -88,6 +88,18 @@ export default function ProductCard({ product = {} }) {
   const [activeImage, setActiveImage] = useState(0);
   const galleryRef = useRef(null);
 
+  const goToPrevImage = () => {
+    if (activeImage > 0) {
+      scrollToImage(activeImage - 1);
+    }
+  };
+
+  const goToNextImage = () => {
+    if (activeImage < 2) {
+      // Since you have 3 images (0, 1, 2)
+      scrollToImage(activeImage + 1);
+    }
+  };
   // Setup scroll listener to update active image indicator
   useEffect(() => {
     const gallery = galleryRef.current;
@@ -138,25 +150,33 @@ export default function ProductCard({ product = {} }) {
           <div className="min-w-full h-full flex-shrink-0 relative snap-center">
             <Image src="/ThirdPlaceholder.svg" alt={product?.name || "Product"} fill className="object-contain" />
           </div>
+          {/* Left click area */}
+          <div
+            className="absolute left-0 top-0 w-1/4 h-full cursor-pointer z-10"
+            onClick={goToPrevImage}
+            aria-label="Previous image"
+          />
+
+          {/* Right click area */}
+          <div
+            className="absolute right-0 top-0 w-1/4 h-full cursor-pointer z-10"
+            onClick={goToNextImage}
+            aria-label="Next image"
+          />
         </div>
 
         {/* Navigation lines */}
-        <div className="absolute bottom-2 left-0 right-0 flex justify-center space-x-1">
+        <div className="absolute bottom-2 left-0 right-0 flex justify-center space-x-0.5">
           {[0, 1, 2].map((index) => (
             <button
               key={index}
               onClick={() => scrollToImage(index)}
-              className={`w-20 h-1 rounded-sm transition-colors ${
-                activeImage === index ? "bg-[#494791]" : "bg-gray-300"
-              }`}
+              className={`w-20 h-1 transition-colors ${activeImage === index ? "bg-[#494791]" : "bg-gray-300"}`}
               aria-label={`View image ${index + 1}`}
             ></button>
           ))}
         </div>
       </div>
-
-      {/* Divider */}
-      <div className="border-b border-purple-300 w-full my-2"></div>
 
       {/* Product Card Details */}
       <div className="flex flex-col">

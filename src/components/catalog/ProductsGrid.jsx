@@ -1,11 +1,12 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { productServices } from "../../services/productServices";
 import ProductCard from "../catalog/ProductCard";
 
 export default function ProductsGrid() {
   const [currentPage, setCurrentPage] = useState(1);
+  // const [lowPriority, setLowPriority] = useState();
   const productsPerPage = 16;
 
   const {
@@ -16,12 +17,40 @@ export default function ProductsGrid() {
     queryKey: ["products"],
     queryFn: productServices.getProducts,
   });
+  const sortedProducts = useMemo(() => {
+    if (!products) return [];
+
+    const highPriority = [];
+    const lowPriority = [];
+
+    products.forEach((product) => {
+      if (parseInt(product.stock, 10) > 0 || parseFloat(product.price) == 0) {
+        lowPriority.push(product);
+      } else {
+        highPriority.push(product);
+      }
+    });
+    highPriority.sort((a, b) => parseInt(b.stock, 10) - parseInt(a.stock, 10));
+    lowPriority.sort((a, b) => {
+      // First prioritize by whether it has stock
+      const aHasStock = parseInt(a.stock, 10) > 0;
+      const bHasStock = parseInt(b.stock, 10) > 0;
+
+      if (aHasStock && !bHasStock) return -1;
+      if (!aHasStock && bHasStock) return 1;
+
+      // Then by stock amount
+      return parseInt(b.stock, 10) - parseInt(a.stock, 10);
+    });
+
+    return [...lowPriority, ...highPriority];
+  }, [products]);
 
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
 
-  const currentProducts = products?.slice(indexOfFirstProduct, indexOfLastProduct);
-  const totalPages = Math.ceil(products?.length / productsPerPage);
+  const currentProducts = sortedProducts?.slice(indexOfFirstProduct, indexOfLastProduct);
+  const totalPages = Math.ceil(sortedProducts?.length / productsPerPage);
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
     // Optionally scroll to top when changing pages
