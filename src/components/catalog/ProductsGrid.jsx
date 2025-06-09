@@ -22,8 +22,16 @@ export default function ProductsGrid({ selectedFilters }) {
   const filteredAndSortedProducts = useMemo(() => {
     if (!products) return [];
 
+    // Handle different API response structures
+    const productsArray = Array.isArray(products) ? products : products.data || products.results || [];
+
+    if (!Array.isArray(productsArray)) {
+      console.error("Products data is not an array:", products);
+      return [];
+    }
+
     // First, filter the products
-    let filtered = products.filter((product) => {
+    let filtered = productsArray.filter((product) => {
       // Filter by categories
       if (selectedFilters.categories.length > 0) {
         const hasCategory = product.categories?.some((cat) => selectedFilters.categories.includes(cat.id || cat));
