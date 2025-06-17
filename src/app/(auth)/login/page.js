@@ -4,6 +4,7 @@ import BlogSection from "../../../components/home/BlogSection";
 import FeatureSectionBottom from "../../../components/home/FeatureSectionBottom";
 import PartnersScroller from "../../../components/home/PartnersScroller";
 import About from "../../../components/layout/About";
+import SubscribeSection from "../../../components/home/SubscribeSection";
 
 export default function LoginPage() {
   return (
@@ -23,7 +24,7 @@ export default function LoginPage() {
        <BlogSection />
        <FeatureSectionBottom />
        <PartnersScroller />
-       
+       <SubscribeSection />
     </div>
   );
 }
