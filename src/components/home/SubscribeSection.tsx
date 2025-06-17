@@ -1,8 +1,10 @@
 import React from "react";
 
-export default function SubscribeSection() {
+export default function SubscribeSection({ className = "" }) {
   return (
-    <div className="w-full py-22  flex flex-col items-center justify-center bg-[#494791] text-white">
+    <div
+      className={`${className} w-full py-22  flex flex-col items-center justify-center bg-[#494791] text-white`}
+    >
       <h2 className="uppercase text-lg  lg:text-3xl mb-8 font-semibold">
         Stay Updated & Get Exclusive Deals!
       </h2>

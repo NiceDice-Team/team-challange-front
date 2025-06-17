@@ -24,7 +24,7 @@ export default function LoginPage() {
        <BlogSection />
        <FeatureSectionBottom />
        <PartnersScroller />
-       <SubscribeSection />
+       <SubscribeSection className="mt-20"/>
     </div>
   );
 }
