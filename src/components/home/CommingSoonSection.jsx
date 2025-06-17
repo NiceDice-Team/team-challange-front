@@ -31,7 +31,7 @@ const ComingSoonCard = ({ image, title, url }) => {
 export default function CommingSoonSection() {
   return (
     <section className="mb-25 flex flex-col items-center px-8  lg:px-50">
-      <h2 className="text-4xl font-semibold tracking-wide mb-8 uppercase self-start">Coming soon</h2>
+      <h2 className="text-title font-semibold tracking-wide mb-8 uppercase self-start">Coming soon</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full ">
         {demoGames.map((game) => (
           <ComingSoonCard key={game.id} title={game.title} image={game.image} url={game.url} />

@@ -7,7 +7,7 @@ import Image from "next/image";
 export default function About() {
   return (
     <section className="flex flex-col items-center justify-center ">
-      <h2 className="uppercase   text-center  text-lg lg:mt-20 lg:text-3xl mb-8">About us</h2>
+      <h2 className="uppercase   text-center  text-lg lg:mt-20 lg:text-title mb-8">About us</h2>
       <div className="text-center text-sm lg:text-lg text-pretty max-w-3xl mb-6">
         We are passionate board game enthusiasts dedicated to bringing you the best tabletop experiences. Our store
         offers a carefully selected range of games, from timeless classics to the latest innovations. We believe in the
@@ -16,7 +16,7 @@ export default function About() {
       </div>
 
       {/* Sign up for deals form */}
-      <div className="w-full py-22  flex flex-col items-center justify-center bg-[#494791] text-white">
+      <div className="w-full py-22  flex flex-col items-center justify-center bg-purple text-white">
         <h2 className="uppercase text-lg  lg:text-3xl mb-8 font-semibold">Stay Updated & Get Exclusive Deals!</h2>
 
         <p className="text-sm lg:text-lg text-pretty max-w-xl text-center mb-6">
