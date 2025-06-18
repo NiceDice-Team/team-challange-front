@@ -124,7 +124,7 @@ export default function ReviewSection({ reviews = [] }) {
     <section className="  mb-25 px-8 lg:px-50">
       {/* Heading + arrows */}
       <div className="mb-8 flex items-center justify-between">
-        <h2 className="text-4xl font-semibold tracking-wide">REVIEWS FROM OUR CUSTOMERS</h2>
+        <h2 className="text-title font-semibold tracking-wide">REVIEWS FROM OUR CUSTOMERS</h2>
         <div className="flex gap-4">
           <PrevArrow onClick={prev} disabled={page === 0} />
           <NextArrow onClick={next} disabled={page === maxPage} />

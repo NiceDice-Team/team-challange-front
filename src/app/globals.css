@@ -10,6 +10,20 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --color-purple: #494791;
+  --color-light-purple: #c6c6e2;
+  --color-red: #ce2f2f;
+  --color-red-price: #c41313;
+  --color-gray: #d9d9d9;
+  --color-green: #3a9b25;
+  --color-orange: #ff7c40;
+
+  /* font size */
+  --text-title: 40px;
+
+  /* margin, padding */
+  --spacing-107: 107px;
 }
 
 @media (prefers-color-scheme: dark) {

@@ -26,7 +26,7 @@ export default function NewArrivals() {
           <Link href="/products/new-arrivals" className="flex h-[648px] flex-col">
             <div className="relative flex-grow overflow-hidden">
               <Image src={NEW_GAME2_IMG} alt="" fill className="object-cover" />
-              <span className="absolute top-6 left-6 bg-white px-4 py-2 text-3xl font-medium text-[#494791]">
+              <span className="absolute top-6 left-6 bg-white px-4 py-2 text-title font-medium text-[#494791]">
                 NEW ARRIVALS
               </span>
             </div>
