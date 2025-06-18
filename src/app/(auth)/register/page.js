@@ -15,7 +15,34 @@ export default function RegisterPage() {
       </div>
       
       <div className="flex flex-col items-center justify-center mb-28">
-        <p className="text-gray-500"> form </p>
+        <form className="flex flex-col gap-4 w-[500px] mb-12">
+        <input
+            placeholder="Name"
+            className="w-full md:flex-1 p-4 bg-white text-black outline-none"
+          />
+           <input
+            placeholder="Last Name"
+            className="w-full md:flex-1 p-4 bg-white text-black outline-none"
+          />
+        <input
+            type="email"
+            placeholder="Email"
+            className="w-full md:flex-1 p-4 bg-white text-black outline-none"
+          />
+           <input
+           type="password"
+            placeholder="Password"
+            className="w-full md:flex-1 p-4 bg-white text-black outline-none"
+          />
+           <input
+           type="password"
+            placeholder="Confirm Password"
+            className="w-full md:flex-1 p-4 bg-white text-black outline-none"
+          />
+          <button type="submit" className="w-full bg-purple text-white p-4 px-8 text-base uppercase hover:bg-gray-100 transition-all duration-150">
+            REGISTER
+          </button>
+        </form>
 
         <p className="text-purple">Already have an account?</p>
         <Link  href="/login" className="underline text-purple">Log in here<span className="inline-block ml-1">→</span></Link>
