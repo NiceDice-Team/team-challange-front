@@ -2,6 +2,7 @@ import ProductPage from "../../../../components/catalog/ProductPage.jsx";
 import Navbar from "../../../../components/layout/Navbar.jsx";
 import Footer from "../../../../components/layout/Footer.jsx";
 import ReviewsProduct from "../../../../components/catalog/ReviewsProduct.jsx";
+import ReviewsComments from "../../../../components/catalog/ReviewsComments.jsx";
 
 export default function ProductDetailPage({ params }) {
   // You can use params.id to fetch the specific product data
@@ -10,6 +11,8 @@ export default function ProductDetailPage({ params }) {
       <Navbar />
       <ProductPage params={params} />
       <ReviewsProduct />
+      <ReviewsComments />
+
       <Footer />
     </>
   );

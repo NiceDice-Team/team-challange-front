@@ -1,7 +1,6 @@
 import DICE_IMG from "../../../public/About/dice.png";
 import MEDAL_IMG from "../../../public/About/medal.png";
 import QUESTION_IMG from "../../../public/About/question.png";
-
 import Image from "next/image";
 import SubscribeSection from "../home/SubscribeSection";
 
