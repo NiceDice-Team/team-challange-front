@@ -1,9 +1,4 @@
 import Link from "next/link";
-import BlogSection from "../../../components/home/BlogSection";
-import FeatureSectionBottom from "../../../components/home/FeatureSectionBottom";
-import FeatureSection from "../../../components/home/FeaturesSection";
-import PartnersScroller from "../../../components/home/PartnersScroller";
-import SubscribeSection from "../../../components/home/SubscribeSection";
 
 export default function RegisterPage() {
   return (
@@ -15,7 +10,7 @@ export default function RegisterPage() {
       </div>
       
       <div className="flex flex-col items-center justify-center mb-28">
-        <form className="flex flex-col gap-4 w-[500px] mb-12" action={signup}>
+        <form className="flex flex-col gap-4 w-[500px] mb-12">
         <input
             placeholder="Name"
             className="w-full md:flex-1 p-4 bg-white text-black outline-none"
@@ -47,12 +42,6 @@ export default function RegisterPage() {
         <p className="text-purple">Already have an account?</p>
         <Link  href="/login" className="underline text-purple">Log in here<span className="inline-block ml-1">→</span></Link>
       </div>
-      
-       <FeatureSection />
-       <BlogSection />
-       <FeatureSectionBottom />
-       <PartnersScroller />
-       <SubscribeSection className="mt-20"/>
     </div>
   );
 }
