@@ -15,7 +15,7 @@ export default function RegisterPage() {
       </div>
       
       <div className="flex flex-col items-center justify-center mb-28">
-        <form className="flex flex-col gap-4 w-[500px] mb-12">
+        <form className="flex flex-col gap-4 w-[500px] mb-12" action={signup}>
         <input
             placeholder="Name"
             className="w-full md:flex-1 p-4 bg-white text-black outline-none"
