@@ -16,13 +16,13 @@ export default function AuthLayout({ children }) {
       
       <main className="flex-1 px-8 lg:px-16 py-10">
         {children}
-        <FeatureSection />
-        <BlogSection />
-        <FeatureSectionBottom />
-        <PartnersScroller />
-        <SubscribeSection className="mt-20"/>
+        
       </main>
-      
+      <FeatureSection />
+      <BlogSection />
+      <FeatureSectionBottom />
+      <PartnersScroller />
+      <SubscribeSection className="mt-20"/>
       <Footer />
     </div>
   );
