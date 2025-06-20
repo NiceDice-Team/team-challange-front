@@ -155,15 +155,43 @@ export default function ProductCard({ product = {} }) {
             `}</style>
 
             {/* Individual images */}
-            <div className="min-w-full h-full flex-shrink-0 relative snap-center">
-              <Image src="/FirstPlaceholder.svg" alt={product?.name || "Product"} fill className="object-contain" />
-            </div>
-            <div className="min-w-full h-full flex-shrink-0 relative snap-center">
-              <Image src="/SecondPlaceholder.svg" alt={product?.name || "Product"} fill className="object-contain" />
-            </div>
-            <div className="min-w-full h-full flex-shrink-0 relative snap-center">
-              <Image src="/ThirdPlaceholder.svg" alt={product?.name || "Product"} fill className="object-contain" />
-            </div>
+            {(() => {
+              const validImages = product?.images?.filter(image => image && typeof image === 'string' && image.trim() !== "") || [];
+              
+              if (validImages.length > 0) {
+                return validImages.slice(0, 3).map((image, index) => (
+                  <div key={index} className="min-w-full h-full flex-shrink-0 relative snap-center">
+                    <Image 
+                      src={image} 
+                      alt={`${product.name} ${index + 1}`} 
+                      fill 
+                      className="object-contain" 
+                      unoptimized
+                      onError={(e) => {
+                        console.warn("Product card image failed to load:", image);
+                        // Hide the image on error
+                        e.target.style.display = 'none';
+                      }}
+                    />
+                  </div>
+                ));
+              } else {
+                // Fallback to placeholder images if no valid product images
+                return (
+                  <>
+                    <div className="min-w-full h-full flex-shrink-0 relative snap-center">
+                      <Image src="/FirstPlaceholder.svg" alt={product?.name || "Product"} fill className="object-contain" />
+                    </div>
+                    <div className="min-w-full h-full flex-shrink-0 relative snap-center">
+                      <Image src="/SecondPlaceholder.svg" alt={product?.name || "Product"} fill className="object-contain" />
+                    </div>
+                    <div className="min-w-full h-full flex-shrink-0 relative snap-center">
+                      <Image src="/ThirdPlaceholder.svg" alt={product?.name || "Product"} fill className="object-contain" />
+                    </div>
+                  </>
+                );
+              }
+            })()}
           </div>
 
           {/* Left click area */}
