@@ -24,7 +24,11 @@ const StarsLine = ({ rating = 0 }) => {
     </svg>
   );
   return (
-    <div className="flex">{Array.from({ length: 5 }).map((_, index) => (index < rating ? filledStar : emptyStar))}</div>
+    <div className="flex">
+      {Array.from({ length: 5 }).map((_, index) => (
+        <span key={index}>{index < rating ? filledStar : emptyStar}</span>
+      ))}
+    </div>
   );
 };
 
