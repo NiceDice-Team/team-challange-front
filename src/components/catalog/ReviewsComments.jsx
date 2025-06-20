@@ -1,6 +1,9 @@
+"use client";
 import StarRating from "../layout/StarsLine";
 import SubscribeSection from "../home/SubscribeSection";
 import ReviewCard from "../home/ReviewCard";
+import { Pagination } from "../ui/Pagination";
+import { useState } from "react";
 import PERSON1_IMG from "../../../public/Reviews/person1.png";
 import PERSON2_IMG from "../../../public/Reviews/person2.png";
 import PERSON3_IMG from "../../../public/Reviews/person3.png";
@@ -33,18 +36,59 @@ const reviewComments = [
     body: "Awesome product. Prepare yourself. This one does really big hugs to your gaming table. 36 X 60 Inches. Awesome luxurious and sober table presence and fully reversible. A nice transport bag is already included in the package.",
     images: [REVIEW_2_IMG1, REVIEW_2_IMG2],
   },
+  {
+    rating: 4,
+    date: "March 15, 2025",
+    avatarSrc: PERSON3_IMG,
+    name: "Sarah M.",
+    aboutHref: "/games/monopoly",
+    aboutText: "Monopoly Classic",
+    title: "Great family game night choice",
+    body: "Classic gameplay that never gets old. The kids love it and it brings the whole family together. Quality pieces and board. Would definitely recommend for family game nights.",
+    images: [],
+  },
+  {
+    rating: 5,
+    date: "March 12, 2025",
+    avatarSrc: PERSON1_IMG,
+    name: "Mike R.",
+    aboutHref: "/games/chess",
+    aboutText: "Chess Set Deluxe",
+    title: "Perfect chess set",
+    body: "Beautiful wooden chess set with excellent craftsmanship. The pieces feel substantial and the board is gorgeous. Great for both playing and display.",
+    images: [],
+  },
 ];
 
+const REVIEWS_PER_PAGE = 2;
+
 export default function ReviewsComments({ children }) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [sortBy, setSortBy] = useState("most-recent");
+
+  // Calculate pagination
+  const totalPages = Math.ceil(reviewComments.length / REVIEWS_PER_PAGE);
+  const startIndex = (currentPage - 1) * REVIEWS_PER_PAGE;
+  const endIndex = startIndex + REVIEWS_PER_PAGE;
+  const currentReviews = reviewComments.slice(startIndex, endIndex);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handleSortChange = (e) => {
+    setSortBy(e.target.value);
+    setCurrentPage(1); // Reset to first page when sorting changes
+  };
   return (
-    <section className="grid grid-cols-2 gap-10 w-full max-w-6xl mx-auto">
+    <section className="grid grid-cols-2 gap-10 w-full max-w-6xl mx-auto items-start">
       {/* Sort option and Comments section */}
       <div className="flex flex-col gap-6">
         <div className="flex items-center gap-2">
-          <label className="uppercase text-lg font-semibold" for="reviews-comments">
+          <label className="uppercase text-lg font-semibold" htmlFor="reviews-comments">
             sort by
           </label>
-          <select id="reviews-comments">
+          <select id="reviews-comments" value={sortBy} onChange={handleSortChange}>
             <option value="most-recent">Most Recent</option>
             <option value="oldest">Oldest</option>
             <option value="highest-rated">Highest Rated</option>
@@ -53,19 +97,28 @@ export default function ReviewsComments({ children }) {
         </div>
 
         <div className="flex flex-col gap-6">
-          {reviewComments.map((review, idx) => (
+          {currentReviews.map((review, idx) => (
             <ReviewCard
               className="border-t-2 border-[color:var(--color-light-purple)]"
-              key={idx}
+              key={startIndex + idx}
               {...review}
               collapsible={true}
             />
           ))}
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex justify-center mt-6">
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+          </div>
+        )}
       </div>
 
       {/* Stay updated section */}
-      <SubscribeSection className="px-14 py-28" />
+      <div>
+        <SubscribeSection className="px-14 py-40 " />
+      </div>
     </section>
   );
 }
