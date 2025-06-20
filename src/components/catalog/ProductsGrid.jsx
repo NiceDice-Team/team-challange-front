@@ -154,11 +154,7 @@ export default function ProductsGrid({ selectedFilters }) {
       {/* Pagination */}
       {!allProductsLoading && totalPages > 1 && (
         <div className="flex justify-center mt-12 mb-4">
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
+          <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
         </div>
       )}
     </section>

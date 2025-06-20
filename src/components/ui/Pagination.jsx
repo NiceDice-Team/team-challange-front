@@ -4,7 +4,7 @@ export function Pagination({ currentPage, totalPages, onPageChange, className = 
   const getVisiblePages = () => {
     const pages = [];
     const maxVisiblePages = Math.min(totalPages, 5); // Show up to 5 pages
-    
+
     if (totalPages <= 5) {
       // If total pages is 5 or less, show all pages
       for (let i = 1; i <= totalPages; i++) {
@@ -14,7 +14,7 @@ export function Pagination({ currentPage, totalPages, onPageChange, className = 
       // Show current page and surrounding pages
       let startPage = Math.max(1, currentPage - 2);
       let endPage = Math.min(totalPages, currentPage + 2);
-      
+
       // Ensure we always show 5 pages when possible
       if (endPage - startPage < 4) {
         if (startPage === 1) {
@@ -23,12 +23,12 @@ export function Pagination({ currentPage, totalPages, onPageChange, className = 
           startPage = Math.max(1, endPage - 4);
         }
       }
-      
+
       for (let i = startPage; i <= endPage; i++) {
         pages.push(i);
       }
     }
-    
+
     return pages;
   };
 
