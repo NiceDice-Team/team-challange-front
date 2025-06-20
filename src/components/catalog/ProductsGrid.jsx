@@ -4,29 +4,31 @@ import { useState, useMemo } from "react";
 import { productServices } from "../../services/productServices";
 import ProductCard from "../catalog/ProductCard";
 import ProductCardSkeleton from "../catalog/ProductCardSkeleton";
+import { Pagination } from "../ui/Pagination";
 
 export default function ProductsGrid({ selectedFilters }) {
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 16;
+  const productsPerPage = 8; // Match API page_size
 
+  // For filtering, we need all products
   const {
-    data: products,
-    isLoading: productsLoading,
-    error: productsError,
+    data: allProductsData,
+    isLoading: allProductsLoading,
+    error: allProductsError,
   } = useQuery({
-    queryKey: ["products"],
-    queryFn: productServices.getProducts,
+    queryKey: ["allProducts"],
+    queryFn: productServices.getAllProducts,
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
   // Apply filters and sorting
   const filteredAndSortedProducts = useMemo(() => {
-    if (!products) return [];
+    if (!allProductsData) return [];
 
-    // Handle different API response structures
-    const productsArray = Array.isArray(products) ? products : products.data || products.results || [];
+    const productsArray = Array.isArray(allProductsData) ? allProductsData : [];
 
     if (!Array.isArray(productsArray)) {
-      console.error("Products data is not an array:", products);
+      console.error("Products data is not an array:", allProductsData);
       return [];
     }
 
@@ -90,7 +92,7 @@ export default function ProductsGrid({ selectedFilters }) {
     });
 
     return [...lowPriority, ...highPriority];
-  }, [products, selectedFilters]);
+  }, [allProductsData, selectedFilters]);
 
   // Reset to page 1 when filters change
   useMemo(() => {
@@ -120,11 +122,11 @@ export default function ProductsGrid({ selectedFilters }) {
   return (
     <section className="w-full">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 min-h-[400px]">
-        {productsLoading &&
+        {allProductsLoading &&
           // Show skeleton cards while loading
           Array.from({ length: productsPerPage }).map((_, index) => <ProductCardSkeleton key={`skeleton-${index}`} />)}
 
-        {productsError && (
+        {allProductsError && (
           <div className="col-span-full text-center py-16">
             <div className="max-w-md mx-auto">
               <p className="text-red-500">Error loading products</p>
@@ -133,7 +135,7 @@ export default function ProductsGrid({ selectedFilters }) {
           </div>
         )}
 
-        {!productsLoading && !productsError && currentProducts?.length === 0 && (
+        {!allProductsLoading && !allProductsError && currentProducts?.length === 0 && (
           <div className="col-span-full text-center py-16">
             <div className="max-w-md mx-auto">
               <p className="text-gray-500 text-lg">
@@ -144,76 +146,19 @@ export default function ProductsGrid({ selectedFilters }) {
           </div>
         )}
 
-        {!productsLoading &&
+        {!allProductsLoading &&
           currentProducts &&
           currentProducts.map((product) => <ProductCard product={product} key={product.id} />)}
       </div>
 
       {/* Pagination */}
-      {!productsLoading && totalPages > 1 && (
+      {!allProductsLoading && totalPages > 1 && (
         <div className="flex justify-center mt-12 mb-4">
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className={`px-3 py-1 border rounded transition-colors ${
-                currentPage === 1
-                  ? "bg-gray-100 text-gray-400 cursor-not-allowed border-gray-300"
-                  : "border-[#494791] text-[#494791] hover:bg-[#494791] hover:text-white"
-              }`}
-            >
-              Previous
-            </button>
-
-            {/* Page numbers */}
-            {[...Array(totalPages)].map((_, index) => {
-              const pageNumber = index + 1;
-
-              // Show first page, last page, current page, and pages around current
-              if (
-                pageNumber === 1 ||
-                pageNumber === totalPages ||
-                (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
-              ) {
-                return (
-                  <button
-                    key={pageNumber}
-                    onClick={() => handlePageChange(pageNumber)}
-                    className={`px-3 py-1 border rounded transition-colors ${
-                      currentPage === pageNumber
-                        ? "bg-[#494791] text-white border-[#494791]"
-                        : "border-[#494791] text-[#494791] hover:bg-[#494791] hover:text-white"
-                    }`}
-                  >
-                    {pageNumber}
-                  </button>
-                );
-              }
-
-              // Show ellipsis for gaps
-              if (pageNumber === currentPage - 2 || pageNumber === currentPage + 2) {
-                return (
-                  <span key={pageNumber} className="px-2">
-                    ...
-                  </span>
-                );
-              }
-
-              return null;
-            })}
-
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className={`px-3 py-1 border rounded transition-colors ${
-                currentPage === totalPages
-                  ? "bg-gray-100 text-gray-400 cursor-not-allowed border-gray-300"
-                  : "border-[#494791] text-[#494791] hover:bg-[#494791] hover:text-white"
-              }`}
-            >
-              Next
-            </button>
-          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         </div>
       )}
     </section>
