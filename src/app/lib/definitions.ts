@@ -19,4 +19,21 @@ export const SignupFormSchema = z.object({
     //   message: "Contain at least one special character.",
     // })
     .trim(),
+  confirmPassword: z
+    .string()
+    .min(8, { message: "Be at least 8 characters long" })
+    .regex(/[a-zA-Z]/, { message: "Contain at least one letter." }),
 });
+
+export type FormState =
+  | {
+      errors?: {
+        firstname?: string[];
+        lastname?: string[];
+        email?: string[];
+        password?: string[];
+        confirmPassword?: string[];
+      };
+      message?: string;
+    }
+  | undefined;
