@@ -23,7 +23,7 @@ export default function ReviewsProduct({ children }) {
         <div className="flex flex-col justify-center items-center gap-1 ">
           {Array.from({ length: 5 }).map((_, index) => (
             <div key={index} className="flex flex-nowrap justify-center items-center gap-2">
-              <StarRating rating={Math.abs(-1 - index)} />
+              <StarRating rating={Math.abs(-index + 5)} />
               <progress
                 id="rating"
                 max="100"
