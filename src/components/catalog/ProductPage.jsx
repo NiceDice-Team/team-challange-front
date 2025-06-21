@@ -108,17 +108,20 @@ export default function ProductPage({ params }) {
         {/* Product Image Section */}
         <div className="space-y-4">
           <div className="aspect-square bg-gray-100  flex items-center justify-center overflow-hidden  relative">
-            {product.images && product.images.length > 0 && product.images[0] && 
-             typeof product.images[0] === 'string' && product.images[0].trim() !== "" ? (
-              <Image 
-                src={product.images[0]} 
-                alt={product.name} 
-                fill 
-                className="object-contain" 
-                unoptimized 
+            {product.images &&
+            product.images.length > 0 &&
+            product.images[0] &&
+            typeof product.images[0] === "string" &&
+            product.images[0].trim() !== "" ? (
+              <Image
+                src={product.images[0]}
+                alt={product.name}
+                fill
+                className="object-contain"
+                unoptimized
                 onError={(e) => {
                   console.warn("Product image failed to load:", product.images[0]);
-                  e.target.style.display = 'none';
+                  e.target.style.display = "none";
                 }}
               />
             ) : (
@@ -141,24 +144,27 @@ export default function ProductPage({ params }) {
           {/* Thumbnail images */}
           {product.images && product.images.length > 1 && (
             <div className="flex gap-3 overflow-x-auto">
-              {product.images.slice(0, 4).filter(img => img && typeof img === 'string' && img.trim() !== "").map((image, index) => (
-                <div
-                  key={index}
-                  className="flex-shrink-0 w-16 h-16 bg-gray-100 rounded border overflow-hidden cursor-pointer hover:opacity-80 relative"
-                >
-                  <Image 
-                    src={image} 
-                    alt={`${product.name} ${index + 1}`} 
-                    fill 
-                    className="object-cover" 
-                    unoptimized 
-                    onError={(e) => {
-                      console.warn("Thumbnail image failed to load:", image);
-                      e.target.style.display = 'none';
-                    }}
-                  />
-                </div>
-              ))}
+              {product.images
+                .slice(0, 4)
+                .filter((img) => img && typeof img === "string" && img.trim() !== "")
+                .map((image, index) => (
+                  <div
+                    key={index}
+                    className="flex-shrink-0 w-16 h-16 bg-gray-100  border overflow-hidden cursor-pointer hover:opacity-80 relative"
+                  >
+                    <Image
+                      src={image}
+                      alt={`${product.name} ${index + 1}`}
+                      fill
+                      className="object-cover"
+                      unoptimized
+                      onError={(e) => {
+                        console.warn("Thumbnail image failed to load:", image);
+                        e.target.style.display = "none";
+                      }}
+                    />
+                  </div>
+                ))}
             </div>
           )}
         </div>
@@ -199,7 +205,7 @@ export default function ProductPage({ params }) {
           {/* Quantity and Add to Cart */}
           <div className="space-y-4">
             <div className="flex items-center gap-4">
-              <div className="flex items-center border border-gray-300 rounded">
+              <div className="flex items-center border border-gray-300 ">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   className="p-2 hover:bg-gray-100 text-gray-600"
@@ -228,7 +234,7 @@ export default function ProductPage({ params }) {
               <button
                 onClick={handleAddToCart}
                 disabled={!isInStock}
-                className={`flex-1 py-3 px-6 rounded text-white font-medium transition-colors ${
+                className={`flex-1 py-3 px-6  text-white font-medium transition-colors ${
                   isInStock ? "bg-[color:var(--color-purple)] hover:opacity-90" : "bg-gray-400 cursor-not-allowed"
                 }`}
               >
