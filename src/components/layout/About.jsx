@@ -3,6 +3,8 @@ import MEDAL_IMG from "../../../public/About/medal.png";
 import QUESTION_IMG from "../../../public/About/question.png";
 
 import Image from "next/image";
+import { CustomButton } from "../shared/CustomButton";
+import { CustomInput } from "../shared/CustomInput";
 
 export default function About() {
   return (
@@ -17,17 +19,19 @@ export default function About() {
 
       {/* Sign up for deals form */}
       <div className="w-full py-22  flex flex-col items-center justify-center bg-purple text-white">
-        <h2 className="uppercase text-lg  lg:text-3xl mb-8 font-semibold">Stay Updated & Get Exclusive Deals!</h2>
+        <h2 className="uppercase text-title  lg:text-3xl mb-8 font-semibold">Stay Updated & Get Exclusive Deals!</h2>
 
-        <p className="text-sm lg:text-lg text-pretty max-w-xl text-center mb-6">
+        <p className="text-sm lg:text-base text-pretty max-w-xl text-center mb-6">
           Subscribe to our newsletter and be the first to know about new arrivals, special offers, and gaming news
         </p>
-        <div className="flex flex-col w-full max-w-3xl gap-3 items-center">
-          <div className="flex flex-col md:flex-row w-full gap-4">
-            <input type="email" placeholder="Email" className="w-full md:flex-1 p-4 bg-white text-black outline-none" />
-            <button className="w-full md:w-auto bg-white text-[#494791] p-4 px-8 text-lg font-semibold uppercase hover:bg-gray-100 transition-all duration-150">
+        <div className="flex flex-col w-full max-w-150 gap-3 items-center">
+          <div className="flex flex-col md:flex-row w-full max-w-150 gap-4">
+            {/* <input type="email" placeholder="Email" className="w-full md:flex-1 p-4 bg-white text-black outline-none" /> */}
+            {/* <button className="w-full md:w-auto bg-white text-[#494791] p-4 px-8 text-lg font-semibold uppercase hover:bg-gray-100 transition-all duration-150">
               Subscribe
-            </button>
+            </button> */}
+            <CustomInput type="email" placeholder="Email"/>
+            <CustomButton className="h-12 w-38"> Subscribe</CustomButton>
           </div>
 
           <div className="flex items-center gap-2 self-start max-w-4xl">
