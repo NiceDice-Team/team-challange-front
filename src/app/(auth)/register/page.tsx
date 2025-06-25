@@ -5,14 +5,14 @@ import { useActionState } from "react";
 import { signup } from "@/app/actions/auth";
 import { CustomInput } from "@/components/shared/CustomInput";
 import CustomCheckbox from "@/components/shared/CustomCheckbox";
+import Image from "next/image";
+import ArrowNext from "../../../../public/icons/ArrowNext.svg";
+import { FormState } from "@/app/lib/definitions";
 
 export default function RegisterPage() {
-  const [state, action, pending] = useActionState(signup, {
-    success: false,
+  const [state, action, pending] = useActionState<FormState, FormData>(signup, {
     errors: {},
-    serverError: "",
   });
-
   return (
     <div className="mx-auto mt-20">
       <h1 className="text-title font-normal text-center mb-9 uppercase">
@@ -60,7 +60,9 @@ export default function RegisterPage() {
             name="confirmPassword"
             error={state?.errors?.confirmPassword}
           />
-          {state.message && <p className="text-error">{state.message}</p>}
+          {state.errors.serverError && (
+            <p className="text-error">{state.errors.serverError}</p>
+          )}
           <div className="flex flex-col gap-2">
             <CustomCheckbox
               id="privacy"
@@ -93,8 +95,9 @@ export default function RegisterPage() {
         </form>
 
         <p className="text-purple">Already have an account?</p>
-        <Link href="/login" className="underline text-purple">
-          Log in here<span className="inline-block ml-1">→</span>
+        <Link href="/login" className="flex gap-1">
+          <span className="underline text-purple">Log in here</span>
+          <Image src={ArrowNext} alt="arrow" />
         </Link>
       </div>
     </div>

@@ -1,7 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { redirect, RedirectType } from "next/navigation";
 import { FormState, SignupFormSchema } from "../lib/definitions";
 
 type ResponseType = {
@@ -12,17 +12,31 @@ type ResponseType = {
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-export async function signup(state: FormState, formData: FormData) {
+export async function signup(
+  state: FormState,
+  formData: FormData
+): Promise<FormState> {
+  const firstname = String(formData.get("firstname"));
+  const email = String(formData.get("email"));
+  const lastname = String(formData.get("lastname"));
+  const password = String(formData.get("password"));
+  const confirmPassword = String(formData.get("confirmPassword"));
+
   const validatedFields = SignupFormSchema.safeParse({
-    firstname: formData.get("firstname"),
-    lastname: formData.get("lastname"),
-    email: formData.get("email"),
-    password: formData.get("password"),
-    confirmPassword: formData.get("confirmPassword"),
+    firstname,
+    lastname,
+    email,
+    password,
+    confirmPassword,
   });
 
   if (!validatedFields.success) {
     return {
+      firstname,
+      lastname,
+      email,
+      password,
+      confirmPassword,
       errors: validatedFields.error.flatten().fieldErrors,
     };
   }
@@ -44,18 +58,38 @@ export async function signup(state: FormState, formData: FormData) {
       body: JSON.stringify(requestBody),
     });
 
-    const res = (await response.json()) as ResponseType;
+    const res = await response.json();
     if (!response.ok) {
       const err = res;
+      if (err?.username) {
+        err.email = err.username;
+      }
       return {
-        success: false,
-        errors: err,
+        firstname,
+        lastname,
+        email,
+        password,
+        confirmPassword,
+        errors: err || {
+          serverError:
+            "An error occurred during signup. Please try again." +
+            " If the problem persists, contact support.",
+        },
       };
     }
     const token = res.access;
     const refresh = res.refresh;
     if (!token || !refresh) {
-      return { success: false, serverError: "No token received" };
+      return {
+        firstname,
+        lastname,
+        email,
+        password,
+        confirmPassword,
+        errors: {
+          serverError: "No token received",
+        },
+      };
     }
 
     // save token in cookies
@@ -73,13 +107,18 @@ export async function signup(state: FormState, formData: FormData) {
       path: "/",
       maxAge: 60 * 60 * 24 * 7, // 7 days
     });
-    redirect("/complete-signup");
   } catch (error) {
     console.error("Error during signup:", error);
     return {
+      firstname,
+      lastname,
+      email,
+      password,
+      confirmPassword,
       errors: {
-        global: ["An error occurred during signup. Please try again."],
+        serverError: "An error occurred during signup. Please try again.",
       },
     };
   }
+  redirect("/complete-signup", RedirectType.replace);
 }

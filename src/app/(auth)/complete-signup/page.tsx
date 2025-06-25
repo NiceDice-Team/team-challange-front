@@ -13,7 +13,7 @@ export default function CofirmSignUp() {
         Please click the link in that email to activate your account
       </p>
       <Link href="/catalog" className="flex gap-1">
-        <span className="text-purple underline ">Browse games</span>
+        <span className="text-purple underline">Browse games</span>
         <Image src={ArrowNext} alt="arrow" />
       </Link>
     </div>
