@@ -20,10 +20,7 @@ export const SignupFormSchema = z
       //   message: "Contain at least one special character.",
       // })
       .trim(),
-    confirmPassword: z
-      .string()
-      .min(8, { message: "Be at least 8 characters long" })
-      .regex(/[a-zA-Z]/, { message: "Contain at least one letter." }),
+    confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",

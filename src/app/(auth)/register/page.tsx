@@ -6,7 +6,11 @@ import { signup } from "@/app/actions/auth";
 import { CustomInput } from "@/components/shared/CustomInput";
 
 export default function RegisterPage() {
-  const [state, action, pending] = useActionState(signup, undefined);
+  const [state, action, pending] = useActionState(signup, {
+    success: false,
+    errors: {},
+    serverError: "",
+  });
 
   return (
     <div className="mx-auto mt-20">
@@ -20,47 +24,42 @@ export default function RegisterPage() {
 
       <div className="flex flex-col items-center justify-center mb-28">
         <form className="flex flex-col gap-4 w-[500px] mb-12" action={action}>
-          {/* <input
-            defaultValue="User"
-            placeholder="Name"
-            id="firstname"
-            name="firstname"
-            className="w-full md:flex-1 p-4 bg-white text-black outline-none"
-          /> */}
           <CustomInput
-            defaultValue="Anna"
             placeholder="Enter your name"
             id="firstname"
             label="First name"
+            name="firstname"
             error={state?.errors?.firstname}
           />
           <CustomInput
-            defaultValue="Vinture"
             placeholder="Enter your last name"
             id="lastname"
             label="Last name"
+            name="lastname"
             error={state?.errors?.lastname}
           />
           <CustomInput
-            defaultValue="anna@gmail.com"
             placeholder="Enter email address"
             id="email"
             label="Email"
+            name="email"
             error={state?.errors?.email}
           />
           <CustomInput
-            defaultValue="12345678"
             placeholder="Enter password"
             id="password"
             label="password"
+            name="password"
             error={state?.errors?.password}
           />
           <CustomInput
             placeholder="Enter password"
             id="confirmPassword"
             label="Confirm Password"
+            name="confirmPassword"
             error={state?.errors?.confirmPassword}
           />
+          {state.message && <p className="text-error">{state.message}</p>}
           <button
             type="submit"
             disabled={pending}
