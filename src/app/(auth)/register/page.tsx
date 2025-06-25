@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { signup } from "@/app/actions/auth";
 import { CustomInput } from "@/components/shared/CustomInput";
+import CustomCheckbox from "@/components/shared/CustomCheckbox";
 
 export default function RegisterPage() {
   const [state, action, pending] = useActionState(signup, {
@@ -60,6 +61,10 @@ export default function RegisterPage() {
             error={state?.errors?.confirmPassword}
           />
           {state.message && <p className="text-error">{state.message}</p>}
+          <CustomCheckbox
+            id="privacy"
+            label="I agree to the Privacy Policy and Terms of Service"
+          />
           <button
             type="submit"
             disabled={pending}
