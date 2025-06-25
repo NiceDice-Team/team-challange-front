@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { Label } from "../ui/label";
 
 interface CheckboxProps {
-  label?: string;
+  label?: React.ReactNode;
   id: string;
   disabled?: boolean;
   className?: string;

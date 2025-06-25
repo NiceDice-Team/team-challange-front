@@ -63,7 +63,18 @@ export default function RegisterPage() {
           {state.message && <p className="text-error">{state.message}</p>}
           <CustomCheckbox
             id="privacy"
-            label="I agree to the Privacy Policy and Terms of Service"
+            label={
+              <p>
+                I agree to the{" "}
+                <Link href="/" className="underline">
+                  Privacy Policy
+                </Link>{" "}
+                and{" "}
+                <Link href="/" className="underline">
+                  Terms of Service
+                </Link>
+              </p>
+            }
           />
           <button
             type="submit"
