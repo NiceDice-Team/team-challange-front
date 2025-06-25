@@ -61,21 +61,28 @@ export default function RegisterPage() {
             error={state?.errors?.confirmPassword}
           />
           {state.message && <p className="text-error">{state.message}</p>}
-          <CustomCheckbox
-            id="privacy"
-            label={
-              <p>
-                I agree to the{" "}
-                <Link href="/" className="underline">
-                  Privacy Policy
-                </Link>{" "}
-                and{" "}
-                <Link href="/" className="underline">
-                  Terms of Service
-                </Link>
-              </p>
-            }
-          />
+          <div className="flex flex-col gap-2">
+            <CustomCheckbox
+              id="privacy"
+              label={
+                <p>
+                  I agree to the{" "}
+                  <Link href="/" className="underline">
+                    Privacy Policy
+                  </Link>{" "}
+                  and{" "}
+                  <Link href="/" className="underline">
+                    Terms of Service
+                  </Link>
+                </p>
+              }
+            />
+            <CustomCheckbox
+              id="subscribe"
+              label="Subscribe to news, updates & special offers"
+            />
+          </div>
+
           <button
             type="submit"
             disabled={pending}
