@@ -1,6 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { FormState, SignupFormSchema } from "../lib/definitions";
 
 type ResponseType = {
@@ -72,6 +73,7 @@ export async function signup(state: FormState, formData: FormData) {
       path: "/",
       maxAge: 60 * 60 * 24 * 7, // 7 days
     });
+    redirect("/complete-signup");
   } catch (error) {
     console.error("Error during signup:", error);
     return {
