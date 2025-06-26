@@ -4,6 +4,7 @@ import { productServices } from "../../services/productServices";
 import { useState } from "react";
 import Image from "next/image";
 import { ProductAccordion } from "./ProductPageAccordion";
+import { CustomBreadcrumb } from "../shared/CustomBreadcrumb";
 
 // Import test images
 import testImg1 from "../../../public/DynamicProduct/product_id_page_test_img_1.jpg";
@@ -135,8 +136,20 @@ export default function ProductPage({ params }) {
       ? (parseFloat(product.price) * (1 - parseFloat(product.discount) / 100)).toFixed(2)
       : null;
 
+  // Breadcrumb items
+  const breadcrumbItems = [
+    { label: "Home", href: "/" },
+    { label: "Board Games", href: "/catalog" },
+    { label: product?.name || "Product", current: true },
+  ];
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
+      {/* Breadcrumb */}
+      <div className="mb-6">
+        <CustomBreadcrumb items={breadcrumbItems} />
+      </div>
+      
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Product Image Section */}
         <div className="space-y-4">
