@@ -21,6 +21,13 @@
     "baseUrl": ".",
     "paths": { "@/*": ["./src/*"] }
   },
-  "include": ["next-env.d.ts", ".next/types/**/*.ts", "**/*.ts", "**/*.tsx", "src/components/ui/accordion.jsx"],
+  "include": [
+    "next-env.d.ts",
+    ".next/types/**/*.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "src/components/ui/accordion.jsx",
+    "src/components/shared/CustomAccordion.jsx"
+  ],
   "exclude": ["node_modules"]
 }
