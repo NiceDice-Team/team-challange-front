@@ -3,9 +3,21 @@ import { useQuery } from "@tanstack/react-query";
 import { productServices } from "../../services/productServices";
 import { useState } from "react";
 import Image from "next/image";
+import { ProductAccordion } from "./ProductPageAccordion";
+
+// Import test images
+import testImg1 from "../../../public/DynamicProduct/product_id_page_test_img_1.jpg";
+import testImg2 from "../../../public/DynamicProduct/product_id_page_test_img_2.jpg";
+import testImg3 from "../../../public/DynamicProduct/product_id_page_test_img_3.jpg";
+import testImg4 from "../../../public/DynamicProduct/product_id_page_test_img_4.jpg";
+import testImg5 from "../../../public/DynamicProduct/product_id_page_test_img_5.jpg";
 
 export default function ProductPage({ params }) {
   const [quantity, setQuantity] = useState(1);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+
+  // Test images array
+  const testImages = [testImg1, testImg2, testImg3, testImg4, testImg5];
 
   let productId = params?.id;
 
@@ -125,69 +137,104 @@ export default function ProductPage({ params }) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Product Image Section */}
         <div className="space-y-4">
-          <div className="aspect-square bg-gray-100  flex items-center justify-center overflow-hidden  relative">
-            {product.images &&
-            product.images.length > 0 &&
-            product.images[0] &&
-            typeof product.images[0] === "string" &&
-            product.images[0].trim() !== "" ? (
+          {/* Main Image Container */}
+          <div className="relative w-full max-w-[600px] mx-auto flex items-center ">
+            {/* Back Button */}
+            <button
+              onClick={() =>
+                setSelectedImageIndex(selectedImageIndex === 0 ? testImages.length - 1 : selectedImageIndex - 1)
+              }
+              className="flex-shrink-0 transition-opacity hover:opacity-80"
+              disabled={selectedImageIndex === 0}
+            >
+              {selectedImageIndex === 0 ? (
+                // Disabled state
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect
+                    x="40"
+                    y="40"
+                    width="40"
+                    height="40"
+                    rx="20"
+                    transform="rotate(-180 40 40)"
+                    fill="#494791"
+                    fillOpacity="0.5"
+                  />
+                  <path
+                    d="M24.122 10.6887L25.186 11.7527L16.941 19.9967L25.186 28.2407L24.122 29.3047L14.814 19.9967L24.122 10.6887Z"
+                    fill="white"
+                  />
+                </svg>
+              ) : (
+                // Active state
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="40" y="40" width="40" height="40" rx="20" transform="rotate(-180 40 40)" fill="#494791" />
+                  <path
+                    d="M24.122 10.6887L25.186 11.7527L16.941 19.9967L25.186 28.2407L24.122 29.3047L14.814 19.9967L24.122 10.6887Z"
+                    fill="white"
+                  />
+                </svg>
+              )}
+            </button>
+
+            {/* Square aspect ratio container */}
+            <div className="aspect-square flex-1 relative">
               <Image
-                src={product.images[0]}
-                alt={product.name}
+                src={testImages[selectedImageIndex]}
+                alt={product?.name || "Product image"}
                 fill
-                className="object-contain"
-                unoptimized
-                onError={(e) => {
-                  console.warn("Product image failed to load:", product.images[0]);
-                  e.target.style.display = "none";
-                }}
+                className="object-contain "
+                priority
               />
-            ) : (
-              <div className="text-center text-gray-400 p-8">
-                <div className="w-32 h-32 mx-auto mb-4 border-2   flex items-center justify-center">
-                  <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1}
-                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                  </svg>
-                </div>
-                <span>No Image Available</span>
-              </div>
-            )}
+            </div>
+
+            {/* Forward Button */}
+            <button
+              onClick={() =>
+                setSelectedImageIndex(selectedImageIndex === testImages.length - 1 ? 0 : selectedImageIndex + 1)
+              }
+              className="flex-shrink-0 transition-opacity hover:opacity-80"
+              disabled={selectedImageIndex === testImages.length - 1}
+            >
+              {selectedImageIndex === testImages.length - 1 ? (
+                // Disabled state
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="40" height="40" rx="20" fill="#494791" fillOpacity="0.5" />
+                  <path
+                    d="M15.878 29.3113L14.814 28.2473L23.059 20.0033L14.814 11.7593L15.878 10.6953L25.186 20.0033L15.878 29.3113Z"
+                    fill="white"
+                  />
+                </svg>
+              ) : (
+                // Active state
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="40" height="40" rx="20" fill="#494791" />
+                  <path
+                    d="M15.878 29.3113L14.814 28.2473L23.059 20.0033L14.814 11.7593L15.878 10.6953L25.186 20.0033L15.878 29.3113Z"
+                    fill="white"
+                  />
+                </svg>
+              )}
+            </button>
           </div>
 
           {/* Thumbnail images */}
-          {product.images && product.images.length > 1 && (
-            <div className="flex gap-3 overflow-x-auto">
-              {product.images
-                .slice(0, 4)
-                .filter((img) => img && typeof img === "string" && img.trim() !== "")
-                .map((image, index) => (
-                  <div
-                    key={index}
-                    className="flex-shrink-0 w-16 h-16 bg-gray-100  border overflow-hidden cursor-pointer hover:opacity-80 relative"
-                  >
-                    <Image
-                      src={image}
-                      alt={`${product.name} ${index + 1}`}
-                      fill
-                      className="object-cover"
-                      unoptimized
-                      onError={(e) => {
-                        console.warn("Thumbnail image failed to load:", image);
-                        e.target.style.display = "none";
-                      }}
-                    />
-                  </div>
-                ))}
-            </div>
-          )}
+          <div className="flex gap-1 overflow-x-auto max-w-[600px] mx-auto">
+            {testImages.map((image, index) => (
+              <div
+                key={index}
+                className={`flex-shrink-0 w-[104px] h-[104px] overflow-hidden cursor-pointer relative transition-opacity ${
+                  selectedImageIndex === index ? "opacity-100" : "opacity-50 hover:opacity-75"
+                }`}
+                onClick={() => setSelectedImageIndex(index)}
+              >
+                <Image src={image} alt={`Product image ${index + 1}`} fill className="object-contain p-1" />
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="flex flex-col gap-6">
@@ -276,6 +323,9 @@ export default function ProductPage({ params }) {
               </button>
             </div>
           </div>
+
+          {/* Accordion */}
+          <ProductAccordion accordionParams={product} />
         </div>
       </div>
     </div>
