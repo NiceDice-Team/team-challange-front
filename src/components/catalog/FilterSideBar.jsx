@@ -4,101 +4,37 @@ import { useQuery } from "@tanstack/react-query";
 import FilterSideBarSkeleton from "./FilterSideBarSkeleton";
 
 export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
-  const {
-    data: categories,
-    isLoading: categoriesLoading,
-    error: categoriesError,
-  } = useQuery({
+  // Fetch all filter data
+  const { data: categories = [], isLoading: categoriesLoading } = useQuery({
     queryKey: ["categories"],
     queryFn: catalogServices.getCategories,
   });
 
-  const {
-    data: audiences,
-    isLoading: audiencesLoading,
-    error: audiencesError,
-  } = useQuery({
+  const { data: audiences = [], isLoading: audiencesLoading } = useQuery({
     queryKey: ["audiences"],
     queryFn: catalogServices.getAudiences,
   });
 
-  const {
-    data: gameTypes,
-    isLoading: gameTypesLoading,
-    error: gameTypesError,
-  } = useQuery({
+  const { data: gameTypes = [], isLoading: gameTypesLoading } = useQuery({
     queryKey: ["game-types"],
     queryFn: catalogServices.getGameTypes,
   });
 
-  const {
-    data: brands,
-    isLoading: brandsLoading,
-    error: brandsError,
-  } = useQuery({
+  const { data: brands = [], isLoading: brandsLoading } = useQuery({
     queryKey: ["brands"],
     queryFn: catalogServices.getBrands,
   });
 
-  // Helper function to handle checkbox changes
-  const handleFilterChange = (filterType, value) => {
-    setSelectedFilters((prev) => {
-      const currentValues = prev[filterType] || [];
-      if (currentValues.includes(value)) {
-        return {
-          ...prev,
-          [filterType]: currentValues.filter((item) => item !== value),
-        };
-      } else {
-        return {
-          ...prev,
-          [filterType]: [...currentValues, value],
-        };
-      }
-    });
-  };
+  const isLoading = categoriesLoading || audiencesLoading || gameTypesLoading || brandsLoading;
 
-  // Function to render filter tags
-  const renderFilterTag = (filterName, filterType, value) => {
-    return (
-      <div
-        key={`${filterType}-${value}`}
-        className="bg-[#C6C6E2] p-1.5 text-black text-sm flex justify-center items-center "
-      >
-        {filterName}
-        <svg
-          className="h-3 w-3 inline-block ml-1 cursor-pointer"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          onClick={() => handleFilterChange(filterType, value)}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </div>
-    );
-  };
-
-  // Function to render checkbox filters
-  const renderCheckbox = (item, filterType, displayName) => {
-    const value = item.id || item.name; // Use id for categories, name for others
-    const isChecked = selectedFilters[filterType]?.includes(value) || false;
-
-    return (
-      <div key={`${filterType}-${value}`} className="flex items-center">
-        <input
-          type="checkbox"
-          checked={isChecked}
-          id={`checkbox-${filterType}-${value}`}
-          onChange={() => handleFilterChange(filterType, value)}
-          className="w-4 h-4 border border-[#494791] accent-[#494791] rounded-none"
-        />
-
-        <label htmlFor={`checkbox-${filterType}-${value}`} className="ms-2 text-base font-medium text-gray-900">
-          {displayName || item.name}
-        </label>
-      </div>
-    );
+  // Toggle filter value
+  const toggleFilter = (filterType, value) => {
+    setSelectedFilters((prev) => ({
+      ...prev,
+      [filterType]: prev[filterType]?.includes(value)
+        ? prev[filterType].filter((item) => item !== value)
+        : [...(prev[filterType] || []), value],
+    }));
   };
 
   // Clear all filters
@@ -112,22 +48,63 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
     });
   };
 
-  // Check if any filters are selected
-  const hasActiveFilters =
-    selectedFilters.categories.length > 0 ||
-    selectedFilters.gameTypes.length > 0 ||
-    selectedFilters.audiences.length > 0 ||
-    selectedFilters.brands.length > 0;
+  // Check if any filters are active
+  const hasActiveFilters = Object.entries(selectedFilters)
+    .filter(([key]) => key !== "priceRange")
+    .some(([, values]) => values.length > 0);
 
-  // Show skeleton while loading
-  const isLoading = categoriesLoading || audiencesLoading || gameTypesLoading || brandsLoading;
+  // Render filter tag with remove button
+  const FilterTag = ({ name, filterType, value }) => (
+    <div className="bg-[#C6C6E2] p-1.5 text-black text-sm flex justify-center items-center">
+      {name}
+      <svg
+        className="h-3 w-3 inline-block ml-1 cursor-pointer"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        onClick={() => toggleFilter(filterType, value)}
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </div>
+  );
 
-  if (isLoading) {
-    return <FilterSideBarSkeleton />;
-  }
+  // Render checkbox for filter option
+  const FilterCheckbox = ({ item, filterType }) => {
+    const value = item.id || item.name;
+    const isChecked = selectedFilters[filterType]?.includes(value);
+
+    return (
+      <div className="flex items-center">
+        <input
+          type="checkbox"
+          checked={isChecked}
+          onChange={() => toggleFilter(filterType, value)}
+          className="w-4 h-4 border border-[#494791] accent-[#494791] rounded-none"
+        />
+        <label className="ms-2 text-base font-medium text-gray-900">{item.name}</label>
+      </div>
+    );
+  };
+
+  // Render filter section
+  const FilterSection = ({ title, items, filterType }) => (
+    <>
+      <div className="border-t border-[#494791] my-5"></div>
+      <h4 className="text-base font-semibold uppercase">{title}</h4>
+      <div className="mt-2 space-y-2">
+        {items.map((item) => (
+          <FilterCheckbox key={item.id || item.name} item={item} filterType={filterType} />
+        ))}
+      </div>
+    </>
+  );
+
+  if (isLoading) return <FilterSideBarSkeleton />;
 
   return (
     <section className="min-w-40 max-w-2xs mt-5">
+      {/* Header with clear all button */}
       <div className="flex flex-row justify-between items-center mb-4">
         <h3 className="uppercase text-lg font-bold">Filters</h3>
         {hasActiveFilters && (
@@ -143,90 +120,30 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
       {/* Active Filters Display */}
       {hasActiveFilters && (
         <div className="flex flex-wrap gap-2 mb-4">
-          {/* Categories */}
           {selectedFilters.categories.map((id) => {
-            const category = categories?.find((cat) => cat.id === id);
-            return category && renderFilterTag(category.name, "categories", id);
+            const category = categories.find((cat) => cat.id === id);
+            return category && <FilterTag key={id} name={category.name} filterType="categories" value={id} />;
           })}
-
-          {/* Game Types */}
-          {selectedFilters.gameTypes.map((name) => renderFilterTag(name, "gameTypes", name))}
-
-          {/* Audiences */}
-          {selectedFilters.audiences.map((name) => renderFilterTag(name, "audiences", name))}
-
-          {/* Brands */}
-          {selectedFilters.brands.map((name) => renderFilterTag(name, "brands", name))}
+          {selectedFilters.gameTypes.map((name) => (
+            <FilterTag key={name} name={name} filterType="gameTypes" value={name} />
+          ))}
+          {selectedFilters.audiences.map((name) => (
+            <FilterTag key={name} name={name} filterType="audiences" value={name} />
+          ))}
+          {selectedFilters.brands.map((name) => (
+            <FilterTag key={name} name={name} filterType="brands" value={name} />
+          ))}
         </div>
       )}
 
+      {/* Filter Sections */}
+      <FilterSection title="Categories" items={categories} filterType="categories" />
+      <FilterSection title="Game Types" items={gameTypes} filterType="gameTypes" />
+      <FilterSection title="Audience" items={audiences} filterType="audiences" />
+      <FilterSection title="Brands" items={brands} filterType="brands" />
+
+      {/* Price Filter */}
       <div className="border-t border-[#494791] my-5"></div>
-
-      {/* CATEGORIES FILTER */}
-      <h4 className="text-base font-semibold uppercase">Categories</h4>
-      <div className="mt-2 space-y-2">
-        {categoriesLoading ? (
-          <div className="text-sm text-gray-500">Loading categories...</div>
-        ) : categoriesError ? (
-          <div className="text-sm text-red-500">Error loading categories</div>
-        ) : categories && categories.length > 0 ? (
-          categories.map((category) => renderCheckbox(category, "categories", category.name))
-        ) : (
-          <div className="text-sm text-gray-500">No categories available</div>
-        )}
-      </div>
-
-      <div className="border-t border-[#494791] my-5"></div>
-
-      {/* GAME TYPES FILTER */}
-      <h4 className="text-base font-semibold uppercase">Game Types</h4>
-      <div className="mt-2 space-y-2">
-        {gameTypesLoading ? (
-          <div className="text-sm text-gray-500">Loading game types...</div>
-        ) : gameTypesError ? (
-          <div className="text-sm text-red-500">Error loading game types</div>
-        ) : gameTypes && gameTypes.length > 0 ? (
-          gameTypes.map((type) => renderCheckbox(type, "gameTypes", type.name))
-        ) : (
-          <div className="text-sm text-gray-500">No game types available</div>
-        )}
-      </div>
-
-      <div className="border-t border-[#494791] my-5"></div>
-
-      {/* AUDIENCE FILTER */}
-      <h4 className="text-base font-semibold uppercase">Audience</h4>
-      <div className="mt-2 space-y-2">
-        {audiencesLoading ? (
-          <div className="text-sm text-gray-500">Loading audiences...</div>
-        ) : audiencesError ? (
-          <div className="text-sm text-red-500">Error loading audiences</div>
-        ) : audiences && audiences.length > 0 ? (
-          audiences.map((audience) => renderCheckbox(audience, "audiences", audience.name))
-        ) : (
-          <div className="text-sm text-gray-500">No audiences available</div>
-        )}
-      </div>
-
-      <div className="border-t border-[#494791] my-5"></div>
-
-      {/* BRANDS FILTER */}
-      <h4 className="text-base font-semibold uppercase">Brands</h4>
-      <div className="mt-2 space-y-2">
-        {brandsLoading ? (
-          <div className="text-sm text-gray-500">Loading brands...</div>
-        ) : brandsError ? (
-          <div className="text-sm text-red-500">Error loading brands</div>
-        ) : brands && brands.length > 0 ? (
-          brands.map((brand) => renderCheckbox(brand, "brands", brand.name))
-        ) : (
-          <div className="text-sm text-gray-500">No brands available</div>
-        )}
-      </div>
-
-      <div className="border-t border-[#494791] my-5"></div>
-
-      {/* PRICE FILTER */}
       <h4 className="text-base font-semibold uppercase">Price</h4>
       <div className="mt-2">
         <div className="flex items-center gap-2">

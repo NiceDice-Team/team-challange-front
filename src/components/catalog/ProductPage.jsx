@@ -2,17 +2,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { productServices } from "../../services/productServices";
 import { useState } from "react";
-import StarsLine from "../layout/StarsLine";
 import Image from "next/image";
 
 export default function ProductPage({ params }) {
   const [quantity, setQuantity] = useState(1);
 
-  // Ensure params.id exists and handle edge cases
   let productId = params?.id;
 
-  // Handle the [object Object] case
-  if (productId === "[object Object]" || productId === "%5Bobject%20Object%5D") {
+  if (productId === "[object Object]") {
     console.warn("Invalid product ID received, redirecting...");
     if (typeof window !== "undefined") {
       window.location.href = "/catalog";
@@ -27,16 +24,7 @@ export default function ProductPage({ params }) {
   } = useQuery({
     queryKey: ["product", productId],
     queryFn: () => productServices.getProductById(productId),
-    enabled: !!productId && productId !== "[object Object]" && productId !== "%5Bobject%20Object%5D",
-  });
-
-  // Debug logging
-  console.log("ProductPage Debug:", {
-    params,
-    productId,
-    isLoading,
-    error: error?.message,
-    product: product ? { id: product.id, name: product.name } : null,
+    enabled: !!productId && productId !== "[object Object]",
   });
 
   // If no product ID, show error
@@ -96,7 +84,40 @@ export default function ProductPage({ params }) {
     console.log(`Adding ${quantity} of product ${product.id} to cart`);
   };
 
-  const isInStock = parseInt(product.stock) > 0;
+  const stockQuantity = parseInt(product.stock) || 0;
+  const isInStock = stockQuantity > 0;
+
+  // Determine stock status based on quantity
+  const getStockStatus = (stock) => {
+    if (stock === 0) {
+      return {
+        message: "Sold out",
+        color: "var(--color-gray-2)",
+        status: "sold-out",
+      };
+    } else if (stock >= 1 && stock <= 5) {
+      return {
+        message: `Very low stock (${stock} units)`,
+        color: "var(--color-red-stock)",
+        status: "very-low",
+      };
+    } else if (stock >= 6 && stock <= 10) {
+      return {
+        message: `Low stock (${stock} units)`,
+        color: "var(--color-orange)",
+        status: "low",
+      };
+    } else {
+      return {
+        message: "In stock",
+        color: "var(--color-green)",
+        status: "in-stock",
+      };
+    }
+  };
+
+  const stockStatus = getStockStatus(stockQuantity);
+
   const discountPrice =
     product.discount && parseFloat(product.discount) > 0
       ? (parseFloat(product.price) * (1 - parseFloat(product.discount) / 100)).toFixed(2)
@@ -169,37 +190,50 @@ export default function ProductPage({ params }) {
           )}
         </div>
 
-        {/* Product Information Section */}
-        <div className="space-y-6">
-          {/* Brand and SKU */}
-          <div className="text-sm text-gray-500 uppercase tracking-wide">
-            {product.brand && <span>{product.brand}</span>}
-            <span className="ml-4">SKU: {product.id.toString().padStart(6, "0")}</span>
-          </div>
-
-          {/* Product Title */}
-          <h1 className="text-3xl font-bold text-gray-900 leading-tight">{product.name}</h1>
-
-          {/* Price */}
-          <div className="space-y-2">
-            <div className="flex items-baseline gap-3">
-              {discountPrice ? (
-                <>
-                  <span className="text-3xl font-bold text-red-600">${discountPrice}</span>
-                  <span className="text-xl text-gray-500 line-through">${product.price}</span>
-                </>
-              ) : (
-                <span className="text-3xl font-bold text-gray-900">${product.price}</span>
-              )}
-            </div>
-
-            {/* Stock Status */}
-            <div className="flex items-center gap-2">
-              <div className={`w-2 h-2 rounded-full ${isInStock ? "bg-green-500" : "bg-red-500"}`}></div>
-              <span className={`text-sm font-medium ${isInStock ? "text-green-600" : "text-red-600"}`}>
-                {isInStock ? `Very low stock (${product.stock} units)` : "Out of stock"}
+        <div className="flex flex-col gap-6">
+          {/* Product Information Section */}
+          <div className="">
+            {/* Brand and SKU */}
+            <div className="mb-2 text-lg text-[var(--color-purple)] uppercase  flex justify-between items-center">
+              {product.brand && <span>{product.brand}</span>}
+              <span className="text-base text-[var(--color-gray-2)]">
+                SKU: {product.id.toString().padStart(6, "0")}
               </span>
             </div>
+            {/* Product Title */}
+            <h1 className="leading-none text-[40px] uppercase text-black">{product.name}</h1>
+          </div>
+
+          <div>
+            {/* Price */}
+            <div className="mb-4">
+              <div className="flex items-baseline gap-3">
+                {discountPrice ? (
+                  <>
+                    <span className="text-3xl font-bold text-red-600">${discountPrice}</span>
+                    <span className="text-xl text-gray-500 line-through">${product.price}</span>
+                  </>
+                ) : (
+                  <span className="text-5xl  text-black">${product.price}</span>
+                )}
+              </div>
+            </div>
+            {/* Short Description */}
+            <div>
+              <p className="text-base text-black">
+                Ticket to Ride: Europe is a captivating game that combines simple rules with strategic depth, making it
+                a fantastic addition to family game nights, game clubs, or casual gaming sessions. Will you become the
+                greatest rail baron across Europe?
+              </p>
+            </div>
+          </div>
+
+          {/* Stock Status */}
+          <div className="flex flex-row flex-nowrap items-center gap-2">
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: stockStatus.color }}></div>
+            <span className="text-base" style={{ color: stockStatus.color }}>
+              {stockStatus.message}
+            </span>
           </div>
 
           {/* Quantity and Add to Cart */}
@@ -216,16 +250,16 @@ export default function ProductPage({ params }) {
                 <input
                   type="number"
                   min="1"
-                  max={isInStock ? product.stock : 1}
+                  max={isInStock ? stockQuantity : 1}
                   value={quantity}
                   onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
                   disabled={!isInStock}
                   className="w-16 text-center py-2 border-0 focus:outline-none disabled:bg-gray-50"
-                />
+                />{" "}
                 <button
-                  onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
+                  onClick={() => setQuantity(Math.min(stockQuantity, quantity + 1))}
                   className="p-2 hover:bg-gray-100 text-gray-600"
-                  disabled={!isInStock || quantity >= product.stock}
+                  disabled={!isInStock || quantity >= stockQuantity}
                 >
                   +
                 </button>
@@ -241,131 +275,6 @@ export default function ProductPage({ params }) {
                 ADD TO CART
               </button>
             </div>
-          </div>
-
-          {/* Expandable Sections */}
-          <div className="space-y-0 border-t pt-6">
-            {/* Description */}
-            <details className="group border-b border-gray-200">
-              <summary className="flex items-center justify-between cursor-pointer py-4 text-[16px] font-medium text-[color:var(--color-purple)] hover:opacity-80">
-                DESCRIPTION
-                <svg
-                  className="w-5 h-5 transition-transform group-open:rotate-180"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </summary>
-              <div className="pb-4 text-[16px] text-gray-600 leading-relaxed">
-                <p>{product.description}</p>
-              </div>
-            </details>
-
-            {/* Game Information */}
-            <details className="group border-b border-gray-200">
-              <summary className="flex items-center justify-between cursor-pointer py-4 text-[16px] font-medium text-[color:var(--color-purple)] hover:opacity-80">
-                GAME INFORMATION
-                <svg
-                  className="w-5 h-5 transition-transform group-open:rotate-180"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </summary>
-              <div className="pb-4 text-[16px] text-gray-900 space-y-3">
-                {product.brand && (
-                  <div className="flex">
-                    <span className="font-medium">• Publisher:</span>
-                    <span className="ml-2 underline cursor-pointer">{product.brand}</span>
-                  </div>
-                )}
-
-                <div className="flex">
-                  <span className="font-medium">• Players:</span>
-                  <span className="ml-2">2-5</span>
-                </div>
-
-                <div className="flex">
-                  <span className="font-medium">• Ages:</span>
-                  <span className="ml-2">8+</span>
-                </div>
-
-                <div className="flex">
-                  <span className="font-medium">• Play Time:</span>
-                  <span className="ml-2">30-60 Minutes</span>
-                </div>
-
-                <div className="flex flex-col">
-                  <span className="font-medium">• Includes:</span>
-                  <span className="ml-2">Game board, cards, tokens, and instructions</span>
-                </div>
-
-                <div className="flex flex-col">
-                  <span className="font-medium">• Game Features:</span>
-                  <span className="ml-2">Strategic gameplay, exciting challenges, and engaging player interaction</span>
-                </div>
-
-                {product.categories && product.categories.length > 0 && (
-                  <div className="flex">
-                    <span className="font-medium">• Categories:</span>
-                    <span className="ml-2">{product.categories.map((cat) => cat.name || cat).join(", ")}</span>
-                  </div>
-                )}
-
-                {product.types && product.types.length > 0 && (
-                  <div className="flex">
-                    <span className="font-medium">• Game Type:</span>
-                    <span className="ml-2">{product.types.map((type) => type.name || type).join(", ")}</span>
-                  </div>
-                )}
-              </div>
-            </details>
-
-            {/* Delivery and Payment */}
-            <details className="group">
-              <summary className="flex items-center justify-between cursor-pointer py-4 text-[16px] font-medium text-[color:var(--color-purple)] hover:opacity-80">
-                DELIVERY AND PAYMENT
-                <svg
-                  className="w-5 h-5 transition-transform group-open:rotate-180"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </summary>
-              <div className="pb-4 text-[16px] text-gray-900 space-y-4">
-                <div>
-                  <h4 className="font-medium mb-2">🚚 Shipping Within Ukraine</h4>
-                  <div className="space-y-1 ml-6">
-                    <p>
-                      <strong>Delivery Methods:</strong>
-                    </p>
-                    <p>• Nova Poshta: 1-3 business days</p>
-                    <p>• Ukrposhta: 2-5 business days</p>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="font-medium mb-2">🌍 International Shipping</h4>
-                  <div className="space-y-1 ml-6">
-                    <p>• Carriers: Ukrposhta, Nova Poshta, DHL, FedEx</p>
-                    <p>• Delivery Time: 7-14 business days</p>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="font-medium mb-2">💳 Payment Methods</h4>
-                  <div className="ml-6">
-                    <p>Credit/Debit Card, PayPal, Bank Transfer</p>
-                  </div>
-                </div>
-              </div>
-            </details>
           </div>
         </div>
       </div>
