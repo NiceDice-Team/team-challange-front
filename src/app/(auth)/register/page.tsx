@@ -3,18 +3,15 @@
 import Link from "next/link";
 import { useActionState, useEffect } from "react";
 import { signup } from "../../actions/auth";
+import { CustomInput } from "@/components/shared/CustomInput";
 
 export default function RegisterPage() {
   const [state, action, pending] = useActionState(signup, undefined);
-  // useEffect(() => {
 
-  //   action()
-  // }, []);
-  console.log("state", state);
   return (
     <div className="mx-auto mt-20">
       <h1 className="text-title font-normal text-center mb-9 uppercase">
-        Create account{" "}
+        Create account
       </h1>
       <div className="text-center text-base mb-12">
         <p>Join our community of board game enthusiasts! 🎲</p>
@@ -23,15 +20,45 @@ export default function RegisterPage() {
 
       <div className="flex flex-col items-center justify-center mb-28">
         <form className="flex flex-col gap-4 w-[500px] mb-12" action={action}>
-          <input
+          {/* <input
             defaultValue="User"
             placeholder="Name"
             id="firstname"
             name="firstname"
             className="w-full md:flex-1 p-4 bg-white text-black outline-none"
+          /> */}
+          <CustomInput
+            placeholder="Enter your name"
+            id="firstname"
+            label="First name"
+            error={state?.errors?.firstname}
           />
-          {state?.errors?.firstname && <p>{state.errors.firstname}</p>}
-          <input
+          <CustomInput
+            placeholder="Enter your last name"
+            id="lastname"
+            label="Last name"
+            error={state?.errors?.lastname}
+          />
+          <CustomInput
+            placeholder="Enter email address"
+            id="email"
+            label="Email"
+            error={state?.errors?.email}
+          />
+          <CustomInput
+            placeholder="Enter password"
+            id="password"
+            label="password"
+            error={state?.errors?.password}
+          />
+          <CustomInput
+            placeholder="Enter password"
+            id="confirmPassword"
+            label="Confirm Password"
+            error={state?.errors?.confirmPassword}
+          />
+
+          {/* <input
             defaultValue="User"
             placeholder="Last Name"
             id="lastname"
@@ -65,7 +92,7 @@ export default function RegisterPage() {
           />
           {state?.errors?.confirmPassword && (
             <p>{state.errors.confirmPassword}</p>
-          )}
+          )} */}
           <button
             type="submit"
             disabled={pending}
