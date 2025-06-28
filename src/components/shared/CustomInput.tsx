@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { Info } from "lucide-react";
 
 type InputPros = {
   className?: string;
@@ -34,23 +35,31 @@ export const CustomInput: React.FC<InputPros> = ({
           {label}
         </label>
       )}
-      <Input
-        type={type}
-        placeholder={placeholder}
-        id={id}
-        className={cn(
-          "w-full h-12 md:flex-1 px-4 py-padding-12 bg-white text-purple border-black rounded-none outline-none  placeholder:text-placeholder",
-          "focus:outline-none focus-visible:otline-none focus-visible:ring-0 focus-visible:shadow-none ",
-          error && "border-red-500 focus:ring-red-500",
-          className
-        )}
-        {...props}
-      />
+      {error && error.length > 0 && (
+        <div className="border-4 border-error-border">
+          <Input
+            type={type}
+            placeholder={placeholder}
+            id={id}
+            className={cn(
+              "w-full h-12 md:flex-1 px-4 py-padding-12 bg-white text-purple border-black rounded-none outline-none  placeholder:text-placeholder",
+              "focus:outline-none focus-visible:otline-none focus-visible:ring-0 focus-visible:shadow-none ",
+              error &&
+                "border-error focus:ring-red-500 focus-visible:ring-red-500",
+              className
+            )}
+            {...props}
+          />
+        </div>
+      )}
       {error &&
         error.map((err, index) => (
-          <p key={index} className="text-red-500 text-sm">
-            {err}
-          </p>
+          <div className="flex items-center gap-1" key={index}>
+            <Info size={16} color="#e30000" />
+            <p key={index} className="text-error text-sm">
+              {err}
+            </p>
+          </div>
         ))}
     </div>
   );

@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useEffect } from "react";
-import { signup } from "../../actions/auth";
+import { useActionState } from "react";
+import { signup } from "@/app/actions/auth";
 import { CustomInput } from "@/components/shared/CustomInput";
 
 export default function RegisterPage() {
@@ -28,24 +28,28 @@ export default function RegisterPage() {
             className="w-full md:flex-1 p-4 bg-white text-black outline-none"
           /> */}
           <CustomInput
+            defaultValue="Anna"
             placeholder="Enter your name"
             id="firstname"
             label="First name"
             error={state?.errors?.firstname}
           />
           <CustomInput
+            defaultValue="Vinture"
             placeholder="Enter your last name"
             id="lastname"
             label="Last name"
             error={state?.errors?.lastname}
           />
           <CustomInput
+            defaultValue="anna@gmail.com"
             placeholder="Enter email address"
             id="email"
             label="Email"
             error={state?.errors?.email}
           />
           <CustomInput
+            defaultValue="12345678"
             placeholder="Enter password"
             id="password"
             label="password"
@@ -57,42 +61,6 @@ export default function RegisterPage() {
             label="Confirm Password"
             error={state?.errors?.confirmPassword}
           />
-
-          {/* <input
-            defaultValue="User"
-            placeholder="Last Name"
-            id="lastname"
-            name="lastname"
-            className="w-full md:flex-1 p-4 bg-white text-black outline-none"
-          />
-          {state?.errors?.lastname && <p>{state.errors.lastname}</p>}
-          <input
-            defaultValue="user@example.com"
-            id="email"
-            name="email"
-            type="email"
-            placeholder="Email"
-            className="w-full md:flex-1 p-4 bg-white text-black outline-none"
-          />
-          {state?.errors?.email && <p>{state.errors.email}</p>}
-          <input
-            id="password"
-            name="password"
-            type="password"
-            placeholder="Password"
-            className="w-full md:flex-1 p-4 bg-white text-black outline-none"
-          />
-          {state?.errors?.password && <p>{state.errors.password}</p>}
-          <input
-            id="confirmPassword"
-            name="confirmPassword"
-            type="password"
-            placeholder="Confirm Password"
-            className="w-full md:flex-1 p-4 bg-white text-black outline-none"
-          />
-          {state?.errors?.confirmPassword && (
-            <p>{state.errors.confirmPassword}</p>
-          )} */}
           <button
             type="submit"
             disabled={pending}
