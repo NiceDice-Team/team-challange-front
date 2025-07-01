@@ -9,7 +9,7 @@ export default function CatalogLayout({ children }) {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-[var(--color-very-light-gray)]">
       <div className="px-8 lg:px-16 py-6">
         <Navbar />
       </div>

@@ -89,62 +89,73 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
 
   // Render filter section
   const FilterSection = ({ title, items, filterType }) => (
-    <>
-      <h4 className="text-base font-semibold uppercase">{title}</h4>
-      <div className="mt-2 space-y-2">
+    <div className="flex flex-col gap-6">
+      <h4 className="text-base font-medium uppercase">{title}</h4>
+      <div className="flex flex-col gap-2">
         {items.map((item) => (
           <FilterCheckbox key={item.id || item.name} item={item} filterType={filterType} />
         ))}
       </div>
-    </>
+    </div>
   );
 
   if (isLoading) return <FilterSideBarSkeleton />;
 
   return (
-    <section className="min-w-40 max-w-2xs ">
-      {/* Header with clear all button */}
-      <div className="flex flex-row justify-between items-center mb-4">
-        <h3 className="uppercase text-lg font-bold">Filters</h3>
-        {hasActiveFilters && (
-          <button
-            onClick={clearAllFilters}
-            className="underline text-[var(--color-gray-2)] text-base hover:text-gray-900 transition-colors"
-          >
-            Clear all
-          </button>
-        )}
-      </div>
-
-      {/* Active Filters Display */}
+    <section className="w-[247px] flex flex-col gap-6">
+      {/* Active Filters Display Card */}
       {hasActiveFilters && (
-        <div className="flex flex-wrap gap-2 mb-4">
-          {selectedFilters.categories.map((id) => {
-            const category = categories.find((cat) => cat.id === id);
-            return category && <FilterTag key={id} name={category.name} filterType="categories" value={id} />;
-          })}
-          {selectedFilters.gameTypes.map((name) => (
-            <FilterTag key={name} name={name} filterType="gameTypes" value={name} />
-          ))}
-          {selectedFilters.audiences.map((name) => (
-            <FilterTag key={name} name={name} filterType="audiences" value={name} />
-          ))}
-          {selectedFilters.brands.map((name) => (
-            <FilterTag key={name} name={name} filterType="brands" value={name} />
-          ))}
+        <div className="bg-white shadow-md p-4 flex flex-col gap-6">
+          {/* Header with clear all button */}
+          <div className="flex flex-row justify-between items-center">
+            <h3 className="uppercase text-base font-medium">Filters</h3>
+            <button
+              onClick={clearAllFilters}
+              className="underline text-[var(--color-gray-2)] text-base hover:text-gray-900 transition-colors"
+            >
+              Clear all
+            </button>
+          </div>
+
+          {/* Active Filters */}
+          <div className="flex flex-wrap gap-2">
+            {selectedFilters.categories.map((id) => {
+              const category = categories.find((cat) => cat.id === id);
+              return category && <FilterTag key={id} name={category.name} filterType="categories" value={id} />;
+            })}
+            {selectedFilters.gameTypes.map((name) => (
+              <FilterTag key={name} name={name} filterType="gameTypes" value={name} />
+            ))}
+            {selectedFilters.audiences.map((name) => (
+              <FilterTag key={name} name={name} filterType="audiences" value={name} />
+            ))}
+            {selectedFilters.brands.map((name) => (
+              <FilterTag key={name} name={name} filterType="brands" value={name} />
+            ))}
+          </div>
         </div>
       )}
 
-      {/* Filter Sections */}
-      <FilterSection title="Categories" items={categories} filterType="categories" />
-      <FilterSection title="Game Types" items={gameTypes} filterType="gameTypes" />
-      <FilterSection title="Audience" items={audiences} filterType="audiences" />
-      <FilterSection title="Brands" items={brands} filterType="brands" />
+      {/* Filter Sections as Cards */}
+      <div className="bg-white shadow-lg p-4">
+        <FilterSection title="Categories" items={categories} filterType="categories" />
+      </div>
 
-      {/* Price Filter */}
+      <div className="bg-white shadow-md p-4">
+        <FilterSection title="Game Types" items={gameTypes} filterType="gameTypes" />
+      </div>
 
-      <h4 className="text-base font-semibold uppercase">Price</h4>
-      <div className="mt-2">
+      <div className="bg-white shadow-md p-4">
+        <FilterSection title="Audience" items={audiences} filterType="audiences" />
+      </div>
+
+      <div className="bg-white shadow-md p-4">
+        <FilterSection title="Brands" items={brands} filterType="brands" />
+      </div>
+
+      {/* Price Filter Card */}
+      <div className="bg-white shadow-md p-4 flex flex-col gap-4">
+        <h4 className="text-base font-medium uppercase">Price</h4>
         <div className="flex items-center gap-2">
           <input
             type="number"

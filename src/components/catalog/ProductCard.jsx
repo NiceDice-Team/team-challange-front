@@ -136,7 +136,7 @@ export default function ProductCard({ product = {} }) {
 
   return (
     <Link href={`/product/${product.id}`}>
-      <article className="flex flex-col w-[240px] h-[427px]">
+      <article className="flex flex-col w-[240px] h-[427px] bg-white shadow-md p-4">
         <div className="relative w-full h-[192px] mb-2">
           {/* Image gallery container - hiding scrollbar */}
           <div
