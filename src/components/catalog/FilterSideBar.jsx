@@ -137,7 +137,7 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
       )}
 
       {/* Filter Sections as Cards */}
-      <div className="bg-white shadow-lg p-4">
+      <div className="bg-white shadow-md p-4">
         <FilterSection title="Categories" items={categories} filterType="categories" />
       </div>
 
