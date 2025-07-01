@@ -55,7 +55,7 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
 
   // Render filter tag with remove button
   const FilterTag = ({ name, filterType, value }) => (
-    <div className="bg-[#C6C6E2] p-1.5 text-black text-sm flex justify-center items-center">
+    <div className="bg-white border-[1px] border-[var(--color-light-purple-2)] p-2 text-[var(--color-purple)] text-sm flex justify-center items-center gap-2">
       {name}
       <svg
         className="h-3 w-3 inline-block ml-1 cursor-pointer"
@@ -110,7 +110,7 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
         {hasActiveFilters && (
           <button
             onClick={clearAllFilters}
-            className="underline text-[#717171] text-base hover:text-gray-900 transition-colors"
+            className="underline text-[var(--color-gray-2)] text-base hover:text-gray-900 transition-colors"
           >
             Clear all
           </button>

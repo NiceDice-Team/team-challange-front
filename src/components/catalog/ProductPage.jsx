@@ -149,7 +149,7 @@ export default function ProductPage({ params }) {
       <div className="mb-6">
         <CustomBreadcrumb items={breadcrumbItems} />
       </div>
-      
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Product Image Section */}
         <div className="space-y-4">
