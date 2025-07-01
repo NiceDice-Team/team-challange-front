@@ -90,7 +90,6 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
   // Render filter section
   const FilterSection = ({ title, items, filterType }) => (
     <>
-      <div className="border-t border-[#494791] my-5"></div>
       <h4 className="text-base font-semibold uppercase">{title}</h4>
       <div className="mt-2 space-y-2">
         {items.map((item) => (
@@ -103,7 +102,7 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
   if (isLoading) return <FilterSideBarSkeleton />;
 
   return (
-    <section className="min-w-40 max-w-2xs mt-5">
+    <section className="min-w-40 max-w-2xs ">
       {/* Header with clear all button */}
       <div className="flex flex-row justify-between items-center mb-4">
         <h3 className="uppercase text-lg font-bold">Filters</h3>
@@ -143,7 +142,7 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
       <FilterSection title="Brands" items={brands} filterType="brands" />
 
       {/* Price Filter */}
-      <div className="border-t border-[#494791] my-5"></div>
+
       <h4 className="text-base font-semibold uppercase">Price</h4>
       <div className="mt-2">
         <div className="flex items-center gap-2">

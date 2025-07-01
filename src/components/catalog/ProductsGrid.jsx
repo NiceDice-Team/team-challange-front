@@ -5,6 +5,7 @@ import { productServices } from "../../services/productServices";
 import ProductCard from "../catalog/ProductCard";
 import ProductCardSkeleton from "../catalog/ProductCardSkeleton";
 import { Pagination } from "../ui/Pagination";
+import { CustomSelect } from "../shared/CustomSelect";
 
 export default function ProductsGrid({ selectedFilters }) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -121,6 +122,19 @@ export default function ProductsGrid({ selectedFilters }) {
 
   return (
     <section className="w-full">
+      <div className="w-full flex flex-row justify-end items-center gap-4 mb-12">
+        <span className="uppercase text-lg font-medium">Sort by</span>
+        <CustomSelect
+          placeholder="Relevance"
+          options={[
+            { value: "relevance", label: "Relevance" },
+            { value: "bestsellers", label: "Bestsellers" },
+            { value: "price-high-low", label: "Price, high to low" },
+            { value: "price-low-high", label: "Price, low to high" },
+            { value: "newest", label: "Newest first" },
+          ]}
+        />
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 min-h-[400px]">
         {allProductsLoading &&
           // Show skeleton cards while loading
