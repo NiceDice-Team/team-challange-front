@@ -1,4 +1,6 @@
 import React from "react";
+import { CustomInput } from "../shared/CustomInput";
+import { CustomButton } from "../shared/CustomButton";
 
 export default function SubscribeSection({ className = "" }) {
   return (
@@ -11,15 +13,9 @@ export default function SubscribeSection({ className = "" }) {
         Subscribe to our newsletter and be the first to know about new arrivals, special offers, and gaming news
       </p>
       <div className="flex flex-col w-full max-w-3xl gap-3 items-center">
-        <div className="flex flex-col md:flex-row w-full gap-4 ">
-          <input
-            type="email"
-            placeholder="Email"
-            className="w-full md:flex-1 px-4 py-3 bg-white text-black outline-none"
-          />
-          <button className="w-full md:w-auto bg-white text-[#494791]  px-8 text-base font-semibold uppercase hover:bg-gray-100 transition-all duration-150">
-            Subscribe
-          </button>
+        <div className="flex flex-col md:flex-row w-full gap-4">
+          <CustomInput type="email" placeholder="Email" />
+          <CustomButton className="h-12 w-38"> Subscribe</CustomButton>
         </div>
 
         <div className="flex items-center gap-2 self-start max-w-4xl">

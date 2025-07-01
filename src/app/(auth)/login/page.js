@@ -20,11 +20,7 @@ export default function LoginPage() {
        <Link  href="/" className="underline text-[#494791]">Continue as a guest<span className="inline-block ml-1">→</span></Link>
       </div>
       
-       <FeatureSection />
-       <BlogSection />
-       <FeatureSectionBottom />
-       <PartnersScroller />
-       <SubscribeSection className="mt-20"/>
+      
     </div>
   );
 }
