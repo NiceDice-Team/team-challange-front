@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { productServices } from "../../services/productServices";
 import ProductCard from "../catalog/ProductCard";
 import ProductCardSkeleton from "../catalog/ProductCardSkeleton";
-import { Pagination } from "../ui/Pagination";
+import { Pagination } from "../ui/pagination";
 import { CustomSelect } from "../shared/CustomSelect";
 
 export default function ProductsGrid({ selectedFilters }) {

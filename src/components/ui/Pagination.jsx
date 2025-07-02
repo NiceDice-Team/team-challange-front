@@ -15,7 +15,7 @@ export function Pagination({ currentPage, totalPages, onPageChange, className = 
       let startPage = Math.max(1, currentPage - 2);
       let endPage = Math.min(totalPages, currentPage + 2);
 
-      // Ensure we always show 5 pages when possible
+      // Ensure we always show 5 at least
       if (endPage - startPage < 4) {
         if (startPage === 1) {
           endPage = Math.min(totalPages, startPage + 4);

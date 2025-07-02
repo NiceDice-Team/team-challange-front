@@ -2,7 +2,7 @@
 import StarRating from "../layout/StarsLine";
 import SubscribeSection from "../home/SubscribeSection";
 import ReviewCard from "../home/ReviewCard";
-import { Pagination } from "../ui/Pagination";
+import { Pagination } from "../ui/pagination";
 import { useState } from "react";
 import PERSON1_IMG from "../../../public/Reviews/person1.png";
 import PERSON2_IMG from "../../../public/Reviews/person2.png";

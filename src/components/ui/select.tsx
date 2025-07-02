@@ -5,7 +5,6 @@ import * as SelectPrimitive from "@radix-ui/react-select";
 import { ChevronDownIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Base select components
 const Select = SelectPrimitive.Root;
 const SelectValue = SelectPrimitive.Value;
 
@@ -55,7 +54,6 @@ function SelectItem({ className, children, ...props }: React.ComponentProps<type
       )}
       {...props}
     >
-      {/* Checkmark area - 16x16px space on the left */}
       <span className="flex h-4 w-4 items-center justify-center">
         <SelectPrimitive.ItemIndicator>
           <svg width="12" height="8" viewBox="0 0 12 8" fill="var(--color-purple)">
@@ -67,7 +65,6 @@ function SelectItem({ className, children, ...props }: React.ComponentProps<type
         </SelectPrimitive.ItemIndicator>
       </span>
 
-      {/* Text starts at 24px from left edge */}
       <div className="">
         <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
       </div>
