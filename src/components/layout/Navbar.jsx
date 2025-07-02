@@ -4,9 +4,9 @@ import Image from "next/image";
 import Placeholder_Square from "../../../public/700x700.svg";
 import Link from "next/link";
 
-export default function Navbar() {
+export default function Navbar({ className = "" }) {
   return (
-    <div className="flex flex-col">
+    <div className={`flex flex-col ${className}`}>
       <div className="flex flex-row items-center justify-between gap-2 lg:gap-0">
         <div className="">
           <svg width="330" height="54" viewBox="0 0 330 54" fill="none">

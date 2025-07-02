@@ -4,8 +4,7 @@ import FeatureSection from "../../components/home/FeaturesSection.jsx";
 import BlogSection from "../../components/home/BlogSection.jsx";
 import FeatureSectionBottom from "../../components/home/FeatureSectionBottom.jsx";
 import PartnersScroller from "../../components/home/PartnersScroller.jsx";
-import SubscribeSection from "../../components/home/SubscribeSection.tsx";
-
+import SubscribeSection from "../../components/home/SubscribeSection.jsx";
 
 export default function AuthLayout({ children }) {
   return (
@@ -13,16 +12,13 @@ export default function AuthLayout({ children }) {
       <div className="px-8 lg:px-16 py-6">
         <Navbar />
       </div>
-      
-      <main className="flex-1 px-8 lg:px-16 py-10">
-        {children}
-        
-      </main>
+
+      <main className="flex-1 px-8 lg:px-16 py-10">{children}</main>
       <FeatureSection />
       <BlogSection />
       <FeatureSectionBottom />
       <PartnersScroller />
-      <SubscribeSection className="mt-20"/>
+      <SubscribeSection className="mt-20" />
       <Footer />
     </div>
   );

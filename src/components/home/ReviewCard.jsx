@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function ReviewCard({
   rating = 5, // Integer 0‑5
@@ -11,9 +14,21 @@ export default function ReviewCard({
   title,
   body,
   images = [], // Up to 4 image URLs
+  collapsible = false, //to make the comment collapsible
+  className = "",
 }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  // Function to cut the text
+  const cutText = (text, maxLength = 100) => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength);
+  };
+
+  const CutTruncate = collapsible && body.length > 100;
+  const displayBody = CutTruncate && !isExpanded ? cutText(body) : body;
   return (
-    <article className=" bg-[#EEEEEE] p-5 shadow flex flex-col justify-between">
+    <article className={`p-5 flex flex-col justify-between ${className}`}>
       {/* ─ Rating + Date ─────────────────────────────────── */}
       <header className="mb-6 flex items-start justify-between">
         <div className="flex space-x-1 text-[#494791]">
@@ -37,17 +52,31 @@ export default function ReviewCard({
         <h3 className="font-semibold">{name}</h3>
         {aboutHref && aboutText && (
           <Link href={aboutHref} className=" ml-auto   decoration-2 underline-offset-2 hover:text-indigo-800">
-            About&nbsp;<span className="underline">{aboutText}</span>
+            About&nbsp;
+            <span className="underline underline-offset-2 text-[color:var(--color-purple)]">{aboutText}</span>
           </Link>
         )}
       </div>
 
       {/* ─ Review text ───────────────────────────────────── */}
       <h4 className="mb-2 text-xl font-bold">{title}</h4>
-      <p className="mb-4 leading-relaxed">{body}</p>
+      <div className="mb-4 leading-relaxed">
+        <p>
+          {displayBody}
+          {CutTruncate && !isExpanded && "..."}
+        </p>
+        {CutTruncate && (
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="text-[color:var(--color-purple)] hover:text-[color:var(--color-light-purple)] underline underline-offset-2 mt-1 block"
+          >
+            {isExpanded ? "Read less" : "Read more"}
+          </button>
+        )}
+      </div>
 
-      {/* ─ Thumbnail gallery (max 4) ─────────────────────── */}
-      {images.length > 0 && (
+      {/* ─ Thumbnail gallery (max 4) - only show when expanded or not collapsible ─ */}
+      {images.length > 0 && (!collapsible || isExpanded) && (
         <div className="flex gap-3">
           {images.slice(0, 4).map((src, idx) => (
             <div key={idx} className="relative aspect-square flex-1">
