@@ -23,6 +23,7 @@
     "next": "15.2.4",
     "playwright": "^1.52.0",
     "react": "^19.0.0",
+    "react-dice-roll": "^1.2.2",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.58.1",
     "tailwind-merge": "^3.3.1",
