@@ -1,5 +1,6 @@
 import { CustomButton } from "@/components/shared/CustomButton";
 import { CustomInput } from "@/components/shared/CustomInput";
+import { PasswordInput } from "@/components/shared/PasswordInput";
 import Link from "next/link";
 
 export default function LoginPage() {
@@ -25,8 +26,7 @@ export default function LoginPage() {
             name="email"
             // error={state?.errors?.email}
           />
-
-          <CustomInput
+          <PasswordInput
             placeholder="Enter password"
             id="password"
             label="password"
