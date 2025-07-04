@@ -89,18 +89,9 @@ export default function RegisterPage() {
             />
           </div>
 
-          {/* <button
-            type="submit"
-            disabled={pending || !isChecked}
-            className="w-full bg-purple text-white p-4 px-8 text-base uppercase hover:bg-gray-100 transition-all duration-150"
-          >
-            REGISTER
-          </button> */}
           <CustomButton type="submit" disabled={pending || !isChecked}>
             REGISTER
           </CustomButton>
-          <CustomButton styleType="linkButton">REGISTER</CustomButton>
-          <CustomButton styleType="whiteButton">REGISTER</CustomButton>
         </form>
 
         <p className="text-purple">Already have an account?</p>
