@@ -1,15 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { signup } from "@/app/actions/auth";
 import { CustomInput } from "@/components/shared/CustomInput";
 import CustomCheckbox from "@/components/shared/CustomCheckbox";
 import Image from "next/image";
 import ArrowNext from "../../../../public/icons/ArrowNext.svg";
 import { FormState } from "@/app/lib/definitions";
+import { CustomButton } from "@/components/shared/CustomButton";
 
 export default function RegisterPage() {
+  const [isChecked, setIsChecked] = useState(true);
   const [state, action, pending] = useActionState<FormState, FormData>(signup, {
     errors: {},
   });
@@ -66,6 +68,8 @@ export default function RegisterPage() {
           <div className="flex flex-col gap-2">
             <CustomCheckbox
               id="privacy"
+              checked={isChecked}
+              onCheckedChange={() => setIsChecked((prev) => !prev)}
               label={
                 <p>
                   I agree to the{" "}
@@ -85,13 +89,18 @@ export default function RegisterPage() {
             />
           </div>
 
-          <button
+          {/* <button
             type="submit"
-            disabled={pending}
+            disabled={pending || !isChecked}
             className="w-full bg-purple text-white p-4 px-8 text-base uppercase hover:bg-gray-100 transition-all duration-150"
           >
             REGISTER
-          </button>
+          </button> */}
+          <CustomButton type="submit" disabled={pending || !isChecked}>
+            REGISTER
+          </CustomButton>
+          <CustomButton styleType="linkButton">REGISTER</CustomButton>
+          <CustomButton styleType="whiteButton">REGISTER</CustomButton>
         </form>
 
         <p className="text-purple">Already have an account?</p>

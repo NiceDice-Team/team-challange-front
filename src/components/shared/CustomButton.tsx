@@ -2,15 +2,41 @@
 
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
+import { FC } from "react";
 
-export const CustomButton = ({ className, ...props }) => {
+interface ButtonProps {
+  children: React.ReactNode;
+  className?: string;
+  loading?: boolean;
+  disabled?: boolean;
+  type?: "button" | "submit" | "reset";
+  styleType?: "linkButton" | "whiteButton";
+}
+
+export const CustomButton: FC<ButtonProps> = ({
+  children,
+  styleType,
+  className = "",
+  loading = false,
+  disabled = false,
+  ...props
+}) => {
   return (
     <Button
       className={cn(
-        "w-full bg-white text-purple py-4 px-8text-lg text-base font-medium uppercase rounded-none hover:hover:bg-gray-100 transition-all duration-150",
+        "w-full bg-purple text-white py-4 px-8 text-base font-medium uppercase rounded-none hover:bg-light-purple transition-all duration-150",
+        "disabled:bg-gray disabled:cursor-auto focus-visible:ring-0 focus-visible:outline-none",
+        styleType === "linkButton" &&
+          "size-fit text-purple disabled:text-disabled bg-transparent hover:text-light-purple hover:bg-transparent p-0 underline shadow-none",
+        styleType === "whiteButton" &&
+          "bg-white text-purple shadow-none hover:hover:bg-gray-100 py-4 px-8",
         className
       )}
+      disabled={disabled}
       {...props}
-    />
+    >
+      {/* ADD LOADER ANIMATION */}
+      {loading ? "loader" : children}
+    </Button>
   );
 };
