@@ -27,7 +27,7 @@ export default function ProductsGrid({ selectedFilters }) {
     if (!allProductsData) return [];
 
     const productsArray = Array.isArray(allProductsData) ? allProductsData : [];
-
+    
     if (!Array.isArray(productsArray)) {
       console.error("Products data is not an array:", allProductsData);
       return [];

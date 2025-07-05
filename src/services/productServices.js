@@ -12,6 +12,7 @@ export const productServices = {
 
     while (hasMore) {
       const response = await fetchAPI(`products/?page=${page}&page_size=50`);
+      
       allProducts = [...allProducts, ...response.results];
       hasMore = response.next !== null;
       page++;
@@ -22,10 +23,8 @@ export const productServices = {
 
   // Get single product by ID
   getProductById: async (id) => {
-    console.log(`Fetching product with ID: ${id}`);
     try {
       const result = await fetchAPI(`products/${id}/`);
-      console.log(`Product fetched successfully:`, result);
       return result;
     } catch (error) {
       console.error(`Error fetching product ${id}:`, error);
