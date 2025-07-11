@@ -48,3 +48,17 @@ export type FormState =
       };
     }
   | undefined;
+
+export const loginSchema = z.object({
+  email: z.string().email("Invalid email"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+});
+export type LoginFormState = {
+  email?: string;
+  password?: string;
+  errors?: {
+    email?: string[];
+    password?: string[];
+    serverError?: string;
+  };
+};
