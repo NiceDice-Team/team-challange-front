@@ -1,7 +1,11 @@
+"use client";
+
 import { CustomButton } from "@/components/shared/CustomButton";
 import { CustomInput } from "@/components/shared/CustomInput";
 import { PasswordInput } from "@/components/shared/PasswordInput";
+import { FormEvent } from "react";
 import Link from "next/link";
+import { API_URL } from "@/services/api";
 
 export default function LoginPage() {
   return (
@@ -18,27 +22,6 @@ export default function LoginPage() {
       </div>
 
       <div className="flex flex-col items-center justify-center mb-28">
-        <form className="flex flex-col gap-2 w-[500px] mb-12">
-          <CustomInput
-            placeholder="Enter email address"
-            id="email"
-            label="Email"
-            name="email"
-            // error={state?.errors?.email}
-          />
-          <PasswordInput
-            placeholder="Enter password"
-            id="password"
-            label="password"
-            name="password"
-            // error={state?.errors?.password}
-          />
-          <Link href="/forgot-password" className="text-right underline mb-4">
-            Forgot your password?
-          </Link>
-          <CustomButton type="submit">SIGN IN</CustomButton>
-        </form>
-
         <Link href="/" className="underline text-[#494791]">
           Continue as a guest<span className="inline-block ml-1">→</span>
         </Link>

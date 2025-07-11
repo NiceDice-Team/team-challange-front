@@ -49,6 +49,7 @@ export const PasswordInput: FC<PasswordProps> = ({
           id={id}
           placeholder={placeholder}
           name={name}
+          autoComplete="off"
           className={cn(
             "w-full h-12 md:flex-1 px-4 py-padding-12 bg-white text-purple border-black rounded-none outline-none  placeholder:text-placeholder",
             "focus:outline-none focus-visible:otline-none focus-visible:ring-0 focus-visible:shadow-none ",
@@ -62,7 +63,7 @@ export const PasswordInput: FC<PasswordProps> = ({
         {!hideToggle && (
           <button
             type="button"
-            className="absolute inset-y-0 right-0 flex items-center p-[14px]  hover:border-transparent focus:outline-0 focus-visible:outline-0"
+            className="absolute inset-y-0 right-0 flex items-center px-4  hover:border-transparent focus:outline-0 focus-visible:outline-0"
             onClick={() => setVisible(!visible)}
             tabIndex={-1}
             aria-label={visible ? "Hide password" : "Show password"}

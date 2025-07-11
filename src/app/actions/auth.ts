@@ -46,7 +46,6 @@ export async function signup(
     last_name: validatedFields.data.lastname,
     email: validatedFields.data.email,
     password: validatedFields.data.password,
-    username: validatedFields.data.email.split("@")[0],
   };
 
   try {
@@ -59,56 +58,65 @@ export async function signup(
     });
 
     const res = await response.json();
+    console.log("res", res);
     if (!response.ok) {
-      const err = res;
-      if (err?.username) {
-        err.email = err.username;
+      let errors = {};
+      if (res.errors && res.errors.length > 0) {
+        errors = res.errors.reduce((acc, error) => {
+          if (error.attr) {
+            acc[error.attr] = [error.detail];
+          } else {
+            acc.serverError =
+              error.detail ||
+              "An error occurred during signup. Please try again." +
+                " If the problem persists, contact support.";
+          }
+          return acc;
+        }, {});
       }
+
       return {
         firstname,
         lastname,
         email,
         password,
         confirmPassword,
-        errors: err || {
-          serverError:
-            "An error occurred during signup. Please try again." +
-            " If the problem persists, contact support.",
-        },
+        errors: errors,
       };
     }
-    const token = res.access;
-    const refresh = res.refresh;
-    if (!token || !refresh) {
-      return {
-        firstname,
-        lastname,
-        email,
-        password,
-        confirmPassword,
-        errors: {
-          serverError: "No token received",
-        },
-      };
-    }
+    // const token = res.access;
+    // const refresh = res.refresh;
+    // if (!token || !refresh) {
+    //   return {
+    //     firstname,
+    //     lastname,
+    //     email,
+    //     password,
+    //     confirmPassword,
+    //     errors: {
+    //       serverError: "No token received",
+    //     },
+    //   };
+    // }
 
     // save token in cookies
-    (await cookies()).set("access_token", token, {
-      httpOnly: true,
-      secure: true,
-      path: "/",
-      maxAge: 60 * 15, // 15 minutes
-    });
+    // (await cookies()).set("access_token", token, {
+    //   httpOnly: true,
+    //   secure: true,
+    //   path: "/",
+    //   maxAge: 60 * 15, // 15 minutes
+    // });
 
-    // save refreshToken in cookies
-    (await cookies()).set("refresh_token", refresh, {
-      httpOnly: true,
-      secure: true,
-      path: "/",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-    });
+    // // save refreshToken in cookies
+    // (await cookies()).set("refresh_token", refresh, {
+    //   httpOnly: true,
+    //   secure: true,
+    //   path: "/",
+    //   maxAge: 60 * 60 * 24 * 7, // 7 days
+    // });
   } catch (error) {
-    console.error("Error during signup:", error);
+    console.log("", JSON.stringify(error, null, 2));
+    console.error("Error during signup:", error, error.message);
     return {
       firstname,
       lastname,
