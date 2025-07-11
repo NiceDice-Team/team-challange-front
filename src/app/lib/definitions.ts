@@ -3,17 +3,20 @@ import { z } from "zod";
 export const SignupFormSchema = z
   .object({
     firstname: z
-      .string()
-      .min(2, { message: "Name must be at least 2 characters long." })
+      .string({ required_error: "Please enter your name" })
+      .min(2, { message: "Please enter your name" })
       .trim(),
     lastname: z
-      .string()
-      .min(2, { message: "Name must be at least 2 characters long." })
+      .string({ required_error: "Please enter your last name" })
+      .min(2, { message: "Please enter your last name" })
       .trim(),
-    email: z.string().email({ message: "Please enter a valid email." }).trim(),
+    email: z
+      .string({ required_error: "Please enter your email address" })
+      .email({ message: "Please enter a valid email." })
+      .trim(),
     password: z
       .string()
-      .min(8, { message: "Be at least 8 characters" })
+      .min(8, { message: "Password must be at least 8 characters" })
       // .regex(/[a-zA-Z]/, { message: "Contain at least one letter." })
       // .regex(/[0-9]/, { message: "Contain at least one number." })
       // .regex(/[^a-zA-Z0-9]/, {

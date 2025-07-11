@@ -40,7 +40,6 @@ export async function signup(
       errors: validatedFields.error.flatten().fieldErrors,
     };
   }
-
   const requestBody = {
     first_name: validatedFields.data.firstname,
     last_name: validatedFields.data.lastname,
@@ -115,7 +114,6 @@ export async function signup(
     //   maxAge: 60 * 60 * 24 * 7, // 7 days
     // });
   } catch (error) {
-    console.log("", JSON.stringify(error, null, 2));
     console.error("Error during signup:", error, error.message);
     return {
       firstname,

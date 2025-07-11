@@ -49,7 +49,7 @@ export const CustomInput: React.FC<InputPros> = ({
           name={name}
           className={cn(
             "w-full h-12 md:flex-1 px-4 py-padding-12 bg-white text-purple border-black rounded-none outline-none  placeholder:text-placeholder",
-            "focus:outline-none focus-visible:otline-none focus-visible:ring-0 focus-visible:shadow-none ",
+            "focus:outline-2 focus:outline-purple/40  focus-visible:ring-2 focus-visible:ring-purple/40 focus-visible:shadow-none ",
             error &&
               "border-error focus:ring-red-500 focus-visible:ring-red-500",
             className

@@ -51,13 +51,6 @@ export default function RegisterPage() {
             name="email"
             error={state?.errors?.email}
           />
-          {/* <CustomInput
-            placeholder="Enter password"
-            id="password"
-            label="password"
-            name="password"
-            error={state?.errors?.password}
-          /> */}
           <PasswordInput
             placeholder="Enter password"
             id="password"
@@ -72,13 +65,6 @@ export default function RegisterPage() {
             name="confirmPassword"
             error={state?.errors?.confirmPassword}
           />
-          {/* <CustomInput
-            placeholder="Enter password"
-            id="confirmPassword"
-            label="Confirm Password"
-            name="confirmPassword"
-            error={state?.errors?.confirmPassword}
-          /> */}
           {state.errors.serverError && (
             <p className="text-error">{state.errors.serverError}</p>
           )}
