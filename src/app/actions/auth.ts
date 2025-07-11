@@ -8,6 +8,7 @@ import {
   LoginFormState,
   loginSchema,
 } from "../lib/definitions";
+import { useAuthStore } from "@/store/auth";
 
 type ResponseType = {
   access?: string;
@@ -177,7 +178,8 @@ export async function signin(
         },
       };
     }
-
+    // save token in store
+    useAuthStore.setState({ accessToken: token, refreshToken: refresh });
     // save token in cookies
     (await cookies()).set("access_token", token, {
       httpOnly: true,
@@ -204,5 +206,5 @@ export async function signin(
     };
   }
 
-  redirect("/", RedirectType.replace);
+  //redirect("/", RedirectType.replace);
 }
