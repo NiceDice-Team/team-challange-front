@@ -100,7 +100,7 @@ export async function signup(
       },
     };
   }
-  redirect("/complete-signup", RedirectType.replace);
+  redirect("/confirm-signup", RedirectType.replace);
 }
 
 export async function signin(
