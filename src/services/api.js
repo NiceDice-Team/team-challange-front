@@ -1,4 +1,5 @@
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+export const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+
 // const API_URL = "/api/";
 
 export async function fetchAPI(endoint, options = {}) {
@@ -9,6 +10,7 @@ export async function fetchAPI(endoint, options = {}) {
       "Content-Type": "application/json",
       ...options.headers,
     },
+    body: options.body ? JSON.stringify(options.body) : null,
   });
   if (!response.ok) {
     throw new Error(`API Error! status: ${response.status}`);

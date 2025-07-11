@@ -1,18 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { signup } from "@/app/actions/auth";
 import { CustomInput } from "@/components/shared/CustomInput";
 import CustomCheckbox from "@/components/shared/CustomCheckbox";
 import Image from "next/image";
 import ArrowNext from "../../../../public/icons/ArrowNext.svg";
 import { FormState } from "@/app/lib/definitions";
+import { CustomButton } from "@/components/shared/CustomButton";
+import { API_URL } from "@/services/api";
+import { PasswordInput } from "@/components/shared/PasswordInput";
 
 export default function RegisterPage() {
+  const [isChecked, setIsChecked] = useState(true);
   const [state, action, pending] = useActionState<FormState, FormData>(signup, {
     errors: {},
   });
+
   return (
     <div className="mx-auto mt-20">
       <h1 className="text-title font-normal text-center mb-9 uppercase">
@@ -46,14 +51,14 @@ export default function RegisterPage() {
             name="email"
             error={state?.errors?.email}
           />
-          <CustomInput
+          <PasswordInput
             placeholder="Enter password"
             id="password"
             label="password"
             name="password"
             error={state?.errors?.password}
           />
-          <CustomInput
+          <PasswordInput
             placeholder="Enter password"
             id="confirmPassword"
             label="Confirm Password"
@@ -66,6 +71,8 @@ export default function RegisterPage() {
           <div className="flex flex-col gap-2">
             <CustomCheckbox
               id="privacy"
+              checked={isChecked}
+              onCheckedChange={() => setIsChecked((prev) => !prev)}
               label={
                 <p>
                   I agree to the{" "}
@@ -85,13 +92,9 @@ export default function RegisterPage() {
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={pending}
-            className="w-full bg-purple text-white p-4 px-8 text-base uppercase hover:bg-gray-100 transition-all duration-150"
-          >
+          <CustomButton type="submit" disabled={pending || !isChecked}>
             REGISTER
-          </button>
+          </CustomButton>
         </form>
 
         <p className="text-purple">Already have an account?</p>
