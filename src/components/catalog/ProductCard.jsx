@@ -118,27 +118,27 @@ export default function ProductCard({ product = {} }) {
 
             {/* Individual images */}
             <div className="min-w-full h-full flex-shrink-0 relative snap-center">
-              <Image 
-                src={product?.image || "/FirstPlaceholder.svg"} 
-                alt={product?.name || "Product"} 
-                fill 
-                className="object-contain" 
+              <Image
+                src={product?.images?.[0] ? `/api/media/${product.images[0]}` : "/FirstPlaceholder.svg"}
+                alt={product?.name || "Product"}
+                fill
+                className="object-contain"
               />
             </div>
             <div className="min-w-full h-full flex-shrink-0 relative snap-center">
-              <Image 
-                src={product?.image || "/SecondPlaceholder.svg"} 
-                alt={product?.name || "Product"} 
-                fill 
-                className="object-contain" 
+              <Image
+                src={product?.images?.[1] ? `/api/media/${product.images[1]}` : "/SecondPlaceholder.svg"}
+                alt={product?.name || "Product"}
+                fill
+                className="object-contain"
               />
             </div>
             <div className="min-w-full h-full flex-shrink-0 relative snap-center">
-              <Image 
-                src={product?.image || "/ThirdPlaceholder.svg"} 
-                alt={product?.name || "Product"} 
-                fill 
-                className="object-contain" 
+              <Image
+                src={product?.images?.[2] ? `/api/media/${product.images[2]}` : "/ThirdPlaceholder.svg"}
+                alt={product?.name || "Product"}
+                fill
+                className="object-contain"
               />
             </div>
           </div>
