@@ -3,24 +3,37 @@
 import { CustomButton } from "@/components/shared/CustomButton";
 import { CustomInput } from "@/components/shared/CustomInput";
 import { PasswordInput } from "@/components/shared/PasswordInput";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import Link from "next/link";
 import { LoginFormState } from "@/app/lib/definitions";
 import { signin } from "@/app/actions/auth";
 import { GoogleAuthButton } from "@/components/auth/GoogleLogin";
+import { useAuthStore } from "@/store/auth";
+import decodeToken from "@/lib/decodeToken";
+import { useRouter } from "next/navigation";
 
 const INITIAL_STATE: LoginFormState = {
   errors: {},
 };
 
 export default function LoginPage() {
+  const { setTokens } = useAuthStore();
+  const router = useRouter();
   const [formState, formAction, pending] = useActionState<
     LoginFormState,
     FormData
   >(signin, INITIAL_STATE);
 
+  useEffect(() => {
+    if (formState?.accessToken && formState?.refreshToken) {
+      setTokens(formState.accessToken, formState.refreshToken);
+      decodeToken(formState.accessToken);
+      router.push("/");
+    }
+  }, [formState?.accessToken, formState?.refreshToken, router, setTokens]);
+
   return (
-    <div className="mx-auto mt-20">
+    <div className="flex flex-col items-center mx-auto mt-20">
       <h1 className="mb-9 font-normal text-4xl text-center uppercase">
         Log in here or{" "}
         <Link href="/register" className="underline">
@@ -32,11 +45,8 @@ export default function LoginPage() {
         <p>Unlock exclusive rewards, and track your orders with ease.</p>
       </div>
 
-      <div className="flex flex-col justify-center items-center mb-28">
-        <form
-          className="flex flex-col gap-2 mb-12 w-[500px]"
-          action={formAction}
-        >
+      <div className="flex flex-col justify-center items-center mb-28 w-[500px]">
+        <form className="flex flex-col gap-2 w-full" action={formAction}>
           <CustomInput
             placeholder="Enter email address"
             id="email"
@@ -60,10 +70,15 @@ export default function LoginPage() {
           <CustomButton type="submit" disabled={pending}>
             SIGN IN
           </CustomButton>
-          <GoogleAuthButton />
         </form>
+        <div className="flex items-center gap-2 mt-6 mb-4 w-full">
+          <div className="flex-grow bg-gray-text h-px"></div>
+          <span className="text-gray-text">or</span>
+          <div className="flex-grow bg-gray-text h-px"></div>
+        </div>
+        <GoogleAuthButton />
 
-        <Link href="/" className="text-purple underline">
+        <Link href="/" className="mt-12 text-purple underline">
           Continue as a guest<span className="inline-block ml-1">→</span>
         </Link>
       </div>

@@ -56,6 +56,8 @@ export const loginSchema = z.object({
 export type LoginFormState = {
   email?: string;
   password?: string;
+  accessToken?: string;
+  refreshToken?: string;
   errors?: {
     email?: string[];
     password?: string[];

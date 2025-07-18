@@ -8,7 +8,6 @@ import {
   LoginFormState,
   loginSchema,
 } from "../lib/definitions";
-import { useAuthStore } from "@/store/auth";
 
 type ResponseType = {
   access?: string;
@@ -139,7 +138,6 @@ export async function signin(
     });
 
     const res = await response.json();
-    console.log("signin res", res);
 
     if (!response.ok) {
       let errors: any = {};
@@ -178,8 +176,6 @@ export async function signin(
         },
       };
     }
-    // save token in store
-    useAuthStore.setState({ accessToken: token, refreshToken: refresh });
     // save token in cookies
     (await cookies()).set("access_token", token, {
       httpOnly: true,
@@ -195,6 +191,13 @@ export async function signin(
       path: "/",
       maxAge: 60 * 60 * 24 * 7, // 7 days
     });
+
+    return {
+      email,
+      password,
+      accessToken: token,
+      refreshToken: refresh,
+    };
   } catch (error) {
     console.error("Error during signin:", error, error.message);
     return {
@@ -205,6 +208,4 @@ export async function signin(
       },
     };
   }
-
-  //redirect("/", RedirectType.replace);
 }
