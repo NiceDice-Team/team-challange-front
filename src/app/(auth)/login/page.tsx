@@ -8,6 +8,7 @@ import Link from "next/link";
 import { LoginFormState } from "@/app/lib/definitions";
 import { signin } from "@/app/actions/auth";
 import { GoogleAuthButton } from "@/components/auth/GoogleLogin";
+import { FacebookAuthButton } from "@/components/auth/FacebookLogin";
 import { useAuthStore } from "@/store/auth";
 import { useUserStore } from "@/store/user";
 import decodeToken from "@/lib/decodeToken";
@@ -85,7 +86,10 @@ export default function LoginPage() {
           <span className="text-gray-text">or</span>
           <div className="flex-grow bg-gray-text h-px"></div>
         </div>
-        <GoogleAuthButton />
+        <div className="flex flex-col gap-3 w-full">
+          <GoogleAuthButton />
+          <FacebookAuthButton />
+        </div>
 
         <Link href="/" className="mt-12 text-purple underline">
           Continue as a guest<span className="inline-block ml-1">→</span>
