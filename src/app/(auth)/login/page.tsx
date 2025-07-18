@@ -7,6 +7,7 @@ import { useActionState } from "react";
 import Link from "next/link";
 import { LoginFormState } from "@/app/lib/definitions";
 import { signin } from "@/app/actions/auth";
+import { GoogleAuthButton } from "@/components/auth/GoogleLogin";
 
 const INITIAL_STATE: LoginFormState = {
   errors: {},
@@ -59,6 +60,7 @@ export default function LoginPage() {
           <CustomButton type="submit" disabled={pending}>
             SIGN IN
           </CustomButton>
+          <GoogleAuthButton />
         </form>
 
         <Link href="/" className="text-purple underline">
