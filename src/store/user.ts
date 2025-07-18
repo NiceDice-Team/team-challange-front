@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export type UserData = {
   id: string;
@@ -7,7 +8,7 @@ export type UserData = {
   last_name: string;
 };
 
-type UserState = {
+export type UserState = {
   userData: UserData | null;
   isLoading: boolean;
   error: string | null;
@@ -20,38 +21,50 @@ type UserState = {
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-export const useUserStore = create<UserState>()((set, get) => ({
-  userData: null,
-  isLoading: false,
-  error: null,
-  setUserData: (userData) => set({ userData }),
-  setLoading: (isLoading) => set({ isLoading }),
-  setError: (error) => set({ error }),
-  clearUserData: () => set({ userData: null, error: null }),
+export const useUserStore = create<UserState>()(
+  persist(
+    (set, get) => ({
+      userData: null,
+      isLoading: false,
+      error: null,
+      setUserData: (userData) => set({ userData }),
+      setLoading: (isLoading) => set({ isLoading }),
+      setError: (error) => set({ error }),
+      clearUserData: () => set({ userData: null, error: null }),
 
-  fetchUserData: async (userId: string, accessToken: string) => {
-    set({ isLoading: true, error: null });
+      fetchUserData: async (userId: string, accessToken: string) => {
+        set({ isLoading: true, error: null });
 
-    try {
-      const response = await fetch(`${API_URL}api/users/${userId}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-      });
+        try {
+          const response = await fetch(`${API_URL}users/${userId}`, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json",
+            },
+          });
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch user data: ${response.status}`);
-      }
+          if (!response.ok) {
+            throw new Error(`Failed to fetch user data: ${response.status}`);
+          }
 
-      const userData = await response.json();
-      set({ userData, isLoading: false });
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to fetch user data";
-      set({ error: errorMessage, isLoading: false });
-      console.error("Error fetching user data:", error);
+          const userData = await response.json();
+          set({ userData, isLoading: false });
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error
+              ? error.message
+              : "Failed to fetch user data";
+          set({ error: errorMessage, isLoading: false });
+          console.error("Error fetching user data:", error);
+        }
+      },
+    }),
+    {
+      name: "user",
+      partialize: (state) => ({
+        userData: state.userData,
+      }),
     }
-  },
-}));
+  )
+);

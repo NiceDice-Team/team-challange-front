@@ -3,11 +3,15 @@ import LanguageSelector from "./LanguageSelector";
 import Image from "next/image";
 import Placeholder_Square from "../../../public/700x700.svg";
 import Link from "next/link";
+import { useUserStore } from "@/store/user";
+
 
 export default function Navbar() {
+  const user = useUserStore((state) => state.userData);
+
   return (
     <div className="flex flex-col">
-      <div className="flex flex-row items-center justify-between gap-2 lg:gap-0">
+      <div className="flex flex-row justify-between items-center gap-2 lg:gap-0">
         <div className="">
           <svg width="330" height="54" viewBox="0 0 330 54" fill="none">
             <rect width="157.288" height="45.627" fill="#494791" />
@@ -51,14 +55,14 @@ export default function Navbar() {
             />
           </svg>
         </div>
-        <form className="flex flex-row p-1 max-w-lg flex-1 justify-between items-center border-2 border-[#494791] ">
+        <form className="flex flex-row flex-1 justify-between items-center p-1 border-[#494791] border-2 max-w-lg">
           <input
             type="search"
             id="default-search"
-            className="ml-1 w-full outline-[#494791] outline-0"
+            className="ml-1 outline-[#494791] outline-0 w-full"
             placeholder="Search games..."
           />
-          <button className="p-1 rounded-[2px]  bg-[#494791] hover:bg-[#4a479170]" type="submit">
+          <button className="bg-[#494791] hover:bg-[#4a479170] p-1 rounded-[2px]" type="submit">
             <svg width="25" height="24" viewBox="0 0 25 24" fill="none">
               <path
                 fillRule="evenodd"
@@ -87,6 +91,7 @@ export default function Navbar() {
                 strokeWidth="1.5"
               />
             </svg>
+            <p>{user?.first_name}</p>
           </Link>
           {/* Cart Logo */}
           <div>
@@ -103,17 +108,17 @@ export default function Navbar() {
         </div>
       </div>
       {/* Pagination list */}
-      <div className=" mt-6">
-        <ul className="flex flex-row text-sm flex-wrap gap-4 justify-center   uppercase  lg:text-lg lg:gap-14">
-          <li className="  cursor-pointer ">new arrivals</li>
-          <li className="  cursor-pointer ">bestsellers</li>
-          <li className="  cursor-pointer ">board games</li>
-          <li className="  cursor-pointer  text-red-500">sale</li>
-          <li className="  cursor-pointer ">comming soon</li>
-          <li className="  cursor-pointer ">reviews</li>
-          <li className="  cursor-pointer ">about</li>
+      <div className="mt-6">
+        <ul className="flex flex-row flex-wrap justify-center gap-4 lg:gap-14 text-sm lg:text-lg uppercase">
+          <li className="cursor-pointer">new arrivals</li>
+          <li className="cursor-pointer">bestsellers</li>
+          <li className="cursor-pointer">board games</li>
+          <li className="text-red-500 cursor-pointer">sale</li>
+          <li className="cursor-pointer">comming soon</li>
+          <li className="cursor-pointer">reviews</li>
+          <li className="cursor-pointer">about</li>
         </ul>
-        <div className="h-px w-full bg-[#494791] mt-3"></div>
+        <div className="bg-[#494791] mt-3 w-full h-px"></div>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-type AuthState = {
+export type AuthState = {
   accessToken: string | null;
   refreshToken: string | null;
   userId: string | null;
