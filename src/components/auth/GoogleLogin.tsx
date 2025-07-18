@@ -3,7 +3,7 @@
 import { FC, useState } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { CustomButton } from "../shared/CustomButton";
-import GoogleIcon from "../../../public/icons/google.svg";
+import GoogleIcon from "../../../public/icons/Google.svg";
 import Image from "next/image";
 
 interface GoogleAuthButtonProps {

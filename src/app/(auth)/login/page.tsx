@@ -9,6 +9,7 @@ import { LoginFormState } from "@/app/lib/definitions";
 import { signin } from "@/app/actions/auth";
 import { GoogleAuthButton } from "@/components/auth/GoogleLogin";
 import { useAuthStore } from "@/store/auth";
+import { useUserStore } from "@/store/user";
 import decodeToken from "@/lib/decodeToken";
 import { useRouter } from "next/navigation";
 
@@ -17,7 +18,8 @@ const INITIAL_STATE: LoginFormState = {
 };
 
 export default function LoginPage() {
-  const { setTokens } = useAuthStore();
+  const { setTokens, userId } = useAuthStore();
+  const { fetchUserData } = useUserStore();
   const router = useRouter();
   const [formState, formAction, pending] = useActionState<
     LoginFormState,
@@ -28,9 +30,16 @@ export default function LoginPage() {
     if (formState?.accessToken && formState?.refreshToken) {
       setTokens(formState.accessToken, formState.refreshToken);
       decodeToken(formState.accessToken);
-      router.push("/");
     }
-  }, [formState?.accessToken, formState?.refreshToken, router, setTokens]);
+  }, [formState?.accessToken, formState?.refreshToken, setTokens]);
+
+  useEffect(() => {
+    if (userId && formState?.accessToken) {
+      fetchUserData(userId, formState.accessToken).then(() => {
+        router.push("/");
+      });
+    }
+  }, [userId, formState?.accessToken, fetchUserData, router]);
 
   return (
     <div className="flex flex-col items-center mx-auto mt-20">
