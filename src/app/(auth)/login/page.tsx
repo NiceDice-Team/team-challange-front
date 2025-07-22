@@ -5,7 +5,7 @@ import { CustomInput } from "@/components/shared/CustomInput";
 import { PasswordInput } from "@/components/shared/PasswordInput";
 import { useActionState, useEffect } from "react";
 import Link from "next/link";
-import { LoginFormState } from "@/app/lib/definitions";
+import { LoginFormState } from "@/lib/definitions";
 import { signin } from "@/app/actions/auth";
 import { GoogleAuthButton } from "@/components/auth/GoogleLogin";
 import { FacebookAuthButton } from "@/components/auth/FacebookLogin";

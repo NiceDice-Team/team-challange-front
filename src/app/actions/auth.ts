@@ -7,7 +7,7 @@ import {
   SignupFormSchema,
   LoginFormState,
   loginSchema,
-} from "../lib/definitions";
+} from "../../lib/definitions";
 
 type ResponseType = {
   access?: string;
