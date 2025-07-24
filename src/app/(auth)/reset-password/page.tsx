@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { CustomButton } from "@/components/shared/CustomButton";
 import Link from "next/link";
 import { fetchAPI } from "@/services/api";
@@ -8,7 +8,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { PasswordInput } from "@/components/shared/PasswordInput";
 import { resetPasswordSchema } from "@/lib/definitions";
 
-export default function ResetPasswordPage() {
+function ResetPasswordForm() {
   const [formData, setFormData] = useState({
     password: "",
     confirmPassword: "",
@@ -136,5 +136,29 @@ export default function ResetPasswordPage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+function LoadingFallback() {
+  return (
+    <div className="flex flex-col items-center mx-auto mt-20 mb-32">
+      <div className="animate-pulse">
+        <div className="bg-gray-200 mb-9 rounded w-96 h-12"></div>
+        <div className="bg-gray-200 mb-12 rounded w-80 h-6"></div>
+        <div className="space-y-6 w-[504px]">
+          <div className="bg-gray-200 rounded h-12"></div>
+          <div className="bg-gray-200 rounded h-12"></div>
+          <div className="bg-gray-200 rounded h-12"></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <ResetPasswordForm />
+    </Suspense>
   );
 }
