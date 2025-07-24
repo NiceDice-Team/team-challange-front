@@ -7,14 +7,15 @@ import Link from "next/link";
 import { fetchAPI } from "@/services/api";
 import { z } from "zod";
 import { forgotPasswordSchema } from "@/lib/definitions";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
-
+  const router = useRouter();
+  
   const validateEmail = (email: string) => {
     try {
       forgotPasswordSchema.parse({ email });
@@ -32,9 +33,7 @@ export default function ForgotPasswordPage() {
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newEmail = e.target.value;
     setEmail(newEmail);
-    if (validationErrors.length > 0) {
-      validateEmail(newEmail);
-    }
+    validateEmail(newEmail);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -42,10 +41,8 @@ export default function ForgotPasswordPage() {
     if (!validateEmail(email)) {
       return;
     }
-
     setIsSubmitting(true);
     setError("");
-
     try {
       await fetchAPI("users/forgot-password/", {
         method: "POST",
@@ -53,10 +50,10 @@ export default function ForgotPasswordPage() {
           email: email,
         },
       });
-      redirect("/forgot-password/success");
+      router.push("/forgot-password/success");
     } catch (error) {
       console.error("Error sending reset email:", error);
-      setError("Произошла ошибка при отправке email. Попробуйте еще раз.");
+      setError("Error sending reset email. Try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -80,7 +77,7 @@ export default function ForgotPasswordPage() {
           name="email"
           onChange={handleEmailChange}
           disabled={isSubmitting}
-          error={validationErrors}
+          error={validationErrors.length > 0 ? validationErrors : undefined}
         />
         {error && (
           <div className="text-red-600 text-sm text-center">{error}</div>
@@ -88,7 +85,9 @@ export default function ForgotPasswordPage() {
         <CustomButton
           type="submit"
           className="w-full"
-          disabled={isSubmitting}
+          disabled={
+            isSubmitting || validationErrors.length > 0 || !email.trim()
+          }
           loading={isSubmitting}
         >
           {isSubmitting ? "SUBMITINNG..." : "SUBMIT"}
