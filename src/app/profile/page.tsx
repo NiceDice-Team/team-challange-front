@@ -7,8 +7,8 @@ export default function ProfilePage() {
   const user = useUserStore((state) => state.userData);
 
   return (
-    <div className="bg-gray-50 py-8 min-h-screen">
-      <p>{user?.first_name}</p>
+    <div className="py-8 min-h-screen">
+      <div className="text-title uppercase">Welcome, {user?.first_name}!</div>
     </div>
   );
 }
