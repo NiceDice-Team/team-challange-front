@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState } from "react";
 import { SessionProvider } from 'next-auth/react';
+import { AuthProvider } from "@/components/providers/AuthProvider";
 
 export default function Providers({ children }) {
   // This ensures that data is not shared between different users and requests
@@ -23,8 +24,10 @@ export default function Providers({ children }) {
   return (
     <SessionProvider>
       <QueryClientProvider client={queryClient}>
-        {children}
-        <ReactQueryDevtools initialIsOpen={false} />
+        <AuthProvider>
+          {children}
+          <ReactQueryDevtools initialIsOpen={false} />
+        </AuthProvider>
       </QueryClientProvider>
     </SessionProvider>
   );

@@ -15,7 +15,7 @@ export type UserState = {
   setUserData: (userData: UserData) => void;
   setLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
-  clearUserData: () => void;
+  clearAllUserData: () => void;
   fetchUserData: (userId: string, accessToken: string) => Promise<void>;
 };
 
@@ -23,14 +23,18 @@ const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export const useUserStore = create<UserState>()(
   persist(
-    (set, get) => ({
+    (set, get, api) => ({
       userData: null,
       isLoading: false,
       error: null,
       setUserData: (userData) => set({ userData }),
       setLoading: (isLoading) => set({ isLoading }),
       setError: (error) => set({ error }),
-      clearUserData: () => set({ userData: null, error: null }),
+
+      clearAllUserData: () => {
+        set({ userData: null, error: null, isLoading: false });
+        api.persist.clearStorage();
+      },
 
       fetchUserData: async (userId: string, accessToken: string) => {
         set({ isLoading: true, error: null });

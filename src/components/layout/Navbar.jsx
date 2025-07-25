@@ -39,7 +39,10 @@ export default function Navbar() {
           <LanguageSelector />
 
           {/* Profile Logo */}
-          <Link href="/login" className="cursor-pointer">
+          <Link 
+            href={user ? "/profile" : "/login"} 
+            className="flex items-center gap-2 cursor-pointer"
+          >
             <svg width="18" height="22" viewBox="0 0 18 22" fill="none">
               <path
                 d="M9 9C11.2091 9 13 7.20914 13 5C13 2.79086 11.2091 1 9 1C6.79086 1 5 2.79086 5 5C5 7.20914 6.79086 9 9 9Z"
@@ -52,7 +55,7 @@ export default function Navbar() {
                 strokeWidth="1.5"
               />
             </svg>
-            <p>{user?.first_name}</p>
+            <p>{user?.first_name || "Profile"}</p>
           </Link>
           {/* Cart Logo */}
           <div>
