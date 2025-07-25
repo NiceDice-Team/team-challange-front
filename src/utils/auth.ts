@@ -48,3 +48,24 @@ export function syncTokensFromCookies() {
     userId,
   };
 }
+
+/**
+ * Get url from query params
+ */
+export function getReturnUrl(): string | null {
+  if (typeof window === "undefined") return null;
+
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get("returnUrl");
+}
+
+/**
+ * Clear returnUrl from url
+ */
+export function clearReturnUrl(): void {
+  if (typeof window === "undefined") return;
+
+  const url = new URL(window.location.href);
+  url.searchParams.delete("returnUrl");
+  window.history.replaceState({}, "", url.toString());
+}
