@@ -64,3 +64,11 @@ export type LoginFormState = {
     serverError?: string;
   };
 };
+
+export const forgotPasswordSchema = z.object({
+  email: z
+    .string()
+    .email("Invalid email")
+    .min(1, "Email required")
+    .max(255, "Email too long"),
+});

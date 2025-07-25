@@ -14,6 +14,8 @@ type InputPros = {
   error?: string[];
   id?: string;
   name?: string;
+  disabled?: boolean;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 export const CustomInput: React.FC<InputPros> = ({
@@ -25,10 +27,11 @@ export const CustomInput: React.FC<InputPros> = ({
   error,
   id,
   name,
+  disabled,
   ...props
 }) => {
   return (
-    <div className="w-full flex flex-col gap-2">
+    <div className="flex flex-col gap-2 w-full">
       {label && (
         <label
           className={cn("uppercase text-base font-normal", labelStyle)}
@@ -47,6 +50,7 @@ export const CustomInput: React.FC<InputPros> = ({
           placeholder={placeholder}
           id={id}
           name={name}
+          disabled={disabled}
           className={cn(
             "w-full h-12 md:flex-1 px-4 py-padding-12 bg-white text-purple border-black rounded-none outline-none  placeholder:text-placeholder",
             "focus:outline-2 focus:outline-purple/40  focus-visible:ring-2 focus-visible:ring-purple/40 focus-visible:shadow-none ",

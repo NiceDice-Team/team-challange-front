@@ -41,7 +41,7 @@ export default function Navbar() {
           {/* Profile Logo */}
           <Link 
             href={user ? "/profile" : "/login"} 
-            className="flex items-center gap-2 cursor-pointer"
+            className="flex flex-col items-center gap-1 cursor-pointer"
           >
             <svg width="18" height="22" viewBox="0 0 18 22" fill="none">
               <path
@@ -55,7 +55,7 @@ export default function Navbar() {
                 strokeWidth="1.5"
               />
             </svg>
-            <p>{user?.first_name || "Profile"}</p>
+            <p>{user?.first_name || "Sign in"}</p>
           </Link>
           {/* Cart Logo */}
           <div>
