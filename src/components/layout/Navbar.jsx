@@ -1,7 +1,5 @@
 "use client";
 import LanguageSelector from "./LanguageSelector";
-import Image from "next/image";
-import logo from "../../../public/icons/logo.svg";
 import Link from "next/link";
 import { useUserStore } from "@/store/user";
 import { LogoIcon, SearchIcon, ProfileIcon, CartIcon } from "@/svgs/icons";
