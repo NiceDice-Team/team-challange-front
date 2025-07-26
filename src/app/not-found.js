@@ -1,13 +1,14 @@
 "use client";
 import Link from "next/link";
-import Dice from "react-dice-roll";
-import { useRef, useState } from "react";
+import { useState } from "react";
+import RollingDice from "../utils/dice"; // Import the dice component
 
 // 404 Not Found Page
 export default function NotFound() {
-  const diceRef = useRef(null);
+  const [diceValue, setDiceValue] = useState(4);
   const [joke, setJoke] = useState("Roll the dice if you ready!");
   const [isLoading, setIsLoading] = useState(false);
+  const [isRolling, setIsRolling] = useState(false);
 
   const fetchJoke = async () => {
     try {
@@ -26,15 +27,21 @@ export default function NotFound() {
   };
 
   const handleRollDice = async () => {
-    if (diceRef.current) {
-      diceRef.current.rollDice();
-      setIsLoading(true);
+    setIsRolling(true);
+    setIsLoading(true);
 
-      setTimeout(async () => {
-        await fetchJoke();
-        setIsLoading(false);
-      }, 1200);
-    }
+    // Simulate rolling animation
+    setTimeout(() => {
+      const newValue = Math.floor(Math.random() * 6) + 1;
+      setDiceValue(newValue);
+      setIsRolling(false);
+    }, 1200);
+
+    // Fetch joke after animation
+    setTimeout(async () => {
+      await fetchJoke();
+      setIsLoading(false);
+    }, 1200);
   };
 
   return (
@@ -42,22 +49,23 @@ export default function NotFound() {
       <h2 className="uppercase text-6xl sm:text-8xl md:text-9xl lg:text-[156px] font-bold mt-8 md:mt-0">404</h2>
 
       <div className="my-4">
-        <Dice
-          ref={diceRef}
-          onRoll={(value) => console.log(`Rolled: ${value}`)}
-          size={80}
-          rollingTime={1500}
-          triggers={["click"]}
-          defaultValue={4}
-        />
+        <RollingDice value={diceValue} isRolling={isRolling} onClick={handleRollDice} />
       </div>
 
       <div className="w-full max-w-4xl p-8 md:px-16 lg:px-[171px] py-8 md:py-10 flex flex-col items-center gap-6 md:gap-10 bg-white/30 shadow-xl ">
         <h3 className="font-bold text-3xl md:text-4xl lg:text-5xl text-center">Game over!</h3>
 
-        <p className="text-base md:text-xl lg:text-2xl text-center min-h-[3rem] flex items-center">
-          {isLoading ? <span className="animate-pulse">Loading joke...</span> : joke}
-        </p>
+        <div className="relative text-base md:text-xl lg:text-2xl text-center min-h-[4rem] md:min-h-[6rem] lg:min-h-[8rem] flex items-center justify-center px-4">
+          <p className={`transition-all duration-500 ${isLoading ? "opacity-30 blur-sm" : "opacity-100 blur-0"}`}>
+            {joke}
+          </p>
+          {/* Loading spinner */}
+          {isLoading && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="animate-pulse text-base md:text-xl lg:text-2xl">Rolling for a new joke...</span>
+            </div>
+          )}
+        </div>
 
         <p className="text-pretty text-base md:text-xl lg:text-xl text-center">
           It looks like you&apos;ve rolled off the board! The page you&apos;re looking for doesn&apos;t exist in our
