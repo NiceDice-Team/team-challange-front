@@ -1,30 +1,35 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { signup } from "@/app/actions/auth";
 import { CustomInput } from "@/components/shared/CustomInput";
 import CustomCheckbox from "@/components/shared/CustomCheckbox";
 import Image from "next/image";
 import ArrowNext from "../../../../public/icons/ArrowNext.svg";
-import { FormState } from "@/app/lib/definitions";
+import { FormState } from "@/lib/definitions";
+import { CustomButton } from "@/components/shared/CustomButton";
+import { API_URL } from "@/services/api";
+import { PasswordInput } from "@/components/shared/PasswordInput";
 
 export default function RegisterPage() {
+  const [isChecked, setIsChecked] = useState(true);
   const [state, action, pending] = useActionState<FormState, FormData>(signup, {
     errors: {},
   });
+
   return (
     <div className="mx-auto mt-20">
-      <h1 className="text-title font-normal text-center mb-9 uppercase">
+      <h1 className="mb-9 font-normal text-title text-center uppercase">
         Create account
       </h1>
-      <div className="text-center text-base mb-12">
+      <div className="mb-12 text-base text-center">
         <p>Join our community of board game enthusiasts! 🎲</p>
         <p>Fill in the details below to get started</p>
       </div>
 
-      <div className="flex flex-col items-center justify-center mb-28">
-        <form className="flex flex-col gap-4 w-[500px] mb-12" action={action}>
+      <div className="flex flex-col justify-center items-center mb-28">
+        <form className="flex flex-col gap-4 mb-12 w-[500px]" action={action}>
           <CustomInput
             placeholder="Enter your name"
             id="firstname"
@@ -46,14 +51,14 @@ export default function RegisterPage() {
             name="email"
             error={state?.errors?.email}
           />
-          <CustomInput
+          <PasswordInput
             placeholder="Enter password"
             id="password"
             label="password"
             name="password"
             error={state?.errors?.password}
           />
-          <CustomInput
+          <PasswordInput
             placeholder="Enter password"
             id="confirmPassword"
             label="Confirm Password"
@@ -66,6 +71,8 @@ export default function RegisterPage() {
           <div className="flex flex-col gap-2">
             <CustomCheckbox
               id="privacy"
+              checked={isChecked}
+              onCheckedChange={() => setIsChecked((prev) => !prev)}
               label={
                 <p>
                   I agree to the{" "}
@@ -85,18 +92,14 @@ export default function RegisterPage() {
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={pending}
-            className="w-full bg-purple text-white p-4 px-8 text-base uppercase hover:bg-gray-100 transition-all duration-150"
-          >
+          <CustomButton type="submit" disabled={pending || !isChecked}>
             REGISTER
-          </button>
+          </CustomButton>
         </form>
 
         <p className="text-purple">Already have an account?</p>
         <Link href="/login" className="flex gap-1">
-          <span className="underline text-purple">Log in here</span>
+          <span className="text-purple underline">Log in here</span>
           <Image src={ArrowNext} alt="arrow" />
         </Link>
       </div>
