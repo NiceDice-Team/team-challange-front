@@ -45,5 +45,10 @@
     "tailwindcss": "^4",
     "tw-animate-css": "^1.3.4",
     "typescript": "^5.8.3"
+  },
+  "overrides": {
+    "react-dice-roll": {
+      "react": "$react"
+    }
   }
 }
