@@ -21,6 +21,7 @@
   --color-gray: #d9d9d9;
   --color-gray-2: #717171;
   --color-placeholder: #a3a3a3;
+  --color-gray-text: #717171;
   --color-green: #3a9b25;
   --color-orange: #ff7c40;
   --color-very-light-gray: #fafafa;
@@ -64,6 +65,9 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  /* shadow */
+  --shadow-header: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
 }
 
 @layer utilities {
@@ -182,4 +186,11 @@
     background: linear-gradient(90deg, #494791 7.69%, #b23b30 99.52%),
       linear-gradient(106.44deg, rgba(104, 102, 167, 0.9) -1.37%, #494791 48.83%, rgba(125, 123, 184, 0.9) 95.22%);
   }
+
+input:-internal-autofill-selected {
+  background-color: white;
+}
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 30px white inset !important;
+  box-shadow: 0 0 0 30px white inset !important;
 }
