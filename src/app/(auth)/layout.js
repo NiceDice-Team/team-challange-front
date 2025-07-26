@@ -4,7 +4,9 @@ import FeatureSection from "../../components/home/FeaturesSection.jsx";
 import BlogSection from "../../components/home/BlogSection.jsx";
 import FeatureSectionBottom from "../../components/home/FeatureSectionBottom.jsx";
 import PartnersScroller from "../../components/home/PartnersScroller.jsx";
-import SubscribeSection from "../../components/home/SubscribeSection.tsx";
+import SubscribeSection from "../../components/home/SubscribeSection.jsx";
+
+
 
 export default function AuthLayout({ children }) {
   return (

@@ -6,20 +6,25 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-noto-sans-jp);
   --font-mono: var(--font-geist-mono);
 
   --color-purple: #494791;
   --color-light-purple: #c6c6e2;
+  --color-light-purple-2: #a4a3c8;
+  --color-light-purple-3: #f2f1ff;
   --color-red: #ce2f2f;
   --color-red-price: #c41313;
+  --color-red-stock: #ec3535;
   --color-error: #e30000;
   --color-error-border: #ffe4e8;
   --color-gray: #d9d9d9;
+  --color-gray-2: #717171;
   --color-placeholder: #a3a3a3;
   --color-gray-text: #717171;
   --color-green: #3a9b25;
   --color-orange: #ff7c40;
+  --color-very-light-gray: #fafafa;
 
   /* font size */
   --text-title: 40px;
@@ -167,6 +172,20 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .bg-not-found-gradient {
+    background: linear-gradient(90deg, #494791 7.69%, #b23b30 99.52%),
+      linear-gradient(106.44deg, rgba(104, 102, 167, 0.9) -1.37%, #494791 48.83%, rgba(125, 123, 184, 0.9) 95.22%);
+  }
 
 input:-internal-autofill-selected {
   background-color: white;
