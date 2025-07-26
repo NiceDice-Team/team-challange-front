@@ -70,19 +70,11 @@
   --shadow-header: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
 }
 
-@layer utilities {
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-}
 .group:hover .animate-animationCarousel,
 .group:hover .animate-infiniteScroll {
   animation-play-state: paused;
 }
+
 @keyframes infiniteScroll {
   0% {
     transform: translateX(0);
@@ -91,6 +83,7 @@
     transform: translateX(-100%);
   }
 }
+
 .animate-infiniteScroll {
   animation: infiniteScroll 15s linear infinite;
 }
@@ -186,7 +179,9 @@
     background: linear-gradient(90deg, #494791 7.69%, #b23b30 99.52%),
       linear-gradient(106.44deg, rgba(104, 102, 167, 0.9) -1.37%, #494791 48.83%, rgba(125, 123, 184, 0.9) 95.22%);
   }
+}
 
+/* Autofill styles - outside of @layer utilities */
 input:-internal-autofill-selected {
   background-color: white;
 }
