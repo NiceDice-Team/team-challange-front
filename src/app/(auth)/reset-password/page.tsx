@@ -46,7 +46,6 @@ function ResetPasswordForm() {
       const newFormData = { ...formData, [field]: e.target.value };
       setFormData(newFormData);
 
-      // Валидируем только если есть ошибки
       if (Object.keys(validationErrors).length > 0) {
         validateForm();
       }
@@ -73,6 +72,7 @@ function ResetPasswordForm() {
       //   body: { token, password: formData.password },
       // });
       // router.push("/reset-password/success");
+      router.push("/login?mode=back");
     } catch (error) {
       console.error("Error resetting password:", error);
       setError("Error resetting password. Try again.");

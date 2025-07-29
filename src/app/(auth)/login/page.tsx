@@ -12,7 +12,7 @@ import { FacebookAuthButton } from "@/components/auth/FacebookLogin";
 import { useAuthStore } from "@/store/auth";
 import { useUserStore } from "@/store/user";
 import decodeToken from "@/lib/decodeToken";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const INITIAL_STATE: LoginFormState = {
   errors: {},
@@ -22,6 +22,8 @@ export default function LoginPage() {
   const { setTokens, userId } = useAuthStore();
   const { fetchUserData } = useUserStore();
   const router = useRouter();
+  const params = useSearchParams();
+  const mode = params.get("mode");
   const [formState, formAction, pending] = useActionState<
     LoginFormState,
     FormData
@@ -45,15 +47,28 @@ export default function LoginPage() {
   return (
     <div className="flex flex-col items-center mx-auto mt-20">
       <h1 className="mb-9 font-normal text-4xl text-center uppercase">
-        Log in here or{" "}
-        <Link href="/register" className="underline">
-          create account
-        </Link>
+        {mode === "back" ? (
+          "👋 Welcome back!"
+        ) : (
+          <div className="flex items-center gap-2">
+            Log in here or{" "}
+            <Link href="/register" className="underline">
+              create account
+            </Link>
+          </div>
+        )}
       </h1>
-      <div className="mb-12 text-base text-center">
-        <p>🎯 Don&apos;t forget to log in!</p>
-        <p>Unlock exclusive rewards, and track your orders with ease.</p>
-      </div>
+      {mode === "back" ? (
+        <div className="mb-12 text-base text-center">
+          <p>🎉 Success! Your password has been changed.</p>
+          <p>You can now log in and continue your adventure</p>
+        </div>
+      ) : (
+        <div className="mb-12 text-base text-center">
+          <p>🎯 Don&apos;t forget to log in!</p>
+          <p>Unlock exclusive rewards, and track your orders with ease.</p>
+        </div>
+      )}
 
       <div className="flex flex-col justify-center items-center mb-28 w-[500px]">
         <form className="flex flex-col gap-2 w-full" action={formAction}>
