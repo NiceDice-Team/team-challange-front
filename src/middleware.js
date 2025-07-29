@@ -3,8 +3,18 @@ import { NextResponse } from "next/server";
 export default function middleware(request) {
   const { pathname } = request.nextUrl;
 
-  // List of protected routes
+  // List of protected and public routes
   const protectedRoutes = ["/profile"];
+  const publicRoutes = [
+    "/login",
+    "/register",
+    "/reset-password",
+    "/confirm-signup",
+  ];
+
+  const isPublicRoute = publicRoutes.some((route) =>
+    pathname.startsWith(route)
+  );
 
   const isProtectedRoute = protectedRoutes.some((route) =>
     pathname.startsWith(route)
