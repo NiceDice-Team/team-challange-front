@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 export default function middleware(request) {
   const { pathname } = request.nextUrl;
 
-  // List of protected and public routes
   const protectedRoutes = ["/profile"];
   const publicRoutes = [
     "/login",
@@ -21,7 +20,7 @@ export default function middleware(request) {
   );
 
   if (isProtectedRoute) {
-    const accessToken = request.cookies.get("accessToken")?.value;
+    const accessToken = request.cookies.get("access_token")?.value;
 
     if (!accessToken) {
       const loginUrl = new URL("/login", request.url);
