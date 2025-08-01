@@ -3,7 +3,6 @@ import LanguageSelector from "./LanguageSelector";
 import Link from "next/link";
 import { useUserStore } from "@/store/user";
 import { LogoIcon, SearchIcon, ProfileIcon, CartIcon } from "@/svgs/icons";
-import { LogoutButton } from "../auth/LogoutButton";
 import { useEffect } from "react";
 import { getTokens } from "@/lib/tokenManager";
 import decodeToken from "@/lib/decodeToken";

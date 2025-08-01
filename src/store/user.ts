@@ -3,7 +3,7 @@ import { persist } from "zustand/middleware";
 import axiosInstance from "@/lib/axiosInstance";
 
 export type UserData = {
-  id: string;
+  id?: string;
   email: string;
   first_name: string;
   last_name: string;
