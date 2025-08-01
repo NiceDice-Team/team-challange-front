@@ -11,8 +11,9 @@ import { FormState } from "@/lib/definitions";
 import { CustomButton } from "@/components/shared/CustomButton";
 import { API_URL } from "@/services/api";
 import { PasswordInput } from "@/components/shared/PasswordInput";
+import { PublicRoute } from "@/components/auth/RouteGuards";
 
-export default function RegisterPage() {
+function RegisterPageContent() {
   const [isChecked, setIsChecked] = useState(true);
   const [state, action, pending] = useActionState<FormState, FormData>(signup, {
     errors: {},
@@ -104,5 +105,13 @@ export default function RegisterPage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <PublicRoute>
+      <RegisterPageContent />
+    </PublicRoute>
   );
 }

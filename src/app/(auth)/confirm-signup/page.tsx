@@ -1,15 +1,16 @@
 import Link from "next/link";
 import ArrowNext from "../../../../public/icons/ArrowNext.svg";
 import Image from "next/image";
+import { PublicRoute } from "@/components/auth/RouteGuards";
 
-export default function CofirmSignUp() {
+function CofirmSignUpContent() {
   return (
-    <div className="flex flex-col items-center mb-65 mt-23">
-      <h1 className="text-title mb-9 uppercase">Thank you for registering!</h1>
+    <div className="flex flex-col items-center mt-23 mb-65">
+      <h1 className="mb-9 text-title uppercase">Thank you for registering!</h1>
       <p className="text-base">
         A confirmation email has been sent to your inbox.
       </p>
-      <p className="text-base mb-12">
+      <p className="mb-12 text-base">
         Please click the link in that email to activate your account
       </p>
       <Link href="/catalog" className="flex gap-1">
@@ -17,5 +18,13 @@ export default function CofirmSignUp() {
         <Image src={ArrowNext} alt="arrow" />
       </Link>
     </div>
+  );
+}
+
+export default function CofirmSignUp() {
+  return (
+    <PublicRoute>
+      <CofirmSignUpContent />
+    </PublicRoute>
   );
 }

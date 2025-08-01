@@ -18,7 +18,9 @@ const INITIAL_STATE: LoginFormState = {
   errors: {},
 };
 
-export default function LoginPage() {
+import { PublicRoute } from "@/components/auth/RouteGuards";
+
+function LoginPageContent() {
   const { setTokens, userId } = useAuthStore();
   const { fetchUserData } = useUserStore();
   const router = useRouter();
@@ -111,5 +113,13 @@ export default function LoginPage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <PublicRoute>
+      <LoginPageContent />
+    </PublicRoute>
   );
 }
