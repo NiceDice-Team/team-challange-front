@@ -8,8 +8,9 @@ import { fetchAPI } from "@/services/api";
 import { z } from "zod";
 import { forgotPasswordSchema } from "@/lib/definitions";
 import { useRouter } from "next/navigation";
+import { PublicRoute } from "@/components/auth/RouteGuards";
 
-export default function ForgotPasswordPage() {
+function ForgotPasswordPageContent() {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -101,5 +102,13 @@ export default function ForgotPasswordPage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function ForgotPasswordPage() {
+  return (
+    <PublicRoute>
+      <ForgotPasswordPageContent />
+    </PublicRoute>
   );
 }
