@@ -3,7 +3,7 @@
 import { CustomButton } from "@/components/shared/CustomButton";
 import { CustomInput } from "@/components/shared/CustomInput";
 import { PasswordInput } from "@/components/shared/PasswordInput";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import Link from "next/link";
 import { LoginFormState } from "@/lib/definitions";
 import { signin } from "@/app/actions/auth";
@@ -16,14 +16,27 @@ const INITIAL_STATE: LoginFormState = {
 };
 
 import { PublicRoute } from "@/components/auth/RouteGuards";
+import { useRouter } from "next/navigation";
 
 function LoginPageContent() {
   const params = useSearchParams();
+  const router = useRouter();
   const mode = params.get("mode");
   const [formState, formAction, pending] = useActionState<
     LoginFormState,
     FormData
   >(signin, INITIAL_STATE);
+
+  useEffect(() => {
+    if (
+      !pending &&
+      formState.accessToken &&
+      formState.refreshToken &&
+      Object.keys(formState.errors || {}).length === 0
+    ) {
+      router.push("/");
+    }
+  }, [formState, pending, router]);
 
   return (
     <div className="flex flex-col items-center mx-auto mt-20">

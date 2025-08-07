@@ -34,22 +34,24 @@ export function ProtectedRoute({ children }) {
 export function PublicRoute({ children }) {
   const router = useRouter();
 
-  useEffect(() => {
+ useEffect(() => {
     const checkAuth = () => {
-      if (isAuthenticated()) {
-        const urlParams = new URLSearchParams(window.location.search);
-        const returnUrl = urlParams.get('returnUrl');
-        
-        if (returnUrl) {
-          router.push(decodeURIComponent(returnUrl));
-        } else {
-          router.push('/');
-        }
+    if (isAuthenticated()) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const returnUrl = urlParams.get('returnUrl');
+      
+      if (returnUrl) {
+        router.push(decodeURIComponent(returnUrl));
+      } else {
+        router.push('/');
       }
-    };
+    }
+  };
 
-    checkAuth();
-  }, [router]);
+  const interval = setInterval(checkAuth, 1000);
+  
+  return () => clearInterval(interval);
+}, [router]);
 
   if (isAuthenticated()) {
     return (

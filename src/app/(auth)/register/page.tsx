@@ -9,7 +9,6 @@ import Image from "next/image";
 import ArrowNext from "../../../../public/icons/ArrowNext.svg";
 import { FormState } from "@/lib/definitions";
 import { CustomButton } from "@/components/shared/CustomButton";
-import { API_URL } from "@/services/api";
 import { PasswordInput } from "@/components/shared/PasswordInput";
 import { PublicRoute } from "@/components/auth/RouteGuards";
 
