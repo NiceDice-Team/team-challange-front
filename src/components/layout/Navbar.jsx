@@ -3,10 +3,29 @@ import LanguageSelector from "./LanguageSelector";
 import Link from "next/link";
 import { useUserStore } from "@/store/user";
 import { LogoIcon, SearchIcon, ProfileIcon, CartIcon } from "@/svgs/icons";
+import { LogoutButton } from "../auth/LogoutButton";
+import { useEffect } from "react";
+import { getTokens } from "@/lib/tokenManager";
+import decodeToken from "@/lib/decodeToken";
+import { useAuthStore } from "@/store/auth";
 
 export default function Navbar() {
-  const user = useUserStore((state) => state.userData);
-  
+  const {userData, fetchUserData} = useUserStore((state) => state);
+  const {userId} = useAuthStore((state) => state);
+
+   useEffect(() => {
+    if (!userData) {
+      if(userId) {
+         fetchUserData(userId)
+         return
+      } else {
+      const {refreshToken} = getTokens()
+        if(refreshToken) {
+          decodeToken(refreshToken);
+        }
+      }
+    }
+  }, [userId, userData, fetchUserData]);
 
   return (
     <div className="flex flex-col">
@@ -29,9 +48,9 @@ export default function Navbar() {
           {/* Language Selector */}
           <LanguageSelector />
           {/* Profile Logo */}
-          <Link href={user ? "/profile" : "/login"} className="flex flex-col items-center gap-1 cursor-pointer">
+          <Link href={userData ? "/profile" : "/login"} className="flex flex-col items-center gap-1 cursor-pointer">
             <img src={ProfileIcon} alt="Profile" className="w-auto h-6" />
-            <p>{user?.first_name || "Sign in"}</p>
+            <p>{userData?.first_name || "Sign in"}</p>
           </Link>
           {/* Cart Logo */}
           <div>

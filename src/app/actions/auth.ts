@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { redirect, RedirectType } from "next/navigation";
+import { jwtDecode } from "jwt-decode";
 import {
   FormState,
   SignupFormSchema,
@@ -178,16 +179,18 @@ export async function signin(
     }
     // save token in cookies
     (await cookies()).set("access_token", token, {
-      httpOnly: true,
-      secure: true,
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
       path: "/",
       maxAge: 60 * 15, // 15 minutes
     });
 
     // save refreshToken in cookies
     (await cookies()).set("refresh_token", refresh, {
-      httpOnly: true,
-      secure: true,
+      httpOnly: false, 
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
       path: "/",
       maxAge: 60 * 60 * 24 * 7, // 7 days
     });

@@ -3,16 +3,13 @@
 import { CustomButton } from "@/components/shared/CustomButton";
 import { CustomInput } from "@/components/shared/CustomInput";
 import { PasswordInput } from "@/components/shared/PasswordInput";
-import { useActionState, useEffect } from "react";
+import { useActionState } from "react";
 import Link from "next/link";
 import { LoginFormState } from "@/lib/definitions";
 import { signin } from "@/app/actions/auth";
 import { GoogleAuthButton } from "@/components/auth/GoogleLogin";
 import { FacebookAuthButton } from "@/components/auth/FacebookLogin";
-import { useAuthStore } from "@/store/auth";
-import { useUserStore } from "@/store/user";
-import decodeToken from "@/lib/decodeToken";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 const INITIAL_STATE: LoginFormState = {
   errors: {},
@@ -21,30 +18,12 @@ const INITIAL_STATE: LoginFormState = {
 import { PublicRoute } from "@/components/auth/RouteGuards";
 
 function LoginPageContent() {
-  const { setTokens, userId } = useAuthStore();
-  const { fetchUserData } = useUserStore();
-  const router = useRouter();
   const params = useSearchParams();
   const mode = params.get("mode");
   const [formState, formAction, pending] = useActionState<
     LoginFormState,
     FormData
   >(signin, INITIAL_STATE);
-
-  useEffect(() => {
-    if (formState?.accessToken && formState?.refreshToken) {
-      setTokens(formState.accessToken, formState.refreshToken);
-      decodeToken(formState.accessToken);
-    }
-  }, [formState?.accessToken, formState?.refreshToken, setTokens]);
-
-  useEffect(() => {
-    if (userId && formState?.accessToken) {
-      fetchUserData(userId, formState.accessToken).then(() => {
-        router.push("/");
-      });
-    }
-  }, [userId, formState?.accessToken, fetchUserData, router]);
 
   return (
     <div className="flex flex-col items-center mx-auto mt-20">

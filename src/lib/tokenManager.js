@@ -4,7 +4,7 @@ import { getCookie, deleteCookie } from "@/utils/auth";
 /**
  * Получает токены из кукисов
  */
-function getTokens() {
+export function getTokens() {
   const accessToken = getCookie("access_token");
   const refreshToken = getCookie("refresh_token");
 
