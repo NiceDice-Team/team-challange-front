@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState } from "react";
 import { SessionProvider } from 'next-auth/react';
 import { AuthProvider } from "@/components/providers/AuthProvider";
+import { CartProvider } from "@/context/CartContext";
 
 export default function Providers({ children }) {
   // This ensures that data is not shared between different users and requests
@@ -25,8 +26,10 @@ export default function Providers({ children }) {
     <SessionProvider>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          {children}
-          <ReactQueryDevtools initialIsOpen={false} />
+          <CartProvider>
+            {children}
+            <ReactQueryDevtools initialIsOpen={false} />
+          </CartProvider>
         </AuthProvider>
       </QueryClientProvider>
     </SessionProvider>

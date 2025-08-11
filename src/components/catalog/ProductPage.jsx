@@ -5,6 +5,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { ProductAccordion } from "./ProductPageAccordion";
 import { CustomBreadcrumb } from "../shared/CustomBreadcrumb";
+import { useAddToCart } from "@/context/CartContext";
 
 // Import test images
 import testImg1 from "../../../public/DynamicProduct/product_id_page_test_img_1.jpg";
@@ -16,6 +17,8 @@ import testImg5 from "../../../public/DynamicProduct/product_id_page_test_img_5.
 export default function ProductPage({ params }) {
   const [quantity, setQuantity] = useState(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const { addToCart } = useAddToCart();
 
   // Test images array
   const testImages = [testImg1, testImg2, testImg3, testImg4, testImg5];
@@ -92,9 +95,27 @@ export default function ProductPage({ params }) {
     );
   }
 
-  const handleAddToCart = () => {
-    // Add to cart logic here
-    console.log(`Adding ${quantity} of product ${product.id} to cart`);
+  const handleAddToCart = async () => {
+    if (isAddingToCart) return; // Prevent multiple rapid clicks
+    
+    setIsAddingToCart(true);
+    try {
+      const result = await addToCart(product, quantity);
+      
+      if (result.success) {
+        console.log(`✅ Added ${quantity} of "${product.name}" to cart!`);
+        // Optional: Show success feedback or reset quantity to 1
+        // setQuantity(1);
+      } else {
+        alert(`❌ ${result.error}`);
+      }
+    } catch (error) {
+      console.error('Failed to add to cart:', error);
+      alert('❌ Failed to add product to cart. Please try again.');
+    } finally {
+      // Re-enable button after a short delay to prevent spam clicking
+      setTimeout(() => setIsAddingToCart(false), 500);
+    }
   };
 
   const stockQuantity = parseInt(product.stock) || 0;
@@ -327,12 +348,14 @@ export default function ProductPage({ params }) {
 
               <button
                 onClick={handleAddToCart}
-                disabled={!isInStock}
-                className={`flex-1 py-3 px-6  text-white font-medium transition-colors ${
-                  isInStock ? "bg-[color:var(--color-purple)] hover:opacity-90" : "bg-gray-400 cursor-not-allowed"
+                disabled={!isInStock || isAddingToCart}
+                className={`flex-1 py-3 px-6 text-white font-medium transition-colors ${
+                  isInStock && !isAddingToCart 
+                    ? "bg-[color:var(--color-purple)] hover:opacity-90" 
+                    : "bg-gray-400 cursor-not-allowed"
                 }`}
               >
-                ADD TO CART
+                {isAddingToCart ? 'ADDING...' : 'ADD TO CART'}
               </button>
             </div>
           </div>

@@ -3,9 +3,34 @@ import LanguageSelector from "./LanguageSelector";
 import Link from "next/link";
 import { useUserStore } from "@/store/user";
 import { LogoIcon, SearchIcon, ProfileIcon, CartIcon } from "@/svgs/icons";
+import { useState } from "react";
+import CartDropdown from "@/components/cart/CartDropdown";
+import { useCart } from "@/context/CartContext";
 
 export default function Navbar() {
   const user = useUserStore((state) => state.userData);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  
+  // Use cart context
+  const { 
+    cartItems, 
+    cartItemCount, 
+    isLoading,
+    loadCartItems,
+    updateQuantityOptimistic,
+    removeItemOptimistic 
+  } = useCart();
+
+  const handleCartToggle = () => {
+    if (!isCartOpen) {
+      loadCartItems(); // Refresh cart data when opening
+    }
+    setIsCartOpen(!isCartOpen);
+  };
+
+  const handleCloseCart = () => {
+    setIsCartOpen(false);
+  };
 
   return (
     <div className="flex flex-col">
@@ -31,9 +56,22 @@ export default function Navbar() {
           <Link href="/login" className="cursor-pointer">
             <img src={ProfileIcon} alt="Profile" className="h-6 w-auto" />
           </Link>
-          {/* Cart Logo */}
-          <div>
-            <img src={CartIcon} alt="Cart" className="h-6 w-6" />
+          {/* Cart Button */}
+          <div className="relative">
+            <button 
+              onClick={handleCartToggle}
+              className="cursor-pointer p-1 hover:bg-gray-100 rounded transition-colors"
+            >
+              <img src={CartIcon} alt="Cart" className="h-6 w-6" />
+              {cartItemCount > 0 && (
+                <span 
+                  key={cartItemCount} // This triggers re-render with animation on count change
+                  className="absolute -top-2 -right-2 bg-[#494791] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium animate-bounce transition-all duration-300 ease-out"
+                >
+                  {cartItemCount > 99 ? '99+' : cartItemCount}
+                </span>
+              )}
+            </button>
           </div>
         </div>
       </div>
@@ -50,6 +88,16 @@ export default function Navbar() {
         </ul>
         <div className="bg-[#494791] mt-3 w-full h-px"></div>
       </div>
+
+      {/* Cart Dropdown */}
+      <CartDropdown 
+        isOpen={isCartOpen}
+        onClose={handleCloseCart}
+        cartItems={cartItems}
+        onUpdateCart={loadCartItems}
+        onUpdateQuantity={updateQuantityOptimistic}
+        onRemoveItem={removeItemOptimistic}
+      />
     </div>
   );
 }
