@@ -9,20 +9,21 @@ import { CustomSelect } from "../shared/CustomSelect";
 
 export default function ProductsGrid({ selectedFilters }) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortBy, setSortBy] = useState("relevance");
   const productsPerPage = 8; // Match API page_size
 
-  // For filtering, we need all products
+  // For filtering, we need all products with sorting
   const {
     data: allProductsData,
     isLoading: allProductsLoading,
     error: allProductsError,
   } = useQuery({
-    queryKey: ["allProducts"],
-    queryFn: productServices.getAllProducts,
+    queryKey: ["allProducts", sortBy],
+    queryFn: () => productServices.getAllProductsWithSort(sortBy),
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
-  // Apply filters and sorting
+  // Apply filters and client-side sorting if needed
   const filteredAndSortedProducts = useMemo(() => {
     if (!allProductsData) return [];
 
@@ -69,36 +70,49 @@ export default function ProductsGrid({ selectedFilters }) {
       return true;
     });
 
-    // Then, sort the filtered products
-    const highPriority = [];
-    const lowPriority = [];
+    // Apply client-side sorting if backend doesn't handle it or for special cases
+    if (sortBy === "bestsellers") {
+      // Sort by highest rating/stars
+      filtered.sort((a, b) => {
+        const aStars = parseFloat(a.stars) || 0;
+        const bStars = parseFloat(b.stars) || 0;
+        return bStars - aStars;
+      });
+    } else if (sortBy === "relevance") {
+      // Custom relevance sorting (stock priority + default order)
+      const highPriority = [];
+      const lowPriority = [];
 
-    filtered.forEach((product) => {
-      if (parseInt(product.stock, 10) > 0 || parseFloat(product.price) == 0) {
-        lowPriority.push(product);
-      } else {
-        highPriority.push(product);
-      }
-    });
+      filtered.forEach((product) => {
+        if (parseInt(product.stock, 10) > 0 || parseFloat(product.price) == 0) {
+          lowPriority.push(product);
+        } else {
+          highPriority.push(product);
+        }
+      });
 
-    highPriority.sort((a, b) => parseInt(b.stock, 10) - parseInt(a.stock, 10));
-    lowPriority.sort((a, b) => {
-      const aHasStock = parseInt(a.stock, 10) > 0;
-      const bHasStock = parseInt(b.stock, 10) > 0;
+      highPriority.sort((a, b) => parseInt(b.stock, 10) - parseInt(a.stock, 10));
+      lowPriority.sort((a, b) => {
+        const aHasStock = parseInt(a.stock, 10) > 0;
+        const bHasStock = parseInt(b.stock, 10) > 0;
 
-      if (aHasStock && !bHasStock) return -1;
-      if (!aHasStock && bHasStock) return 1;
+        if (aHasStock && !bHasStock) return -1;
+        if (!aHasStock && bHasStock) return 1;
 
-      return parseInt(b.stock, 10) - parseInt(a.stock, 10);
-    });
+        return parseInt(b.stock, 10) - parseInt(a.stock, 10);
+      });
 
-    return [...lowPriority, ...highPriority];
-  }, [allProductsData, selectedFilters]);
+      filtered = [...lowPriority, ...highPriority];
+    }
+    // For other sort options (price, newest), the backend API handles the sorting
 
-  // Reset to page 1 when filters change
+    return filtered;
+  }, [allProductsData, selectedFilters, sortBy]);
+
+  // Reset to page 1 when filters or sort change
   useMemo(() => {
     setCurrentPage(1);
-  }, [selectedFilters]);
+  }, [selectedFilters, sortBy]);
 
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
@@ -126,6 +140,8 @@ export default function ProductsGrid({ selectedFilters }) {
         <span className="uppercase text-lg font-medium">Sort by</span>
         <CustomSelect
           placeholder="Relevance"
+          value={sortBy}
+          onValueChange={setSortBy}
           options={[
             { value: "relevance", label: "Relevance" },
             { value: "bestsellers", label: "Bestsellers" },
