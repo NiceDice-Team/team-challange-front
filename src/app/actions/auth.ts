@@ -90,7 +90,6 @@ export async function signup(
           errorMessage += " - Invalid JSON response";
         }
       } else {
-        // Если ответ не JSON, получаем текст для отладки
         const textResponse = await response.text();
         console.error(
           "Non-JSON response received:",
