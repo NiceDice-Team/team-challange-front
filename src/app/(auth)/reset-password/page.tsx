@@ -69,7 +69,6 @@ function ResetPasswordForm() {
         return;
       }
 
-      console.log("body", token, formData.password);
       const response = await fetchAPI("users/reset-password/", {
         method: "POST",
         body: { userId: user.id, token, password: formData.password },
