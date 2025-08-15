@@ -2,7 +2,6 @@
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export const sendOAuthToken = async (provider, token) => {
-  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   const response = await fetch(`${API_URL}users/oauth/`, {
     method: "POST",
