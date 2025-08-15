@@ -62,7 +62,6 @@ export async function signup(
       body: JSON.stringify(requestBody),
     });
 
-    const res = await response.json();
     if (!response.ok) {
       const contentType = response.headers.get("content-type");
       let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
