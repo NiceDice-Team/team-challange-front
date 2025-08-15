@@ -56,8 +56,6 @@ export function useTokenManager() {
   return {
     getToken,
     executeWithToken,
-    checkAuth,
-    getCurrentUser,
     handleLogout,
     isLoading,
     error,
