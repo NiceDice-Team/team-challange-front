@@ -36,7 +36,7 @@ export async function logoutAction() {
     cookieStore.set("access_token", "", {
       expires: new Date(0),
       path: "/",
-      httpOnly: true,
+      httpOnly: false,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
     });
@@ -44,7 +44,15 @@ export async function logoutAction() {
     cookieStore.set("refresh_token", "", {
       expires: new Date(0),
       path: "/",
-      httpOnly: true,
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+
+    cookieStore.set("userId", "", {
+      expires: new Date(0),
+      path: "/",
+      httpOnly: false,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
     });

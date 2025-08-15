@@ -28,7 +28,7 @@ export function deleteCookie(name: string): void {
  * Check if user is authenticated
  */
 export function isAuthenticated(): boolean {
-  const accessToken = getCookie("accessToken");
+  const accessToken = getCookie("access_token");
   return !!accessToken;
 }
 
@@ -38,8 +38,8 @@ export function isAuthenticated(): boolean {
 export function syncTokensFromCookies() {
   if (typeof window === "undefined") return null;
 
-  const accessToken = getCookie("accessToken");
-  const refreshToken = getCookie("refreshToken");
+  const accessToken = getCookie("access_token");
+  const refreshToken = getCookie("refresh_token");
   const userId = getCookie("userId");
 
   return {
