@@ -161,7 +161,7 @@ export default function ProductPage({ params }) {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-[1320px] mx-auto px-8 lg:px-16 py-8">
       {/* Breadcrumb */}
       <div className="mb-6">
         <CustomBreadcrumb items={breadcrumbItems} />
