@@ -99,7 +99,7 @@ export function useOptimisticCart() {
     }, 300);
 
     addToCartTimeouts.current.set(productId, timeoutId);
-  }, [loadCartItems]);
+  }, []);
 
   // Optimistic quantity update with debouncing
   const updateQuantityOptimistic = useCallback(async (cartItemId, newQuantity) => {
@@ -170,7 +170,7 @@ export function useOptimisticCart() {
     }, 500);
 
     updateQuantityTimeouts.current.set(cartItemId, timeoutId);
-  }, [cartItems, loadCartItems]);
+  }, [cartItems]);
 
   // Remove item (with optimistic update)
   const removeItemOptimistic = useCallback(async (cartItemId) => {
@@ -194,7 +194,7 @@ export function useOptimisticCart() {
       
       throw error;
     }
-  }, [cartItems, loadCartItems]);
+  }, [cartItems]);
 
   // Initial load
   useEffect(() => {
