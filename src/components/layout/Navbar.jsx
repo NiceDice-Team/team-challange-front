@@ -5,26 +5,14 @@ import { useUserStore } from "@/store/user";
 import { LogoIcon, SearchIcon, ProfileIcon, CartIcon } from "@/svgs/icons";
 import { useState } from "react";
 import CartDropdown from "@/components/cart/CartDropdown";
-import { useCart } from "@/context/CartContext";
+import { useCartSummary } from "@/hooks/useCartQuery";
 
 export default function Navbar() {
   const user = useUserStore((state) => state.userData);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  
-  // Use cart context
-  const { 
-    cartItems, 
-    cartItemCount, 
-    isLoading,
-    loadCartItems,
-    updateQuantityOptimistic,
-    removeItemOptimistic 
-  } = useCart();
+  const { itemCount } = useCartSummary();
 
   const handleCartToggle = () => {
-    if (!isCartOpen) {
-      loadCartItems(); // Refresh cart data when opening
-    }
     setIsCartOpen(!isCartOpen);
   };
 
@@ -49,26 +37,26 @@ export default function Navbar() {
             <img src={SearchIcon} alt="Search" className="h-6 w-6" />
           </button>
         </form>
-        <div className="flex flex-row gap-1 lg:gap-4">
+        <div className="flex flex-row items-center gap-1 lg:gap-4">
           {/* Language Selector */}
           <LanguageSelector />
           {/* Profile Logo */}
-          <Link href="/login" className="cursor-pointer">
-            <img src={ProfileIcon} alt="Profile" className="h-6 w-auto" />
+          <Link href="/login" className="cursor-pointer p-1 hover:bg-gray-100 rounded transition-colors flex items-center justify-center">
+            <img src={ProfileIcon} alt="Profile" className="h-6 w-6" />
           </Link>
           {/* Cart Button */}
           <div className="relative">
             <button 
               onClick={handleCartToggle}
-              className="cursor-pointer p-1 hover:bg-gray-100 rounded transition-colors"
+              className="cursor-pointer p-1 hover:bg-gray-100 rounded transition-colors flex items-center justify-center"
             >
               <img src={CartIcon} alt="Cart" className="h-6 w-6" />
-              {cartItemCount > 0 && (
+              {itemCount > 0 && (
                 <span 
-                  key={cartItemCount} // This triggers re-render with animation on count change
+                  key={itemCount} // This triggers re-render with animation on count change
                   className="absolute -top-2 -right-2 bg-[#494791] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium animate-bounce transition-all duration-300 ease-out"
                 >
-                  {cartItemCount > 99 ? '99+' : cartItemCount}
+                  {itemCount > 99 ? '99+' : itemCount}
                 </span>
               )}
             </button>
@@ -93,10 +81,6 @@ export default function Navbar() {
       <CartDropdown 
         isOpen={isCartOpen}
         onClose={handleCloseCart}
-        cartItems={cartItems}
-        onUpdateCart={loadCartItems}
-        onUpdateQuantity={updateQuantityOptimistic}
-        onRemoveItem={removeItemOptimistic}
       />
     </div>
   );

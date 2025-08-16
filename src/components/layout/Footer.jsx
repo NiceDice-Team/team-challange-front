@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <footer className="mt-25 flex flex-row justify-between pb-5 px-8 lg:px-50">
+    <footer className="mt-25 flex flex-row justify-between pb-5 px-4 lg:px-8 max-w-full overflow-hidden">
       <div>
         <svg width="330" height="54" viewBox="0 0 330 54" fill="none">
           <rect width="157.288" height="45.627" fill="#494791" />
@@ -44,7 +44,7 @@ export default function Footer() {
           />
         </svg>
       </div>
-      <div className="flex flex-row justify-between gap-20">
+      <div className="flex flex-row justify-between gap-4 lg:gap-12 xl:gap-20 flex-wrap lg:flex-nowrap">
         <div>
           <h3 className="uppercase mb-2 font-bold">products</h3>
           <ul className="flex flex-col gap-2">
@@ -74,7 +74,7 @@ export default function Footer() {
           </ul>
         </div>
       </div>
-      <div className="">
+      <div className="flex-shrink-0">
         <h3 className="uppercase mb-2 font-bold">follow us</h3>
         <div className="flex flex-row gap-3">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

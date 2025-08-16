@@ -70,8 +70,7 @@ export function useOptimisticCart() {
       try {
         await cartServices.addToCart(productId, quantity);
         
-        // Refresh cart data to sync with server
-        await loadCartItems();
+        // No need to sync with server - optimistic update is sufficient
         
         // Clean up timeout reference
         addToCartTimeouts.current.delete(productId);
@@ -142,8 +141,7 @@ export function useOptimisticCart() {
           await cartServices.updateCartItem(cartItemId, newQuantity);
         }
         
-        // Refresh cart data to sync with server
-        await loadCartItems();
+        // No need to sync with server - optimistic update is sufficient
         
         // Clean up timeout reference
         updateQuantityTimeouts.current.delete(cartItemId);
@@ -185,7 +183,8 @@ export function useOptimisticCart() {
 
     try {
       await cartServices.removeFromCart(cartItemId);
-      await loadCartItems(); // Sync with server
+      
+      // No need to sync with server - optimistic update is sufficient
     } catch (error) {
       console.error('Failed to remove item:', error);
       

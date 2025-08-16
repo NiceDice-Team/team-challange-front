@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useMemo } from 'react';
 import { useOptimisticCart } from '@/hooks/useOptimisticCart';
 
 const CartContext = createContext();
@@ -8,8 +8,19 @@ const CartContext = createContext();
 export function CartProvider({ children }) {
   const cartMethods = useOptimisticCart();
 
+  // Memoize the context value to prevent unnecessary re-renders
+  const contextValue = useMemo(() => cartMethods, [
+    cartMethods.cartItems,
+    cartMethods.cartItemCount,
+    cartMethods.isLoading,
+    cartMethods.loadCartItems,
+    cartMethods.addToCartOptimistic,
+    cartMethods.updateQuantityOptimistic,
+    cartMethods.removeItemOptimistic
+  ]);
+
   return (
-    <CartContext.Provider value={cartMethods}>
+    <CartContext.Provider value={contextValue}>
       {children}
     </CartContext.Provider>
   );

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import React, { useState } from "react";
 import {
   StarEmptyIcon,
@@ -7,13 +8,15 @@ import {
   CircleOrangeIcon,
   CircleGreenIcon,
   CircleGrayIcon,
+  HeartFilledIcon,
+  HeartEmptyIcon,
 } from "@/svgs/icons";
-import { useAddToCart } from "@/context/CartContext";
+import { useAddToCart } from "@/hooks/useCartQuery";
 
 export default function CartProductCard({ product = {} }) {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
-  const { addToCart } = useAddToCart();
+  const addToCartMutation = useAddToCart();
 
   // Create star rating display
   const renderStars = () => {
@@ -21,13 +24,13 @@ export default function CartProductCard({ product = {} }) {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
       stars.push(
-        <span key={i} className="text-[#494791]">
+        <div key={i} className="text-[#494791]">
           {i <= rating ? (
             <img src={StarFilledIcon} alt="filled star" className="h-4 w-4" />
           ) : (
             <img src={StarEmptyIcon} alt="empty star" className="h-4 w-4" />
           )}
-        </span>
+        </div>
       );
     }
     return stars;
@@ -65,25 +68,19 @@ export default function CartProductCard({ product = {} }) {
   const brandName = product.brand?.name || 'Unknown Brand';
 
   const handleAddToCart = async () => {
-    if (isAddingToCart) return; // Prevent multiple rapid clicks
+    if (addToCartMutation.isPending) return; // Prevent multiple rapid clicks
     
-    setIsAddingToCart(true);
     try {
-      const result = await addToCart(product, 1);
+      await addToCartMutation.mutateAsync({
+        productId: product.id,
+        quantity: 1,
+        productData: product
+      });
       
-      if (result.success) {
-        // Success feedback - could be a toast notification instead
-        console.log(`✅ "${product.name || 'Product'}" added to cart!`);
-      } else {
-        // Show error message
-        alert(`❌ ${result.error}`);
-      }
+      console.log(`✅ "${product.name || 'Product'}" added to cart!`);
     } catch (error) {
       console.error('Failed to add to cart:', error);
       alert('❌ Failed to add product to cart. Please try again.');
-    } finally {
-      // Re-enable button after a short delay to prevent spam clicking
-      setTimeout(() => setIsAddingToCart(false), 500);
     }
   };
 
@@ -97,14 +94,14 @@ export default function CartProductCard({ product = {} }) {
       {/* Image Section */}
       <div className="relative w-full h-[190px] mb-4">
         {/* Product Image */}
-        <div className="w-full h-[182px] relative overflow-hidden">
+        <Link href={`/product/${product.id}`} className="w-full h-[182px] relative overflow-hidden block hover:opacity-75 transition-opacity">
           <Image 
             src={imageUrl}
             alt={product.name || 'Product'}
             fill
             className="object-cover"
           />
-        </div>
+        </Link>
         
         {/* Progress Lines */}
         <div className="flex gap-px mt-2">
@@ -118,15 +115,7 @@ export default function CartProductCard({ product = {} }) {
           onClick={handleFavoriteToggle}
           className="absolute top-2 right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors"
         >
-          {isFavorite ? (
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="#494791" stroke="#494791" strokeWidth="1.5">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-            </svg>
-          ) : (
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#494791" strokeWidth="1.5">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-            </svg>
-          )}
+          {isFavorite ? <HeartFilledIcon /> : <HeartEmptyIcon />}
         </button>
       </div>
 
@@ -135,9 +124,11 @@ export default function CartProductCard({ product = {} }) {
         {/* Content that can vary in height */}
         <div className="flex-1 flex flex-col gap-2">
           {/* Product Name - Fixed height with line clamp */}
-          <h3 className="text-lg font-medium text-black uppercase leading-[22px] mb-2 h-[44px] line-clamp-2 overflow-hidden">
-            {product.name || 'Product Name'}
-          </h3>
+          <Link href={`/product/${product.id}`} className="hover:text-[#494791] transition-colors">
+            <h3 className="text-lg font-medium text-black uppercase leading-[22px] mb-2 h-[44px] line-clamp-2 overflow-hidden">
+              {product.name || 'Product Name'}
+            </h3>
+          </Link>
 
           {/* Rating - Fixed height */}
           <div className="flex items-center gap-1 mb-2 h-[16px]">
@@ -175,14 +166,14 @@ export default function CartProductCard({ product = {} }) {
         {/* Add to Cart Button - Always at bottom with fixed height */}
         <button 
           className={`w-full py-3 px-8 border border-[#494791] text-base font-medium uppercase transition-colors duration-200 h-[49px] flex items-center justify-center ${
-            isAddingToCart 
+            addToCartMutation.isPending
               ? 'bg-[#494791]/70 text-white cursor-not-allowed' 
               : 'text-[#494791] hover:bg-[#494791] hover:text-white'
           }`}
           onClick={handleAddToCart}
-          disabled={isAddingToCart}
+          disabled={addToCartMutation.isPending}
         >
-          {isAddingToCart ? 'ADDING...' : 'ADD TO CART'}
+          {addToCartMutation.isPending ? 'ADDING...' : 'ADD TO CART'}
         </button>
       </div>
     </div>

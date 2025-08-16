@@ -11,14 +11,14 @@ import {
   CircleGrayIcon,
 } from "@/svgs/icons";
 import { Heart } from "lucide-react";
-import { useAddToCart } from "@/context/CartContext";
+import { useAddToCart } from "@/hooks/useCartQuery";
+import { CustomButton } from "@/components/shared/CustomButton";
 
 export default function ProductCard({ product = {} }) {
   const [activeImage, setActiveImage] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [isAddingToCart, setIsAddingToCart] = useState(false);
   const galleryRef = useRef(null);
-  const { addToCart } = useAddToCart();
+  const addToCartMutation = useAddToCart();
 
   // Create star rating display
   const renderStars = () => {
@@ -101,6 +101,26 @@ export default function ProductCard({ product = {} }) {
     }
   };
 
+  // Handler for adding product to cart
+  const handleAddToCart = async (e) => {
+    e.preventDefault();
+    if (addToCartMutation.isPending) return; // Prevent multiple rapid clicks
+
+    try {
+      await addToCartMutation.mutateAsync({
+        productId: product.id,
+        quantity: 1,
+        productData: product,
+      });
+
+      // TODO: console.log убрать и добавить Toast (в будущем)
+      console.log(`✅ "${product.name || "Product"}" added to cart!`);
+    } catch (error) {
+      console.error("Failed to add to cart:", error);
+      alert("❌ Failed to add product to cart. Please try again.");
+    }
+  };
+
   return (
     <Link href={`/product/${product.id}`}>
       <article className="flex flex-col w-[240px] h-[427px] bg-white shadow-md p-4">
@@ -169,30 +189,30 @@ export default function ProductCard({ product = {} }) {
           />
 
           {/* Heart icon - positioned absolutely in upper right */}
-          <button
+          <CustomButton
             onClick={(e) => {
               e.preventDefault();
               setIsFavorite(!isFavorite);
-              console.log('Toggle wishlist:', product.name, !isFavorite);
+              console.log("Toggle wishlist:", product.name, !isFavorite);
             }}
-            className="absolute top-2 right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center z-20 hover:bg-gray-50 transition-colors"
+            styleType="wishlist"
+            className="absolute top-2 right-2 z-20"
             aria-label="Add to wishlist"
           >
-            <Heart 
-              className={`w-4 h-4 ${isFavorite ? 'fill-[#494791] text-[#494791]' : 'text-[#494791]'}`} 
-            />
-          </button>
+            <Heart className={`w-4 h-4 ${isFavorite ? "fill-[#494791] text-[#494791]" : "text-[#494791]"}`} />
+          </CustomButton>
 
           {/* Navigation lines */}
           <div className="absolute bottom-2 left-0 right-0 flex justify-center space-x-0.5">
             {[0, 1, 2].map((index) => (
-              <button
+              <CustomButton
                 key={index}
                 onClick={(e) => {
                   e.preventDefault();
                   scrollToImage(index);
                 }}
-                className={`w-20 h-1 transition-colors ${activeImage === index ? "bg-[#494791]" : "bg-gray-300"}`}
+                styleType="navigation"
+                className={activeImage === index ? "bg-[#494791]" : "bg-gray-300"}
                 aria-label={`View image ${index + 1}`}
               />
             ))}
@@ -221,37 +241,14 @@ export default function ProductCard({ product = {} }) {
           </p>
 
           {/* Add to cart button */}
-          <button
-            onClick={async (e) => {
-              e.preventDefault();
-              if (isAddingToCart) return; // Prevent multiple rapid clicks
-              
-              setIsAddingToCart(true);
-              try {
-                const result = await addToCart(product, 1);
-                
-                if (result.success) {
-                  console.log(`✅ "${product.name || 'Product'}" added to cart!`);
-                } else {
-                  alert(`❌ ${result.error}`);
-                }
-              } catch (error) {
-                console.error('Failed to add to cart:', error);
-                alert('❌ Failed to add product to cart. Please try again.');
-              } finally {
-                // Re-enable button after a short delay to prevent spam clicking
-                setTimeout(() => setIsAddingToCart(false), 500);
-              }
-            }}
-            disabled={isAddingToCart}
-            className={`mt-4 w-full border-2 border-[#494791] text-center py-2 text-base font-medium transition h-10 ${
-              isAddingToCart 
-                ? 'bg-[#494791]/70 text-white cursor-not-allowed' 
-                : 'text-[#494791] hover:bg-gray-100'
-            }`}
+          <CustomButton
+            onClick={handleAddToCart}
+            disabled={addToCartMutation.isPending}
+            styleType="productCart"
+            className="mt-4 text-center"
           >
-            {isAddingToCart ? 'ADDING...' : 'ADD TO CART'}
-          </button>
+            {addToCartMutation.isPending ? "ADDING..." : "ADD TO CART"}
+          </CustomButton>
         </div>
       </article>
     </Link>
