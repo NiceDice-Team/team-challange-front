@@ -3,14 +3,32 @@ import LanguageSelector from "./LanguageSelector";
 import Link from "next/link";
 import { useUserStore } from "@/store/user";
 import { LogoIcon, SearchIcon, ProfileIcon, CartIcon } from "@/svgs/icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CartDropdown from "@/components/cart/CartDropdown";
 import { useCartSummary } from "@/hooks/useCartQuery";
+import { getTokens } from "@/lib/tokenManager";
+import decodeToken from "@/lib/decodeToken";
+import { useAuthStore } from "@/store/auth";
 
 export default function Navbar() {
-  const user = useUserStore((state) => state.userData);
+  const { userData, fetchUserData } = useUserStore((state) => state);
+  const { userId } = useAuthStore((state) => state);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const { itemCount } = useCartSummary();
+
+  useEffect(() => {
+    if (!userData) {
+      if (userId) {
+        fetchUserData(userId);
+        return;
+      } else {
+        const { refreshToken } = getTokens();
+        if (refreshToken) {
+          decodeToken(refreshToken);
+        }
+      }
+    }
+  }, [userId, userData, fetchUserData]);
 
   const handleCartToggle = () => {
     setIsCartOpen(!isCartOpen);
@@ -42,22 +60,26 @@ export default function Navbar() {
             {/* Language Selector */}
             <LanguageSelector />
             {/* Profile Logo */}
-            <Link href="/login" className="cursor-pointer p-1 hover:bg-gray-100 rounded transition-colors flex items-center justify-center">
+            <Link
+              href={userData ? "/profile" : "/login"}
+              className="flex flex-col items-center gap-1 cursor-pointer p-1 hover:bg-gray-100 rounded transition-colors"
+            >
               <img src={ProfileIcon} alt="Profile" className="h-6 w-6" />
+              <p className="text-xs">{userData?.first_name || "Sign in"}</p>
             </Link>
             {/* Cart Button */}
             <div className="relative">
-              <button 
+              <button
                 onClick={handleCartToggle}
                 className="cursor-pointer p-1 hover:bg-gray-100 rounded transition-colors flex items-center justify-center"
               >
                 <img src={CartIcon} alt="Cart" className="h-6 w-6" />
                 {itemCount > 0 && (
-                  <span 
+                  <span
                     key={itemCount} // This triggers re-render with animation on count change
                     className="absolute -top-2 -right-2 bg-[#494791] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium animate-bounce transition-all duration-300 ease-out"
                   >
-                    {itemCount > 99 ? '99+' : itemCount}
+                    {itemCount > 99 ? "99+" : itemCount}
                   </span>
                 )}
               </button>
@@ -80,10 +102,7 @@ export default function Navbar() {
       </div>
 
       {/* Cart Dropdown */}
-      <CartDropdown 
-        isOpen={isCartOpen}
-        onClose={handleCloseCart}
-      />
+      <CartDropdown isOpen={isCartOpen} onClose={handleCloseCart} />
     </div>
   );
 }

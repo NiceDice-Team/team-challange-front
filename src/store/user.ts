@@ -1,8 +1,9 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import axiosInstance from "@/lib/axiosInstance";
 
 export type UserData = {
-  id: string;
+  id?: string;
   email: string;
   first_name: string;
   last_name: string;
@@ -16,7 +17,7 @@ export type UserState = {
   setLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
   clearAllUserData: () => void;
-  fetchUserData: (userId: string, accessToken: string) => Promise<void>;
+  fetchUserData: (userId: string) => Promise<void>;
 };
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
@@ -36,24 +37,12 @@ export const useUserStore = create<UserState>()(
         api.persist.clearStorage();
       },
 
-      fetchUserData: async (userId: string, accessToken: string) => {
+      fetchUserData: async (userId: string) => {
         set({ isLoading: true, error: null });
 
         try {
-          const response = await fetch(`${API_URL}users/${userId}`, {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              "Content-Type": "application/json",
-            },
-          });
-
-          if (!response.ok) {
-            throw new Error(`Failed to fetch user data: ${response.status}`);
-          }
-
-          const userData = await response.json();
-          set({ userData, isLoading: false });
+          const response = await axiosInstance.get(`users/${userId}`);
+          set({ userData: response.data, isLoading: false });
         } catch (error) {
           const errorMessage =
             error instanceof Error

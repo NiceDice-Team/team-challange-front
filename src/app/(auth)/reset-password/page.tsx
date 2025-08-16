@@ -7,6 +7,7 @@ import { fetchAPI } from "@/services/api";
 import { useRouter, useSearchParams } from "next/navigation";
 import { PasswordInput } from "@/components/shared/PasswordInput";
 import { resetPasswordSchema } from "@/lib/definitions";
+import { useUserStore } from "@/store/user";
 
 function ResetPasswordForm() {
   const [formData, setFormData] = useState({
@@ -18,6 +19,8 @@ function ResetPasswordForm() {
   const [validationErrors, setValidationErrors] = useState<{
     [key: string]: string[];
   }>({});
+
+  const user = useUserStore((state) => state.userData);
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -46,7 +49,6 @@ function ResetPasswordForm() {
       const newFormData = { ...formData, [field]: e.target.value };
       setFormData(newFormData);
 
-      // Валидируем только если есть ошибки
       if (Object.keys(validationErrors).length > 0) {
         validateForm();
       }
@@ -67,15 +69,34 @@ function ResetPasswordForm() {
         return;
       }
 
-      console.log("body", token, formData.password);
-      // await fetchAPI("users/reset-password/", {
-      //   method: "POST",
-      //   body: { token, password: formData.password },
-      // });
-      // router.push("/reset-password/success");
+      const response = await fetchAPI("users/reset-password/", {
+        method: "POST",
+        body: { userId: user.id, token, password: formData.password },
+      });
+
+      if (response) {
+        // TODO toast
+        router.push("/login?mode=back");
+      }
     } catch (error) {
       console.error("Error resetting password:", error);
-      setError("Error resetting password. Try again.");
+
+      if (error?.errors && Array.isArray(error.errors)) {
+        error.errors.forEach((err: any) => {
+          if (err.detail) {
+            console.error("Server error detail:", err.detail);
+          }
+        });
+
+        const firstError = error.errors[0];
+        if (firstError?.detail) {
+          setError(firstError.detail);
+        } else {
+          setError("Error resetting password. Try again.");
+        }
+      } else {
+        setError("Error resetting password. Try again.");
+      }
     } finally {
       setIsSubmitting(false);
     }

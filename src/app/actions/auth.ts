@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { redirect, RedirectType } from "next/navigation";
+import { jwtDecode } from "jwt-decode";
 import {
   FormState,
   SignupFormSchema,
@@ -61,21 +62,41 @@ export async function signup(
       body: JSON.stringify(requestBody),
     });
 
-    const res = await response.json();
     if (!response.ok) {
-      let errors = {};
-      if (res.errors && res.errors.length > 0) {
-        errors = res.errors.reduce((acc, error) => {
-          if (error.attr) {
-            acc[error.attr] = [error.detail];
-          } else {
-            acc.serverError =
-              error.detail ||
-              "An error occurred during signup. Please try again." +
-                " If the problem persists, contact support.";
-          }
-          return acc;
-        }, {});
+      const contentType = response.headers.get("content-type");
+      let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+
+      if (contentType && contentType.includes("application/json")) {
+        try {
+          const res = await response.json();
+          let errors = {
+            firstname: res.error_message?.first_name,
+            lastname: res.error_message?.last_name,
+            email: res.error_message?.email,
+            password: res.error_message?.password,
+            confirmPassword: res.error_message?.confirm_password,
+          };
+
+          return {
+            firstname,
+            lastname,
+            email,
+            password,
+            confirmPassword,
+            errors: errors,
+          };
+        } catch (jsonError) {
+          console.error("Error parsing JSON response:", jsonError);
+          errorMessage += " - Invalid JSON response";
+        }
+      } else {
+        // Если ответ не JSON, получаем текст для отладки
+        const textResponse = await response.text();
+        console.error(
+          "Non-JSON response received:",
+          textResponse.substring(0, 200)
+        );
+        errorMessage += " - Server returned non-JSON response";
       }
 
       return {
@@ -84,11 +105,24 @@ export async function signup(
         email,
         password,
         confirmPassword,
-        errors: errors,
+        errors: {
+          serverError: errorMessage,
+        },
       };
     }
+
+    const data = await response.json();
+    console.log("Registration successful:", data);
   } catch (error) {
     console.error("Error during signup:", error, error.message);
+
+    let errorMessage = "An error occurred during signup. Please try again.";
+    if (error instanceof TypeError && error.message.includes("fetch")) {
+      errorMessage = "Network error: Unable to connect to server";
+    } else if (error instanceof SyntaxError && error.message.includes("JSON")) {
+      errorMessage = "Server response error: Invalid data format";
+    }
+
     return {
       firstname,
       lastname,
@@ -96,7 +130,7 @@ export async function signup(
       password,
       confirmPassword,
       errors: {
-        serverError: "An error occurred during signup. Please try again.",
+        serverError: errorMessage,
       },
     };
   }
@@ -178,16 +212,18 @@ export async function signin(
     }
     // save token in cookies
     (await cookies()).set("access_token", token, {
-      httpOnly: true,
-      secure: true,
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
       path: "/",
       maxAge: 60 * 15, // 15 minutes
     });
 
     // save refreshToken in cookies
     (await cookies()).set("refresh_token", refresh, {
-      httpOnly: true,
-      secure: true,
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
       path: "/",
       maxAge: 60 * 60 * 24 * 7, // 7 days
     });
