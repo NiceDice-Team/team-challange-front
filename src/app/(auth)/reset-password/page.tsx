@@ -7,7 +7,6 @@ import { fetchAPI } from "@/services/api";
 import { useRouter, useSearchParams } from "next/navigation";
 import { PasswordInput } from "@/components/shared/PasswordInput";
 import { resetPasswordSchema } from "@/lib/definitions";
-import { useUserStore } from "@/store/user";
 
 function ResetPasswordForm() {
   const [formData, setFormData] = useState({
@@ -20,10 +19,43 @@ function ResetPasswordForm() {
     [key: string]: string[];
   }>({});
 
-  const user = useUserStore((state) => state.userData);
-
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  const validateField = (field: string, value: string) => {
+    if (!value.trim()) {
+      setValidationErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        return newErrors;
+      });
+      return true;
+    }
+
+    try {
+      const temp = { ...formData, [field]: value };
+      resetPasswordSchema.parse(temp);
+
+      setValidationErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        return newErrors;
+      });
+
+      return true;
+    } catch (error) {
+      if (error.errors) {
+        const errors: { [key: string]: string[] } = {};
+        error.errors.forEach((err: any) => {
+          const field = err.path[0];
+          if (!errors[field]) errors[field] = [];
+          errors[field].push(err.message);
+        });
+        setValidationErrors((prev) => ({ ...prev, ...errors }));
+      }
+      return false;
+    }
+  };
 
   const validateForm = () => {
     try {
@@ -46,11 +78,17 @@ function ResetPasswordForm() {
 
   const handleInputChange =
     (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-      const newFormData = { ...formData, [field]: e.target.value };
-      setFormData(newFormData);
+      const newValue = e.target.value;
 
-      if (Object.keys(validationErrors).length > 0) {
-        validateForm();
+      setFormData((prev) => ({ ...prev, [field]: newValue }));
+      if (newValue.trim()) {
+        validateField(field, newValue);
+      } else {
+        setValidationErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors[field];
+          return newErrors;
+        });
       }
     };
 
@@ -64,14 +102,11 @@ function ResetPasswordForm() {
 
     try {
       const token = searchParams.get("token");
-      if (!token) {
-        setError("Token not found");
-        return;
-      }
+      const userId = searchParams.get("uid");
 
       const response = await fetchAPI("users/reset-password/", {
         method: "POST",
-        body: { userId: user.id, token, password: formData.password },
+        body: { userId, token, password: formData.password },
       });
 
       if (response) {
@@ -123,6 +158,7 @@ function ResetPasswordForm() {
           id="password"
           label="Password"
           name="password"
+          value={formData.password}
           onChange={handleInputChange("password")}
           disabled={isSubmitting}
           error={validationErrors.password}
@@ -132,6 +168,7 @@ function ResetPasswordForm() {
           id="confirmPassword"
           label="Confirm Password"
           name="confirmPassword"
+          value={formData.confirmPassword}
           onChange={handleInputChange("confirmPassword")}
           disabled={isSubmitting}
           error={validationErrors.confirmPassword}
