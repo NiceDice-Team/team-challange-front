@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useState, Suspense } from "react";
+import React, { useState, Suspense, useEffect } from "react";
 import { CustomButton } from "@/components/shared/CustomButton";
 import Link from "next/link";
 import { fetchAPI } from "@/services/api";
 import { useRouter, useSearchParams } from "next/navigation";
 import { PasswordInput } from "@/components/shared/PasswordInput";
 import { resetPasswordSchema } from "@/lib/definitions";
+import Toast from "@/components/shared/Toast";
+import { toast } from "sonner";
 
 function ResetPasswordForm() {
   const [formData, setFormData] = useState({
@@ -21,6 +23,10 @@ function ResetPasswordForm() {
 
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  useEffect(() => {
+    toast("Event has been created.");
+  }, []);
 
   const validateField = (field: string, value: string) => {
     if (!value.trim()) {
