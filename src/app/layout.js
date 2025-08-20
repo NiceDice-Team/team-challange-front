@@ -1,7 +1,7 @@
 import { Geist, Geist_Mono, Noto_Sans_JP } from "next/font/google";
 import "./globals.css";
 import Providers from "./provider";
-import Toast from "@/components/shared/Toast";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,7 +23,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={`font-sans ${geistNoto.variable} antialiased`}>
         <Providers>{children}</Providers>
-        <Toast />
+        <Toaster position="top-right" duration={100000} />
       </body>
     </html>
   );
