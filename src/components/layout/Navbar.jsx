@@ -13,15 +13,13 @@ export default function Navbar({isPagination = true}) {
   const {userId} = useAuthStore((state) => state);
 
    useEffect(() => {
-    if (!userData) {
+    const {refreshToken} = getTokens()
+    if (!userData && refreshToken) {
       if(userId) {
          fetchUserData(userId)
          return
       } else {
-      const {refreshToken} = getTokens()
-        if(refreshToken) {
           decodeToken(refreshToken);
-        }
       }
     }
   }, [userId, userData, fetchUserData]);
