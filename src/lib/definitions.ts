@@ -77,12 +77,8 @@ export const resetPasswordSchema = z
   .object({
     password: z
       .string()
-      .min(8, { message: "Password must be at least 8 characters" })
       .trim(),
-    confirmPassword: z
-      .string()
-      .min(1, { message: "Please confirm password" })
-      .trim(),
+    confirmPassword: z.string().trim(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",

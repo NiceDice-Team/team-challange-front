@@ -87,7 +87,7 @@ function ForgotPasswordPageContent() {
           type="submit"
           className="w-full"
           disabled={
-            isSubmitting || validationErrors.length > 0 || !email.trim()
+            isSubmitting || validationErrors.length > 0 
           }
           loading={isSubmitting}
         >

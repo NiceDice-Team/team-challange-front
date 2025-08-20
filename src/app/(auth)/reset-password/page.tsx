@@ -80,16 +80,9 @@ function ResetPasswordForm() {
   const handleInputChange =
     (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
       const newValue = e.target.value;
-
       setFormData((prev) => ({ ...prev, [field]: newValue }));
       if (newValue.trim()) {
         validateField(field, newValue);
-      } else {
-        setValidationErrors((prev) => {
-          const newErrors = { ...prev };
-          delete newErrors[field];
-          return newErrors;
-        });
       }
     };
 
