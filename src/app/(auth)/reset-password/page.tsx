@@ -7,6 +7,7 @@ import { fetchAPI } from "@/services/api";
 import { useRouter, useSearchParams } from "next/navigation";
 import { PasswordInput } from "@/components/shared/PasswordInput";
 import { resetPasswordSchema } from "@/lib/definitions";
+import { showCustomToast } from "@/components/shared/Toast";
 
 function ResetPasswordForm() {
   const [formData, setFormData] = useState({
@@ -110,7 +111,12 @@ function ResetPasswordForm() {
       });
 
       if (response) {
-        // TODO toast
+        showCustomToast({
+          type: "success",
+          title: "Success! Your password has been changed.",
+          description: "You can now continue your adventure",
+        });
+
         router.push("/login?mode=back");
       }
     } catch (error) {

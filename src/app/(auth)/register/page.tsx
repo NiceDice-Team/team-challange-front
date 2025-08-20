@@ -12,6 +12,7 @@ import { CustomButton } from "@/components/shared/CustomButton";
 import { PasswordInput } from "@/components/shared/PasswordInput";
 import { PublicRoute } from "@/components/auth/RouteGuards";
 
+
 function RegisterPageContent() {
   const [isChecked, setIsChecked] = useState(true);
   const [state, action, pending] = useActionState<FormState, FormData>(signup, {

@@ -1,8 +1,17 @@
 import Link from "next/link";
 import ArrowNext from "../../../../../public/icons/ArrowNext.svg";
 import Image from "next/image";
+import { useLayoutEffect } from "react";
+import { showCustomToast } from "@/components/shared/Toast";
 
 export default function ForgotPasswordPage() {
+  useLayoutEffect(() => {
+    showCustomToast({
+      type: "success",
+      title: "Success! You are logged.",
+      description: "A password reset link has been sent to your inbox.",
+    });
+  }, []);
   return (
     <div className="flex flex-col items-center mx-auto mt-32 mb-32 w-[464px]">
       <h1 className="mb-9 text-title uppercase">✉️ Check Your Inbox</h1>
