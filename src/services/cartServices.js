@@ -75,10 +75,6 @@ const guestCartManager = {
 };
 
 // Helper function to check if user is authenticated
-// TODO: Replace with NextAuth useSession hook or useAuthStore
-// This localStorage approach conflicts with NextAuth which uses HTTP-only cookies
-// Should use: const { data: session, status } = useSession(); const isAuthenticated = status === "authenticated"
-// Or integrate with existing useAuthStore from context/AuthProvider
 const isAuthenticated = () => {
   if (typeof window === "undefined") return false;
   const token = localStorage.getItem("token");
@@ -238,12 +234,12 @@ export const productServices = {
     try {
       const response = await fetchAPI(`products/?limit=20&ordering=-created_at`);
       const products = response.results || response;
-      
+
       // Randomly select 5 from the fetched products
       const shuffled = [...products].sort(() => Math.random() - 0.5);
       return shuffled.slice(0, limit);
     } catch (error) {
-      console.error('Error fetching random products:', error);
+      console.error("Error fetching random products:", error);
       return [];
     }
   },
@@ -256,7 +252,7 @@ export const productServices = {
       if (params.search) queryParams.append("search", params.search);
       if (params.brand) queryParams.append("brand", params.brand);
       if (params.categories) queryParams.append("categories", params.categories);
-      if (params.audiences) queryParams.append("audiences", params.audiences);
+      if (params.audiences) queryParams.append("audiences", params.audiencesWH);
       if (params.types) queryParams.append("types", params.types);
       if (params.ordering) queryParams.append("ordering", params.ordering);
       if (params.limit) queryParams.append("limit", params.limit);

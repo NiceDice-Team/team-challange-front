@@ -1,16 +1,11 @@
 "use client";
 import ProductsGrid from "../../../components/catalog/ProductsGrid.jsx";
 import FilterSideBar from "../../../components/catalog/FilterSideBar.jsx";
-import { useState } from "react";
+import { useUrlFilters } from "../../../hooks/useUrlFilters.js";
+import { Suspense } from "react";
 
-export default function Catalog() {
-  const [selectedFilters, setSelectedFilters] = useState({
-    categories: [],
-    gameTypes: [],
-    audiences: [],
-    brands: [],
-    priceRange: { min: 0, max: 200 },
-  });
+function CatalogContent() {
+  const { selectedFilters, setSelectedFilters } = useUrlFilters();
 
   return (
     <div className="px-8 lg:px-16">
@@ -22,10 +17,18 @@ export default function Catalog() {
           </div>
 
           <div className="flex-1 min-w-0">
-            <ProductsGrid selectedFilters={selectedFilters} />
+            <ProductsGrid selectedFilters={selectedFilters} setSelectedFilters={setSelectedFilters} />
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Catalog() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CatalogContent />
+    </Suspense>
   );
 }

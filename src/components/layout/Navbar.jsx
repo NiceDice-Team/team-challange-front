@@ -45,9 +45,20 @@ export default function Navbar() {
           <div className="">
             <img src={LogoIcon} alt="DICE DECKS Logo" className="h-auto w-auto" />
           </div>
-          <form className="flex flex-row flex-1 justify-between items-center p-1 border-[#494791] border-2 max-w-lg">
+          <form 
+            className="flex flex-row flex-1 justify-between items-center p-1 border-[#494791] border-2 max-w-lg"
+            onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.target);
+              const searchQuery = formData.get('search');
+              if (searchQuery.trim()) {
+                window.location.href = `/catalog?search=${encodeURIComponent(searchQuery.trim())}`;
+              }
+            }}
+          >
             <input
               type="search"
+              name="search"
               id="default-search"
               className="ml-1 outline-[#494791] outline-0 w-full"
               placeholder="Search games..."
@@ -86,16 +97,44 @@ export default function Navbar() {
             </div>
           </div>
         </div>
-        {/* Pagination list */}
+        {/* Navigation list */}
         <div className="mt-6">
           <ul className="flex flex-row flex-wrap justify-center gap-4 lg:gap-14 text-sm lg:text-lg uppercase">
-            <li className="cursor-pointer">new arrivals</li>
-            <li className="cursor-pointer">bestsellers</li>
-            <li className="cursor-pointer">board games</li>
-            <li className="text-red-500 cursor-pointer">sale</li>
-            <li className="cursor-pointer">comming soon</li>
-            <li className="cursor-pointer">reviews</li>
-            <li className="cursor-pointer">about</li>
+            <li>
+              <Link href="/catalog?categories=1" className="cursor-pointer hover:text-[#494791] transition-colors">
+                new arrivals
+              </Link>
+            </li>
+            <li>
+              <Link href="/catalog?categories=2" className="cursor-pointer hover:text-[#494791] transition-colors">
+                bestsellers
+              </Link>
+            </li>
+            <li>
+              <Link href="/catalog" className="cursor-pointer hover:text-[#494791] transition-colors">
+                board games
+              </Link>
+            </li>
+            <li>
+              <Link href="/catalog?categories=4" className="text-red-500 cursor-pointer hover:text-red-600 transition-colors">
+                sale
+              </Link>
+            </li>
+            <li>
+              <Link href="/catalog?categories=5" className="cursor-pointer hover:text-[#494791] transition-colors">
+                coming soon
+              </Link>
+            </li>
+            <li>
+              <Link href="#reviews" className="cursor-pointer hover:text-[#494791] transition-colors">
+                reviews
+              </Link>
+            </li>
+            <li>
+              <Link href="#about" className="cursor-pointer hover:text-[#494791] transition-colors">
+                about
+              </Link>
+            </li>
           </ul>
           <div className="bg-[#494791] mt-3 w-full h-px"></div>
         </div>

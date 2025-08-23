@@ -29,12 +29,13 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
 
   // Toggle filter value
   const toggleFilter = (filterType, value) => {
-    setSelectedFilters((prev) => ({
-      ...prev,
-      [filterType]: prev[filterType]?.includes(value)
-        ? prev[filterType].filter((item) => item !== value)
-        : [...(prev[filterType] || []), value],
-    }));
+    const newFilters = {
+      ...selectedFilters,
+      [filterType]: selectedFilters[filterType]?.includes(value)
+        ? selectedFilters[filterType].filter((item) => item !== value)
+        : [...(selectedFilters[filterType] || []), value],
+    };
+    setSelectedFilters(newFilters);
   };
 
   // Clear all filters
@@ -45,13 +46,19 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
       audiences: [],
       brands: [],
       priceRange: { min: 0, max: 200 },
+      sortBy: 'relevance',
+      search: ''
     });
   };
 
   // Check if any filters are active
   const hasActiveFilters = Object.entries(selectedFilters)
-    .filter(([key]) => key !== "priceRange")
-    .some(([, values]) => values.length > 0);
+    .filter(([key]) => !["priceRange", "sortBy", "search"].includes(key))
+    .some(([, values]) => values.length > 0) ||
+    selectedFilters.priceRange?.min > 0 ||
+    selectedFilters.priceRange?.max < 200 ||
+    selectedFilters.search ||
+    (selectedFilters.sortBy && selectedFilters.sortBy !== 'relevance');
 
   // Render filter tag with remove button
   const FilterTag = ({ name, filterType, value }) => (
@@ -132,6 +139,48 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
             {selectedFilters.brands.map((name) => (
               <FilterTag key={name} name={name} filterType="brands" value={name} />
             ))}
+            {selectedFilters.search && (
+              <div className="bg-white border-[1px] border-[var(--color-light-purple-2)] p-2 text-[var(--color-purple)] text-sm flex justify-center items-center gap-2">
+                Search: "{selectedFilters.search}"
+                <svg
+                  className="h-3 w-3 inline-block ml-1 cursor-pointer"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  onClick={() => setSelectedFilters(prev => ({ ...prev, search: '' }))}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </div>
+            )}
+            {selectedFilters.sortBy && selectedFilters.sortBy !== 'relevance' && (
+              <div className="bg-white border-[1px] border-[var(--color-light-purple-2)] p-2 text-[var(--color-purple)] text-sm flex justify-center items-center gap-2">
+                Sort: {selectedFilters.sortBy.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                <svg
+                  className="h-3 w-3 inline-block ml-1 cursor-pointer"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  onClick={() => setSelectedFilters(prev => ({ ...prev, sortBy: 'relevance' }))}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </div>
+            )}
+            {(selectedFilters.priceRange?.min > 0 || selectedFilters.priceRange?.max < 200) && (
+              <div className="bg-white border-[1px] border-[var(--color-light-purple-2)] p-2 text-[var(--color-purple)] text-sm flex justify-center items-center gap-2">
+                Price: ${selectedFilters.priceRange.min} - ${selectedFilters.priceRange.max}
+                <svg
+                  className="h-3 w-3 inline-block ml-1 cursor-pointer"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  onClick={() => setSelectedFilters(prev => ({ ...prev, priceRange: { min: 0, max: 200 } }))}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -162,12 +211,13 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
             min="0"
             placeholder="Min"
             value={selectedFilters.priceRange.min}
-            onChange={(e) =>
-              setSelectedFilters((prev) => ({
-                ...prev,
-                priceRange: { ...prev.priceRange, min: parseFloat(e.target.value) || 0 },
-              }))
-            }
+            onChange={(e) => {
+              const newFilters = {
+                ...selectedFilters,
+                priceRange: { ...selectedFilters.priceRange, min: parseFloat(e.target.value) || 0 },
+              };
+              setSelectedFilters(newFilters);
+            }}
             className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
           />
           <span className="text-gray-500">-</span>
@@ -176,12 +226,13 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
             min="0"
             placeholder="Max"
             value={selectedFilters.priceRange.max}
-            onChange={(e) =>
-              setSelectedFilters((prev) => ({
-                ...prev,
-                priceRange: { ...prev.priceRange, max: parseFloat(e.target.value) || 200 },
-              }))
-            }
+            onChange={(e) => {
+              const newFilters = {
+                ...selectedFilters,
+                priceRange: { ...selectedFilters.priceRange, max: parseFloat(e.target.value) || 200 },
+              };
+              setSelectedFilters(newFilters);
+            }}
             className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
           />
         </div>

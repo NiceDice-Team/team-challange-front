@@ -7,23 +7,33 @@ import ProductCardSkeleton from "../catalog/ProductCardSkeleton";
 import { Pagination } from "../ui/pagination";
 import { CustomSelect } from "../shared/CustomSelect";
 
-export default function ProductsGrid({ selectedFilters }) {
+export default function ProductsGrid({ selectedFilters, setSelectedFilters }) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [sortBy, setSortBy] = useState("relevance");
   const productsPerPage = 8; // Match API page_size
 
-  // For filtering, we need all products with sorting
+  // Extract sortBy from selectedFilters or use default
+  const sortBy = selectedFilters.sortBy || "relevance";
+
+  // Handle sort change
+  const setSortBy = (newSortBy) => {
+    setSelectedFilters({
+      ...selectedFilters,
+      sortBy: newSortBy
+    });
+  };
+
+  // For filtering, we need all products with sorting and server-side filters
   const {
     data: allProductsData,
     isLoading: allProductsLoading,
     error: allProductsError,
   } = useQuery({
-    queryKey: ["allProducts", sortBy],
-    queryFn: () => productServices.getAllProductsWithSort(sortBy),
+    queryKey: ["allProducts", sortBy, selectedFilters],
+    queryFn: () => productServices.getAllProductsWithSort(sortBy, selectedFilters),
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
-  // Apply filters and client-side sorting if needed
+  // Apply client-side filters and sorting for features not supported by backend
   const filteredAndSortedProducts = useMemo(() => {
     if (!allProductsData) return [];
 
@@ -34,37 +44,20 @@ export default function ProductsGrid({ selectedFilters }) {
       return [];
     }
 
-    // First, filter the products
+    // Apply client-side filtering for features not fully supported by backend
     let filtered = productsArray.filter((product) => {
-      // Filter by categories
-      if (selectedFilters.categories.length > 0) {
-        const hasCategory = product.categories?.some((cat) => selectedFilters.categories.includes(cat.id || cat));
-        if (!hasCategory) return false;
-      }
-
-      // Filter by game types
-      if (selectedFilters.gameTypes.length > 0) {
-        const hasGameType = product.types?.some((type) => selectedFilters.gameTypes.includes(type.name || type));
-        if (!hasGameType) return false;
-      }
-
-      // Filter by audiences
-      if (selectedFilters.audiences.length > 0) {
-        const hasAudience = product.audiences?.some((audience) =>
-          selectedFilters.audiences.includes(audience.name || audience)
-        );
-        if (!hasAudience) return false;
-      }
-
-      // Filter by brands
-      if (selectedFilters.brands.length > 0) {
-        if (!selectedFilters.brands.includes(product.brand)) return false;
-      }
-
-      // Filter by price range
+      // Filter by price range (client-side only)
       const price = parseFloat(product.price) || 0;
       if (price < selectedFilters.priceRange.min || price > selectedFilters.priceRange.max) {
         return false;
+      }
+
+      // Filter by brands (client-side when multiple brands selected)
+      if (selectedFilters.brands.length > 1) {
+        // If more than one brand selected, apply client-side filtering
+        if (!selectedFilters.brands.includes(product.brand)) {
+          return false;
+        }
       }
 
       return true;
