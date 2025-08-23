@@ -39,18 +39,18 @@ export default function Navbar() {
   };
 
   return (
-    <div className="flex flex-col px-8 lg:px-16">
+    <div className="flex flex-col ">
       <div className="max-w-[1320px] mx-auto w-full">
         <div className="flex flex-row justify-between items-center gap-2 lg:gap-0">
           <div className="">
             <img src={LogoIcon} alt="DICE DECKS Logo" className="h-auto w-auto" />
           </div>
-          <form 
-            className="flex flex-row flex-1 justify-between items-center p-1 border-[#494791] border-2 max-w-lg"
+          <form
+            className="flex flex-row flex-1 justify-between items-center p-1 border-[#494791] border max-w-lg"
             onSubmit={(e) => {
               e.preventDefault();
               const formData = new FormData(e.target);
-              const searchQuery = formData.get('search');
+              const searchQuery = formData.get("search");
               if (searchQuery.trim()) {
                 window.location.href = `/catalog?search=${encodeURIComponent(searchQuery.trim())}`;
               }
@@ -76,7 +76,7 @@ export default function Navbar() {
               className="flex flex-col items-center gap-1 cursor-pointer p-1 hover:bg-gray-100 rounded transition-colors"
             >
               <img src={ProfileIcon} alt="Profile" className="h-6 w-6" />
-              <p className="text-xs">{userData?.first_name || "Sign in"}</p>
+              <p className="text-xs">{userData?.first_name}</p>
             </Link>
             {/* Cart Button */}
             <div className="relative">
@@ -116,7 +116,10 @@ export default function Navbar() {
               </Link>
             </li>
             <li>
-              <Link href="/catalog?categories=4" className="text-red-500 cursor-pointer hover:text-red-600 transition-colors">
+              <Link
+                href="/catalog?categories=4"
+                className="text-red-500 cursor-pointer hover:text-red-600 transition-colors"
+              >
                 sale
               </Link>
             </li>

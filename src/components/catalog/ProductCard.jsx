@@ -247,7 +247,7 @@ export default function ProductCard({ product = {} }) {
           {/* Product name and rating section */}
           <div className="flex items-start gap-2 w-full h-[71px]">
             <div className="flex flex-col gap-2 w-[145px] h-[71px]">
-              <h3 className="text-lg font-medium text-black uppercase w-[145px] h-[44px] leading-[22px] overflow-hidden">
+              <h3 className="text-lg font-normal text-black uppercase w-[145px] h-[44px] leading-[22px] overflow-hidden">
                 {truncateName(product?.name)}
               </h3>
 
