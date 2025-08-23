@@ -26,8 +26,8 @@ export const productServices = {
     return allProducts;
   },
 
-  // Get all products with sorting
-  getAllProductsWithSort: async (sortBy = "relevance") => {
+  // Get all products with sorting and filtering
+  getAllProductsWithSort: async (sortBy = "relevance", filters = {}) => {
     let ordering = "";
     
     // Map frontend sort values to backend API ordering
@@ -55,10 +55,34 @@ export const productServices = {
     let hasMore = true;
 
     while (hasMore) {
-      const endpoint = ordering 
-        ? `products/?offset=${offset}&limit=${limit}&ordering=${ordering}`
-        : `products/?offset=${offset}&limit=${limit}`;
+      const params = new URLSearchParams();
+      params.append('offset', offset.toString());
+      params.append('limit', limit.toString());
       
+      if (ordering) {
+        params.append('ordering', ordering);
+      }
+      
+      // Apply server-side filters
+      if (filters.categories?.length > 0) {
+        params.append('categories', filters.categories.join(','));
+      }
+      if (filters.gameTypes?.length > 0) {
+        params.append('types', filters.gameTypes.join(','));
+      }
+      if (filters.audiences?.length > 0) {
+        params.append('audiences', filters.audiences.join(','));
+      }
+      if (filters.brands?.length > 0) {
+        // Handle multiple brands - use client-side filtering if multiple selected
+        // For server-side, send the first brand for initial filtering
+        params.append('brand', filters.brands[0]);
+      }
+      if (filters.search) {
+        params.append('search', filters.search);
+      }
+
+      const endpoint = `products/?${params.toString()}`;
       const response = await fetchAPI(endpoint);
 
       if (response.results) {
