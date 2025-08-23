@@ -43,8 +43,8 @@ export const PlusIcon = ({ className = "w-4 h-4" }) => (
 );
 
 export const CloseIcon = ({ className = "w-4 h-4" }) => (
-  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className={className}>
-    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="1.33" strokeLinecap="round" />
+  <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
   </svg>
 );
 
@@ -58,5 +58,31 @@ export const TrashIcon = ({ className = "w-4 h-4" }) => (
       strokeLinecap="round"
       strokeLinejoin="round"
     />
+  </svg>
+);
+
+export const FilterCheckmarkIcon = ({ className = "w-4 h-4" }) => (
+  <svg
+    className={className}
+    fill="currentColor"
+    viewBox="0 0 20 20"
+  >
+    <path
+      fillRule="evenodd"
+      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+      clipRule="evenodd"
+    />
+  </svg>
+);
+
+export const ChevronDownIcon = ({ className = "w-6 h-6", isExpanded = false }) => (
+  <svg
+    className={`${className} transform transition-transform ${isExpanded ? 'rotate-0' : 'rotate-180'}`}
+    fill="none"
+    stroke="#494791"
+    strokeWidth={1.5}
+    viewBox="0 0 24 24"
+  >
+    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
   </svg>
 );
