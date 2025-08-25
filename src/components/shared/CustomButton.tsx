@@ -29,7 +29,7 @@ export const CustomButton: FC<ButtonProps> = ({
         styleType === "linkButton" &&
           "size-fit text-purple disabled:text-disabled bg-transparent hover:text-light-purple hover:bg-transparent p-0 underline shadow-none",
         styleType === "whiteButton" &&
-          "bg-white text-purple shadow-none hover:hover:bg-gray-100 py-4 px-8",
+          "bg-white text-purple shadow-none hover:hover:bg-gray-100 py-4 px-8 border border-purple",
         className
       )}
       disabled={disabled}

@@ -16,8 +16,6 @@ interface LogoutButtonProps {
 }
 
 export function LogoutButton({
-  className = "",
-  styleType,
   showIcon = true,
   showText = true,
 }: LogoutButtonProps) {
@@ -40,14 +38,14 @@ export function LogoutButton({
 
   return (
     <CustomButton
-      className={`flex justify-center items-center gap-2 ${className}`}
+      className={`flex justify-center items-center gap-2 bg-white p-0 text-purple border-0 hover:text-gray-900 text-sm normal-case shadow-0 no-underline`}
       onClick={handleLogout}
       disabled={isPending}
-      styleType={styleType}
+      styleType="linkButton"
       loading={isPending}
     >
       {!isPending && showIcon && <LogOut className="w-4 h-4" />}
-      {showText && (isPending ? "Выход..." : "Выйти")}
+      {showText && (isPending ? "Log out..." : "Log out")}
     </CustomButton>
   );
 }
