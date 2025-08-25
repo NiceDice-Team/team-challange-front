@@ -16,7 +16,11 @@ export default function Providers({ children }) {
           queries: {
             // Configure default options here
             staleTime: 5 * 60 * 1000, // 5 minutes
+            gcTime: 5 * 60 * 1000, // cache garbage collect after 5 minutes
             refetchOnWindowFocus: false,
+            refetchOnReconnect: false,
+            refetchOnMount: false,
+            retry: 1,
           },
         },
       })

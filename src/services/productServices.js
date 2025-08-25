@@ -2,17 +2,17 @@ import { fetchAPI } from "./api";
 
 export const productServices = {
   // Get paginated products
-  getProducts: (page = 1, pageSize = 8) => fetchAPI(`products/?offset=${(page - 1) * pageSize}&limit=${pageSize}`),
+  getProducts: (page = 1, pageSize = 8, opts = {}) => fetchAPI(`products/?offset=${(page - 1) * pageSize}&limit=${pageSize}`, opts),
 
   // Get all products (for filtering purposes) - we'll fetch all pages
-  getAllProducts: async () => {
+  getAllProducts: async (opts = {}) => {
     let allProducts = [];
     let offset = 0;
     const limit = 50;
     let hasMore = true;
 
     while (hasMore) {
-      const response = await fetchAPI(`products/?offset=${offset}&limit=${limit}`);
+      const response = await fetchAPI(`products/?offset=${offset}&limit=${limit}`, opts);
 
       if (response.results) {
         allProducts = [...allProducts, ...response.results];
@@ -27,7 +27,7 @@ export const productServices = {
   },
 
   // Get all products with sorting and filtering
-  getAllProductsWithSort: async (sortBy = "relevance", filters = {}) => {
+  getAllProductsWithSort: async (sortBy = "relevance", filters = {}, opts = {}) => {
     let ordering = "";
     
     // Map frontend sort values to backend API ordering
@@ -83,7 +83,7 @@ export const productServices = {
       }
 
       const endpoint = `products/?${params.toString()}`;
-      const response = await fetchAPI(endpoint);
+      const response = await fetchAPI(endpoint, opts);
 
       if (response.results) {
         allProducts = [...allProducts, ...response.results];
@@ -98,9 +98,9 @@ export const productServices = {
   },
 
   // Get single product by ID
-  getProductById: async (id) => {
+  getProductById: async (id, opts = {}) => {
     try {
-      const result = await fetchAPI(`products/${id}/`);
+      const result = await fetchAPI(`products/${id}/`, opts);
       return result;
     } catch (error) {
       console.error(`Error fetching product ${id}:`, error);

@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
 export const useUrlFilters = () => {
@@ -31,6 +31,7 @@ export const useUrlFilters = () => {
   }, [searchParams]);
 
   const [selectedFilters, setSelectedFilters] = useState(getInitialFilters);
+  const debounceRef = useRef(null);
 
   // Create query string from filters
   const createQueryString = useCallback((filters) => {
@@ -67,12 +68,15 @@ export const useUrlFilters = () => {
   // Update URL when filters change
   const updateFilters = useCallback((newFilters) => {
     setSelectedFilters(newFilters);
-    
-    const queryString = createQueryString(newFilters);
-    const url = queryString ? `${pathname}?${queryString}` : pathname;
-    
-    // Use replace to avoid adding to browser history on every filter change
-    router.replace(url, { scroll: false });
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+    debounceRef.current = setTimeout(() => {
+      const queryString = createQueryString(newFilters);
+      const url = queryString ? `${pathname}?${queryString}` : pathname;
+      // Use replace to avoid adding to browser history on every filter change
+      router.replace(url, { scroll: false });
+    }, 300);
   }, [createQueryString, pathname, router]);
 
   // Update URL search params when they change (e.g., browser navigation)
@@ -80,6 +84,15 @@ export const useUrlFilters = () => {
     const newFilters = getInitialFilters();
     setSelectedFilters(newFilters);
   }, [getInitialFilters]);
+
+  // Cleanup pending debounce on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
+  }, []);
 
   return {
     selectedFilters,

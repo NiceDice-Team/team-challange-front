@@ -38,8 +38,13 @@ export default function ProductPage({ params }) {
     error,
   } = useQuery({
     queryKey: ["product", productId],
-    queryFn: () => productServices.getProductById(productId),
+    queryFn: ({ signal }) => productServices.getProductById(productId, { signal }),
     enabled: !!productId && productId !== "[object Object]",
+    staleTime: 15 * 60 * 1000,
+    gcTime: 60 * 60 * 1000,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    retry: 1,
   });
 
   // If no product ID, show error

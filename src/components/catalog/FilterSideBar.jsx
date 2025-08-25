@@ -9,22 +9,42 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
   // Fetch all filter data
   const { data: categories = [], isLoading: categoriesLoading } = useQuery({
     queryKey: ["categories"],
-    queryFn: catalogServices.getCategories,
+    queryFn: ({ signal }) => catalogServices.getCategories({}, { signal }),
+    staleTime: 24 * 60 * 60 * 1000, // 24 hours
+    gcTime: 24 * 60 * 60 * 1000,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    retry: 1,
   });
 
   const { data: audiences = [], isLoading: audiencesLoading } = useQuery({
     queryKey: ["audiences"],
-    queryFn: catalogServices.getAudiences,
+    queryFn: ({ signal }) => catalogServices.getAudiences({}, { signal }),
+    staleTime: 24 * 60 * 60 * 1000,
+    gcTime: 24 * 60 * 60 * 1000,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    retry: 1,
   });
 
   const { data: gameTypes = [], isLoading: gameTypesLoading } = useQuery({
     queryKey: ["game-types"],
-    queryFn: catalogServices.getGameTypes,
+    queryFn: ({ signal }) => catalogServices.getGameTypes({}, { signal }),
+    staleTime: 24 * 60 * 60 * 1000,
+    gcTime: 24 * 60 * 60 * 1000,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    retry: 1,
   });
 
   const { data: brands = [], isLoading: brandsLoading } = useQuery({
     queryKey: ["brands"],
-    queryFn: catalogServices.getBrands,
+    queryFn: ({ signal }) => catalogServices.getBrands({}, { signal }),
+    staleTime: 24 * 60 * 60 * 1000,
+    gcTime: 24 * 60 * 60 * 1000,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    retry: 1,
   });
 
   const isLoading = categoriesLoading || audiencesLoading || gameTypesLoading || brandsLoading;

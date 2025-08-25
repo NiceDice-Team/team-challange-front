@@ -11,6 +11,9 @@ export async function fetchAPI(endpoint, options = {}) {
       ...options.headers,
     },
     body: options.body ? JSON.stringify(options.body) : null,
+    // Allow React Query to cancel in-flight requests when queries change
+    signal: options.signal,
+    cache: "no-store",
   });
   
   if (!response.ok) {

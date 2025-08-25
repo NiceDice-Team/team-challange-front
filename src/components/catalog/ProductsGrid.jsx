@@ -1,6 +1,6 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
-import { useState, useMemo } from "react";
+import { useQuery, keepPreviousData, useQueryClient } from "@tanstack/react-query";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { productServices } from "../../services/productServices";
 import ProductCard from "../catalog/ProductCard";
 import ProductCardSkeleton from "../catalog/ProductCardSkeleton";
@@ -14,6 +14,10 @@ export default function ProductsGrid({ selectedFilters, setSelectedFilters }) {
   // Extract sortBy from selectedFilters or use default
   const sortBy = selectedFilters.sortBy || "relevance";
 
+  const queryClient = useQueryClient();
+  const prevSortRef = useRef(sortBy);
+  const sortChanged = prevSortRef.current !== sortBy;
+
   // Handle sort change
   const setSortBy = (newSortBy) => {
     setSelectedFilters({
@@ -22,15 +26,47 @@ export default function ProductsGrid({ selectedFilters, setSelectedFilters }) {
     });
   };
 
+  // Build a stable, normalized filters key so React Query doesn't refetch
+  // due to object identity or array order changes.
+  const filtersKey = useMemo(() => ({
+    categories: [...(selectedFilters.categories || [])].sort(),
+    gameTypes: [...(selectedFilters.gameTypes || [])].sort(),
+    audiences: [...(selectedFilters.audiences || [])].sort(),
+    brands: [...(selectedFilters.brands || [])].sort(),
+    priceRange: {
+      min: selectedFilters.priceRange?.min ?? 0,
+      max: selectedFilters.priceRange?.max ?? 200,
+    },
+    search: selectedFilters.search || "",
+  }), [selectedFilters]);
+
+  // React to sort changes: force refetch even if cache is fresh, and scroll to top
+  useEffect(() => {
+    const key = ["allProducts", sortBy, filtersKey];
+    queryClient.invalidateQueries({ queryKey: key });
+    try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch {}
+    prevSortRef.current = sortBy;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortBy]);
+
   // For filtering, we need all products with sorting and server-side filters
   const {
     data: allProductsData,
     isLoading: allProductsLoading,
+    isFetching: allProductsFetching,
     error: allProductsError,
   } = useQuery({
-    queryKey: ["allProducts", sortBy, selectedFilters],
-    queryFn: () => productServices.getAllProductsWithSort(sortBy, selectedFilters),
-    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    queryKey: ["allProducts", sortBy, filtersKey],
+    queryFn: ({ signal }) => productServices.getAllProductsWithSort(sortBy, selectedFilters, { signal }),
+    // Keep results warm for longer to reduce churn navigating back/forth
+    staleTime: 15 * 60 * 1000, // 15 minutes
+    gcTime: 60 * 60 * 1000, // 60 minutes in cache
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    retry: 1,
+    // Preserve previous page while fetching to avoid flashes
+    // But for sort changes, show a fresh loading state (no placeholder)
+    placeholderData: sortChanged ? undefined : keepPreviousData,
   });
 
   // Apply client-side filters and sorting for features not supported by backend
