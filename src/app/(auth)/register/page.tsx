@@ -12,11 +12,38 @@ import { CustomButton } from "@/components/shared/CustomButton";
 import { PasswordInput } from "@/components/shared/PasswordInput";
 import { PublicRoute } from "@/components/auth/RouteGuards";
 
+
 function RegisterPageContent() {
   const [isChecked, setIsChecked] = useState(true);
   const [state, action, pending] = useActionState<FormState, FormData>(signup, {
     errors: {},
   });
+  const [formState, setFormState] = useState<FormState>({
+    firstname: "",
+    lastname: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const handleChange = (field: string, value: string) => {
+    setFormState((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  useEffect(() => {
+    if (state) {
+      setFormState((prev) => ({
+        firstname: state.firstname || prev.firstname,
+        lastname: state.lastname || prev.lastname,
+        email: state.email || prev.email,
+        password: state.password || prev.password,
+        confirmPassword: state.confirmPassword || prev.confirmPassword,
+      }));
+    }
+  }, [state]);
 
   return (
     <div className="mx-auto mt-20">
@@ -36,6 +63,8 @@ function RegisterPageContent() {
             label="First name"
             name="firstname"
             error={state?.errors?.firstname}
+            value={formState.firstname}
+            onChange={(e) => handleChange("firstname", e.target.value)}
           />
           <CustomInput
             placeholder="Enter your last name"
@@ -43,6 +72,8 @@ function RegisterPageContent() {
             label="Last name"
             name="lastname"
             error={state?.errors?.lastname}
+            value={formState.lastname}
+            onChange={(e) => handleChange("lastname", e.target.value)}
           />
           <CustomInput
             placeholder="Enter email address"
@@ -50,6 +81,8 @@ function RegisterPageContent() {
             label="Email"
             name="email"
             error={state?.errors?.email}
+            value={formState.email}
+            onChange={(e) => handleChange("email", e.target.value)}
           />
           <PasswordInput
             placeholder="Enter password"
@@ -57,6 +90,8 @@ function RegisterPageContent() {
             label="password"
             name="password"
             error={state?.errors?.password}
+            value={formState.password}
+            onChange={(e) => handleChange("password", e.target.value)}
           />
           <PasswordInput
             placeholder="Enter password"
@@ -64,6 +99,8 @@ function RegisterPageContent() {
             label="Confirm Password"
             name="confirmPassword"
             error={state?.errors?.confirmPassword}
+            value={formState.confirmPassword}
+            onChange={(e) => handleChange("confirmPassword", e.target.value)}
           />
           {state.errors.serverError && (
             <p className="text-error">{state.errors.serverError}</p>

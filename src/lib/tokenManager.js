@@ -29,7 +29,7 @@ function setTokens(accessToken, refreshToken) {
 /**
  * Очищает токены из кукисов
  */
-function clearTokens() {
+export function clearTokens() {
   deleteCookie("access_token");
   deleteCookie("refresh_token");
   deleteCookie("userId");

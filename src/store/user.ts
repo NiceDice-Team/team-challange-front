@@ -20,8 +20,6 @@ export type UserState = {
   fetchUserData: (userId: string) => Promise<void>;
 };
 
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
-
 export const useUserStore = create<UserState>()(
   persist(
     (set, get, api) => ({
