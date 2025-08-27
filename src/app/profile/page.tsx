@@ -1,7 +1,7 @@
 "use client";
 
 import { useUserStore } from "@/store/user";
-import React from "react";
+import React, { useState } from "react";
 import { ProtectedRoute } from "@/components/auth/RouteGuards";
 import ProfileSVG from "@/assets/svg-components/ProfileSVG";
 import { CustomButton } from "@/components/shared/CustomButton";
@@ -11,14 +11,76 @@ import { CustomBreadcrumb } from "@/components/shared/CustomBreadcrumb";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BoxSVG from "@/assets/svg-components/BoxSVG";
+import { CustomInput } from "@/components/shared/CustomInput";
+import { editProfileSchema } from "@/lib/definitions";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { getTokens } from "@/lib/tokenManager";
+import { toast } from "sonner";
 
 const breadcrumbItems = [
   { label: "Home", href: "/" },
   { label: "My account", current: true },
 ];
+type ProfileFormState = z.infer<typeof editProfileSchema>;
+const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 function ProfileContent() {
   const user = useUserStore((state) => state.userData);
+  const { setUserData } = useUserStore();
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ProfileFormState>({
+    resolver: zodResolver(editProfileSchema),
+    defaultValues: {
+      firstname: user?.first_name || "",
+      lastname: user?.last_name || "",
+      email: user?.email || "",
+    },
+  });
+
+  const onSubmit = async (data: ProfileFormState) => {
+    console.log("data", data);
+    setIsSubmitting(true);
+    try {
+      const { accessToken } = getTokens();
+      const requestBody = {
+        first_name: data.firstname,
+        last_name: data.lastname,
+        email: data.email,
+      };
+      const response = await fetch(`${API_URL}users/${user?.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify(requestBody),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to update profile");
+      }
+      const userData = await response.json();
+      setUserData({
+        ...userData,
+        first_name: userData.firstname,
+        last_name: userData.lastname,
+        email: userData.email,
+      });
+      toast.success("Profile updated successfully");
+    } catch (error) {
+      toast.error("Failed to update profile");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="py-8 min-h-screen">
@@ -59,9 +121,9 @@ function ProfileContent() {
           <CustomButton styleType="whiteButton">CHANGE PASSWORD</CustomButton>
         </div>
 
-        <div className="flex flex-col gap-4 w-2/3">
+        <div className="flex flex-col gap-4 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.05)] w-2/3">
           <Tabs defaultValue="history" className="w-full">
-            <TabsList className="w-full">
+            <TabsList className="bg-[#f3f3f3] mb-7 rounded-none w-full h-[40px]">
               <TabsTrigger
                 value="history"
                 className="group gap-2 data-[state=active]:bg-purple rounded-none w-1/2 h-[40px] text-gray-2 data-[state=active]:text-white uppercase"
@@ -77,8 +139,74 @@ function ProfileContent() {
                 Edit Profile
               </TabsTrigger>
             </TabsList>
-            <TabsContent value="history">History</TabsContent>
-            <TabsContent value="edit">Edit</TabsContent>
+            <TabsContent value="history" className="p-7">
+              <h3 className="flex items-center gap-2 text-black text-xl uppercase">
+                <BoxSVG />
+                ORDER HISTORY
+              </h3>
+              <p className="mt-2 text-dark-gray">
+                View and track all your previous orders
+              </p>
+              Table
+            </TabsContent>
+            <TabsContent value="edit">
+              <div className="flex flex-col gap-2 bg-purple mb-10 p-7 text-white">
+                <h3 className="flex items-center gap-2 text-xl uppercase">
+                  <ProfileSVG />
+                  Edit Your Profile
+                </h3>
+                <p>Update your personal information and account details</p>
+              </div>
+              {error && <p className="text-red-500">{error}</p>}
+
+              <form className="px-7" onSubmit={handleSubmit(onSubmit)}>
+                <div className="gap-6 grid grid-cols-1 md:grid-cols-2 mb-6">
+                  <CustomInput
+                    label="First Name"
+                    id="firstname"
+                    name="firstname"
+                    placeholder="Enter your first name"
+                    {...register("firstname")}
+                    error={
+                      errors.firstname?.message
+                        ? [errors.firstname?.message]
+                        : undefined
+                    }
+                  />
+                  <CustomInput
+                    label="Last Name"
+                    id="lastname"
+                    name="lastname"
+                    placeholder="Enter your last name"
+                    {...register("lastname")}
+                    error={
+                      errors.lastname?.message
+                        ? [errors.lastname?.message]
+                        : undefined
+                    }
+                  />
+                </div>
+                <div className="w-1/2">
+                  <CustomInput
+                    label="Email"
+                    id="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    {...register("email")}
+                    error={
+                      errors.email?.message
+                        ? [errors.email?.message]
+                        : undefined
+                    }
+                  />
+                </div>
+                <div className="flex justify-end mt-10 mb-7 w-[186px]">
+                  <CustomButton type="submit">
+                    {isSubmitting ? "UPDATING..." : "MAKE CHANGES"}
+                  </CustomButton>
+                </div>
+              </form>
+            </TabsContent>
           </Tabs>
         </div>
       </div>

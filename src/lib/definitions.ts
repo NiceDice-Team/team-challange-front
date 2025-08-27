@@ -75,12 +75,22 @@ export const forgotPasswordSchema = z.object({
 
 export const resetPasswordSchema = z
   .object({
-    password: z
-      .string()
-      .trim(),
+    password: z.string().trim(),
     confirmPassword: z.string().trim(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
+
+export const editProfileSchema = z.object({
+  firstname: z
+    .string()
+    .min(2, { message: "First name must be at least 2 characters" })
+    .max(50, { message: "First name must be less than 50 characters" }),
+  lastname: z
+    .string()
+    .min(2, { message: "Last name must be at least 2 characters" })
+    .max(50, { message: "Last name must be less than 50 characters" }),
+  email: z.string().email("Invalid email").max(255, "Email too long"),
+});
