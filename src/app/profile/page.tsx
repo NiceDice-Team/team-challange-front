@@ -16,8 +16,9 @@ import { editProfileSchema } from "@/lib/definitions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
-import { getTokens } from "@/lib/tokenManager";
+import { getTokens, getValidAccessToken } from "@/lib/tokenManager";
 import { toast } from "sonner";
+import { showCustomToast } from "@/components/shared/Toast";
 
 const breadcrumbItems = [
   { label: "Home", href: "/" },
@@ -47,16 +48,17 @@ function ProfileContent() {
   });
 
   const onSubmit = async (data: ProfileFormState) => {
-    console.log("data", data);
     setIsSubmitting(true);
     try {
-      const { accessToken } = getTokens();
+      const accessToken = await getValidAccessToken();
+
       const requestBody = {
         first_name: data.firstname,
         last_name: data.lastname,
         email: data.email,
       };
-      const response = await fetch(`${API_URL}users/${user?.id}`, {
+
+      const response = await fetch(`${API_URL}users/${user?.id}/`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -74,9 +76,16 @@ function ProfileContent() {
         last_name: userData.lastname,
         email: userData.email,
       });
-      toast.success("Profile updated successfully");
+      showCustomToast({
+        type: "success",
+        title: "Success! Your profile has been updated.",
+      });
+      
     } catch (error) {
-      toast.error("Failed to update profile");
+      showCustomToast({
+        type: "error",
+        title: "Failed to update profile",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -95,7 +104,7 @@ function ProfileContent() {
         🧩 Your account dashboard - manage your profile, track orders, and
         update your preferences
       </p>
-      <div className="flex flex-row justify-between gap-6 mt-6">
+      <div className="flex flex-row justify-between gap-6 mt-6 h-fit">
         <div className="flex flex-col gap-6 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.05)] pb-6 w-1/3">
           <div className="flex flex-col bg-purple p-6 text-white">
             <div className="flex items-center gap-2 text-xl uppercase">

@@ -47,7 +47,6 @@ export default function Navbar({isPagination = true}) {
           {/* Profile Logo */}
           <Link href={userData ? "/profile" : "/login"} className="flex flex-col items-center gap-1 cursor-pointer">
             <img src={ProfileIcon} alt="Profile" className="w-auto h-6" />
-            <p>{userData?.first_name || "Sign in"}</p>
           </Link>
           {/* Cart Logo */}
           <div>

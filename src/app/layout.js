@@ -23,7 +23,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={`font-sans ${geistNoto.variable} antialiased`}>
         <Providers>{children}</Providers>
-        <Toaster position="top-right" duration={100000} />
+        <Toaster position="top-right" duration={4000} />
       </body>
     </html>
   );
