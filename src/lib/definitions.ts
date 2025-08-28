@@ -70,12 +70,16 @@ export const forgotPasswordSchema = z.object({
     .string()
     .email("Invalid email")
     .min(1, "Email required")
-    .max(255, "Email too long"),
+    .max(50, "Email too long"),
 });
 
 export const resetPasswordSchema = z
   .object({
-    password: z.string().trim(),
+    password: z
+      .string()
+      .min(8, { message: "Password must be at least 8 characters" })
+      .max(50, { message: "Password must be less than 50 characters" })
+      .trim(),
     confirmPassword: z.string().trim(),
   })
   .refine((data) => data.password === data.confirmPassword, {

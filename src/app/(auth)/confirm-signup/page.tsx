@@ -5,7 +5,7 @@ import { PublicRoute } from "@/components/auth/RouteGuards";
 import { showCustomToast } from "@/components/shared/Toast";
 import { useLayoutEffect } from "react";
 
-function CofirmSignUpContent() {
+function ConfirmSignUpContent() {
   useLayoutEffect(() => {
     showCustomToast({
       type: "success",
@@ -33,7 +33,7 @@ function CofirmSignUpContent() {
 export default function CofirmSignUp() {
   return (
     <PublicRoute>
-      <CofirmSignUpContent />
+      <ConfirmSignUpContent />
     </PublicRoute>
   );
 }

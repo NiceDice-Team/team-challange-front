@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, Suspense, useEffect } from "react";
+import React, { useState, Suspense } from "react";
 import { CustomButton } from "@/components/shared/CustomButton";
 import Link from "next/link";
 import { fetchAPI } from "@/services/api";
