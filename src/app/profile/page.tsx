@@ -18,6 +18,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { getValidAccessToken, isAuthenticated } from "@/lib/tokenManager";
 import { showCustomToast } from "@/components/shared/Toast";
+import OrdersTable from "@/components/profile/OrdersTable";
 
 const breadcrumbItems = [
   { label: "Home", href: "/" },
@@ -159,10 +160,10 @@ function ProfileContent() {
                 <BoxSVG />
                 ORDER HISTORY
               </h3>
-              <p className="mt-2 text-dark-gray">
+              <p className="mt-2 mb-10 text-dark-gray">
                 View and track all your previous orders
               </p>
-              Table
+              <OrdersTable />
             </TabsContent>
             <TabsContent value="edit">
               <div className="flex flex-col gap-2 bg-purple mb-10 p-7 text-white">
