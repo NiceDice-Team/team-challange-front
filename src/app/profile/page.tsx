@@ -1,7 +1,7 @@
 "use client";
 
 import { useUserStore } from "@/store/user";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ProtectedRoute } from "@/components/auth/RouteGuards";
 import ProfileSVG from "@/assets/svg-components/ProfileSVG";
 import { CustomButton } from "@/components/shared/CustomButton";
@@ -16,8 +16,7 @@ import { editProfileSchema } from "@/lib/definitions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
-import { getTokens, getValidAccessToken } from "@/lib/tokenManager";
-import { toast } from "sonner";
+import { getValidAccessToken, isAuthenticated } from "@/lib/tokenManager";
 import { showCustomToast } from "@/components/shared/Toast";
 
 const breadcrumbItems = [
@@ -28,11 +27,13 @@ type ProfileFormState = z.infer<typeof editProfileSchema>;
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 function ProfileContent() {
-  const user = useUserStore((state) => state.userData);
+  const { userData, fetchUserData } = useUserStore((state) => state);
   const { setUserData } = useUserStore();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+
+  const accessToken = getValidAccessToken();
 
   const {
     register,
@@ -41,24 +42,30 @@ function ProfileContent() {
   } = useForm<ProfileFormState>({
     resolver: zodResolver(editProfileSchema),
     defaultValues: {
-      firstname: user?.first_name || "",
-      lastname: user?.last_name || "",
-      email: user?.email || "",
+      firstname: userData?.first_name || "",
+      lastname: userData?.last_name || "",
+      email: userData?.email || "",
     },
   });
+
+  useEffect(() => {
+    if (isAuthenticated() && userData && !userData.first_name) {
+      if (accessToken) {
+        fetchUserData(userData.id);
+      }
+    }
+  }, [userData, accessToken, fetchUserData]);
 
   const onSubmit = async (data: ProfileFormState) => {
     setIsSubmitting(true);
     try {
-      const accessToken = await getValidAccessToken();
-
       const requestBody = {
         first_name: data.firstname,
         last_name: data.lastname,
         email: data.email,
       };
 
-      const response = await fetch(`${API_URL}users/${user?.id}/`, {
+      const response = await fetch(`${API_URL}users/${userData?.id}/`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -69,18 +76,17 @@ function ProfileContent() {
       if (!response.ok) {
         throw new Error("Failed to update profile");
       }
-      const userData = await response.json();
+      const user = await response.json();
       setUserData({
         ...userData,
-        first_name: userData.firstname,
-        last_name: userData.lastname,
-        email: userData.email,
+        first_name: user.firstname,
+        last_name: user.lastname,
+        email: user.email,
       });
       showCustomToast({
         type: "success",
         title: "Success! Your profile has been updated.",
       });
-      
     } catch (error) {
       showCustomToast({
         type: "error",
@@ -98,7 +104,7 @@ function ProfileContent() {
         <LogoutButton showText={true} showIcon={true} />
       </div>
       <h3 className="mb-4 text-title uppercase">
-        Welcome, {user?.first_name}!
+        Welcome, {userData?.first_name}!
       </h3>
       <p>
         🧩 Your account dashboard - manage your profile, track orders, and
@@ -116,14 +122,14 @@ function ProfileContent() {
           <div className="flex flex-col gap-2 px-7 text-black">
             <p className="text-sm uppercase">NAME</p>
             <p className="text-gray-2">
-              {user?.first_name} {user?.last_name}
+              {userData?.first_name} {userData?.last_name}
             </p>
           </div>
           <div className="flex flex-col gap-2 px-7 text-black">
             <p className="text-sm uppercase">EMAIL</p>
             <p className="flex items-center gap-2 text-gray-2">
               <Image src={mail} alt="mail" className="w-5 h-5" />
-              {user?.email}
+              {userData?.email}
             </p>
           </div>
           <CustomButton>EDIT PROFILE</CustomButton>

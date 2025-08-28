@@ -27,9 +27,9 @@ export default function Navbar({isPagination = true}) {
   return (
     <div className="flex flex-col">
       <div className="flex flex-row justify-between items-center gap-2 lg:gap-0">
-        <div className="">
+        <Link href="/" >
           <img src={LogoIcon} alt="DICE DECKS Logo" className="w-auto h-auto" />
-        </div>
+        </Link>
         <form className="flex flex-row flex-1 justify-between items-center p-1 border-[#494791] border-2 max-w-lg">
           <input
             type="search"

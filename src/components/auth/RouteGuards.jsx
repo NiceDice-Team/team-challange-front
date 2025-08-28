@@ -9,6 +9,7 @@ export function ProtectedRoute({ children }) {
 
   useEffect(() => {
     const checkAuth = () => {
+      console.log('checkAuth', isAuthenticated());
       if (!isAuthenticated()) {
         const currentPath = window.location.pathname + window.location.search;
         const loginUrl = `/login?returnUrl=${encodeURIComponent(currentPath)}`;
