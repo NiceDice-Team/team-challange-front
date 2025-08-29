@@ -157,9 +157,6 @@ function ProfileContent() {
               {isLoading ? "Loading..." : userData?.email || ""}
             </p>
           </div>
-          <CustomButton disabled={isLoading}>
-            {isLoading ? "LOADING..." : "EDIT PROFILE"}
-          </CustomButton>
           <CustomButton styleType="whiteButton" disabled={isLoading}>
             CHANGE PASSWORD
           </CustomButton>

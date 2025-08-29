@@ -8,6 +8,7 @@ import {
   TableBody,
   TableCell,
 } from "../ui/table";
+import { BadgeProps } from "../ui/badge";
 
 const formatItemsCount = (count: number): string => {
   if (count === 1) {
@@ -48,7 +49,7 @@ const orders = [
   },
 ];
 
-const mappingStatusesToVariant = {
+const mappingStatusesToVariant: Record<string, BadgeProps["variant"]> = {
   Delivered: "default",
   Shipped: "secondary",
   Processing: "outline",
