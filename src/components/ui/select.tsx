@@ -57,7 +57,7 @@ function SelectItem({ className, children, ...props }: React.ComponentProps<type
     >
       <span className="flex h-4 w-4 items-center justify-center">
         <SelectPrimitive.ItemIndicator>
-          <img src={CheckmarkIcon} alt="checkmark" className="h-3 w-3" />
+          <CheckmarkIcon />
         </SelectPrimitive.ItemIndicator>
       </span>
 

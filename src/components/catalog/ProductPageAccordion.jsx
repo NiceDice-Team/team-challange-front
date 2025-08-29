@@ -9,7 +9,7 @@ import {
 
 export const ProductAccordion = ({ accordionParams }) => {
   return (
-    <CustomAccordion collapsible className="w-full">
+    <CustomAccordion collapsible="true" className="w-full">
       {/* Description */}
       <CustomAccordionItem value="description">
         <CustomAccordionTrigger>Description</CustomAccordionTrigger>
