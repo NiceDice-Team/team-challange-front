@@ -19,27 +19,28 @@ import { useForm } from "react-hook-form";
 import { getValidAccessToken, isAuthenticated } from "@/lib/tokenManager";
 import { showCustomToast } from "@/components/shared/Toast";
 import OrdersTable from "@/components/profile/OrdersTable";
+import { useUpdateProfile } from "@/hooks/useUpdateProfile";
 
 const breadcrumbItems = [
   { label: "Home", href: "/" },
   { label: "My account", current: true },
 ];
 type ProfileFormState = z.infer<typeof editProfileSchema>;
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 function ProfileContent() {
-  const { userData, fetchUserData } = useUserStore((state) => state);
-  const { setUserData } = useUserStore();
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { userData, setUserData, fetchUserData, isLoading } = useUserStore(
+    (state) => state
+  );
   const [error, setError] = useState("");
-
   const accessToken = getValidAccessToken();
+
+  const updateProfileMutation = useUpdateProfile();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<ProfileFormState>({
     resolver: zodResolver(editProfileSchema),
     defaultValues: {
@@ -57,8 +58,46 @@ function ProfileContent() {
     }
   }, [userData, accessToken, fetchUserData]);
 
+  useEffect(() => {
+    if (updateProfileMutation.isError) {
+      showCustomToast({
+        type: "error",
+        title: "Failed to update profile",
+        description:
+          updateProfileMutation.error?.message || "Failed to update profile",
+      });
+    }
+  }, [updateProfileMutation.isError, updateProfileMutation.error?.message]);
+
+  useEffect(() => {
+    if (updateProfileMutation.isSuccess && updateProfileMutation.data) {
+      const updatedUserData = {
+        id: updateProfileMutation.data.id,
+        first_name: updateProfileMutation.data.first_name,
+        last_name: updateProfileMutation.data.last_name,
+        email: updateProfileMutation.data.email,
+      };
+      setUserData(updatedUserData);
+
+      reset({
+        firstname: updateProfileMutation.data.first_name,
+        lastname: updateProfileMutation.data.last_name,
+        email: updateProfileMutation.data.email,
+      });
+
+      showCustomToast({
+        type: "success",
+        title: "Success! Your profile has been updated.",
+      });
+    }
+  }, [
+    updateProfileMutation.isSuccess,
+    updateProfileMutation.data,
+    setUserData,
+    reset,
+  ]);
+
   const onSubmit = async (data: ProfileFormState) => {
-    setIsSubmitting(true);
     try {
       const requestBody = {
         first_name: data.firstname,
@@ -66,35 +105,18 @@ function ProfileContent() {
         email: data.email,
       };
 
-      const response = await fetch(`${API_URL}users/${userData?.id}/`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify(requestBody),
+      await updateProfileMutation.mutateAsync({
+        userId: userData.id,
+        data: requestBody,
       });
-      if (!response.ok) {
-        throw new Error("Failed to update profile");
-      }
-      const user = await response.json();
-      setUserData({
-        ...userData,
-        first_name: user.firstname,
-        last_name: user.lastname,
-        email: user.email,
-      });
-      showCustomToast({
-        type: "success",
-        title: "Success! Your profile has been updated.",
-      });
+
+      setError("");
     } catch (error) {
+      setError("Failed to update profile");
       showCustomToast({
         type: "error",
         title: "Failed to update profile",
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -105,7 +127,7 @@ function ProfileContent() {
         <LogoutButton showText={true} showIcon={true} />
       </div>
       <h3 className="mb-4 text-title uppercase">
-        Welcome, {userData?.first_name}!
+        Welcome, {isLoading ? "..." : userData?.first_name}!
       </h3>
       <p>
         🧩 Your account dashboard - manage your profile, track orders, and
@@ -123,18 +145,24 @@ function ProfileContent() {
           <div className="flex flex-col gap-2 px-7 text-black">
             <p className="text-sm uppercase">NAME</p>
             <p className="text-gray-2">
-              {userData?.first_name} {userData?.last_name}
+              {isLoading
+                ? "Loading..."
+                : `${userData?.first_name || ""} ${userData?.last_name || ""}`}
             </p>
           </div>
           <div className="flex flex-col gap-2 px-7 text-black">
             <p className="text-sm uppercase">EMAIL</p>
             <p className="flex items-center gap-2 text-gray-2">
-              <Image src={mail} alt="mail" className="w-5 h-5" />
-              {userData?.email}
+              <Image src={mail} alt="mail" width={20} height={20} />
+              {isLoading ? "Loading..." : userData?.email || ""}
             </p>
           </div>
-          <CustomButton>EDIT PROFILE</CustomButton>
-          <CustomButton styleType="whiteButton">CHANGE PASSWORD</CustomButton>
+          <CustomButton disabled={isLoading}>
+            {isLoading ? "LOADING..." : "EDIT PROFILE"}
+          </CustomButton>
+          <CustomButton styleType="whiteButton" disabled={isLoading}>
+            CHANGE PASSWORD
+          </CustomButton>
         </div>
 
         <div className="flex flex-col gap-4 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.05)] w-2/3">
@@ -182,6 +210,7 @@ function ProfileContent() {
                     id="firstname"
                     name="firstname"
                     placeholder="Enter your first name"
+                    disabled={isLoading}
                     {...register("firstname")}
                     error={
                       errors.firstname?.message
@@ -194,6 +223,7 @@ function ProfileContent() {
                     id="lastname"
                     name="lastname"
                     placeholder="Enter your last name"
+                    disabled={isLoading}
                     {...register("lastname")}
                     error={
                       errors.lastname?.message
@@ -208,6 +238,7 @@ function ProfileContent() {
                     id="email"
                     name="email"
                     placeholder="Enter your email"
+                    disabled={isLoading}
                     {...register("email")}
                     error={
                       errors.email?.message
@@ -217,8 +248,13 @@ function ProfileContent() {
                   />
                 </div>
                 <div className="flex justify-end mt-10 mb-7 w-[186px]">
-                  <CustomButton type="submit">
-                    {isSubmitting ? "UPDATING..." : "MAKE CHANGES"}
+                  <CustomButton
+                    type="submit"
+                    disabled={updateProfileMutation.isPending || isLoading}
+                  >
+                    {updateProfileMutation.isPending
+                      ? "UPDATING..."
+                      : "MAKE CHANGES"}
                   </CustomButton>
                 </div>
               </form>

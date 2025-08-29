@@ -70,7 +70,7 @@ function OrdersTable() {
       <TableBody className="border-none text-black">
         {orders.map((order) => (
           <TableRow key={order.id} className="py-4">
-            <TableCell className="py-4 font-medium">{order.id}</TableCell>
+            <TableCell className="py-4">{order.id}</TableCell>
             <TableCell>{formatDate(order.date)}</TableCell>
             <TableCell>
               <CustomBadge variant={mappingStatusesToVariant[order.status]}>
