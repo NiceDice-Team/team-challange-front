@@ -129,12 +129,12 @@ export default function Navbar() {
               </Link>
             </li>
             <li>
-              <Link href="#reviews" className="cursor-pointer hover:text-[#494791] transition-colors">
+              <Link href="/#reviews" className="cursor-pointer hover:text-[#494791] transition-colors">
                 reviews
               </Link>
             </li>
             <li>
-              <Link href="#about" className="cursor-pointer hover:text-[#494791] transition-colors">
+              <Link href="/#about" className="cursor-pointer hover:text-[#494791] transition-colors">
                 about
               </Link>
             </li>
