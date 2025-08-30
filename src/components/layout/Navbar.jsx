@@ -37,14 +37,14 @@ export default function Navbar({isPagination = true}) {
   };
 
   return (
-    <div className="flex flex-col ">
-      <div className="max-w-[1320px] mx-auto w-full">
+    <div className="flex flex-col">
+      <div className="mx-auto w-full max-w-[1320px]">
         <div className="flex flex-row justify-between items-center gap-2 lg:gap-0">
-          <div className="">
-            <img src={LogoIcon} alt="DICE DECKS Logo" className="h-auto w-auto" />
-          </div>
+          <Link href="/" >
+            <img src={LogoIcon} alt="DICE DECKS Logo" className="w-auto h-auto" />
+          </Link>
           <form
-            className="flex flex-row flex-1 justify-between items-center p-1 border-[#494791] border max-w-lg"
+            className="flex flex-row flex-1 justify-between items-center p-1 border border-[#494791] max-w-lg"
             onSubmit={(e) => {
               e.preventDefault();
               const formData = new FormData(e.target);
@@ -61,8 +61,8 @@ export default function Navbar({isPagination = true}) {
               className="ml-1 outline-[#494791] outline-0 w-full"
               placeholder="Search games..."
             />
-            <button className="p-1 rounded-[2px] bg-[#494791] hover:bg-[#4a479170]" type="submit">
-              <img src={SearchIcon} alt="Search" className="h-6 w-6" />
+            <button className="bg-[#494791] hover:bg-[#4a479170] p-1 rounded-[2px]" type="submit">
+              <img src={SearchIcon} alt="Search" className="w-6 h-6" />
             </button>
           </form>
           <div className="flex flex-row items-center gap-1 lg:gap-4">
@@ -71,68 +71,68 @@ export default function Navbar({isPagination = true}) {
             {/* Profile Logo */}
             <Link
               href={userData ? "/profile" : "/login"}
-              className="flex flex-col items-center gap-1 cursor-pointer p-1 hover:bg-gray-100 rounded transition-colors"
+              className="flex flex-col items-center gap-1 hover:bg-gray-100 p-1 rounded transition-colors cursor-pointer"
             >
-              <img src={ProfileIcon} alt="Profile" className="h-6 w-6" />
-              <p className="text-xs">{userData?.first_name}</p>
+              <img src={ProfileIcon} alt="Profile" className="w-6 h-6" />
             </Link>
             {/* Cart Button */}
             <div className="relative">
               <button
                 onClick={handleCartToggle}
-                className="cursor-pointer p-1 hover:bg-gray-100 rounded transition-colors flex items-center justify-center"
+                className="flex justify-center items-center hover:bg-gray-100 p-1 rounded transition-colors cursor-pointer"
               >
-                <img src={CartIcon} alt="Cart" className="h-6 w-6" />
+                <img src={CartIcon} alt="Cart" className="w-6 h-6" />
                 {itemCount > 0 && (
                   <span
                     key={itemCount} // This triggers re-render with animation on count change
-                    className="absolute -top-2 -right-2 bg-[#494791] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium animate-bounce transition-all duration-300 ease-out"
+                    className="-top-2 -right-2 absolute flex justify-center items-center bg-[#494791] rounded-full w-5 h-5 font-medium text-white text-xs transition-all animate-bounce duration-300 ease-out"
                   >
                     {itemCount > 99 ? "99+" : itemCount}
                   </span>
                 )}
               </button>
             </div>
+          </div>
         </div>
         {/* Navigation list */}
         {isPagination && (
           <div className="mt-6">
             <ul className="flex flex-row flex-wrap justify-center gap-4 lg:gap-14 text-sm lg:text-lg uppercase">
               <li>
-                <Link href="/catalog?categories=1" className="cursor-pointer hover:text-[#494791] transition-colors">
+                <Link href="/catalog?categories=1" className="hover:text-[#494791] transition-colors cursor-pointer">
                   new arrivals
                 </Link>
               </li>
               <li>
-                <Link href="/catalog?categories=2" className="cursor-pointer hover:text-[#494791] transition-colors">
+                <Link href="/catalog?categories=2" className="hover:text-[#494791] transition-colors cursor-pointer">
                   bestsellers
                 </Link>
               </li>
               <li>
-                <Link href="/catalog" className="cursor-pointer hover:text-[#494791] transition-colors">
+                <Link href="/catalog" className="hover:text-[#494791] transition-colors cursor-pointer">
                   board games
                 </Link>
               </li>
               <li>
                 <Link
                   href="/catalog?categories=4"
-                  className="text-red-500 cursor-pointer hover:text-red-600 transition-colors"
+                  className="text-red-500 hover:text-red-600 transition-colors cursor-pointer"
                 >
                   sale
                 </Link>
               </li>
               <li>
-                <Link href="/catalog?categories=5" className="cursor-pointer hover:text-[#494791] transition-colors">
+                <Link href="/catalog?categories=5" className="hover:text-[#494791] transition-colors cursor-pointer">
                   coming soon
                 </Link>
               </li>
               <li>
-                <Link href="/#reviews" className="cursor-pointer hover:text-[#494791] transition-colors">
+                <Link href="/#reviews" className="hover:text-[#494791] transition-colors cursor-pointer">
                   reviews
                 </Link>
               </li>
               <li>
-                <Link href="/#about" className="cursor-pointer hover:text-[#494791] transition-colors">
+                <Link href="/#about" className="hover:text-[#494791] transition-colors cursor-pointer">
                   about
                 </Link>
               </li>

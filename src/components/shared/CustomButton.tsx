@@ -29,7 +29,7 @@ export const CustomButton: FC<ButtonProps> = ({
         styleType === "linkButton" &&
           "size-fit text-purple disabled:text-disabled bg-transparent hover:text-light-purple hover:bg-transparent p-0 underline shadow-none",
         styleType === "whiteButton" &&
-          "bg-white text-purple shadow-none hover:hover:bg-gray-100 py-4 px-8",
+          "bg-white text-purple shadow-none hover:hover:bg-gray-100 py-4 px-8 border border-purple",
         styleType === "productCart" &&
           "w-full border-2 border-[#494791] bg-transparent text-[#494791] hover:bg-gray-100 py-2 h-10 font-medium transition shadow-none disabled:bg-[#494791]/70 disabled:text-white disabled:cursor-not-allowed",
         styleType === "wishlist" &&
