@@ -15,7 +15,9 @@ export default function CatalogLayout({ children }) {
       </div>
 
       <div className="px-8 lg:px-16 mb-6">
-        <CustomBreadcrumb items={breadcrumbItems} />
+        <div className="max-w-[1320px] mx-auto">
+          <CustomBreadcrumb items={breadcrumbItems} />
+        </div>
       </div>
 
       <main className="flex-1">{children}</main>

@@ -6,7 +6,7 @@ import SubscribeSection from "../home/SubscribeSection";
 
 export default function About() {
   return (
-    <section className="flex flex-col items-center justify-center ">
+    <section id="about" className="flex flex-col items-center justify-center ">
       <h2 className="uppercase   text-center  text-lg lg:mt-20 lg:text-title mb-8">About us</h2>
       <div className="text-center text-sm lg:text-lg text-pretty max-w-3xl mb-6">
         We are passionate board game enthusiasts dedicated to bringing you the best tabletop experiences. Our store

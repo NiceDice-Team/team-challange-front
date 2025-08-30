@@ -5,6 +5,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { ProductAccordion } from "./ProductPageAccordion";
 import { CustomBreadcrumb } from "../shared/CustomBreadcrumb";
+import { useAddToCart } from "@/hooks/useCartQuery";
 
 // Import test images
 import testImg1 from "../../../public/DynamicProduct/product_id_page_test_img_1.jpg";
@@ -16,6 +17,7 @@ import testImg5 from "../../../public/DynamicProduct/product_id_page_test_img_5.
 export default function ProductPage({ params }) {
   const [quantity, setQuantity] = useState(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const addToCartMutation = useAddToCart();
 
   // Test images array
   const testImages = [testImg1, testImg2, testImg3, testImg4, testImg5];
@@ -36,8 +38,13 @@ export default function ProductPage({ params }) {
     error,
   } = useQuery({
     queryKey: ["product", productId],
-    queryFn: () => productServices.getProductById(productId),
+    queryFn: ({ signal }) => productServices.getProductById(productId, { signal }),
     enabled: !!productId && productId !== "[object Object]",
+    staleTime: 15 * 60 * 1000,
+    gcTime: 60 * 60 * 1000,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    retry: 1,
   });
 
   // If no product ID, show error
@@ -92,9 +99,24 @@ export default function ProductPage({ params }) {
     );
   }
 
-  const handleAddToCart = () => {
-    // Add to cart logic here
-    console.log(`Adding ${quantity} of product ${product.id} to cart`);
+  const handleAddToCart = async () => {
+    if (addToCartMutation.isPending) return; // Prevent multiple rapid clicks
+    
+    try {
+      await addToCartMutation.mutateAsync({
+        productId: product.id,
+        quantity: quantity,
+        productData: product
+      });
+      
+      // TODO: console.log убрать и добавить Toast (в будущем)
+      console.log(`✅ Added ${quantity} of "${product.name}" to cart!`);
+      // Optional: Show success feedback or reset quantity to 1
+      // setQuantity(1);
+    } catch (error) {
+      console.error('Failed to add to cart:', error);
+      alert('❌ Failed to add product to cart. Please try again.');
+    }
   };
 
   const stockQuantity = parseInt(product.stock) || 0;
@@ -144,7 +166,7 @@ export default function ProductPage({ params }) {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-[1320px] mx-auto px-8 lg:px-16 py-8">
       {/* Breadcrumb */}
       <div className="mb-6">
         <CustomBreadcrumb items={breadcrumbItems} />
@@ -327,12 +349,14 @@ export default function ProductPage({ params }) {
 
               <button
                 onClick={handleAddToCart}
-                disabled={!isInStock}
-                className={`flex-1 py-3 px-6  text-white font-medium transition-colors ${
-                  isInStock ? "bg-[color:var(--color-purple)] hover:opacity-90" : "bg-gray-400 cursor-not-allowed"
+                disabled={!isInStock || addToCartMutation.isPending}
+                className={`flex-1 py-3 px-6 text-white font-medium transition-colors ${
+                  isInStock && !addToCartMutation.isPending 
+                    ? "bg-[color:var(--color-purple)] hover:opacity-90" 
+                    : "bg-gray-400 cursor-not-allowed"
                 }`}
               >
-                ADD TO CART
+                {addToCartMutation.isPending ? 'ADDING...' : 'ADD TO CART'}
               </button>
             </div>
           </div>

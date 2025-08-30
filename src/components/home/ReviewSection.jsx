@@ -121,7 +121,7 @@ export default function ReviewSection({ reviews = [] }) {
   const next = () => setPage((p) => Math.min(maxPage, p + 1));
 
   return (
-    <section className="  mb-25 px-8 lg:px-50">
+    <section id="reviews" className="  mb-25 px-8 lg:px-50">
       {/* Heading + arrows */}
       <div className="mb-8 flex items-center justify-between">
         <h2 className="text-title font-semibold tracking-wide">REVIEWS FROM OUR CUSTOMERS</h2>

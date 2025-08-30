@@ -3,7 +3,7 @@
 import { CustomButton } from "@/components/shared/CustomButton";
 import { CustomInput } from "@/components/shared/CustomInput";
 import { PasswordInput } from "@/components/shared/PasswordInput";
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { LoginFormState } from "@/lib/definitions";
 import { signin } from "@/app/actions/auth";
@@ -117,7 +117,9 @@ function LoginPageContent() {
 export default function LoginPage() {
   return (
     <PublicRoute>
-      <LoginPageContent />
+      <Suspense fallback={<div className="flex justify-center items-center min-h-screen">Loading...</div>}>
+        <LoginPageContent />
+      </Suspense>
     </PublicRoute>
   );
 }
