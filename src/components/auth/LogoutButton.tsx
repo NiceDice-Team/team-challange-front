@@ -6,6 +6,7 @@ import { logoutAction } from "@/app/actions/logout";
 import { useAuthStore } from "@/store/auth";
 import { useUserStore } from "@/store/user";
 import { CustomButton } from "@/components/shared/CustomButton";
+import { clearTokens as clearTokensFromCookies } from "@/lib/tokenManager";
 
 interface LogoutButtonProps {
   className?: string;
@@ -28,6 +29,7 @@ export function LogoutButton({
     startTransition(async () => {
       try {
         clearTokens();
+        clearTokensFromCookies();
         clearAllUserData();
         await logoutAction();
       } catch (error) {

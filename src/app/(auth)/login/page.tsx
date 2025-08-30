@@ -17,6 +17,7 @@ const INITIAL_STATE: LoginFormState = {
 
 import { PublicRoute } from "@/components/auth/RouteGuards";
 import { useRouter } from "next/navigation";
+import { showCustomToast } from "@/components/shared/Toast";
 
 function LoginPageContent() {
   const params = useSearchParams();
@@ -34,6 +35,11 @@ function LoginPageContent() {
       formState.refreshToken &&
       Object.keys(formState.errors || {}).length === 0
     ) {
+      showCustomToast({
+        type: "success",
+        title: "Success! You are logged in.",
+        description: "You can now continue your adventure",
+      });
       router.push("/");
     }
   }, [formState, pending, router]);

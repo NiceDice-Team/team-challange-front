@@ -177,7 +177,12 @@
 
   .bg-not-found-gradient {
     background: linear-gradient(90deg, #494791 7.69%, #b23b30 99.52%),
-      linear-gradient(106.44deg, rgba(104, 102, 167, 0.9) -1.37%, #494791 48.83%, rgba(125, 123, 184, 0.9) 95.22%);
+      linear-gradient(
+        106.44deg,
+        rgba(104, 102, 167, 0.9) -1.37%,
+        #494791 48.83%,
+        rgba(125, 123, 184, 0.9) 95.22%
+      );
   }
 }
 

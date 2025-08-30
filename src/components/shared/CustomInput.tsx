@@ -16,6 +16,7 @@ type InputPros = {
   name?: string;
   disabled?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  value?: string;
 };
 
 export const CustomInput: React.FC<InputPros> = ({
@@ -28,6 +29,7 @@ export const CustomInput: React.FC<InputPros> = ({
   id,
   name,
   disabled,
+  value,
   ...props
 }) => {
   return (
@@ -58,6 +60,7 @@ export const CustomInput: React.FC<InputPros> = ({
               "border-error focus:ring-red-500 focus-visible:ring-red-500",
             className
           )}
+          value={value}
           {...props}
         />
       </div>

@@ -10,22 +10,20 @@ import { getTokens } from "@/lib/tokenManager";
 import decodeToken from "@/lib/decodeToken";
 import { useAuthStore } from "@/store/auth";
 
-export default function Navbar() {
+export default function Navbar({isPagination = true}) {
   const { userData, fetchUserData } = useUserStore((state) => state);
   const { userId } = useAuthStore((state) => state);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const { itemCount } = useCartSummary();
 
   useEffect(() => {
-    if (!userData) {
+    const { refreshToken } = getTokens();
+    if (!userData && refreshToken) {
       if (userId) {
         fetchUserData(userId);
         return;
       } else {
-        const { refreshToken } = getTokens();
-        if (refreshToken) {
-          decodeToken(refreshToken);
-        }
+        decodeToken(refreshToken);
       }
     }
   }, [userId, userData, fetchUserData]);
@@ -95,52 +93,53 @@ export default function Navbar() {
                 )}
               </button>
             </div>
-          </div>
         </div>
         {/* Navigation list */}
-        <div className="mt-6">
-          <ul className="flex flex-row flex-wrap justify-center gap-4 lg:gap-14 text-sm lg:text-lg uppercase">
-            <li>
-              <Link href="/catalog?categories=1" className="cursor-pointer hover:text-[#494791] transition-colors">
-                new arrivals
-              </Link>
-            </li>
-            <li>
-              <Link href="/catalog?categories=2" className="cursor-pointer hover:text-[#494791] transition-colors">
-                bestsellers
-              </Link>
-            </li>
-            <li>
-              <Link href="/catalog" className="cursor-pointer hover:text-[#494791] transition-colors">
-                board games
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/catalog?categories=4"
-                className="text-red-500 cursor-pointer hover:text-red-600 transition-colors"
-              >
-                sale
-              </Link>
-            </li>
-            <li>
-              <Link href="/catalog?categories=5" className="cursor-pointer hover:text-[#494791] transition-colors">
-                coming soon
-              </Link>
-            </li>
-            <li>
-              <Link href="/#reviews" className="cursor-pointer hover:text-[#494791] transition-colors">
-                reviews
-              </Link>
-            </li>
-            <li>
-              <Link href="/#about" className="cursor-pointer hover:text-[#494791] transition-colors">
-                about
-              </Link>
-            </li>
-          </ul>
-          <div className="bg-[#494791] mt-3 w-full h-px"></div>
-        </div>
+        {isPagination && (
+          <div className="mt-6">
+            <ul className="flex flex-row flex-wrap justify-center gap-4 lg:gap-14 text-sm lg:text-lg uppercase">
+              <li>
+                <Link href="/catalog?categories=1" className="cursor-pointer hover:text-[#494791] transition-colors">
+                  new arrivals
+                </Link>
+              </li>
+              <li>
+                <Link href="/catalog?categories=2" className="cursor-pointer hover:text-[#494791] transition-colors">
+                  bestsellers
+                </Link>
+              </li>
+              <li>
+                <Link href="/catalog" className="cursor-pointer hover:text-[#494791] transition-colors">
+                  board games
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/catalog?categories=4"
+                  className="text-red-500 cursor-pointer hover:text-red-600 transition-colors"
+                >
+                  sale
+                </Link>
+              </li>
+              <li>
+                <Link href="/catalog?categories=5" className="cursor-pointer hover:text-[#494791] transition-colors">
+                  coming soon
+                </Link>
+              </li>
+              <li>
+                <Link href="/#reviews" className="cursor-pointer hover:text-[#494791] transition-colors">
+                  reviews
+                </Link>
+              </li>
+              <li>
+                <Link href="/#about" className="cursor-pointer hover:text-[#494791] transition-colors">
+                  about
+                </Link>
+              </li>
+            </ul>
+            <div className="bg-[#494791] mt-3 w-full h-px"></div>
+          </div>
+        )}
       </div>
 
       {/* Cart Dropdown */}
