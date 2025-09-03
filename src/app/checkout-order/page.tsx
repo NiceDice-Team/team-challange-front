@@ -32,9 +32,6 @@ function CheckoutPage() {
           <div className="flex flex-col mb-10">
             <ShippingForm onDataChange={handleShippingDataChange} />
           </div>
-          {/* <div className="flex flex-col mt-6">
-            <PaymentWrapper />
-          </div> */}
         </div>
 
         <div className="flex flex-col gap-4 p-6 border-1 w-1/2">
