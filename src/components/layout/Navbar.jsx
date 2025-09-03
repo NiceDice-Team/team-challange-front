@@ -37,7 +37,7 @@ export default function Navbar({isPagination = true}) {
   };
 
   return (
-    <div className="flex flex-col ">
+    <div className="flex flex-col">
       <div className="max-w-[1320px] mx-auto w-full">
         <div className="flex flex-row justify-between items-center gap-2 lg:gap-0">
           <div className="">
@@ -93,7 +93,9 @@ export default function Navbar({isPagination = true}) {
                 )}
               </button>
             </div>
+          </div>
         </div>
+        
         {/* Navigation list */}
         {isPagination && (
           <div className="mt-6">
