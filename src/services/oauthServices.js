@@ -1,17 +1,17 @@
-
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-export const sendOAuthToken = async (provider, token) => {
+export const sendOAuthToken = async (provider) => {
+  const body = {
+    provider: provider.provider,
+    access_token: provider.token,
+  };
 
   const response = await fetch(`${API_URL}users/oauth/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      provider,
-      token,
-    }),
+    body: JSON.stringify(body),
   });
 
   if (!response.ok) {

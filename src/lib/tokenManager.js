@@ -14,7 +14,7 @@ export function getTokens() {
 /**
  * Сохраняет токены в кукисы
  */
-function setTokens(accessToken, refreshToken) {
+export function setTokens(accessToken, refreshToken) {
   if (typeof document === "undefined") return;
 
   if (accessToken) {

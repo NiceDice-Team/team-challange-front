@@ -12,7 +12,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 
-export const CustomBreadcrumb = ({ className, items = [], ...props }) => {
+export const CustomBreadcrumb = ({ className='', items = [], ...props }) => {
   return (
     <Breadcrumb className={cn("", className)} {...props}>
       <BreadcrumbList className="flex items-center gap-1">
@@ -23,13 +23,13 @@ export const CustomBreadcrumb = ({ className, items = [], ...props }) => {
                 <BreadcrumbLink asChild>
                   <Link
                     href={item.href}
-                    className="text-sm text-[var(--color-gray-2)] hover:text-[var(--color-purple)] transition-colors"
+                    className="text-[var(--color-gray-2)] hover:text-[var(--color-purple)] text-sm transition-colors"
                   >
                     {item.label}
                   </Link>
                 </BreadcrumbLink>
               ) : (
-                <BreadcrumbPage className="text-sm text-[var(--color-purple)]">{item.label}</BreadcrumbPage>
+                <BreadcrumbPage className="text-[var(--color-purple)] text-sm">{item.label}</BreadcrumbPage>
               )}
             </BreadcrumbItem>
 

@@ -117,7 +117,13 @@ function LoginPageContent() {
 export default function LoginPage() {
   return (
     <PublicRoute>
-      <Suspense fallback={<div className="flex justify-center items-center min-h-screen">Loading...</div>}>
+      <Suspense
+        fallback={
+          <div className="flex justify-center items-center min-h-screen">
+            Loading...
+          </div>
+        }
+      >
         <LoginPageContent />
       </Suspense>
     </PublicRoute>

@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { sendOAuthToken } from "@/services/oauthServices";
 import { useUserStore } from "@/store/user";
+import { setTokens, clearTokens } from "@/lib/tokenManager";
 
 interface GoogleAuthButtonProps {
   className?: string;
@@ -29,6 +30,9 @@ export const GoogleAuthButton: FC<GoogleAuthButtonProps> = ({
     mutationFn: sendOAuthToken,
     onSuccess: (data) => {
       oauthCompletedRef.current = true;
+      if (data.access_token) {
+        setTokens(data.access_token, data.refresh_token);
+      }
 
       if (data.user) {
         setUserData({
@@ -99,6 +103,7 @@ export const GoogleAuthButton: FC<GoogleAuthButtonProps> = ({
 
       await logoutAction();
       await signOut({ redirect: false });
+      clearTokens(); // Очищаем токены из куки
     } catch (error) {
       console.error("Sign out error:", error);
       await signOut({
