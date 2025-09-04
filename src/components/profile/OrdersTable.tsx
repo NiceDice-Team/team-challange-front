@@ -77,7 +77,6 @@ function OrdersTable() {
           <TableHead>STATUS</TableHead>
           <TableHead>ITEMS</TableHead>
           <TableHead>TOTAL</TableHead>
-          <TableHead className="text-right">ACTIONS</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody className="border-none text-black">
@@ -93,9 +92,6 @@ function OrdersTable() {
             </TableCell>
             <TableCell>{formatItemsCount(order?.products?.length)}</TableCell>
             <TableCell>${Number(order?.total_amount)?.toFixed(2)}</TableCell>
-            <TableCell className="flex justify-end items-center gap-2 h-[53px] text-right">
-              <Eye size={20} /> View
-            </TableCell>
           </TableRow>
         ))}
       </TableBody>
