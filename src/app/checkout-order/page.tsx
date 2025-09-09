@@ -44,31 +44,24 @@ function CheckoutPage() {
   const [shippingData, setShippingData] = useState<ShippingFormData | null>(
     null
   );
-  const [billingData, setBillingData] = useState<BillingFormData | null>(null);
+  const [manualBillingData, setManualBillingData] =
+    useState<BillingFormData | null>(null);
 
-  useEffect(() => {
-    if (copyBilling && shippingData) {
-      setBillingData(shippingData);
-    }
-  }, [copyBilling, shippingData]);
+  const billingData = copyBilling ? shippingData : manualBillingData;
 
   const handleShippingDataChange = (data: ShippingFormData) => {
     setShippingData(data);
   };
 
   const handleBillingDataChange = (data: BillingFormData) => {
-    setBillingData(data);
-  };
-
-  const handleCopyBillingChange = (checked: boolean) => {
-    setCopyBilling(checked);
+    setManualBillingData(data);
   };
 
   return (
     <div className="py-8 min-h-screen">
       <CustomBreadcrumb items={breadcrumbItems} />
 
-      <h3 className="mb-4 text-title uppercase">Checkout</h3>
+      <h3 className="mt-6 mb-4 text-title uppercase">Checkout</h3>
       <div className="flex gap-6">
         <div className="flex flex-col py-6 w-1/2">
           <div className="flex flex-col mb-10">
@@ -78,7 +71,7 @@ function CheckoutPage() {
             label="Use shipping address as billing address"
             id="copyBilling"
             checked={copyBilling}
-            onCheckedChange={handleCopyBillingChange}
+            onCheckedChange={setCopyBilling}
           />
           {!copyBilling && (
             <div className="flex flex-col mt-6">

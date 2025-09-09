@@ -1,28 +1,16 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { CustomInput } from "../shared/CustomInput";
 import CountrySelectWithSearch from "./CountrySelectWithSearch";
 import PhoneNumberInput from "./PhoneNumberInput";
+import { billingSchema } from "./schema";
 
-const shippingFormSchema = z.object({
-  country: z.string().min(1, "Выберите страну"),
-  firstName: z.string().min(2, "Имя должно содержать минимум 2 символа"),
-  lastName: z.string().min(2, "Фамилия должна содержать минимум 2 символа"),
-  address: z.string().min(5, "Адрес должен содержать минимум 5 символов"),
-  apartment: z.string().optional(),
-  zipCode: z
-    .string()
-    .min(3, "Почтовый индекс должен содержать минимум 3 символа"),
-  city: z.string().min(2, "Город должен содержать минимум 2 символа"),
-  email: z.string().email("Введите корректный email адрес"),
-  phone: z.string().min(10, "Телефон должен содержать минимум 10 цифр"),
-});
 
-type ShippingFormData = z.infer<typeof shippingFormSchema>;
+type ShippingFormData = z.infer<typeof billingSchema>;
 
 interface ShippingFormProps {
   onDataChange?: (data: ShippingFormData) => void;
@@ -40,7 +28,8 @@ export default function ShippingForm({
     trigger,
     formState: { errors, isSubmitting },
   } = useForm<ShippingFormData>({
-    resolver: zodResolver(shippingFormSchema),
+    resolver: zodResolver(billingSchema),
+    mode: "onBlur", 
     defaultValues: {
       country: initialData?.country || "",
       firstName: initialData?.firstName || "",
@@ -56,12 +45,15 @@ export default function ShippingForm({
 
   const selectedCountry = watch("country");
   const formData = watch();
+  const stableFormData = useMemo(() => formData, [JSON.stringify(formData)]);
 
   useEffect(() => {
-    if (onDataChange) {
-      onDataChange(formData);
-    }
-  }, [formData, onDataChange]);
+    const handler = setTimeout(() => {
+      onDataChange?.(stableFormData);
+    }, 500);
+
+    return () => clearTimeout(handler);
+  }, [stableFormData, onDataChange]);
 
   useEffect(() => {
     if (initialData) {
@@ -72,7 +64,6 @@ export default function ShippingForm({
       });
     }
   }, [initialData, setValue]);
-
 
   return (
     <>
