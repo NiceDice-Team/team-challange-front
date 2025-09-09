@@ -60,7 +60,7 @@ export async function signup(
       },
       body: JSON.stringify(requestBody),
     });
-
+console.log('response signup', response);
     if (!response.ok) {
       const contentType = response.headers.get("content-type");
       let errorMessage = `HTTP ${response.status}: ${response.statusText}`;

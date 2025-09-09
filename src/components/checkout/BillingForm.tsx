@@ -35,7 +35,6 @@ export default function BillingForm({
 }: BillingFormProps) {
   const {
     register,
-    handleSubmit,
     watch,
     setValue,
     trigger,
@@ -74,18 +73,10 @@ export default function BillingForm({
     }
   }, [initialData, setValue]);
 
-  const onSubmit = async (data: BillingFormData) => {
-    try {
-      console.log("Billing data:", data);
-    } catch (error) {
-      console.error("Error sending billing form:", error);
-    }
-  };
-
   return (
     <>
       <div className="pb-10 text-xl uppercase">Billing adress</div>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <form className="flex flex-col gap-4">
         <CountrySelectWithSearch
           value={watch("country")}
           onChange={(value) => setValue("country", value)}

@@ -35,7 +35,6 @@ export default function ShippingForm({
 }: ShippingFormProps) {
   const {
     register,
-    handleSubmit,
     watch,
     setValue,
     trigger,
@@ -74,18 +73,11 @@ export default function ShippingForm({
     }
   }, [initialData, setValue]);
 
-  const onSubmit = async (data: ShippingFormData) => {
-    try {
-      console.log("Shipping data:", data);
-    } catch (error) {
-      console.error("Error sending shipping form:", error);
-    }
-  };
 
   return (
     <>
       <div className="pb-10 text-xl uppercase">Shipping</div>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <form className="flex flex-col gap-4">
         <CountrySelectWithSearch
           value={watch("country")}
           onChange={(value) => setValue("country", value)}
