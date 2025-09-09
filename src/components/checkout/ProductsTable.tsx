@@ -15,6 +15,7 @@ const ProductsTable = () => {
 
   return (
     <div className="flex flex-col gap-10 w-full">
+      <div className="text-xl uppercase">Your order</div>
       {cartLoading ? (
         <div className="animate-pulse">Loading order...</div>
       ) : (

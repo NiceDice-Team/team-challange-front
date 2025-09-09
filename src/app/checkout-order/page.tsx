@@ -6,6 +6,7 @@ import ShippingForm, {
 import PaymentWrapper from "@/components/checkout/PaymentWrapper";
 import { useState } from "react";
 import ProductsTable from "@/components/checkout/ProductsTable";
+import DeliveryOptions from "@/components/checkout/DeliveryOptions";
 
 const breadcrumbItems = [
   { label: "Home", href: "/" },
@@ -35,11 +36,10 @@ function CheckoutPage() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-4 p-6 border-1 w-1/2">
-          <div className="pb-10 text-xl uppercase">Your order</div>
+        <div className="flex flex-col gap-10 p-6 border-1 w-1/2">
           <ProductsTable />
+          <DeliveryOptions />
 
-          
           <div className="flex flex-col gap-4">
             <div className="bg-gray-50 p-4 rounded">
               <h4 className="mb-2 font-semibold">Shipping Data:</h4>
