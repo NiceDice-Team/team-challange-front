@@ -80,13 +80,14 @@ function CheckoutPage() {
             checked={copyBilling}
             onCheckedChange={handleCopyBillingChange}
           />
-
-          <div className="flex flex-col mt-6">
-            <BillingForm
-              onDataChange={handleBillingDataChange}
-              initialData={copyBilling ? shippingData : undefined}
-            />
-          </div>
+          {!copyBilling && (
+            <div className="flex flex-col mt-6">
+              <BillingForm
+                onDataChange={handleBillingDataChange}
+                initialData={copyBilling ? shippingData : undefined}
+              />
+            </div>
+          )}
           <div className="flex flex-col mt-6">
             <PaymentForm />
           </div>

@@ -1,9 +1,13 @@
 "use server";
 
+import { clearTokens } from "@/lib/tokenManager";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 
-export async function logoutAction() {
+interface LogoutActionParams {
+  provider?: string;
+}
+
+export async function logoutAction({ provider }: LogoutActionParams = {}) {
   try {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("access_token")?.value;
@@ -30,30 +34,13 @@ export async function logoutAction() {
       }
     }
 
-    // Clean cookies
-    cookieStore.set("access_token", "", {
-      expires: new Date(0),
-      path: "/",
-      httpOnly: false,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-    });
+    clearTokens();
 
-    cookieStore.set("refresh_token", "", {
-      expires: new Date(0),
-      path: "/",
-      httpOnly: false,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-    });
-
-    cookieStore.set("userId", "", {
-      expires: new Date(0),
-      path: "/",
-      httpOnly: false,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-    });
+    return {
+      success: true,
+      needsOAuthLogout: provider === "google" || provider === "facebook",
+      provider: provider,
+    };
   } catch (error) {
     console.error("Error in logout action:", error);
     throw new Error("Error in logout action");

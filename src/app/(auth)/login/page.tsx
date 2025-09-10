@@ -3,25 +3,41 @@
 import { CustomButton } from "@/components/shared/CustomButton";
 import { CustomInput } from "@/components/shared/CustomInput";
 import { PasswordInput } from "@/components/shared/PasswordInput";
-import { useActionState, Suspense } from "react";
+import { useActionState, Suspense, useEffect } from "react";
 import Link from "next/link";
 import { LoginFormState } from "@/lib/definitions";
 import { signin } from "@/app/actions/auth";
 import { GoogleAuthButton } from "@/components/auth/GoogleLogin";
 import { FacebookAuthButton } from "@/components/auth/FacebookLogin";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { PublicRoute } from "@/components/auth/RouteGuards";
+import { showCustomToast } from "@/components/shared/Toast";
+import { getTokens } from "@/lib/tokenManager";
 const INITIAL_STATE: LoginFormState = {
+  refreshToken: "",
   errors: {},
 };
 
 function LoginPageContent() {
   const params = useSearchParams();
+  const router = useRouter();
   const mode = params.get("mode");
+  const {refreshToken} = getTokens();
   const [formState, formAction, pending] = useActionState<
     LoginFormState,
     FormData
   >(signin, INITIAL_STATE);
+
+  useEffect(() => {
+    if (formState.refreshToken || refreshToken) {
+      showCustomToast({
+        type: "success",
+        title: "Success! You are logged in.",
+        description: "You can now continue your adventure",
+      });
+      setTimeout(() => router.push("/"), 1000);
+    }
+  }, [formState, refreshToken]);
 
   return (
     <div className="flex flex-col items-center mx-auto mt-20">

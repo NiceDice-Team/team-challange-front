@@ -1,14 +1,6 @@
 import { useState, useCallback } from "react";
-import {
-  getValidAccessToken,
-  isAuthenticated,
-  logout,
-  getUserFromToken,
-} from "@/lib/tokenManager";
+import { getValidAccessToken, logout } from "@/lib/tokenManager";
 
-/**
- * Хук для управления токенами в React компонентах
- */
 export function useTokenManager() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -28,9 +20,6 @@ export function useTokenManager() {
     }
   }, []);
 
-  /**
-   * Выполняет API запрос с автоматическим управлением токенами
-   */
   const executeWithToken = useCallback(async (apiCall) => {
     try {
       setIsLoading(true);
@@ -46,9 +35,7 @@ export function useTokenManager() {
     }
   }, []);
 
-  /**
-   * Выход из системы
-   */
+
   const handleLogout = useCallback(() => {
     logout();
   }, []);

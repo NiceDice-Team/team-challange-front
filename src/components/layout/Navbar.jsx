@@ -8,25 +8,18 @@ import CartDropdown from "@/components/cart/CartDropdown";
 import { useCartSummary } from "@/hooks/useCartQuery";
 import { getTokens } from "@/lib/tokenManager";
 import decodeToken from "@/lib/decodeToken";
-import { useAuthStore } from "@/store/auth";
 
 export default function Navbar({isPagination = true}) {
-  const { userData, fetchUserData } = useUserStore((state) => state);
-  const { userId } = useAuthStore((state) => state);
+  const { userData } = useUserStore((state) => state);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const { itemCount } = useCartSummary();
+  const { refreshToken } = getTokens();
 
   useEffect(() => {
-    const { refreshToken } = getTokens();
     if (!userData && refreshToken) {
-      if (userId) {
-        fetchUserData(userId);
-        return;
-      } else {
-        decodeToken(refreshToken);
-      }
+      decodeToken(refreshToken);
     }
-  }, [userId, userData, fetchUserData]);
+  }, [userData, refreshToken]);
 
   const handleCartToggle = () => {
     setIsCartOpen(!isCartOpen);

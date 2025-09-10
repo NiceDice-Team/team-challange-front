@@ -89,7 +89,9 @@ export default function ShippingForm({
         <CountrySelectWithSearch
           value={watch("country")}
           onChange={(value) => setValue("country", value)}
-          onBlur={() => trigger("country")}
+          onBlur={() => {
+            void trigger("country");
+          }}
           name="country"
           error={
             errors.country?.message ? [errors.country?.message] : undefined
