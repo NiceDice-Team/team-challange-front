@@ -7,7 +7,8 @@ import { useAuthStore } from "@/store/auth";
 import { useUserStore } from "@/store/user";
 import { CustomButton } from "@/components/shared/CustomButton";
 import { clearTokens as clearTokensFromCookies } from "@/lib/tokenManager";
-
+import { showCustomToast } from "../shared/Toast";
+import { useRouter } from "next/navigation";
 interface LogoutButtonProps {
   className?: string;
   styleType?: "linkButton" | "whiteButton";
@@ -22,6 +23,7 @@ export function LogoutButton({
   const [isPending, startTransition] = useTransition();
   const { clearTokens } = useAuthStore();
   const { clearAllUserData } = useUserStore();
+  const router = useRouter();
 
   const handleLogout = () => {
     startTransition(async () => {
@@ -30,6 +32,14 @@ export function LogoutButton({
         clearTokensFromCookies();
         clearAllUserData();
         await logoutAction();
+        showCustomToast({
+          type: "success",
+          title: "Success! You are logged out.",
+          description: "You can now continue your adventure",
+        });
+        setTimeout(() => {
+          router.push("/");
+        }, 1000);
       } catch (error) {
         console.error("Error during logout:", error);
       }

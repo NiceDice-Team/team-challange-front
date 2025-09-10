@@ -8,12 +8,10 @@ export async function logoutAction() {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("access_token")?.value;
     const refreshToken = cookieStore.get("refresh_token")?.value;
-    console.log("accessToken", accessToken);
-    console.log("refreshToken", refreshToken);
+
     if (accessToken && refreshToken) {
       try {
         const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
-        console.log("PI_URL", API_URL);
         const response = await fetch(`${API_URL}users/logout/`, {
           method: "POST",
           headers: {
@@ -60,6 +58,4 @@ export async function logoutAction() {
     console.error("Error in logout action:", error);
     throw new Error("Error in logout action");
   }
-
-  redirect("/");
 }

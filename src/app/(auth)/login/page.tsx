@@ -3,46 +3,25 @@
 import { CustomButton } from "@/components/shared/CustomButton";
 import { CustomInput } from "@/components/shared/CustomInput";
 import { PasswordInput } from "@/components/shared/PasswordInput";
-import { useActionState, useEffect, Suspense } from "react";
+import { useActionState, Suspense } from "react";
 import Link from "next/link";
 import { LoginFormState } from "@/lib/definitions";
 import { signin } from "@/app/actions/auth";
 import { GoogleAuthButton } from "@/components/auth/GoogleLogin";
 import { FacebookAuthButton } from "@/components/auth/FacebookLogin";
 import { useSearchParams } from "next/navigation";
-
+import { PublicRoute } from "@/components/auth/RouteGuards";
 const INITIAL_STATE: LoginFormState = {
   errors: {},
 };
 
-import { PublicRoute } from "@/components/auth/RouteGuards";
-import { useRouter } from "next/navigation";
-import { showCustomToast } from "@/components/shared/Toast";
-
 function LoginPageContent() {
   const params = useSearchParams();
-  const router = useRouter();
   const mode = params.get("mode");
   const [formState, formAction, pending] = useActionState<
     LoginFormState,
     FormData
   >(signin, INITIAL_STATE);
-
-  useEffect(() => {
-    if (
-      !pending &&
-      formState.accessToken &&
-      formState.refreshToken &&
-      Object.keys(formState.errors || {}).length === 0
-    ) {
-      showCustomToast({
-        type: "success",
-        title: "Success! You are logged in.",
-        description: "You can now continue your adventure",
-      });
-      router.push("/");
-    }
-  }, [formState, pending, router]);
 
   return (
     <div className="flex flex-col items-center mx-auto mt-20">

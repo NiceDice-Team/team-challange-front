@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import ArrowNext from "../../../../public/icons/ArrowNext.svg";
 import Image from "next/image";
