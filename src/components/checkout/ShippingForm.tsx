@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { CustomInput } from "../shared/CustomInput";
-import { CustomSelectWithSearch } from "../shared/CustomSelectWithSearch";
+import CountrySelectWithSearch from "./CountrySelectWithSearch";
 
 const shippingFormSchema = z.object({
   country: z.string().min(1, "Выберите страну"),
@@ -57,7 +57,10 @@ export default function ShippingForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-      <CustomSelectWithSearch />
+      <CountrySelectWithSearch
+        {...register("country")}
+        error={errors.country?.message ? [errors.country?.message] : undefined}
+      />
       <div className="gap-4 grid grid-cols-1 md:grid-cols-2">
         <CustomInput
           label="First Name"
