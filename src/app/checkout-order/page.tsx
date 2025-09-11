@@ -4,6 +4,9 @@ import ShippingForm from "@/components/checkout/ShippingForm";
 import BillingForm from "@/components/checkout/BillingForm";
 import CustomCheckbox from "@/components/shared/CustomCheckbox";
 import { useState, useEffect } from "react";
+import PaymentForm from "@/components/checkout/PaymentForm";
+import Link from "next/link";
+import { CustomButton } from "@/components/shared/CustomButton";
 
 const breadcrumbItems = [
   { label: "Home", href: "/" },
@@ -43,7 +46,6 @@ function CheckoutPage() {
   );
   const [billingData, setBillingData] = useState<BillingFormData | null>(null);
 
-  // Копируем данные из shipping в billing при включении чекбокса
   useEffect(() => {
     if (copyBilling && shippingData) {
       setBillingData(shippingData);
@@ -52,12 +54,10 @@ function CheckoutPage() {
 
   const handleShippingDataChange = (data: ShippingFormData) => {
     setShippingData(data);
-    console.log("Shipping data updated:", data);
   };
 
   const handleBillingDataChange = (data: BillingFormData) => {
     setBillingData(data);
-    console.log("Billing data updated:", data);
   };
 
   const handleCopyBillingChange = (checked: boolean) => {
@@ -86,6 +86,16 @@ function CheckoutPage() {
               onDataChange={handleBillingDataChange}
               initialData={copyBilling ? shippingData : undefined}
             />
+          </div>
+          <div className="flex flex-col mt-6">
+            <PaymentForm />
+          </div>
+
+          <div className="flex justify-between mt-12">
+            <Link href="/cart">Return to cart</Link>
+            <Link href="/checkout/order-review">
+              <CustomButton className="w-[144px]">Order review</CustomButton>
+            </Link>
           </div>
         </div>
 

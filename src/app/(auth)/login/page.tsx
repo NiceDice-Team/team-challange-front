@@ -82,7 +82,7 @@ function LoginPageContent() {
         </div>
         <div className="flex flex-col gap-3 w-full">
           <GoogleAuthButton />
-          {/* <FacebookAuthButton /> */}
+          <FacebookAuthButton />
         </div>
 
         <Link href="/" className="mt-12 text-purple underline">

@@ -7,7 +7,7 @@ interface CountrySelectWithSearchProps {
   error?: string[];
   value?: string;
   onChange?: (value: string) => void;
-  onBlur?: () => void;
+  onBlur: (e: React.FocusEvent<HTMLInputElement>) => void;
   name?: string;
 }
 
@@ -31,17 +31,13 @@ const CountrySelectWithSearch = ({
     onChange?.(val);
   };
 
-  const handleBlur = () => {
-    onBlur?.();
-  };
-
   return (
     <>
       <p className="font-normal text-base uppercase">Country/region</p>
       <CountryDropdown
         value={country}
         onChange={handleChange}
-        onBlur={handleBlur}
+        onBlur={(e) => onBlur(e)}
         name={name}
         className={cn(
           "px-4 border-1 border-black focus-visible:outline-none w-full h-[48px] text-black",
