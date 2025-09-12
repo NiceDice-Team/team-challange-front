@@ -1,9 +1,10 @@
-import { Info } from "lucide-react";
-import { useEffect, useState } from "react";
-import { CountryDropdown } from "react-country-region-selector";
 import { cn } from "@/lib/utils";
+import { Info } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import PhoneInput from "react-phone-number-input";
+import "react-phone-number-input/style.css";
 
-interface CountrySelectWithSearchProps {
+interface PhoneNumberInputProps {
   error?: string[];
   value?: string;
   onChange?: (value: string) => void;
@@ -11,24 +12,25 @@ interface CountrySelectWithSearchProps {
   name?: string;
 }
 
-const CountrySelectWithSearch = ({
+const PhoneNumberInput = ({
   error,
   value,
   onChange,
   onBlur,
   name,
-}: CountrySelectWithSearchProps) => {
-  const [country, setCountry] = useState(value || "");
+}: PhoneNumberInputProps) => {
+  const [phone, setPhone] = useState(value || "");
 
   useEffect(() => {
     if (value !== undefined) {
-      setCountry(value);
+      setPhone(value);
     }
   }, [value]);
 
-  const handleChange = (val: string) => {
-    setCountry(val);
-    onChange?.(val);
+  const handleChange = (phoneValue: string | undefined) => {
+    const phoneStr = phoneValue || "";
+    setPhone(phoneStr);
+    onChange?.(phoneStr);
   };
 
   const handleBlur = () => {
@@ -37,9 +39,12 @@ const CountrySelectWithSearch = ({
 
   return (
     <>
-      <p className="font-normal text-base uppercase">Country/region</p>
-      <CountryDropdown
-        value={country}
+      <p className="font-normal text-base uppercase">Phone number</p>
+      <PhoneInput
+        country={"us"}
+        defaultCountry="US"
+        value={phone}
+        limitMaxLength={true}
         onChange={handleChange}
         onBlur={handleBlur}
         name={name}
@@ -61,4 +66,4 @@ const CountrySelectWithSearch = ({
   );
 };
 
-export default CountrySelectWithSearch;
+export default PhoneNumberInput;

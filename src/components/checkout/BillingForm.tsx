@@ -8,7 +8,7 @@ import { CustomInput } from "../shared/CustomInput";
 import CountrySelectWithSearch from "./CountrySelectWithSearch";
 import PhoneNumberInput from "./PhoneNumberInput";
 
-const shippingFormSchema = z.object({
+const billingFormSchema = z.object({
   country: z.string().min(1, "Выберите страну"),
   firstName: z.string().min(2, "Имя должно содержать минимум 2 символа"),
   lastName: z.string().min(2, "Фамилия должна содержать минимум 2 символа"),
@@ -22,17 +22,17 @@ const shippingFormSchema = z.object({
   phone: z.string().min(10, "Телефон должен содержать минимум 10 цифр"),
 });
 
-type ShippingFormData = z.infer<typeof shippingFormSchema>;
+type BillingFormData = z.infer<typeof billingFormSchema>;
 
-interface ShippingFormProps {
-  onDataChange?: (data: ShippingFormData) => void;
-  initialData?: Partial<ShippingFormData>;
+interface BillingFormProps {
+  onDataChange?: (data: BillingFormData) => void;
+  initialData?: Partial<BillingFormData>;
 }
 
-export default function ShippingForm({
+export default function BillingForm({
   onDataChange,
   initialData,
-}: ShippingFormProps) {
+}: BillingFormProps) {
   const {
     register,
     handleSubmit,
@@ -40,8 +40,8 @@ export default function ShippingForm({
     setValue,
     trigger,
     formState: { errors, isSubmitting },
-  } = useForm<ShippingFormData>({
-    resolver: zodResolver(shippingFormSchema),
+  } = useForm<BillingFormData>({
+    resolver: zodResolver(billingFormSchema),
     defaultValues: {
       country: initialData?.country || "",
       firstName: initialData?.firstName || "",
@@ -68,23 +68,23 @@ export default function ShippingForm({
     if (initialData) {
       Object.entries(initialData).forEach(([key, value]) => {
         if (value !== undefined) {
-          setValue(key as keyof ShippingFormData, value);
+          setValue(key as keyof BillingFormData, value);
         }
       });
     }
   }, [initialData, setValue]);
 
-  const onSubmit = async (data: ShippingFormData) => {
+  const onSubmit = async (data: BillingFormData) => {
     try {
-      console.log("Shipping data:", data);
+      console.log("Billing data:", data);
     } catch (error) {
-      console.error("Error sending shipping form:", error);
+      console.error("Error sending billing form:", error);
     }
   };
 
   return (
     <>
-      <div className="pb-10 text-xl uppercase">Shipping</div>
+      <div className="pb-10 text-xl uppercase">Billing adress</div>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <CountrySelectWithSearch
           value={watch("country")}
@@ -98,7 +98,7 @@ export default function ShippingForm({
         <div className="gap-4 grid grid-cols-1 md:grid-cols-2">
           <CustomInput
             label="First Name"
-            id="firstName"
+            id="billingFirstName"
             name="firstName"
             placeholder="Enter your first name"
             {...register("firstName")}
@@ -110,7 +110,7 @@ export default function ShippingForm({
           />
           <CustomInput
             label="Last Name"
-            id="lastName"
+            id="billingLastName"
             name="lastName"
             placeholder="Enter your last name"
             {...register("lastName")}
@@ -121,7 +121,7 @@ export default function ShippingForm({
         </div>
         <CustomInput
           label="Address"
-          id="address"
+          id="billingAddress"
           name="address"
           placeholder="Enter your address"
           {...register("address")}
@@ -131,7 +131,7 @@ export default function ShippingForm({
         />
         <CustomInput
           label="Apartment, suite, etc"
-          id="apartment"
+          id="billingApartment"
           name="apartment"
           placeholder="Enter your apartment, suite, etc"
           {...register("apartment")}
@@ -142,7 +142,7 @@ export default function ShippingForm({
         <div className="gap-4 grid grid-cols-1 md:grid-cols-2">
           <CustomInput
             label="Zip Code"
-            id="zipCode"
+            id="billingZipCode"
             name="zipCode"
             placeholder="Enter your zip code"
             {...register("zipCode")}
@@ -152,7 +152,7 @@ export default function ShippingForm({
           />
           <CustomInput
             label="Town / City"
-            id="city"
+            id="billingCity"
             name="city"
             placeholder="Enter your city"
             {...register("city")}
@@ -161,7 +161,7 @@ export default function ShippingForm({
         </div>
         <CustomInput
           label="Email"
-          id="email"
+          id="billingEmail"
           name="email"
           placeholder="Enter your email"
           {...register("email")}
