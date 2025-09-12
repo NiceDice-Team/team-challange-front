@@ -39,6 +39,9 @@ function CheckoutPage() {
         <div className="flex flex-col gap-10 p-6 border-1 w-1/2">
           <ProductsTable />
           <DeliveryOptions />
+          <div>
+            <div className="border-purple/50 border-t w-full h-px"></div>
+          </div>
 
           <div className="flex flex-col gap-4">
             <div className="bg-gray-50 p-4 rounded">

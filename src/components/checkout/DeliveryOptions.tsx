@@ -40,7 +40,7 @@ const DeliveryOptions = () => {
           </div>
         ))}
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 mb-10">
         <Image src={icon} alt="info" className="w-6 h-6" />
         <p className="text-gray-2">
           Please note that all international shipments may be subject to customs
@@ -48,6 +48,10 @@ const DeliveryOptions = () => {
           are the full responsibility of the buyer and are not included in the
           item price.
         </p>
+      </div>
+      <div className="flex justify-between items-center font-bold uppercase">
+        <span>Shipping</span>
+        <span>$12</span>
       </div>
     </div>
   );
