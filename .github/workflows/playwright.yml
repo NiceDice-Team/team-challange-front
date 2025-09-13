@@ -17,6 +17,8 @@ jobs:
       run: npm ci
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
+    - name: Install Docker Compose
+      run: sudo apt-get update && sudo apt-get install -y docker-compose
     - name: Start services with Docker Compose
       run: docker-compose up -d
     - name: Wait for services to be ready
