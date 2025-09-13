@@ -94,6 +94,7 @@ export default function Navbar({isPagination = true}) {
             </div>
           </div>
         </div>
+        
         {/* Navigation list */}
         {isPagination && (
           <div className="mt-6">
