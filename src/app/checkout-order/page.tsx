@@ -7,6 +7,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { CustomButton } from "@/components/shared/CustomButton";
 import PaymentWrapper from "@/components/checkout/PaymentWrapper";
+import { ChevronLeft } from "lucide-react";
 
 const breadcrumbItems = [
   { label: "Home", href: "/" },
@@ -85,11 +86,17 @@ function CheckoutPage() {
             <PaymentWrapper />
           </div>
 
-          <div className="flex justify-between mt-12">
-            <Link href="/cart">Return to cart</Link>
-            <Link href="/checkout/order-review">
-              <CustomButton className="w-[144px]">Order review</CustomButton>
+          <div className="flex justify-between items-center mt-12">
+            <Link
+              href="/cart"
+              className="flex items-center gap-2 hover:opacity-80 text-foreground text-base"
+            >
+              <ChevronLeft className="w-6 h-6 text-purple" />
+              Return to cart
             </Link>
+            <CustomButton className="bg-purple hover:bg-purple/90 border border-purple w-72 h-12 text-white">
+              Order review
+            </CustomButton>
           </div>
         </div>
 

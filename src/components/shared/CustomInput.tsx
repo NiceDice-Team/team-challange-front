@@ -7,6 +7,7 @@ import { Info } from "lucide-react";
 
 type InputPros = {
   className?: string;
+  blockClassName?: string;
   label?: string;
   labelStyle?: string;
   type?: React.HTMLInputTypeAttribute;
@@ -30,13 +31,14 @@ export const CustomInput: React.FC<InputPros> = ({
   name,
   disabled,
   value,
+  blockClassName,
   ...props
 }) => {
   return (
-    <div className="flex flex-col gap-2 w-full">
+    <div className={cn("flex flex-col gap-2 w-full", blockClassName)}>
       {label && (
         <label
-          className={cn("uppercase text-base font-normal", labelStyle)}
+          className={cn("font-normal text-base uppercase", labelStyle)}
           htmlFor={id}
         >
           {label}
@@ -54,7 +56,7 @@ export const CustomInput: React.FC<InputPros> = ({
           name={name}
           disabled={disabled}
           className={cn(
-            "w-full h-12 md:flex-1 px-4 py-padding-12 bg-white text-purple border-black rounded-none outline-none  placeholder:text-placeholder",
+            "md:flex-1 bg-white px-4 py-padding-12 border-black rounded-none outline-none w-full h-12 text-purple placeholder:text-placeholder",
             "focus:outline-2 focus:outline-purple/40  focus-visible:ring-2 focus-visible:ring-purple/40 focus-visible:shadow-none ",
             error &&
               "border-error focus:ring-red-500 focus-visible:ring-red-500",
