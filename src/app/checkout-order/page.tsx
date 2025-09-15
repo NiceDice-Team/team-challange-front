@@ -3,10 +3,10 @@ import { CustomBreadcrumb } from "@/components/shared/CustomBreadcrumb";
 import ShippingForm from "@/components/checkout/ShippingForm";
 import BillingForm from "@/components/checkout/BillingForm";
 import CustomCheckbox from "@/components/shared/CustomCheckbox";
-import { useState, useEffect } from "react";
-import PaymentForm from "@/components/checkout/PaymentForm";
+import { useState } from "react";
 import Link from "next/link";
 import { CustomButton } from "@/components/shared/CustomButton";
+import PaymentWrapper from "@/components/checkout/PaymentWrapper";
 
 const breadcrumbItems = [
   { label: "Home", href: "/" },
@@ -82,7 +82,7 @@ function CheckoutPage() {
             </div>
           )}
           <div className="flex flex-col mt-6">
-            <PaymentForm />
+            <PaymentWrapper />
           </div>
 
           <div className="flex justify-between mt-12">
