@@ -17,6 +17,7 @@ type InputPros = {
   name?: string;
   disabled?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   value?: string;
 };
 
@@ -32,6 +33,7 @@ export const CustomInput: React.FC<InputPros> = ({
   disabled,
   value,
   blockClassName,
+  onBlur,
   ...props
 }) => {
   return (
@@ -55,6 +57,7 @@ export const CustomInput: React.FC<InputPros> = ({
           id={id}
           name={name}
           disabled={disabled}
+          onBlur={onBlur}
           className={cn(
             "md:flex-1 bg-white px-4 py-padding-12 border-black rounded-none outline-none w-full h-12 text-purple placeholder:text-placeholder",
             "focus:outline-2 focus:outline-purple/40  focus-visible:ring-2 focus-visible:ring-purple/40 focus-visible:shadow-none ",

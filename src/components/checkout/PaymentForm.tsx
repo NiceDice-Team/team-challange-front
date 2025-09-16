@@ -11,6 +11,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
+import { useEffect, useMemo } from "react";
 
 const CARD_ELEMENT_OPTIONS = {
   style: {
@@ -39,18 +40,56 @@ const schema = z.object({
     .regex(/^[a-zA-Z]+$/, "Only letters are allowed"),
 });
 
-export default function PaymentForm() {
+type PaymentFormData = z.infer<typeof schema>;
+
+interface PaymentFormProps {
+  onDataChange?: (data: PaymentFormData) => void;
+  initialData?: Partial<PaymentFormData>;
+}
+
+export default function PaymentForm({
+  onDataChange,
+  initialData,
+}: PaymentFormProps) {
   const stripe = useStripe();
   const elements = useElements();
   const {
     register,
     handleSubmit: handleSubmitForm,
+    watch,
+    setValue,
+    trigger,
     formState: { errors },
-  } = useForm({
+  } = useForm<PaymentFormData>({
     resolver: zodResolver(schema),
     mode: "onBlur",
+    defaultValues: {
+      firstName: initialData?.firstName || "",
+      lastName: initialData?.lastName || "",
+    },
   });
 
+  const formData = watch();
+  const stableFormData = useMemo(() => formData, [formData]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      onDataChange?.(stableFormData);
+    }, 500);
+
+    return () => clearTimeout(handler);
+  }, [stableFormData, onDataChange]);
+
+  useEffect(() => {
+    if (initialData) {
+      Object.entries(initialData).forEach(([key, value]) => {
+        if (value !== undefined) {
+          setValue(key as keyof PaymentFormData, value);
+        }
+      });
+    }
+  }, [initialData, setValue]);
+  console.log("stableFormData", stableFormData);
   const handleSubmit = async (data: any) => {
     console.log("   data", data);
     if (!stripe || !elements) return;
@@ -69,10 +108,7 @@ export default function PaymentForm() {
   return (
     <>
       <div className="pb-10 text-xl uppercase">Payment</div>
-      <form
-        onSubmit={handleSubmitForm(handleSubmit)}
-        className="flex flex-col gap-4"
-      >
+      <form className="flex flex-col gap-4">
         <CustomInput
           label="First Name"
           id="firstName"
@@ -80,6 +116,9 @@ export default function PaymentForm() {
           placeholder="Enter your first name"
           blockClassName="gap-1"
           {...register("firstName")}
+          onBlur={() => {
+            void trigger("firstName");
+          }}
           error={
             errors.firstName?.message ? [errors.firstName?.message] : undefined
           }
@@ -91,6 +130,9 @@ export default function PaymentForm() {
           placeholder="Enter your last name"
           blockClassName="gap-1"
           {...register("lastName")}
+          onBlur={() => {
+            void trigger("lastName");
+          }}
           error={
             errors.lastName?.message ? [errors.lastName?.message] : undefined
           }
