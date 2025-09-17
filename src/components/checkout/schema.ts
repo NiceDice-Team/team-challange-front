@@ -1,6 +1,7 @@
 import z from "zod";
 
-export const billingSchema = z.object({
+
+const addressFields = {
   country: z.string().min(1, "Choose country"),
   firstName: z
     .string()
@@ -48,4 +49,59 @@ export const billingSchema = z.object({
     }),
   email: z.string().email("Invalid email"),
   phone: z.string().min(8, "Phone must be at least 8 characters"),
-});
+};
+
+// Схема для отдельного адреса (для обратной совместимости)
+export const billingSchema = z.object(addressFields);
+
+// Схема для объединенной формы с shipping и billing адресами
+export const combinedFormSchema = z
+  .object({
+    // Shipping адрес
+    shippingCountry: addressFields.country,
+    shippingFirstName: addressFields.firstName,
+    shippingLastName: addressFields.lastName,
+    shippingAddress: addressFields.address,
+    shippingApartment: addressFields.apartment,
+    shippingZipCode: addressFields.zipCode,
+    shippingCity: addressFields.city,
+    shippingEmail: addressFields.email,
+    shippingPhone: addressFields.phone,
+
+    // Billing адрес (опциональный, если copyBilling = true)
+    billingCountry: addressFields.country.optional(),
+    billingFirstName: addressFields.firstName.optional(),
+    billingLastName: addressFields.lastName.optional(),
+    billingAddress: addressFields.address.optional(),
+    billingApartment: addressFields.apartment.optional(),
+    billingZipCode: addressFields.zipCode.optional(),
+    billingCity: addressFields.city.optional(),
+    billingEmail: addressFields.email.optional(),
+    billingPhone: addressFields.phone.optional(),
+
+    // Флаг копирования
+    copyBilling: z.boolean().default(false),
+  })
+  .refine(
+    (data) => {
+      // Если copyBilling = false, то billing поля обязательны
+      if (!data.copyBilling) {
+        return (
+          data.billingCountry &&
+          data.billingFirstName &&
+          data.billingLastName &&
+          data.billingAddress &&
+          data.billingZipCode &&
+          data.billingCity &&
+          data.billingEmail &&
+          data.billingPhone
+        );
+      }
+      return true;
+    },
+    {
+      message:
+        "Billing address fields are required when not copying from shipping",
+      path: ["billingCountry"], // Указываем на первое поле billing для отображения ошибки
+    }
+  );
