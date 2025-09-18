@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState } from "react";
 import { SessionProvider } from 'next-auth/react';
-import { AuthProvider } from "@/components/providers/AuthProvider";
 import { CartProvider } from "@/context/CartContext";
 
 export default function Providers({ children }) {
@@ -29,12 +28,10 @@ export default function Providers({ children }) {
   return (
     <SessionProvider>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <CartProvider>
-            {children}
-            <ReactQueryDevtools initialIsOpen={false} />
-          </CartProvider>
-        </AuthProvider>
+        <CartProvider>
+          {children}
+          <ReactQueryDevtools initialIsOpen={false} />
+        </CartProvider>
       </QueryClientProvider>
     </SessionProvider>
   );

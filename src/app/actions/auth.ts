@@ -2,7 +2,6 @@
 
 import { cookies } from "next/headers";
 import { redirect, RedirectType } from "next/navigation";
-import { jwtDecode } from "jwt-decode";
 import {
   FormState,
   SignupFormSchema,
@@ -61,7 +60,7 @@ export async function signup(
       },
       body: JSON.stringify(requestBody),
     });
-
+console.log('response signup', response);
     if (!response.ok) {
       const contentType = response.headers.get("content-type");
       let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
