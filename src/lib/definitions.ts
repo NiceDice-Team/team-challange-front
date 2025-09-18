@@ -98,3 +98,67 @@ export const editProfileSchema = z.object({
     .max(50, { message: "Last name must be less than 50 characters" }),
   email: z.string().email("Invalid email").max(255, "Email too long"),
 });
+
+export const orderStatusSchema = z.enum([
+  "pending",
+  "processing",
+  "shipped",
+  "delivered",
+  "cancelled",
+]);
+
+export const ProductSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  price: z.number(),
+  image: z.string().optional(),
+});
+export const orderItemSchema = z.object({
+  id: z.string(),
+  products: z.array(ProductSchema),
+  product_count: z.number().min(1),
+  total_amount: z.number(),
+  created_at: z.string(),
+  status: orderStatusSchema,
+});
+
+export const orderSchema = z.object({
+  id: z.string(),
+  user_id: z.string(),
+  order_number: z.string(),
+  status: orderStatusSchema,
+  total_amount: z.number(),
+  shipping_address: z.object({
+    first_name: z.string(),
+    last_name: z.string(),
+    address: z.string(),
+    apartment: z.string().optional(),
+    city: z.string(),
+    zip_code: z.string(),
+    country: z.string(),
+    email: z.string().email(),
+    phone: z.string(),
+  }),
+  billing_address: z
+    .object({
+      first_name: z.string(),
+      last_name: z.string(),
+      address: z.string(),
+      apartment: z.string().optional(),
+      city: z.string(),
+      zip_code: z.string(),
+      country: z.string(),
+      email: z.string().email(),
+      phone: z.string(),
+    })
+    .optional(),
+  items: z.array(orderItemSchema),
+  created_at: z.string(),
+  updated_at: z.string(),
+  payment_method: z.string().optional(),
+  tracking_number: z.string().optional(),
+});
+
+export type OrderStatus = z.infer<typeof orderStatusSchema>;
+export type OrderItem = z.infer<typeof orderItemSchema>;
+export type Order = z.infer<typeof orderItemSchema>;

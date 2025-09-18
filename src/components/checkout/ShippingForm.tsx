@@ -49,7 +49,6 @@ export default function ShippingForm({ onDataChange }: ShippingFormProps) {
   }, [copyBilling, setValue, watch]);
 
   const onSubmit = (data: CombinedFormData) => {
-    console.log("data", data);
     onDataChange?.(data);
   };
 

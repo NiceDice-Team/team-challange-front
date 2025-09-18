@@ -9,6 +9,9 @@ import {
   TableCell,
 } from "../ui/table";
 import { BadgeProps } from "../ui/badge";
+import { useUserStore } from "@/store/user";
+import { useOrdersQuery } from "@/hooks/useOrdersQuery";
+import { Order } from "@/lib/definitions";
 
 const formatItemsCount = (count: number): string => {
   if (count === 1) {
@@ -25,37 +28,46 @@ const formatDate = (dateString: string): string => {
   return `${day}.${month}.${year}`;
 };
 
-const orders = [
-  {
-    id: 12345674,
-    date: "2021-01-01",
-    total: 112.0,
-    status: "Delivered",
-    items: 2,
-  },
-  {
-    id: 12345600,
-    date: "2021-01-01",
-    total: 56.0,
-    status: "Shipped",
-    items: 1,
-  },
-  {
-    id: 10045674,
-    date: "2021-01-01",
-    total: 230,
-    status: "Processing",
-    items: 3,
-  },
-];
-
 const mappingStatusesToVariant: Record<string, BadgeProps["variant"]> = {
-  Delivered: "default",
-  Shipped: "secondary",
-  Processing: "outline",
+  delivered: "default",
+  shipped: "secondary",
+  processing: "outline",
+  pending: "destructive",
+  cancelled: "destructive",
 };
 
 function OrdersTable() {
+  const { userData } = useUserStore();
+  const userId = userData?.id;
+
+  const { data: orders = [], isLoading, error } = useOrdersQuery(userId);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center py-8">
+        <div className="text-gray-500">Loading orders...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center py-8">
+        <div className="text-red-500">
+          Error loading orders: {error.message}
+        </div>
+      </div>
+    );
+  }
+
+  if (!orders || orders?.length === 0) {
+    return (
+      <div className="flex justify-center items-center py-8">
+        <div className="text-gray-500">No orders found</div>
+      </div>
+    );
+  }
+  console.log("orders", orders);
   return (
     <Table>
       <TableHeader className="mb-6 border-none">
@@ -69,17 +81,18 @@ function OrdersTable() {
         </TableRow>
       </TableHeader>
       <TableBody className="border-none text-black">
-        {orders.map((order) => (
+        {orders.map((order: Order) => (
           <TableRow key={order.id} className="py-4">
             <TableCell className="py-4">{order.id}</TableCell>
-            <TableCell>{formatDate(order.date)}</TableCell>
+            <TableCell>{formatDate(order.created_at)}</TableCell>
             <TableCell>
               <CustomBadge variant={mappingStatusesToVariant[order.status]}>
-                {order.status}
+                {order?.status?.charAt(0).toUpperCase() +
+                  order?.status?.slice(1)}
               </CustomBadge>
             </TableCell>
-            <TableCell>{formatItemsCount(order.items)}</TableCell>
-            <TableCell>${order.total.toFixed(2)}</TableCell>
+            <TableCell>{formatItemsCount(order?.products?.length)}</TableCell>
+            <TableCell>${Number(order?.total_amount)?.toFixed(2)}</TableCell>
             <TableCell className="flex justify-end items-center gap-2 h-[53px] text-right">
               <Eye size={20} /> View
             </TableCell>

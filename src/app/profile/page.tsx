@@ -23,7 +23,7 @@ import { useUpdateProfile } from "@/hooks/useUpdateProfile";
 
 const breadcrumbItems = [
   { label: "Home", href: "/" },
-  { label: "My account", current: true },
+  { label: "My account", href: "/profile", current: true },
 ];
 type ProfileFormState = z.infer<typeof editProfileSchema>;
 
@@ -123,7 +123,7 @@ function ProfileContent() {
   return (
     <div className="py-8 min-h-screen">
       <div className="flex justify-between items-center">
-        <CustomBreadcrumb items={breadcrumbItems} />
+        {/* <CustomBreadcrumb items={breadcrumbItems} /> */}
         <LogoutButton showText={true} showIcon={true} />
       </div>
       <h3 className="mb-4 text-title uppercase">
