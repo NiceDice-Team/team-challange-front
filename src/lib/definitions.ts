@@ -51,7 +51,14 @@ export type FormState =
 
 export const loginSchema = z.object({
   email: z.string().email("Invalid email"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  password: z
+    .string()
+    .trim()
+    .min(8, "Password must be at least 8 characters")
+    .max(128, "Password must be less than 128 characters")
+    .regex(/^[A-Za-z0-9]+$/, {
+      message: "Contain at least one letter.",
+    }),
 });
 export type LoginFormState = {
   email?: string;
