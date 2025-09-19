@@ -89,7 +89,7 @@ export default function PaymentForm({
       });
     }
   }, [initialData, setValue]);
-  console.log("stableFormData", stableFormData);
+
   const handleSubmit = async (data: any) => {
     console.log("   data", data);
     if (!stripe || !elements) return;

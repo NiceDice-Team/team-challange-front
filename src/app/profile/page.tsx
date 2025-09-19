@@ -123,7 +123,7 @@ function ProfileContent() {
   return (
     <div className="py-8 min-h-screen">
       <div className="flex justify-between items-center">
-        {/* <CustomBreadcrumb items={breadcrumbItems} /> */}
+        <CustomBreadcrumb items={breadcrumbItems} />
         <LogoutButton showText={true} showIcon={true} />
       </div>
       <h3 className="mb-4 text-title uppercase">

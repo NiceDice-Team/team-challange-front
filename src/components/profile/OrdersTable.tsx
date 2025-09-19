@@ -67,7 +67,7 @@ function OrdersTable() {
       </div>
     );
   }
-  console.log("orders", orders);
+
   return (
     <Table>
       <TableHeader className="mb-6 border-none">
