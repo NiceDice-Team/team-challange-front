@@ -197,3 +197,6 @@ input:-webkit-autofill {
 .PhoneInputInput {
   outline: none;
 }
+input[type="radio"]:checked {
+  background-color: blue; 
+}

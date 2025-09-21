@@ -1,5 +1,9 @@
+"use client";
 import Image from "next/image";
 import icon from "../../assets/icons/attention.svg";
+import { RadioButton } from "../shared/CustomRadio";
+import { useState } from "react";
+
 const deliveryOptions = [
   {
     id: 1,
@@ -28,16 +32,27 @@ const deliveryOptions = [
 ];
 
 const DeliveryOptions = () => {
+  const [paymentMethod, setPaymentMethod] = useState(deliveryOptions[0].name);
   return (
     <div className="flex flex-col gap-4 w-full">
       <div className="mb-6 text-xl uppercase">Choose delivery option</div>
       <div className="flex flex-col gap-3">
         {deliveryOptions.map((option) => (
-          <div key={option.id} className="flex gap-2">
-            <p className="font-bold text-purple">${option.price}</p>
-            <h3 className="font-medium">{option.name}</h3>
-            <p className="text-gray-2">{option.description}</p>
-          </div>
+          <RadioButton
+            className="flex items-center gap-3 h-10"
+            key={option.id}
+            name="payment"
+            value={option.name}
+            id={option.id.toString()}
+            checked={paymentMethod === option.name}
+            onChange={(e) => setPaymentMethod(e.target.value)}
+          >
+            <div className="flex gap-2">
+              <p className="font-bold text-purple">${option.price}</p>
+              <h3 className="font-medium uppercase">{option.name}</h3>
+              <p className="text-gray-2">{option.description}</p>
+            </div>
+          </RadioButton>
         ))}
       </div>
       <div className="flex items-center gap-2 mb-10">
