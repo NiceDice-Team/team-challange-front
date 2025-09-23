@@ -4,7 +4,14 @@ import icon from "../../assets/icons/attention.svg";
 import { RadioButton } from "../shared/CustomRadio";
 import { useState } from "react";
 
-const deliveryOptions = [
+export interface DeliveryOption {
+  id: number;
+  name: string;
+  price: number;
+  description: string;
+}
+
+const deliveryOptions: DeliveryOption[] = [
   {
     id: 1,
     name: "DHL",
@@ -31,8 +38,20 @@ const deliveryOptions = [
   },
 ];
 
-const DeliveryOptions = () => {
+const DeliveryOptions = ({
+  onPaymentMethodChange,
+}: {
+  onPaymentMethodChange: (paymentMethod: DeliveryOption) => void;
+}) => {
   const [paymentMethod, setPaymentMethod] = useState(deliveryOptions[0].name);
+
+  const handlePaymentMethodChange = (paymentMethod: string) => {
+    setPaymentMethod(paymentMethod);
+    const method = deliveryOptions.find(
+      (option) => option.name === paymentMethod
+    );
+    onPaymentMethodChange(method);
+  };
   return (
     <div className="flex flex-col gap-4 w-full">
       <div className="mb-6 text-xl uppercase">Choose delivery option</div>
@@ -45,7 +64,7 @@ const DeliveryOptions = () => {
             value={option.name}
             id={option.id.toString()}
             checked={paymentMethod === option.name}
-            onChange={(e) => setPaymentMethod(e.target.value)}
+            onChange={handlePaymentMethodChange}
           >
             <div className="flex gap-2">
               <p className="font-bold text-purple">${option.price}</p>
@@ -57,17 +76,18 @@ const DeliveryOptions = () => {
       </div>
       <div className="flex items-center gap-2 mb-10">
         <Image src={icon} alt="info" className="w-6 h-6" />
-        <p className="text-gray-2">
+        <p className="max-w-[566px] text-gray-2">
           Please note that all international shipments may be subject to customs
           duties and taxes depending on your local regulations. These charges
           are the full responsibility of the buyer and are not included in the
           item price.
         </p>
       </div>
-      <div className="flex justify-between items-center font-bold uppercase">
+      <div className="flex justify-between items-center mb-2 font-bold uppercase">
         <span>Shipping</span>
         <span>$12</span>
       </div>
+      <div className="border-purple/50 border-t w-full h-px"></div>
     </div>
   );
 };

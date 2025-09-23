@@ -8,7 +8,10 @@ export const RadioButton = ({
   className = "",
 }) => {
   return (
-    <div className={`flex items-center gap-4 ${className}`}>
+    <label
+      className={`flex items-center gap-4 cursor-pointer ${className}`}
+      onClick={onChange}
+    >
       <div className="relative">
         <input
           type="radio"
@@ -16,7 +19,6 @@ export const RadioButton = ({
           name={name}
           value={value}
           checked={checked}
-          onChange={onChange}
           className="sr-only"
         />
         <div
@@ -28,6 +30,6 @@ export const RadioButton = ({
         </div>
       </div>
       <div className="flex-1">{children}</div>
-    </div>
+    </label>
   );
 };

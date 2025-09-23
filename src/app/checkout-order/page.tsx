@@ -6,7 +6,9 @@ import ShippingForm, {
 import PaymentWrapper from "@/components/checkout/PaymentWrapper";
 import { useState } from "react";
 import ProductsTable from "@/components/checkout/ProductsTable";
-import DeliveryOptions from "@/components/checkout/DeliveryOptions";
+import DeliveryOptions, {
+  DeliveryOption,
+} from "@/components/checkout/DeliveryOptions";
 
 const breadcrumbItems = [
   { label: "Home", href: "/" },
@@ -19,11 +21,13 @@ function CheckoutPage() {
   const [shippingData, setShippingData] = useState<CombinedFormData | null>(
     null
   );
+  const [paymentMethod, setPaymentMethod] = useState<DeliveryOption | null>(
+    null
+  );
   const handleShippingDataChange = (data) => {
     setShippingData(data);
-    console.log(data);
   };
-
+  console.log("paymentMethod", paymentMethod, shippingData);
   return (
     <div className="py-8 min-h-screen">
       <CustomBreadcrumb items={breadcrumbItems} />
@@ -36,22 +40,14 @@ function CheckoutPage() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-10 p-6 border-1 w-1/2">
+        <div className="flex flex-col gap-10 p-6 border-1 w-1/2 h-fit">
           <ProductsTable />
-          <DeliveryOptions />
-          <div>
-            <div className="border-purple/50 border-t w-full h-px"></div>
-          </div>
-
-          <div className="flex flex-col gap-4">
-            <div className="bg-gray-50 p-4 rounded">
-              <h4 className="mb-2 font-semibold">Shipping Data:</h4>
-              <pre className="text-gray-600 text-xs">
-                {shippingData
-                  ? JSON.stringify(shippingData, null, 2)
-                  : "No data"}
-              </pre>
+          <DeliveryOptions onPaymentMethodChange={setPaymentMethod} />
+          <div className="flex justify-between items-center -mt-4 h-10 text-purple">
+            <div className="font-bold text-foreground text-base uppercase">
+              Order Total
             </div>
+            <div className="font-bold text-foreground text-base">$55</div>
           </div>
         </div>
       </div>
