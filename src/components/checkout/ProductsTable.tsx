@@ -1,7 +1,7 @@
 import { useCartQuery } from "@/hooks/useCartQuery";
 import { useMemo } from "react";
 
-const ProductsTable = () => {
+const ProductsTable = ({ setSubtotal }: { setSubtotal: (subtotal: number) => void }) => {
   const { data: cartItems = [], isLoading: cartLoading } = useCartQuery();
 
   const subtotal = useMemo(() => {
@@ -10,8 +10,10 @@ const ProductsTable = () => {
       return sum + price * item.quantity;
     }, 0);
 
+    setSubtotal(calculatedSubtotal);
+
     return calculatedSubtotal;
-  }, [cartItems]);
+  }, [cartItems, setSubtotal]);
 
   return (
     <div className="flex flex-col gap-10 w-full">

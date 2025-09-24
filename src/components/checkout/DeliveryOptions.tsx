@@ -11,7 +11,7 @@ export interface DeliveryOption {
   description: string;
 }
 
-const deliveryOptions: DeliveryOption[] = [
+export const deliveryOptions: DeliveryOption[] = [
   {
     id: 1,
     name: "DHL",
@@ -43,13 +43,12 @@ const DeliveryOptions = ({
 }: {
   onPaymentMethodChange: (paymentMethod: DeliveryOption) => void;
 }) => {
-  const [paymentMethod, setPaymentMethod] = useState(deliveryOptions[0].name);
+  const [payment, setPayment] = useState<DeliveryOption>(deliveryOptions[0]);
 
-  const handlePaymentMethodChange = (paymentMethod: string) => {
-    setPaymentMethod(paymentMethod);
-    const method = deliveryOptions.find(
-      (option) => option.name === paymentMethod
-    );
+  const handlePaymentMethodChange = (e) => {
+    const val = e.target.value;
+    const method = deliveryOptions.find((option) => option.name === val);
+    setPayment(method);
     onPaymentMethodChange(method);
   };
   return (
@@ -63,7 +62,7 @@ const DeliveryOptions = ({
             name="payment"
             value={option.name}
             id={option.id.toString()}
-            checked={paymentMethod === option.name}
+            checked={payment?.name === option.name}
             onChange={handlePaymentMethodChange}
           >
             <div className="flex gap-2">
@@ -85,7 +84,7 @@ const DeliveryOptions = ({
       </div>
       <div className="flex justify-between items-center mb-2 font-bold uppercase">
         <span>Shipping</span>
-        <span>$12</span>
+        <span>${payment?.price}</span>
       </div>
       <div className="border-purple/50 border-t w-full h-px"></div>
     </div>
