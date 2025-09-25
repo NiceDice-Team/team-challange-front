@@ -22,6 +22,8 @@ function LoginPageContent() {
   const params = useSearchParams();
   const router = useRouter();
   const mode = params.get("mode");
+  const message = params.get("message");
+  const activationStatus = params.get("activation_status");
   const {refreshToken} = getTokens();
   const [formState, formAction, pending] = useActionState<
     LoginFormState,
@@ -38,6 +40,25 @@ function LoginPageContent() {
       setTimeout(() => router.push("/"), 1000);
     }
   }, [formState, refreshToken]);
+
+  useEffect(() => {
+    if (message) {
+      switch (activationStatus) {
+        case "success":
+          showCustomToast({
+            type: "success",
+            title: "Success! You are logged in.",
+          });
+          break;
+        case "error":
+          showCustomToast({
+            type: "error",
+            title: "Error! You are not logged in.",
+          });
+          break;
+      }
+    }
+  }, [message, activationStatus]);
 
   return (
     <div className="flex flex-col items-center mx-auto mt-20">
