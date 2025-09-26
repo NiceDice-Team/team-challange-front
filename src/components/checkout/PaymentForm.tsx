@@ -12,6 +12,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
 import { useEffect, useMemo } from "react";
+import { usePaymentProcess } from "@/hooks/usePaymentProcess";
+import { useCartQuery } from "@/hooks/useCartQuery";
+import { showCustomToast } from "../shared/Toast";
 
 const CARD_ELEMENT_OPTIONS = {
   style: {
@@ -55,7 +58,7 @@ export default function PaymentForm({
   const elements = useElements();
   const {
     register,
-    handleSubmit: handleSubmitForm,
+    handleSubmit,
     watch,
     setValue,
     trigger,
@@ -68,7 +71,12 @@ export default function PaymentForm({
       lastName: initialData?.lastName || "",
     },
   });
-
+  const { processPayment, isProcessing, error } = usePaymentProcess();
+  const { data: cartItems = [], isLoading: cartLoading } = useCartQuery();
+  const amountInCents = cartItems.reduce(
+    (acc, item) => acc + item.product.price * item.quantity,
+    0
+  );
   const formData = watch();
   const stableFormData = useMemo(() => formData, [formData]);
 
@@ -90,7 +98,7 @@ export default function PaymentForm({
     }
   }, [initialData, setValue]);
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmitForm = async (data: any) => {
     console.log("   data", data);
     if (!stripe || !elements) return;
 
@@ -101,14 +109,27 @@ export default function PaymentForm({
         card,
         billing_details: { name: `${data.firstName} ${data.lastName}` },
       });
-      console.log("error", error, "paymentMethod", paymentMethod);
+      if (error) {
+        console.error(error);
+        showCustomToast({
+          type: "error",
+          title: "Payment failed",
+          description: error.message,
+        });
+      } else {
+        processPayment(amountInCents, "usd", paymentMethod.id);
+        showCustomToast({ type: "success", title: "Payment successful" });
+      }
     }
   };
 
   return (
     <>
       <div className="pb-10 text-xl uppercase">Payment</div>
-      <form className="flex flex-col gap-4">
+      <form
+        className="flex flex-col gap-4"
+        onSubmit={handleSubmit(handleSubmitForm)}
+      >
         <CustomInput
           label="First Name"
           id="firstName"
