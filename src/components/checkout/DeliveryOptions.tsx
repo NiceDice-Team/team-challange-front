@@ -3,6 +3,7 @@ import Image from "next/image";
 import icon from "../../assets/icons/attention.svg";
 import { RadioButton } from "../shared/CustomRadio";
 import { useState } from "react";
+import { useCheckoutStore } from "@/store/checkout";
 
 export interface DeliveryOption {
   id: number;
@@ -41,14 +42,16 @@ export const deliveryOptions: DeliveryOption[] = [
 const DeliveryOptions = ({
   onPaymentMethodChange,
 }: {
-  onPaymentMethodChange: (paymentMethod: DeliveryOption) => void;
+  onPaymentMethodChange: (method: DeliveryOption) => void;
 }) => {
   const [payment, setPayment] = useState<DeliveryOption>(deliveryOptions[0]);
+  const { setPaymentMethod } = useCheckoutStore();
 
   const handlePaymentMethodChange = (e) => {
     const val = e.target.value;
     const method = deliveryOptions.find((option) => option.name === val);
     setPayment(method);
+    setPaymentMethod(method);
     onPaymentMethodChange(method);
   };
   return (

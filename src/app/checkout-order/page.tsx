@@ -7,7 +7,6 @@ import { useState } from "react";
 import ProductsTable from "@/components/checkout/ProductsTable";
 import DeliveryOptions, {
   DeliveryOption,
-  deliveryOptions,
 } from "@/components/checkout/DeliveryOptions";
 
 const breadcrumbItems = [
@@ -18,16 +17,10 @@ const breadcrumbItems = [
 ];
 
 function CheckoutPage() {
-  const [shippingData, setShippingData] = useState<CombinedFormData | null>(
-    null
-  );
   const [paymentMethod, setPaymentMethod] = useState<DeliveryOption | null>(
     null
   );
   const [subtotal, setSubtotal] = useState<number>(0);
-  const handleShippingDataChange = (data) => {
-    setShippingData(data);
-  };
 
   return (
     <div className="py-8 min-h-screen">
@@ -37,7 +30,7 @@ function CheckoutPage() {
       <div className="flex gap-6">
         <div className="flex flex-col py-6 w-1/2">
           <div className="flex flex-col mb-10">
-            <ShippingForm onDataChange={handleShippingDataChange} />
+            <ShippingForm paymentMethod={paymentMethod} />
           </div>
         </div>
 
