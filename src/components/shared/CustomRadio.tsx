@@ -19,6 +19,7 @@ export const RadioButton = ({
           name={name}
           value={value}
           checked={checked}
+          onChange={onChange}
           className="sr-only"
         />
         <div

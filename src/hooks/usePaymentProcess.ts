@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useStripe, useElements } from "@stripe/react-stripe-js";
 
 export interface CreatePaymentIntentRequest {
-  amount: number; // сумма в копейках
+  amount: number; // amount in cents
   currency: string;
 }
 
@@ -89,10 +89,10 @@ export const useCreatePaymentIntent = () => {
   return useMutation({
     mutationFn: createPaymentIntent,
     onSuccess: (data) => {
-      console.log("Payment intent создан успешно:", data);
+      console.log("Payment intent created successfully:", data);
     },
     onError: (error) => {
-      console.error("Ошибка при создании payment intent:", error);
+      console.error("Error creating payment intent:", error);
     },
   });
 };
@@ -104,17 +104,17 @@ export const useConfirmPayment = () => {
   return useMutation({
     mutationFn: (data: ConfirmPaymentRequest) => {
       if (!stripe) {
-        throw new Error("Stripe не инициализирован");
+        throw new Error("Stripe not initialized");
       }
       return confirmPayment(stripe, data);
     },
     onSuccess: (data) => {
-      console.log("Платеж подтвержден успешно:", data);
+      console.log("Payment confirmed successfully:", data);
 
       queryClient.invalidateQueries({ queryKey: ["orders"] });
     },
     onError: (error) => {
-      console.error("Ошибка при подтверждении платежа:", error);
+      console.error("Error:", error);
     },
   });
 };
@@ -141,7 +141,7 @@ export const usePaymentProcess = () => {
 
       return result;
     } catch (error) {
-      console.error("Ошибка в процессе платежа:", error);
+      console.error("Error in payment process:", error);
       throw error;
     }
   };
