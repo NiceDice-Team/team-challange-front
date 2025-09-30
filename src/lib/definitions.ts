@@ -4,11 +4,19 @@ export const SignupFormSchema = z
   .object({
     firstname: z
       .string({ required_error: "Please enter your name" })
-      .min(2, { message: "Please enter your name" })
+      .min(2, { message: "Invalid first name" })
+      .max(150, { message: "Invalid first name" })
+      .regex(/^[A-Za-z' -]+$/u, {
+        message: "Only letters, spaces and apostrophes are allowed",
+      })
       .trim(),
     lastname: z
       .string({ required_error: "Please enter your last name" })
-      .min(2, { message: "Please enter your last name" })
+      .min(2, { message: "Invalid last name" })
+      .max(150, { message: "Invalid last name" })
+      .regex(/^[A-Za-z' -]+$/u, {
+        message: "Only letters, spaces and apostrophes are allowed",
+      })
       .trim(),
     email: z
       .string({ required_error: "Please enter your email address" })
@@ -17,11 +25,10 @@ export const SignupFormSchema = z
     password: z
       .string()
       .min(8, { message: "Password must be at least 8 characters" })
-      // .regex(/[a-zA-Z]/, { message: "Contain at least one letter." })
-      // .regex(/[0-9]/, { message: "Contain at least one number." })
-      // .regex(/[^a-zA-Z0-9]/, {
-      //   message: "Contain at least one special character.",
-      // })
+      .max(128, { message: "Password must be less than 128 characters" })
+      .regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/, {
+        message: "Contain at least one letter and one number.",
+      })
       .trim(),
     confirmPassword: z.string(),
   })

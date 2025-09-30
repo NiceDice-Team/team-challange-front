@@ -26,14 +26,9 @@ function CheckoutPage() {
   );
   const [subtotal, setSubtotal] = useState<number>(0);
   const handleShippingDataChange = (data) => {
-    console.log("data", data);
     setShippingData(data);
   };
-  console.log(
-    "paymentMethod",
-    paymentMethod,
-    JSON.stringify(shippingData, null, 2)
-  );
+
   return (
     <div className="py-8 min-h-screen">
       <CustomBreadcrumb items={breadcrumbItems} />
