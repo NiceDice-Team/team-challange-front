@@ -3,7 +3,7 @@
 import { CustomButton } from "@/components/shared/CustomButton";
 import { CustomInput } from "@/components/shared/CustomInput";
 import { PasswordInput } from "@/components/shared/PasswordInput";
-import { useActionState, Suspense, useEffect } from "react";
+import { useActionState, Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { LoginFormState } from "@/lib/definitions";
 import { signin } from "@/app/actions/auth";
@@ -13,10 +13,23 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { PublicRoute } from "@/components/auth/RouteGuards";
 import { showCustomToast } from "@/components/shared/Toast";
 import { getTokens } from "@/lib/tokenManager";
+import { z } from "zod";
+
 const INITIAL_STATE: LoginFormState = {
   refreshToken: "",
   errors: {},
 };
+
+const loginSchema = z.object({
+  email: z.string().email("Invalid email"),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .max(128, { message: "Password must be less than 128 characters" })
+    .regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/, {
+      message: "Contain at least one letter and one number.",
+    }),
+});
 
 function LoginPageContent() {
   const params = useSearchParams();
@@ -29,6 +42,13 @@ function LoginPageContent() {
     LoginFormState,
     FormData
   >(signin, INITIAL_STATE);
+
+  
+  const [values, setValues] = useState({ email: "", password: "" });
+  const [errors, setErrors] = useState<{
+    email?: string;
+    password?: string;
+  }>({});
 
   useEffect(() => {
     if (formState.refreshToken || refreshToken) {
@@ -59,6 +79,19 @@ function LoginPageContent() {
       }
     }
   }, [message, activationStatus]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+      setValues((prev) => ({ ...prev, [name]: value }));
+
+      const result = loginSchema.safeParse({ ...values, [name]: value });
+      if (!result.success) {
+        const fieldError = result.error.flatten().fieldErrors[name]?.[0];
+        setErrors((prev) => ({ ...prev, [name]: fieldError }));
+      } else {
+        setErrors((prev) => ({ ...prev, [name]: undefined }));
+      }
+    };
 
   return (
     <div className="flex flex-col items-center mx-auto mt-20">
@@ -93,14 +126,28 @@ function LoginPageContent() {
             id="email"
             label="Email"
             name="email"
-            error={formState?.errors?.email}
+            error={
+              [
+                ...(formState?.errors?.email ? [formState.errors.email] : []),
+                ...(errors.email ? [errors.email] : []),
+              ].filter(Boolean) as string[]
+            }
+            onChange={handleChange}
           />
           <PasswordInput
             placeholder="Enter password"
             id="password"
             label="password"
             name="password"
-            error={formState?.errors?.password}
+            error={
+              [
+                ...(formState?.errors?.password
+                  ? [formState.errors.password]
+                  : []),
+                ...(errors.password ? [errors.password] : []),
+              ].filter(Boolean) as string[]
+            }
+            onChange={handleChange}
           />
           <Link href="/forgot-password" className="mb-4 text-right underline">
             Forgot your password?
