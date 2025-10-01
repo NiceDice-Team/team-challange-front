@@ -57,15 +57,19 @@ export type FormState =
   | undefined;
 
 export const loginSchema = z.object({
-  email: z.string().email("Invalid email"),
+  email: z
+    .string({ required_error: "Please enter your email address" })
+    .email({ message: "Please enter a valid email." })
+    .trim(),
   password: z
     .string()
     .trim()
-    .min(8, "Password must be at least 8 characters")
-    .max(128, "Password must be less than 128 characters")
-    .regex(/^[A-Za-z0-9]+$/, {
-      message: "Contain at least one letter.",
-    }),
+    .min(8, { message: "Password must be at least 8 characters" })
+    .max(128, { message: "Password must be less than 128 characters" })
+    .regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/, {
+      message: "Contain at least one letter and one number.",
+    })
+    .trim(),
 });
 export type LoginFormState = {
   email?: string;
@@ -83,8 +87,8 @@ export const forgotPasswordSchema = z.object({
   email: z
     .string()
     .email("Invalid email")
-    .min(1, "Email required")
-    .max(50, "Email too long"),
+    .min(8, { message: "Password must be at least 8 characters" })
+    .max(128, { message: "Password must be less than 128 characters" }),
 });
 
 export const resetPasswordSchema = z
@@ -92,7 +96,7 @@ export const resetPasswordSchema = z
     password: z
       .string()
       .min(8, { message: "Password must be at least 8 characters" })
-      .max(50, { message: "Password must be less than 50 characters" })
+      .max(128, { message: "Password must be less than 128 characters" })
       .trim(),
     confirmPassword: z.string().trim(),
   })
@@ -105,12 +109,16 @@ export const editProfileSchema = z.object({
   firstname: z
     .string()
     .min(2, { message: "First name must be at least 2 characters" })
-    .max(50, { message: "First name must be less than 50 characters" }),
+    .max(150, { message: "First name must be less than 150 characters" }),
   lastname: z
     .string()
     .min(2, { message: "Last name must be at least 2 characters" })
-    .max(50, { message: "Last name must be less than 50 characters" }),
-  email: z.string().email("Invalid email").max(255, "Email too long"),
+    .max(150, { message: "Last name must be less than 150 characters" }),
+  email: z
+    .string()
+    .email("Invalid email")
+    .min(8, { message: "Password must be at least 8 characters" })
+    .max(128, { message: "Password must be less than 128 characters" }),
 });
 
 export const orderStatusSchema = z.enum([
