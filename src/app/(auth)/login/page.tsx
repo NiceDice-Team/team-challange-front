@@ -5,7 +5,7 @@ import { CustomInput } from "@/components/shared/CustomInput";
 import { PasswordInput } from "@/components/shared/PasswordInput";
 import { useActionState, Suspense, useEffect, useState } from "react";
 import Link from "next/link";
-import { LoginFormState } from "@/lib/definitions";
+import { LoginFormState, loginFrontSchema } from "@/lib/definitions";
 import { signin } from "@/app/actions/auth";
 import { GoogleAuthButton } from "@/components/auth/GoogleLogin";
 import { FacebookAuthButton } from "@/components/auth/FacebookLogin";
@@ -20,16 +20,6 @@ const INITIAL_STATE: LoginFormState = {
   errors: {},
 };
 
-const loginSchema = z.object({
-  email: z.string().email("Invalid email"),
-  password: z
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .max(128, { message: "Password must be less than 128 characters" })
-    .regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/, {
-      message: "Contain at least one letter and one number.",
-    }),
-});
 
 function LoginPageContent() {
   const params = useSearchParams();
@@ -84,7 +74,7 @@ function LoginPageContent() {
       const { name, value } = e.target;
       setValues((prev) => ({ ...prev, [name]: value }));
 
-      const result = loginSchema.safeParse({ ...values, [name]: value });
+      const result = loginFrontSchema.safeParse({ ...values, [name]: value });
       if (!result.success) {
         const fieldError = result.error.flatten().fieldErrors[name]?.[0];
         setErrors((prev) => ({ ...prev, [name]: fieldError }));
