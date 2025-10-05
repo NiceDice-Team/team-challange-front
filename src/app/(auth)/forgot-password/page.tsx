@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { CustomButton } from "@/components/shared/CustomButton";
 import { CustomInput } from "@/components/shared/CustomInput";
 import Link from "next/link";
@@ -10,53 +12,37 @@ import { forgotPasswordSchema } from "@/lib/definitions";
 import { useRouter } from "next/navigation";
 import { PublicRoute } from "@/components/auth/RouteGuards";
 
+type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
+
 function ForgotPasswordPageContent() {
-  const [email, setEmail] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const router = useRouter();
-  
-  const validateEmail = (email: string) => {
-    try {
-      forgotPasswordSchema.parse({ email });
-      setValidationErrors([]);
-      return true;
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        const errors = error.errors.map((err) => err.message);
-        setValidationErrors(errors);
-      }
-      return false;
-    }
-  };
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newEmail = e.target.value;
-    setEmail(newEmail);
-    validateEmail(newEmail);
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<ForgotPasswordFormData>({
+    resolver: zodResolver(forgotPasswordSchema),
+    mode: "onSubmit",
+    defaultValues: {
+      email: "",
+    },
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validateEmail(email)) {
-      return;
-    }
-    setIsSubmitting(true);
+  const onSubmit = async (data: ForgotPasswordFormData) => {
     setError("");
     try {
       await fetchAPI("users/forgot-password/", {
         method: "POST",
         body: {
-          email: email,
+          email: data.email,
         },
       });
       router.push("/forgot-password/success");
     } catch (error) {
       console.error("Error sending reset email:", error);
       setError("Error sending reset email. Try again.");
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -70,15 +56,15 @@ function ForgotPasswordPageContent() {
         you a link to reset your password
       </div>
 
-      <form className="space-y-6 w-[504px]" onSubmit={handleSubmit}>
+      <form className="space-y-6 w-[504px]" onSubmit={handleSubmit(onSubmit)}>
         <CustomInput
           placeholder="Enter email address"
           id="email"
           label="Email"
           name="email"
-          onChange={handleEmailChange}
+          {...register("email")}
           disabled={isSubmitting}
-          error={validationErrors.length > 0 ? validationErrors : undefined}
+          error={errors.email?.message ? [errors.email.message] : undefined}
         />
         {error && (
           <div className="text-red-600 text-sm text-center">{error}</div>
@@ -86,12 +72,10 @@ function ForgotPasswordPageContent() {
         <CustomButton
           type="submit"
           className="w-full"
-          disabled={
-            isSubmitting || validationErrors.length > 0 
-          }
+          disabled={isSubmitting}
           loading={isSubmitting}
         >
-          {isSubmitting ? "SUBMITINNG..." : "SUBMIT"}
+          {isSubmitting ? "SUBMITTING..." : "SUBMIT"}
         </CustomButton>
       </form>
 

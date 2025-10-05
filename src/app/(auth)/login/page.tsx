@@ -13,7 +13,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { PublicRoute } from "@/components/auth/RouteGuards";
 import { showCustomToast } from "@/components/shared/Toast";
 import { getTokens } from "@/lib/tokenManager";
-import { z } from "zod";
 
 const INITIAL_STATE: LoginFormState = {
   refreshToken: "",
