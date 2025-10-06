@@ -21,8 +21,12 @@ function ConfirmSignUpContent() {
       <p className="text-base">
         A confirmation email has been sent to your inbox.
       </p>
+      <p className="mb-9 text-base">
+        Please click the link in that email to activate your account.
+      </p>
       <p className="mb-12 text-base">
-        Please click the link in that email to activate your account
+        Check the message for 5-10 minutes. If you don&apos;t find the list,
+        please check your spam folder and resend it again.
       </p>
       <Link href="/catalog" className="flex gap-1">
         <span className="text-purple underline">Browse games</span>
