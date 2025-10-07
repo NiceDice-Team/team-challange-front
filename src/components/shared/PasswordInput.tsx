@@ -72,10 +72,13 @@ export const PasswordInput: FC<PasswordProps> = ({
             {visible ? (
               <EyeOff
                 size={24}
-                className={cn({ "text-error": error.length > 0 })}
+                className={cn({ "text-error": error && error.length > 0 })}
               />
             ) : (
-              <Eye size={24} className={cn({ "text-error": error.length > 0 })} />
+              <Eye
+                size={24}
+                className={cn({ "text-error": error && error.length > 0 })}
+              />
             )}
           </button>
         )}

@@ -1,6 +1,9 @@
 "use client";
 
 import React, { useState, Suspense } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { CustomButton } from "@/components/shared/CustomButton";
 import Link from "next/link";
 import { fetchAPI } from "@/services/api";
@@ -9,89 +12,27 @@ import { PasswordInput } from "@/components/shared/PasswordInput";
 import { resetPasswordSchema } from "@/lib/definitions";
 import { showCustomToast } from "@/components/shared/Toast";
 
-function ResetPasswordForm() {
-  const [formData, setFormData] = useState({
-    password: "",
-    confirmPassword: "",
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState("");
-  const [validationErrors, setValidationErrors] = useState<{
-    [key: string]: string[];
-  }>({});
+type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 
+function ResetPasswordForm() {
+  const [error, setError] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const validateField = (field: string, value: string) => {
-    if (!value.trim()) {
-      setValidationErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[field];
-        return newErrors;
-      });
-      return true;
-    }
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<ResetPasswordFormData>({
+    resolver: zodResolver(resetPasswordSchema),
+    mode: "onSubmit",
+    defaultValues: {
+      password: "",
+      confirmPassword: "",
+    },
+  });
 
-    try {
-      const temp = { ...formData, [field]: value };
-      resetPasswordSchema.parse(temp);
-
-      setValidationErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[field];
-        return newErrors;
-      });
-
-      return true;
-    } catch (error) {
-      if (error.errors) {
-        const errors: { [key: string]: string[] } = {};
-        error.errors.forEach((err: any) => {
-          const field = err.path[0];
-          if (!errors[field]) errors[field] = [];
-          errors[field].push(err.message);
-        });
-        setValidationErrors((prev) => ({ ...prev, ...errors }));
-      }
-      return false;
-    }
-  };
-
-  const validateForm = () => {
-    try {
-      resetPasswordSchema.parse(formData);
-      setValidationErrors({});
-      return true;
-    } catch (error: any) {
-      if (error.errors) {
-        const errors: { [key: string]: string[] } = {};
-        error.errors.forEach((err: any) => {
-          const field = err.path[0];
-          if (!errors[field]) errors[field] = [];
-          errors[field].push(err.message);
-        });
-        setValidationErrors(errors);
-      }
-      return false;
-    }
-  };
-
-  const handleInputChange =
-    (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-      const newValue = e.target.value;
-      setFormData((prev) => ({ ...prev, [field]: newValue }));
-      if (newValue.trim()) {
-        validateField(field, newValue);
-      }
-    };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validateForm()) return;
-
-    setIsSubmitting(true);
+  const onSubmit = async (data: ResetPasswordFormData) => {
     setError("");
 
     try {
@@ -100,7 +41,7 @@ function ResetPasswordForm() {
 
       const response = await fetchAPI("users/reset-password/", {
         method: "POST",
-        body: { userId, token, password: formData.password },
+        body: { userId, token, password: data.password },
       });
 
       if (response) {
@@ -131,15 +72,8 @@ function ResetPasswordForm() {
       } else {
         setError("Error resetting password. Try again.");
       }
-    } finally {
-      setIsSubmitting(false);
     }
   };
-
-  const isFormValid =
-    formData.password.trim() &&
-    formData.confirmPassword.trim() &&
-    Object.keys(validationErrors).length === 0;
 
   return (
     <div className="flex flex-col items-center mx-auto mt-20 mb-32">
@@ -151,26 +85,30 @@ function ResetPasswordForm() {
         <br /> Now enter a new password to continue your quest
       </div>
 
-      <form className="space-y-6 w-[504px]" onSubmit={handleSubmit}>
+      <form className="space-y-6 w-[504px]" onSubmit={handleSubmit(onSubmit)}>
         <PasswordInput
           placeholder="Enter password"
           id="password"
           label="Password"
           name="password"
-          value={formData.password}
-          onChange={handleInputChange("password")}
+          {...register("password")}
           disabled={isSubmitting}
-          error={validationErrors.password}
+          error={
+            errors.password?.message ? [errors.password.message] : undefined
+          }
         />
         <PasswordInput
           placeholder="Enter password"
           id="confirmPassword"
           label="Confirm Password"
           name="confirmPassword"
-          value={formData.confirmPassword}
-          onChange={handleInputChange("confirmPassword")}
+          {...register("confirmPassword")}
           disabled={isSubmitting}
-          error={validationErrors.confirmPassword}
+          error={
+            errors.confirmPassword?.message
+              ? [errors.confirmPassword.message]
+              : undefined
+          }
         />
 
         {error && (
@@ -179,7 +117,7 @@ function ResetPasswordForm() {
         <CustomButton
           type="submit"
           className="w-full"
-          disabled={isSubmitting || !isFormValid}
+          disabled={isSubmitting}
           loading={isSubmitting}
         >
           {isSubmitting ? "RESETTING..." : "RESET"}
