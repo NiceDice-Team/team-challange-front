@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { isAuthenticated } from "@/lib/tokenManager";
 
@@ -33,27 +33,33 @@ export function ProtectedRoute({ children }) {
 
 export function PublicRoute({ children }) {
   const router = useRouter();
+  const [isChecking, setIsChecking] = useState(true);
 
- useEffect(() => {
+  useEffect(() => {
     const checkAuth = () => {
-    if (isAuthenticated()) {
-      const urlParams = new URLSearchParams(window.location.search);
-      const returnUrl = urlParams.get('returnUrl');
-      
-      if (returnUrl) {
-        router.push(decodeURIComponent(returnUrl));
+      const authenticated = isAuthenticated();
+      if (authenticated) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const returnUrl = urlParams.get('returnUrl');
+        
+        if (returnUrl) {
+          router.push(decodeURIComponent(returnUrl));
+        } else {
+          router.push('/');
+        }
       } else {
-        router.push('/');
+        setIsChecking(false);
       }
-    }
-  };
+    };
+    
+    const timeout = setTimeout(() => {
+      checkAuth();
+    }, 100);
 
-  const interval = setInterval(checkAuth, 1000);
-  
-  return () => clearInterval(interval);
-}, [router]);
+    return () => clearTimeout(timeout);
+  }, [router]);
 
-  if (isAuthenticated()) {
+  if (isChecking) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="border-purple border-b-2 rounded-full w-8 h-8 animate-spin"></div>

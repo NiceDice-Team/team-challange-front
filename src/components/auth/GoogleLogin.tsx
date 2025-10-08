@@ -21,7 +21,7 @@ export const GoogleAuthButton: FC<GoogleAuthButtonProps> = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [logoutLoading, setLogoutLoading] = useState(false);
-  const { data: session } = useSession();
+  const { data: session, update: updateSession } = useSession();
   const router = useRouter();
   const { setUserData } = useUserStore();
   const oauthCompletedRef = useRef(false);
@@ -101,11 +101,19 @@ export const GoogleAuthButton: FC<GoogleAuthButtonProps> = ({
     try {
       oauthCompletedRef.current = false;
 
-      await logoutAction();
-      await signOut({ redirect: false });
-      clearTokens(); // Очищаем токены из куки
+      const provider = session?.provider || "google";
+
+      const result = await logoutAction({ provider });
+      if (result.needsOAuthLogout) {
+        await signOut({ redirect: false });
+      }
+      clearTokens();
+
+      await updateSession();
+      router.push("/");
     } catch (error) {
       console.error("Sign out error:", error);
+
       await signOut({
         callbackUrl: "/",
         redirect: true,
