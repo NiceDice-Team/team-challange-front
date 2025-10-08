@@ -107,8 +107,10 @@ export const resetPasswordSchema = z
     password: z
       .string()
       .min(8, { message: "Password must be at least 8 characters" })
-      .max(128, { message: "Password must be less than 128 characters" })
-      .trim(),
+      .max(128, { message: "Password must be less than 128 characters" }) 
+      .regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/, {
+      message: "Contain at least one letter and one number.",
+    }).trim(),
     confirmPassword: z.string().trim(),
   })
   .refine((data) => data.password === data.confirmPassword, {
