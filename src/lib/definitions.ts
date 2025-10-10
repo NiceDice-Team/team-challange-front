@@ -94,6 +94,43 @@ export const loginFrontSchema = z.object({
     }),
 });
 
+export const signupFrontSchema = z
+  .object({
+    firstname: z
+      .string({ required_error: "Please enter your name" })
+      .min(2, { message: "Invalid first name" })
+      .max(150, { message: "Invalid first name" })
+      .regex(/^[A-Za-z' -]+$/u, {
+        message: "Only letters, spaces and apostrophes are allowed",
+      })
+      .trim(),
+    lastname: z
+      .string({ required_error: "Please enter your last name" })
+      .min(2, { message: "Invalid last name" })
+      .max(150, { message: "Invalid last name" })
+      .regex(/^[A-Za-z' -]+$/u, {
+        message: "Only letters, spaces and apostrophes are allowed",
+      })
+      .trim(),
+    email: z
+      .string({ required_error: "Please enter your email address" })
+      .email({ message: "Please enter a valid email." })
+      .trim(),
+    password: z
+      .string()
+      .min(8, { message: "Password must be at least 8 characters" })
+      .max(128, { message: "Password must be less than 128 characters" })
+      .regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/, {
+        message: "Contain at least one letter and one number.",
+      })
+      .trim(),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
 export const forgotPasswordSchema = z.object({
   email: z
     .string()
@@ -107,10 +144,11 @@ export const resetPasswordSchema = z
     password: z
       .string()
       .min(8, { message: "Password must be at least 8 characters" })
-      .max(128, { message: "Password must be less than 128 characters" }) 
+      .max(128, { message: "Password must be less than 128 characters" })
       .regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/, {
-      message: "Contain at least one letter and one number.",
-    }).trim(),
+        message: "Contain at least one letter and one number.",
+      })
+      .trim(),
     confirmPassword: z.string().trim(),
   })
   .refine((data) => data.password === data.confirmPassword, {

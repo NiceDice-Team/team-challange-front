@@ -1,13 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { signup } from "@/app/actions/auth";
 import { CustomInput } from "@/components/shared/CustomInput";
 import CustomCheckbox from "@/components/shared/CustomCheckbox";
 import Image from "next/image";
 import ArrowNext from "../../../../public/icons/ArrowNext.svg";
-import { FormState } from "@/lib/definitions";
+import { FormState, signupFrontSchema } from "@/lib/definitions";
 import { CustomButton } from "@/components/shared/CustomButton";
 import { PasswordInput } from "@/components/shared/PasswordInput";
 import { PublicRoute } from "@/components/auth/RouteGuards";
@@ -17,32 +19,33 @@ function RegisterPageContent() {
   const [state, action, pending] = useActionState<FormState, FormData>(signup, {
     errors: {},
   });
-  const [formState, setFormState] = useState<FormState>({
-    firstname: "",
-    lastname: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors: formErrors },
+    watch,
+  } = useForm({
+    resolver: zodResolver(signupFrontSchema),
+    mode: "onChange",
+    defaultValues: {
+      firstname: "",
+      lastname: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
   });
 
-  const handleChange = (field: string, value: string) => {
-    setFormState((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+  const onSubmit = (data: any) => {
+    const formData = new FormData();
+    formData.append("firstname", data.firstname);
+    formData.append("lastname", data.lastname);
+    formData.append("email", data.email);
+    formData.append("password", data.password);
+    formData.append("confirmPassword", data.confirmPassword);
+    action(formData);
   };
-
-  useEffect(() => {
-    if (state) {
-      setFormState((prev) => ({
-        firstname: state.firstname || prev.firstname,
-        lastname: state.lastname || prev.lastname,
-        email: state.email || prev.email,
-        password: state.password || prev.password,
-        confirmPassword: state.confirmPassword || prev.confirmPassword,
-      }));
-    }
-  }, [state]);
 
   return (
     <div className="mx-auto mt-20">
@@ -55,53 +58,83 @@ function RegisterPageContent() {
       </div>
 
       <div className="flex flex-col justify-center items-center mb-28">
-        <form className="flex flex-col gap-4 mb-12 w-[500px]" action={action}>
+        <form
+          className="flex flex-col gap-4 mb-12 w-[500px]"
+          onSubmit={handleSubmit(onSubmit)}
+        >
           <CustomInput
             placeholder="Enter your name"
             id="firstname"
             label="First name"
-            name="firstname"
-            error={state?.errors?.firstname}
-            value={formState.firstname}
-            onChange={(e) => handleChange("firstname", e.target.value)}
+            {...register("firstname")}
+            error={
+              [
+                ...(formErrors.firstname?.message
+                  ? [formErrors.firstname.message]
+                  : []),
+                ...(state?.errors?.firstname ? [state?.errors?.firstname] : []),
+              ].filter(Boolean) as string[]
+            }
           />
           <CustomInput
             placeholder="Enter your last name"
             id="lastname"
             label="Last name"
-            name="lastname"
-            error={state?.errors?.lastname}
-            value={formState.lastname}
-            onChange={(e) => handleChange("lastname", e.target.value)}
+            {...register("lastname")}
+            error={
+              [
+                ...(formErrors.lastname?.message
+                  ? [formErrors.lastname.message]
+                  : []),
+                ...(state?.errors?.lastname ? [state?.errors?.lastname] : []),
+              ].filter(Boolean) as string[]
+            }
           />
           <CustomInput
             placeholder="Enter email address"
             id="email"
             label="Email"
-            name="email"
-            error={state?.errors?.email}
-            value={formState.email}
-            onChange={(e) => handleChange("email", e.target.value)}
+            {...register("email")}
+            error={
+              [
+                ...(formErrors.email?.message
+                  ? [formErrors.email.message]
+                  : []),
+                ...(state?.errors?.email ? [state?.errors?.email] : []),
+              ].filter(Boolean) as string[]
+            }
           />
           <PasswordInput
             placeholder="Enter password"
             id="password"
             label="password"
-            name="password"
-            error={state?.errors?.password}
-            value={formState.password}
-            onChange={(e) => handleChange("password", e.target.value)}
+            {...register("password")}
+            error={
+              [
+                ...(formErrors.password?.message
+                  ? [formErrors.password.message]
+                  : []),
+                ...(state?.errors?.password ? [state?.errors?.password] : []),
+              ].filter(Boolean) as string[]
+            }
           />
           <PasswordInput
             placeholder="Enter password"
             id="confirmPassword"
             label="Confirm Password"
-            name="confirmPassword"
-            error={state?.errors?.confirmPassword}
-            value={formState.confirmPassword}
-            onChange={(e) => handleChange("confirmPassword", e.target.value)}
+            {...register("confirmPassword")}
+            error={
+              [
+                ...(formErrors.confirmPassword?.message
+                  ? [formErrors.confirmPassword.message]
+                  : []),
+                ...(state?.errors?.confirmPassword
+                  ? [state?.errors?.confirmPassword]
+                  : []),
+              ].filter(Boolean) as string[]
+            }
           />
-          {state.errors.serverError && (
+          {state?.errors?.serverError && (
             <p className="text-error">{state.errors.serverError}</p>
           )}
           <div className="flex flex-col gap-2">
