@@ -23,7 +23,7 @@ import { useUpdateProfile } from "@/hooks/useUpdateProfile";
 
 const breadcrumbItems = [
   { label: "Home", href: "/" },
-  { label: "My account", current: true },
+  { label: "My account", href: "/profile", current: true },
 ];
 type ProfileFormState = z.infer<typeof editProfileSchema>;
 

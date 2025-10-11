@@ -1,12 +1,14 @@
 "use client";
 import { CustomBreadcrumb } from "@/components/shared/CustomBreadcrumb";
-import ShippingForm from "@/components/checkout/ShippingForm";
-import BillingForm from "@/components/checkout/BillingForm";
-import CustomCheckbox from "@/components/shared/CustomCheckbox";
+import ShippingForm, {
+  CombinedFormData,
+} from "@/components/checkout/ShippingForm";
 import { useState } from "react";
-import Link from "next/link";
-import { CustomButton } from "@/components/shared/CustomButton";
-import PaymentWrapper from "@/components/checkout/PaymentWrapper";
+import ProductsTable from "@/components/checkout/ProductsTable";
+import DeliveryOptions, {
+  DeliveryOption,
+  deliveryOptions,
+} from "@/components/checkout/DeliveryOptions";
 
 const breadcrumbItems = [
   { label: "Home", href: "/" },
@@ -15,48 +17,23 @@ const breadcrumbItems = [
   { label: "Checkout", current: true },
 ];
 
-type ShippingFormData = {
-  country: string;
-  firstName: string;
-  lastName: string;
-  address: string;
-  apartment?: string;
-  zipCode: string;
-  city: string;
-  email: string;
-  phone: string;
-};
-
-type BillingFormData = {
-  country: string;
-  firstName: string;
-  lastName: string;
-  address: string;
-  apartment?: string;
-  zipCode: string;
-  city: string;
-  email: string;
-  phone: string;
-};
-
 function CheckoutPage() {
-  const [copyBilling, setCopyBilling] = useState(false);
-  const [shippingData, setShippingData] = useState<ShippingFormData | null>(
+  const [shippingData, setShippingData] = useState<CombinedFormData | null>(
     null
   );
-  const [manualBillingData, setManualBillingData] =
-    useState<BillingFormData | null>(null);
-
-  const billingData = copyBilling ? shippingData : manualBillingData;
-
-  const handleShippingDataChange = (data: ShippingFormData) => {
+  const [paymentMethod, setPaymentMethod] = useState<DeliveryOption | null>(
+    null
+  );
+  const [subtotal, setSubtotal] = useState<number>(0);
+  const handleShippingDataChange = (data) => {
+    console.log("data", data);
     setShippingData(data);
   };
-
-  const handleBillingDataChange = (data: BillingFormData) => {
-    setManualBillingData(data);
-  };
-
+  console.log(
+    "paymentMethod",
+    paymentMethod,
+    JSON.stringify(shippingData, null, 2)
+  );
   return (
     <div className="py-8 min-h-screen">
       <CustomBreadcrumb items={breadcrumbItems} />
@@ -67,49 +44,17 @@ function CheckoutPage() {
           <div className="flex flex-col mb-10">
             <ShippingForm onDataChange={handleShippingDataChange} />
           </div>
-          <CustomCheckbox
-            label="Use shipping address as billing address"
-            id="copyBilling"
-            checked={copyBilling}
-            onCheckedChange={setCopyBilling}
-          />
-          {!copyBilling && (
-            <div className="flex flex-col mt-6">
-              <BillingForm
-                onDataChange={handleBillingDataChange}
-                initialData={copyBilling ? shippingData : undefined}
-              />
-            </div>
-          )}
-          <div className="flex flex-col mt-6">
-            <PaymentWrapper />
-          </div>
-
-          <div className="flex justify-between mt-12">
-            <Link href="/cart">Return to cart</Link>
-            <Link href="/checkout/order-review">
-              <CustomButton className="w-[144px]">Order review</CustomButton>
-            </Link>
-          </div>
         </div>
 
-        <div className="flex flex-col gap-4 p-6 border-1 w-1/2">
-          <div className="pb-10 text-xl uppercase">Your order</div>
-
-          <div className="flex flex-col gap-4">
-            <div className="bg-gray-50 p-4 rounded">
-              <h4 className="mb-2 font-semibold">Shipping Data:</h4>
-              <pre className="text-gray-600 text-xs">
-                {shippingData
-                  ? JSON.stringify(shippingData, null, 2)
-                  : "No data"}
-              </pre>
+        <div className="flex flex-col gap-10 p-6 border-1 w-1/2 h-fit">
+          <ProductsTable setSubtotal={setSubtotal} />
+          <DeliveryOptions onPaymentMethodChange={setPaymentMethod} />
+          <div className="flex justify-between items-center -mt-4 h-10 text-purple">
+            <div className="font-bold text-foreground text-base uppercase">
+              Order Total
             </div>
-            <div className="bg-gray-50 p-4 rounded">
-              <h4 className="mb-2 font-semibold">Billing Data:</h4>
-              <pre className="text-gray-600 text-xs">
-                {billingData ? JSON.stringify(billingData, null, 2) : "No data"}
-              </pre>
+            <div className="font-bold text-foreground text-base">
+              ${(paymentMethod?.price || 0) + subtotal}
             </div>
           </div>
         </div>

@@ -12,7 +12,6 @@ import { CustomButton } from "@/components/shared/CustomButton";
 import { PasswordInput } from "@/components/shared/PasswordInput";
 import { PublicRoute } from "@/components/auth/RouteGuards";
 
-
 function RegisterPageContent() {
   const [isChecked, setIsChecked] = useState(true);
   const [state, action, pending] = useActionState<FormState, FormData>(signup, {
@@ -134,10 +133,12 @@ function RegisterPageContent() {
           </CustomButton>
         </form>
 
-        <p className="text-purple">Already have an account?</p>
-        <Link href="/login" className="flex gap-1">
-          <span className="text-purple underline">Log in here</span>
-          <Image src={ArrowNext} alt="arrow" />
+        <Link href="/login" className="flex flex-col items-center">
+          <p className="text-purple">Already have an account?</p>
+          <div className="flex gap-1">
+            <span className="text-purple underline">Log in here</span>
+            <Image src={ArrowNext} alt="arrow" />
+          </div>
         </Link>
       </div>
     </div>

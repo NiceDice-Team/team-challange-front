@@ -17,7 +17,7 @@ export const CustomBreadcrumb = ({ className='', items = [], ...props }) => {
     <Breadcrumb className={cn("", className)} {...props}>
       <BreadcrumbList className="flex items-center gap-1">
         {items.map((item, index) => (
-          <React.Fragment key={`breadcrumb-${index}`}>
+          <React.Fragment key={item.href || item.label}>
             <BreadcrumbItem>
               {item.href && !item.current ? (
                 <BreadcrumbLink asChild>

@@ -1,164 +1,316 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { CustomInput } from "../shared/CustomInput";
 import CountrySelectWithSearch from "./CountrySelectWithSearch";
 import PhoneNumberInput from "./PhoneNumberInput";
-import { billingSchema } from "./schema";
+import { combinedFormSchema } from "./schema";
+import CustomCheckbox from "../shared/CustomCheckbox";
+import { ChevronLeft } from "lucide-react";
+import { CustomButton } from "../shared/CustomButton";
+import Link from "next/link";
 
-
-type ShippingFormData = z.infer<typeof billingSchema>;
+export type CombinedFormData = z.infer<typeof combinedFormSchema>;
 
 interface ShippingFormProps {
-  onDataChange?: (data: ShippingFormData) => void;
-  initialData?: Partial<ShippingFormData>;
+  onDataChange?: (data: CombinedFormData) => void;
 }
 
-export default function ShippingForm({
-  onDataChange,
-  initialData,
-}: ShippingFormProps) {
+export default function ShippingForm({ onDataChange }: ShippingFormProps) {
   const {
     register,
     watch,
     setValue,
+    handleSubmit,
     trigger,
     formState: { errors, isSubmitting },
-  } = useForm<ShippingFormData>({
-    resolver: zodResolver(billingSchema),
-    mode: "onBlur", 
-    defaultValues: {
-      country: initialData?.country || "",
-      firstName: initialData?.firstName || "",
-      lastName: initialData?.lastName || "",
-      address: initialData?.address || "",
-      apartment: initialData?.apartment || "",
-      zipCode: initialData?.zipCode || "",
-      city: initialData?.city || "",
-      email: initialData?.email || "",
-      phone: initialData?.phone || "",
-    },
+  } = useForm<CombinedFormData>({
+    resolver: zodResolver(combinedFormSchema),
+    mode: "onBlur",
   });
 
-  const selectedCountry = watch("country");
-  const formData = watch();
-  const stableFormData = useMemo(() => formData, [JSON.stringify(formData)]);
+  const copyBilling = watch("copyBilling");
 
   useEffect(() => {
-    const handler = setTimeout(() => {
-      onDataChange?.(stableFormData);
-    }, 500);
-
-    return () => clearTimeout(handler);
-  }, [stableFormData, onDataChange]);
-
-  useEffect(() => {
-    if (initialData) {
-      Object.entries(initialData).forEach(([key, value]) => {
-        if (value !== undefined) {
-          setValue(key as keyof ShippingFormData, value);
-        }
-      });
+    if (copyBilling) {
+      setValue("billingCountry", watch("shippingCountry"));
+      setValue("billingFirstName", watch("shippingFirstName"));
+      setValue("billingLastName", watch("shippingLastName"));
+      setValue("billingAddress", watch("shippingAddress"));
+      setValue("billingApartment", watch("shippingApartment"));
+      setValue("billingZipCode", watch("shippingZipCode"));
+      setValue("billingCity", watch("shippingCity"));
+      setValue("billingEmail", watch("shippingEmail"));
+      setValue("billingPhone", watch("shippingPhone"));
     }
-  }, [initialData, setValue]);
+  }, [copyBilling, setValue, watch]);
+
+  const onSubmit = (data: CombinedFormData) => {
+    onDataChange?.(data);
+  };
 
   return (
     <>
-      <div className="pb-10 text-xl uppercase">Shipping</div>
-      <form className="flex flex-col gap-4">
-        <CountrySelectWithSearch
-          value={watch("country")}
-          onChange={(value) => setValue("country", value)}
-          onBlur={() => {
-            void trigger("country");
-          }}
-          name="country"
-          error={
-            errors.country?.message ? [errors.country?.message] : undefined
-          }
-        />
-        <div className="gap-4 grid grid-cols-1 md:grid-cols-2">
-          <CustomInput
-            label="First Name"
-            id="firstName"
-            name="firstName"
-            placeholder="Enter your first name"
-            {...register("firstName")}
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="flex flex-col gap-4 mb-12">
+          <div className="pb-6 text-xl uppercase">Shipping</div>
+
+          <CountrySelectWithSearch
+            value={watch("shippingCountry")}
+            onChange={(value) => setValue("shippingCountry", value)}
+            onBlur={() => {
+              void trigger("shippingCountry");
+            }}
+            name="shippingCountry"
             error={
-              errors.firstName?.message
-                ? [errors.firstName?.message]
+              errors.shippingCountry?.message
+                ? [errors.shippingCountry?.message]
+                : undefined
+            }
+          />
+          <div className="gap-4 grid grid-cols-1 md:grid-cols-2">
+            <CustomInput
+              label="First Name"
+              id="shippingFirstName"
+              name="shippingFirstName"
+              placeholder="Enter your first name"
+              {...register("shippingFirstName")}
+              error={
+                errors.shippingFirstName?.message
+                  ? [errors.shippingFirstName?.message]
+                  : undefined
+              }
+            />
+            <CustomInput
+              label="Last Name"
+              id="shippingLastName"
+              name="shippingLastName"
+              placeholder="Enter your last name"
+              {...register("shippingLastName")}
+              error={
+                errors.shippingLastName?.message
+                  ? [errors.shippingLastName?.message]
+                  : undefined
+              }
+            />
+          </div>
+          <CustomInput
+            label="Address"
+            id="shippingAddress"
+            name="shippingAddress"
+            placeholder="Enter your address"
+            {...register("shippingAddress")}
+            error={
+              errors.shippingAddress?.message
+                ? [errors.shippingAddress?.message]
                 : undefined
             }
           />
           <CustomInput
-            label="Last Name"
-            id="lastName"
-            name="lastName"
-            placeholder="Enter your last name"
-            {...register("lastName")}
+            label="Apartment, suite, etc"
+            id="shippingApartment"
+            name="shippingApartment"
+            placeholder="Enter your apartment, suite, etc"
+            {...register("shippingApartment")}
             error={
-              errors.lastName?.message ? [errors.lastName?.message] : undefined
+              errors.shippingApartment?.message
+                ? [errors.shippingApartment?.message]
+                : undefined
+            }
+          />
+          <div className="gap-4 grid grid-cols-1 md:grid-cols-2">
+            <CustomInput
+              label="Zip Code"
+              id="shippingZipCode"
+              name="shippingZipCode"
+              placeholder="Enter your zip code"
+              {...register("shippingZipCode")}
+              error={
+                errors.shippingZipCode?.message
+                  ? [errors.shippingZipCode?.message]
+                  : undefined
+              }
+            />
+            <CustomInput
+              label="Town / City"
+              id="shippingCity"
+              name="shippingCity"
+              placeholder="Enter your city"
+              {...register("shippingCity")}
+              error={
+                errors.shippingCity?.message
+                  ? [errors.shippingCity?.message]
+                  : undefined
+              }
+            />
+          </div>
+          <CustomInput
+            label="Email"
+            id="shippingEmail"
+            name="shippingEmail"
+            placeholder="Enter your email"
+            {...register("shippingEmail")}
+            error={
+              errors.shippingEmail?.message
+                ? [errors.shippingEmail?.message]
+                : undefined
+            }
+          />
+          <PhoneNumberInput
+            value={watch("shippingPhone")}
+            onChange={(value) => setValue("shippingPhone", value)}
+            onBlur={() => trigger("shippingPhone")}
+            name="shippingPhone"
+            error={
+              errors.shippingPhone?.message
+                ? [errors.shippingPhone?.message]
+                : undefined
             }
           />
         </div>
-        <CustomInput
-          label="Address"
-          id="address"
-          name="address"
-          placeholder="Enter your address"
-          {...register("address")}
-          error={
-            errors.address?.message ? [errors.address?.message] : undefined
-          }
+
+        <CustomCheckbox
+          label="Use shipping address as billing address"
+          id="copyBilling"
+          checked={copyBilling}
+          onCheckedChange={(checked) => setValue("copyBilling", checked)}
         />
-        <CustomInput
-          label="Apartment, suite, etc"
-          id="apartment"
-          name="apartment"
-          placeholder="Enter your apartment, suite, etc"
-          {...register("apartment")}
-          error={
-            errors.apartment?.message ? [errors.apartment?.message] : undefined
-          }
-        />
-        <div className="gap-4 grid grid-cols-1 md:grid-cols-2">
-          <CustomInput
-            label="Zip Code"
-            id="zipCode"
-            name="zipCode"
-            placeholder="Enter your zip code"
-            {...register("zipCode")}
-            error={
-              errors.zipCode?.message ? [errors.zipCode?.message] : undefined
-            }
-          />
-          <CustomInput
-            label="Town / City"
-            id="city"
-            name="city"
-            placeholder="Enter your city"
-            {...register("city")}
-            error={errors.city?.message ? [errors.city?.message] : undefined}
-          />
+        {!copyBilling && (
+          <div className="flex flex-col gap-4 mt-6">
+            <div className="pb-6 text-xl uppercase">Billing adress</div>
+
+            <CountrySelectWithSearch
+              value={watch("billingCountry")}
+              onChange={(value) => setValue("billingCountry", value)}
+              onBlur={() => trigger("billingCountry")}
+              name="billingCountry"
+              error={
+                errors.billingCountry?.message
+                  ? [errors.billingCountry?.message]
+                  : undefined
+              }
+            />
+            <div className="gap-4 grid grid-cols-1 md:grid-cols-2">
+              <CustomInput
+                label="First Name"
+                id="billingFirstName"
+                name="billingFirstName"
+                placeholder="Enter your first name"
+                {...register("billingFirstName")}
+                error={
+                  errors.billingFirstName?.message
+                    ? [errors.billingFirstName?.message]
+                    : undefined
+                }
+              />
+              <CustomInput
+                label="Last Name"
+                id="billingLastName"
+                name="billingLastName"
+                placeholder="Enter your last name"
+                {...register("billingLastName")}
+                error={
+                  errors.billingLastName?.message
+                    ? [errors.billingLastName?.message]
+                    : undefined
+                }
+              />
+            </div>
+            <CustomInput
+              label="Address"
+              id="billingAddress"
+              name="billingAddress"
+              placeholder="Enter your address"
+              {...register("billingAddress")}
+              error={
+                errors.billingAddress?.message
+                  ? [errors.billingAddress?.message]
+                  : undefined
+              }
+            />
+            <CustomInput
+              label="Apartment, suite, etc"
+              id="billingApartment"
+              name="billingApartment"
+              placeholder="Enter your apartment, suite, etc"
+              {...register("billingApartment")}
+              error={
+                errors.billingApartment?.message
+                  ? [errors.billingApartment?.message]
+                  : undefined
+              }
+            />
+            <div className="gap-4 grid grid-cols-1 md:grid-cols-2">
+              <CustomInput
+                label="Zip Code"
+                id="billingZipCode"
+                name="billingZipCode"
+                placeholder="Enter your zip code"
+                {...register("billingZipCode")}
+                error={
+                  errors.billingZipCode?.message
+                    ? [errors.billingZipCode?.message]
+                    : undefined
+                }
+              />
+              <CustomInput
+                label="Town / City"
+                id="billingCity"
+                name="billingCity"
+                placeholder="Enter your city"
+                {...register("billingCity")}
+                error={
+                  errors.billingCity?.message
+                    ? [errors.billingCity?.message]
+                    : undefined
+                }
+              />
+            </div>
+            <CustomInput
+              label="Email"
+              id="billingEmail"
+              name="billingEmail"
+              placeholder="Enter your email"
+              {...register("billingEmail")}
+              error={
+                errors.billingEmail?.message
+                  ? [errors.billingEmail?.message]
+                  : undefined
+              }
+            />
+            <PhoneNumberInput
+              value={watch("billingPhone")}
+              onChange={(value) => setValue("billingPhone", value)}
+              onBlur={() => trigger("billingPhone")}
+              name="billingPhone"
+              error={
+                errors.billingPhone?.message
+                  ? [errors.billingPhone?.message]
+                  : undefined
+              }
+            />
+          </div>
+        )}
+
+        <div className="flex justify-between items-center mt-12">
+          <Link
+            href="/cart"
+            className="flex items-center gap-2 hover:opacity-80 text-foreground text-base"
+          >
+            <ChevronLeft className="w-6 h-6 text-purple" />
+            Return to cart
+          </Link>
+          <CustomButton
+            type="submit"
+            disabled={isSubmitting}
+            className="bg-purple hover:bg-purple/90 border border-purple w-72 h-12 text-white"
+          >
+            Order review
+          </CustomButton>
         </div>
-        <CustomInput
-          label="Email"
-          id="email"
-          name="email"
-          placeholder="Enter your email"
-          {...register("email")}
-          error={errors.email?.message ? [errors.email?.message] : undefined}
-        />
-        <PhoneNumberInput
-          value={watch("phone")}
-          onChange={(value) => setValue("phone", value)}
-          onBlur={() => trigger("phone")}
-          name="phone"
-          error={errors.phone?.message ? [errors.phone?.message] : undefined}
-        />
       </form>
     </>
   );
