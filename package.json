@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "debug": "cross-env NODE_OPTIONS='--inspect' next dev",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
