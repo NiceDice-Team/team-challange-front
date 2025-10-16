@@ -29,10 +29,10 @@ export const PasswordInput: FC<PasswordProps> = ({
 }) => {
   const [visible, setVisible] = useState(hideToggle);
   return (
-    <div className="w-full flex flex-col gap-2">
+    <div className="flex flex-col gap-2 w-full">
       {label && (
         <label
-          className={cn("uppercase text-base font-normal", labelStyle)}
+          className={cn("font-normal text-base uppercase", labelStyle)}
           htmlFor={id}
         >
           {label}
@@ -51,9 +51,10 @@ export const PasswordInput: FC<PasswordProps> = ({
           name={name}
           autoComplete="off"
           className={cn(
-            "w-full h-12 md:flex-1 px-4 py-padding-12 bg-white text-purple border-black rounded-none outline-none  placeholder:text-placeholder",
+            "md:flex-1 bg-white px-4 py-padding-12 border-black rounded-none outline-none w-full h-12 text-purple placeholder:text-placeholder",
             "focus:outline-none focus-visible:otline-none focus-visible:ring-0 focus-visible:shadow-none ",
             error &&
+              error.length > 0 &&
               "border-error focus:ring-red-500 focus-visible:ring-red-500",
             className
           )}
@@ -63,21 +64,28 @@ export const PasswordInput: FC<PasswordProps> = ({
         {!hideToggle && (
           <button
             type="button"
-            className="absolute inset-y-0 right-0 flex items-center px-4  hover:border-transparent focus:outline-0 focus-visible:outline-0"
+            className="right-0 absolute inset-y-0 flex items-center px-4 hover:border-transparent focus-visible:outline-0 focus:outline-0"
             onClick={() => setVisible(!visible)}
             tabIndex={-1}
             aria-label={visible ? "Hide password" : "Show password"}
           >
             {visible ? (
-              <EyeOff size={24} className={cn({ "text-error": error })} />
+              <EyeOff
+                size={24}
+                className={cn({ "text-error": error && error.length > 0 })}
+              />
             ) : (
-              <Eye size={24} className={cn({ "text-error": error })} />
+              <Eye
+                size={24}
+                className={cn({ "text-error": error && error.length > 0 })}
+              />
             )}
           </button>
         )}
       </div>
 
       {error &&
+        error.length > 0 &&
         error.map((err, index) => (
           <div className="flex items-center gap-1" key={index}>
             <Info size={16} color="#e30000" />

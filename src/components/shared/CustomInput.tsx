@@ -62,6 +62,7 @@ export const CustomInput: React.FC<InputPros> = ({
             "md:flex-1 bg-white px-4 py-padding-12 border-black rounded-none outline-none w-full h-12 text-purple placeholder:text-placeholder",
             "focus:outline-2 focus:outline-purple/40  focus-visible:ring-2 focus-visible:ring-purple/40 focus-visible:shadow-none ",
             error &&
+              error.length > 0 &&
               "border-error focus:ring-red-500 focus-visible:ring-red-500",
             className
           )}
@@ -71,6 +72,7 @@ export const CustomInput: React.FC<InputPros> = ({
       </div>
 
       {error &&
+        error.length > 0 &&
         error.map((err, index) => (
           <div className="flex items-center gap-1" key={index}>
             <Info size={16} color="#e30000" />

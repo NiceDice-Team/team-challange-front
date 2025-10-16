@@ -1,6 +1,5 @@
 import z from "zod";
 
-
 const addressFields = {
   country: z.string().min(1, "Choose country"),
   firstName: z
@@ -30,8 +29,7 @@ const addressFields = {
   apartment: z
     .string()
     .trim()
-    .max(50, "Apartment must be at most 50 characters")
-    .optional(),
+    .max(50, "Apartment must be at most 50 characters"),
   zipCode: z
     .string()
     .min(3, "Zip code must be at least 3 characters")
@@ -51,13 +49,10 @@ const addressFields = {
   phone: z.string().min(8, "Phone must be at least 8 characters"),
 };
 
-// Схема для отдельного адреса (для обратной совместимости)
 export const billingSchema = z.object(addressFields);
 
-// Схема для объединенной формы с shipping и billing адресами
 export const combinedFormSchema = z
   .object({
-    // Shipping адрес
     shippingCountry: addressFields.country,
     shippingFirstName: addressFields.firstName,
     shippingLastName: addressFields.lastName,
@@ -68,7 +63,6 @@ export const combinedFormSchema = z
     shippingEmail: addressFields.email,
     shippingPhone: addressFields.phone,
 
-    // Billing адрес (опциональный, если copyBilling = true)
     billingCountry: addressFields.country.optional(),
     billingFirstName: addressFields.firstName.optional(),
     billingLastName: addressFields.lastName.optional(),
@@ -79,29 +73,50 @@ export const combinedFormSchema = z
     billingEmail: addressFields.email.optional(),
     billingPhone: addressFields.phone.optional(),
 
-    // Флаг копирования
     copyBilling: z.boolean().default(false),
   })
-  .refine(
-    (data) => {
-      // Если copyBilling = false, то billing поля обязательны
-      if (!data.copyBilling) {
-        return (
-          data.billingCountry &&
-          data.billingFirstName &&
-          data.billingLastName &&
-          data.billingAddress &&
-          data.billingZipCode &&
-          data.billingCity &&
-          data.billingEmail &&
-          data.billingPhone
-        );
+  .superRefine((data, ctx) => {
+    if (!data.copyBilling) {
+      if (!data.billingAddress) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Billing address is required",
+          path: ["billingAddress"],
+        });
+        return;
       }
-      return true;
-    },
-    {
-      message:
-        "Billing address fields are required when not copying from shipping",
-      path: ["billingCountry"], // Указываем на первое поле billing для отображения ошибки
+      if (!data.billingFirstName) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "First name is required",
+          path: ["billingAddress", "firstName"],
+        });
+        return;
+      }
+      if (!data.billingLastName) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Last name is required",
+          path: ["billingAddress", "lastName"],
+        });
+        return;
+      }
+      if (!data.billingCity) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "City is required",
+          path: ["billingAddress", "city"],
+        });
+        return;
+      }
+      if (!data.billingZipCode) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Zip code is required",
+          path: ["billingAddress", "zipCode"],
+        });
+        return;
+      }
     }
-  );
+    return true;
+  });

@@ -21,6 +21,10 @@ export default function ForgotPasswordPage() {
         If the email address you entered is associated with an account, you’ll
         receive a password reset link shortly
       </p>
+      <p className="mb-12 text-base">
+        Check the message for 5-10 minutes. If you don&apos;t find the list,
+        please check your spam folder and resend it again.
+      </p>
       <div className="flex flex-row justify-center items-center gap-1 mb-12">
         <p className="text-base">Didn’t receive the email?</p>
         <Link href="/forgot-password" className="flex gap-1">
