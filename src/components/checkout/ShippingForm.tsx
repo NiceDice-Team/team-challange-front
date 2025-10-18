@@ -12,11 +12,13 @@ import CustomCheckbox from "../shared/CustomCheckbox";
 import { ChevronLeft } from "lucide-react";
 import { CustomButton } from "../shared/CustomButton";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { DeliveryOption, useCheckoutStore } from "@/store/checkout";
 
 export type CombinedFormData = z.infer<typeof combinedFormSchema>;
 
 export default function ShippingForm({ paymentMethod }: { paymentMethod: DeliveryOption }) {
+  const router = useRouter();
   const {
     register,
     watch,
@@ -30,10 +32,28 @@ export default function ShippingForm({ paymentMethod }: { paymentMethod: Deliver
     mode: "onSubmit",
     reValidateMode: "onChange",
     defaultValues: {
+      shippingCountry: "United States",
+      shippingFirstName: "John",
+      shippingLastName: "Doe",
+      shippingAddress: "123 Main Street",
+      shippingApartment: "Apt 4B",
+      shippingZipCode: "12345",
+      shippingCity: "New York",
+      shippingEmail: "john.doe@example.com",
+      shippingPhone: "+1234567890",
       billingCountry: "",
+      billingFirstName: "",
+      billingLastName: "",
+      billingAddress: "",
+      billingApartment: "",
+      billingZipCode: "",
+      billingCity: "",
+      billingEmail: "",
+      billingPhone: "",
+      copyBilling: true,
     },
   });
-  const { setFormData, formData, setPaymentMethod } = useCheckoutStore();
+  const { setFormData, setPaymentMethod } = useCheckoutStore();
 
   const copyBilling = watch("copyBilling");
 
@@ -62,15 +82,20 @@ export default function ShippingForm({ paymentMethod }: { paymentMethod: Deliver
   }, [copyBilling, trigger]);
 
   const onSubmit = (data: CombinedFormData) => {
+    console.log("Form submitted successfully:", data);
     setFormData(data as any);
     setPaymentMethod(paymentMethod);
 
-    // router.push("/checkout-order");
+    router.push("/checkout-order/order-review");
+  };
+
+  const onError = (errors: any) => {
+    console.log("Form validation errors:", errors);
   };
 
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit, onError)}>
         <div className="flex flex-col gap-4 mb-12">
           <div className="pb-6 text-xl uppercase">Shipping</div>
 
