@@ -64,5 +64,12 @@ describe("CustomInput", () => {
       expect(screen.getByText("This field is required")).toBeInTheDocument();
       expect(screen.getByRole("textbox")).toHaveClass("border-error");
     });
+
+    test("renders multiple error messages", () => {
+      render(<CustomInput error={["Error 1", "Error 2", "Error 3"]} />);
+      expect(screen.getByText("Error 1")).toBeInTheDocument();
+      expect(screen.getByText("Error 2")).toBeInTheDocument();
+      expect(screen.getByText("Error 3")).toBeInTheDocument();
+    });
    })
 });
