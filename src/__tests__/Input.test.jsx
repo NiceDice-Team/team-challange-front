@@ -20,5 +20,11 @@ describe("CustomInput", () => {
       const input = screen.getByRole("textbox");
       expect(input).toHaveClass("custom-class");
     });
+
+     test("renders input with labelStyle", () => {
+      render(<CustomInput label="Test" labelStyle="custom-label-style" id="test-input" />);
+      const label = screen.getByText("Test");
+      expect(label).toHaveClass("custom-label-style");
+    });
  });
 });
