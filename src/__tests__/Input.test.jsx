@@ -26,5 +26,16 @@ describe("CustomInput", () => {
       const label = screen.getByText("Test");
       expect(label).toHaveClass("custom-label-style");
     });
+
+    test("renders input with different types", () => {
+      const { rerender } = render(<CustomInput type="email" />);
+      expect(screen.getByRole("textbox")).toHaveAttribute("type", "email");
+
+      rerender(<CustomInput type="password" />);
+      expect(screen.getByDisplayValue("")).toHaveAttribute("type", "password");
+
+      rerender(<CustomInput type="number" />);
+      expect(screen.getByRole("spinbutton")).toHaveAttribute("type", "number");
+    });
  });
 });
