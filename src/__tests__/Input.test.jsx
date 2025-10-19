@@ -43,6 +43,13 @@ describe("CustomInput", () => {
       expect(screen.getByDisplayValue("test value")).toBeInTheDocument();
     });
 
+    test("renders input with id and name", () => {
+      render(<CustomInput id="test-id" name="test-name" />);
+      const input = screen.getByRole("textbox");
+      expect(input).toHaveAttribute("id", "test-id");
+      expect(input).toHaveAttribute("name", "test-name");
+    });
 
+   
  });
 });
