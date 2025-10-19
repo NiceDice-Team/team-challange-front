@@ -50,6 +50,11 @@ describe("CustomInput", () => {
       expect(input).toHaveAttribute("name", "test-name");
     });
 
+     test("renders disabled input", () => {
+      render(<CustomInput disabled />);
+      const input = screen.getByRole("textbox");
+      expect(input).toBeDisabled();
+    });
    
  });
 });
