@@ -10,5 +10,9 @@ describe("CustomInput", () => {
       expect(screen.getByLabelText("Test Label")).toBeInTheDocument();
     });
 
+    test("renders input with placeholder", () => {
+      render(<CustomInput placeholder="Enter text here" />);
+      expect(screen.getByPlaceholderText("Enter text here")).toBeInTheDocument();
+    });
  });
 });
