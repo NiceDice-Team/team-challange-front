@@ -14,5 +14,11 @@ describe("CustomInput", () => {
       render(<CustomInput placeholder="Enter text here" />);
       expect(screen.getByPlaceholderText("Enter text here")).toBeInTheDocument();
     });
+
+      test("renders input with custom className", () => {
+      render(<CustomInput className="custom-class" />);
+      const input = screen.getByRole("textbox");
+      expect(input).toHaveClass("custom-class");
+    });
  });
 });
