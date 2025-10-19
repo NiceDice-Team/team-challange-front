@@ -58,7 +58,7 @@ describe("CustomInput", () => {
    
   });
 
-   describe("Error Handling", () => {
+  describe("Error Handling", () => {
     test("renders single error message", () => {
       render(<CustomInput error={["This field is required"]} />);
       expect(screen.getByText("This field is required")).toBeInTheDocument();
@@ -70,6 +70,19 @@ describe("CustomInput", () => {
       expect(screen.getByText("Error 1")).toBeInTheDocument();
       expect(screen.getByText("Error 2")).toBeInTheDocument();
       expect(screen.getByText("Error 3")).toBeInTheDocument();
+    });
+  })
+
+   describe("Interactions", () => {
+    test("handles onChange events", async () => {
+      const handleChange = jest.fn();
+      const user = userEvent.setup();
+      
+      render(<CustomInput onChange={handleChange} />);
+      const input = screen.getByRole("textbox");
+      
+      await user.type(input, "test");
+      expect(handleChange).toHaveBeenCalledTimes(4);
     });
    })
 });
