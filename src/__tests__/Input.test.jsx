@@ -21,7 +21,7 @@ describe("CustomInput", () => {
       expect(input).toHaveClass("custom-class");
     });
 
-     test("renders input with labelStyle", () => {
+    test("renders input with labelStyle", () => {
       render(<CustomInput label="Test" labelStyle="custom-label-style" id="test-input" />);
       const label = screen.getByText("Test");
       expect(label).toHaveClass("custom-label-style");
@@ -50,11 +50,19 @@ describe("CustomInput", () => {
       expect(input).toHaveAttribute("name", "test-name");
     });
 
-     test("renders disabled input", () => {
+    test("renders disabled input", () => {
       render(<CustomInput disabled />);
       const input = screen.getByRole("textbox");
       expect(input).toBeDisabled();
     });
    
- });
+  });
+
+   describe("Error Handling", () => {
+    test("renders single error message", () => {
+      render(<CustomInput error={["This field is required"]} />);
+      expect(screen.getByText("This field is required")).toBeInTheDocument();
+      expect(screen.getByRole("textbox")).toHaveClass("border-error");
+    });
+   })
 });
