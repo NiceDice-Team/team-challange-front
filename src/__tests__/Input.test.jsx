@@ -37,5 +37,12 @@ describe("CustomInput", () => {
       rerender(<CustomInput type="number" />);
       expect(screen.getByRole("spinbutton")).toHaveAttribute("type", "number");
     });
+
+    test("renders input with value", () => {
+      render(<CustomInput value="test value" onChange={() => {}} />);
+      expect(screen.getByDisplayValue("test value")).toBeInTheDocument();
+    });
+
+
  });
 });
