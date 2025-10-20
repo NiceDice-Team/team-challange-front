@@ -107,5 +107,16 @@ describe("CustomInput", () => {
       expect(handleChange).not.toHaveBeenCalled();
     });
   })
+
+  describe('Accessibility', () => {
+    test('associates label with input using htmlFor', () => {
+     render(<CustomInput label="Test Label" id="test-input" />);
+     const label = screen.getByText('Test Label');
+     const input = screen.getByRole('textbox');
+
+     expect(label).toHaveAttribute('for', 'test-input');
+     expect(input).toHaveAttribute('id', 'test-input');
+   });
+  })
    
 });
