@@ -118,5 +118,14 @@ describe("CustomInput", () => {
      expect(input).toHaveAttribute('id', 'test-input');
    });
   })
+
+  test('supports keyboard navigation', async () => {
+     const user = userEvent.setup();
+     render(<CustomInput />);
+     const input = screen.getByRole('textbox');
+
+     await user.tab();
+     expect(input).toHaveFocus();
+   });
    
 });
