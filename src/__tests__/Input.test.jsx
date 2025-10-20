@@ -73,7 +73,7 @@ describe("CustomInput", () => {
     });
   })
 
-   describe("Interactions", () => {
+  describe("Interactions", () => {
     test("handles onChange events", async () => {
       const handleChange = jest.fn();
       const user = userEvent.setup();
@@ -84,5 +84,22 @@ describe("CustomInput", () => {
       await user.type(input, "test");
       expect(handleChange).toHaveBeenCalledTimes(4);
     });
+
+   test('handles onBlur events', async () => {
+     const handleBlur = jest.fn();
+     const user = userEvent.setup();
+
+     render(<CustomInput onBlur={handleBlur} />);
+     const input = screen.getByRole('textbox');
+
+     await user.click(input);
+     await user.tab();
+     expect(handleBlur).toHaveBeenCalledTimes(1);
+   });
    })
+   
+
+
+
+
 });
