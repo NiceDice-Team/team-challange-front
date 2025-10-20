@@ -85,21 +85,27 @@ describe("CustomInput", () => {
       expect(handleChange).toHaveBeenCalledTimes(4);
     });
 
-   test('handles onBlur events', async () => {
-     const handleBlur = jest.fn();
-     const user = userEvent.setup();
+    test('handles onBlur events', async () => {
+      const handleBlur = jest.fn();
+      const user = userEvent.setup();
 
-     render(<CustomInput onBlur={handleBlur} />);
-     const input = screen.getByRole('textbox');
+      render(<CustomInput onBlur={handleBlur} />);
+      const input = screen.getByRole('textbox');
 
-     await user.click(input);
-     await user.tab();
-     expect(handleBlur).toHaveBeenCalledTimes(1);
-   });
-   })
+      await user.click(input);
+      await user.tab();
+      expect(handleBlur).toHaveBeenCalledTimes(1);
+    });
+    test('does not call onChange when disabled', async () => {
+      const handleChange = jest.fn();
+      const user = userEvent.setup();
+
+      render(<CustomInput onChange={handleChange} disabled />);
+      const input = screen.getByRole('textbox');
+
+      await user.type(input, 'test');
+      expect(handleChange).not.toHaveBeenCalled();
+    });
+  })
    
-
-
-
-
 });
