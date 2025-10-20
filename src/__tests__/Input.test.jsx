@@ -127,5 +127,13 @@ describe("CustomInput", () => {
      await user.tab();
      expect(input).toHaveFocus();
    });
+
+   describe('Edge Cases', () => {
+     test('renders with empty string label', () => {
+     render(<CustomInput label="" />);
+     const input = screen.getByRole('textbox');
+     expect(input).toBeInTheDocument();
+   });
+   })
    
 });
