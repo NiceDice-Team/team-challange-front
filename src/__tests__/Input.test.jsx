@@ -134,6 +134,19 @@ describe("CustomInput", () => {
      const input = screen.getByRole('textbox');
      expect(input).toBeInTheDocument();
    });
+   test('renders with undefined error', () => {
+     render(<CustomInput error={undefined} />);
+     const input = screen.getByRole('textbox');
+     expect(input).toBeInTheDocument();
+     expect(input).not.toHaveClass('border-error');
+   });
+    test('renders with null error', () => {
+     render(<CustomInput error={null} />);
+     const input = screen.getByRole('textbox');
+     expect(input).toBeInTheDocument();
+     expect(input).not.toHaveClass('border-error');
+   });
+   
    })
    
 });
