@@ -171,9 +171,15 @@ describe("PasswordInput", () => {
       render(<PasswordInput label="Test Label" id="test-input" />);
       const label = screen.getByText("Test Label");
       const input = getPasswordInput();
-
       expect(label).toHaveAttribute("for", "test-input");
       expect(input).toHaveAttribute("id", "test-input");
+    });
+    test("supports keyboard navigation", async () => {
+      const user = userEvent.setup();
+      render(<PasswordInput id="test-input" />);
+      const input = getPasswordInput();
+      await user.tab();
+      expect(input).toHaveFocus();
     });
   });
 });
