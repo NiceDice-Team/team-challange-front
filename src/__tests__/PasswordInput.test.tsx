@@ -198,4 +198,13 @@ describe("PasswordInput", () => {
       expect(input).toHaveClass("w-full", "h-12", "custom-style");
     });
   });
+
+  describe("Edge Cases", () => {
+    test("renders with undefined error", () => {
+      render(<PasswordInput error={undefined} id="test-input" />);
+      const input = getPasswordInput();
+      expect(input).toBeInTheDocument();
+      expect(input).not.toHaveClass("border-error");
+    });
+  });
 });
