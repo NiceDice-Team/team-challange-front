@@ -123,5 +123,12 @@ describe("PasswordInput", () => {
       );
       expect(inputContainer).toHaveClass("border-4", "border-error-border");
     });
+
+    test("does not render error messages when error array is empty", () => {
+      render(<PasswordInput error={[]} id="test-input" />);
+      const input = getPasswordInput();
+      expect(screen.queryByText(/error/i)).not.toBeInTheDocument();
+      expect(input).not.toHaveClass("border-error");
+    });
   });
 });
