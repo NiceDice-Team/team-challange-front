@@ -12,12 +12,14 @@ describe("PasswordInput", () => {
       render(<PasswordInput label="Test Label" id="test-input" />);
       expect(screen.getByLabelText("Test Label")).toBeInTheDocument();
     });
-    test("render with placeholder"),
-      () => {
-        render(<PasswordInput id="test-input" placeholder="Enter password" />);
-        expect(
-          screen.getByPlaceholderText("Enter password")
-        ).toBeInTheDocument();
-      };
+    test("render with placeholder", () => {
+      render(<PasswordInput id="test-input" placeholder="Enter password" />);
+      expect(screen.getByPlaceholderText("Enter password")).toBeInTheDocument();
+    });
+    test("render with custom className", () => {
+      render(<PasswordInput className="custom-class" id="test-input" />);
+      const passInput = getPasswordInput();
+      expect(passInput).toHaveClass("custom-class");
+    });
   });
 });
