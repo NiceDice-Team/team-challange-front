@@ -37,7 +37,7 @@ describe("PasswordInput", () => {
       expect(screen.getByDisplayValue("test-password")).toBeInTheDocument();
     });
   });
-  
+
    describe("Password Visibility Toggle", () => {
      test("renders toggle button by default", () => {
        render(<PasswordInput id="test-input" />);
@@ -46,5 +46,12 @@ describe("PasswordInput", () => {
        });
        expect(toggleButton).toBeInTheDocument();
      });
+      test("hides toggle button when hideToggle is true", () => {
+        render(<PasswordInput hideToggle id="test-input" />);
+        const toggleButton = screen.queryByRole("button", {
+          name: /show password/i,
+        });
+        expect(toggleButton).not.toBeInTheDocument();
+      });
    });
 });
