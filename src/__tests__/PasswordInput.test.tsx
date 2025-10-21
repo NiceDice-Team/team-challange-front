@@ -53,5 +53,12 @@ describe("PasswordInput", () => {
         });
         expect(toggleButton).not.toBeInTheDocument();
       });
+      test("shows eye icon when password is hidden", () => {
+        render(<PasswordInput id="test-input" />);
+        const toggleButton = screen.getByRole("button", {
+          name: /show password/i,
+        });
+        expect(toggleButton).toBeInTheDocument();
+      });
    });
 });
