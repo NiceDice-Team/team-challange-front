@@ -131,4 +131,15 @@ describe("PasswordInput", () => {
       expect(input).not.toHaveClass("border-error");
     });
   });
+
+  describe("Interactions", () => {
+    test("handles onChange events", async () => {
+      const handleChange = jest.fn();
+      const user = userEvent.setup();
+      render(<PasswordInput onChange={handleChange} id="test-input" />);
+      const input = getPasswordInput();
+      await user.type(input, "test");
+      expect(handleChange).toHaveBeenCalledTimes(4);
+    });
+  });
 });
