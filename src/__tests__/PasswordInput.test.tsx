@@ -184,13 +184,18 @@ describe("PasswordInput", () => {
   });
 
   describe("Props Handling", () => {
-     test("passes through additional props", () => {
-       render(
-         <PasswordInput data-testid="password-input" required id="test-input" />
-       );
-       const input = screen.getByTestId("password-input");
-       expect(input).toHaveAttribute("data-testid", "password-input");
-       expect(input).toBeRequired();
-     });
+    test("passes through additional props", () => {
+      render(
+        <PasswordInput data-testid="password-input" required id="test-input" />
+      );
+      const input = screen.getByTestId("password-input");
+      expect(input).toHaveAttribute("data-testid", "password-input");
+      expect(input).toBeRequired();
+    });
+    test("combines custom className with default styles", () => {
+      render(<PasswordInput className="custom-style" id="test-input" />);
+      const input = getPasswordInput();
+      expect(input).toHaveClass("w-full", "h-12", "custom-style");
+    });
   });
 });
