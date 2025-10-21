@@ -37,4 +37,14 @@ describe("PasswordInput", () => {
       expect(screen.getByDisplayValue("test-password")).toBeInTheDocument();
     });
   });
+  
+   describe("Password Visibility Toggle", () => {
+     test("renders toggle button by default", () => {
+       render(<PasswordInput id="test-input" />);
+       const toggleButton = screen.getByRole("button", {
+         name: /show password/i,
+       });
+       expect(toggleButton).toBeInTheDocument();
+     });
+   });
 });
