@@ -150,5 +150,19 @@ describe("PasswordInput", () => {
       await user.tab();
       expect(handleBlur).toHaveBeenCalledTimes(1);
     });
+    test("does not call onChange & onBlur when disabled", async () => {
+      const handleChange = jest.fn();
+      const handleBlur = jest.fn();
+      const user = userEvent.setup();
+      render(
+        <PasswordInput onChange={handleChange} disabled id="test-input" />
+      );
+      const input = getPasswordInput();
+      await user.type(input, "test");
+      expect(handleChange).not.toHaveBeenCalled();
+      await user.click(input);
+      await user.tab();
+      expect(handleBlur).not.toHaveBeenCalled();
+    });
   });
 });
