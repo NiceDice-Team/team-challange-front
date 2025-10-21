@@ -1,5 +1,10 @@
 import { PasswordInput } from "@/components/shared/PasswordInput";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+
+const getPasswordInput = () => {
+  return screen.getByDisplayValue("");
+};
 
 describe("PasswordInput", () => {
   describe("Rendering", () => {
@@ -7,5 +12,12 @@ describe("PasswordInput", () => {
       render(<PasswordInput label="Test Label" id="test-input" />);
       expect(screen.getByLabelText("Test Label")).toBeInTheDocument();
     });
+    test("render with placeholder"),
+      () => {
+        render(<PasswordInput id="test-input" placeholder="Enter password" />);
+        expect(
+          screen.getByPlaceholderText("Enter password")
+        ).toBeInTheDocument();
+      };
   });
 });
