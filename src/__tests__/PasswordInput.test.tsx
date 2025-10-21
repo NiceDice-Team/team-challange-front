@@ -72,5 +72,22 @@ describe("PasswordInput", () => {
            screen.getByRole("button", { name: /hide password/i })
          ).toBeInTheDocument();
        });
+
+       test("toggles input type between password and text", async () => {
+         const user = userEvent.setup();
+         render(<PasswordInput id="test-input" />);
+         const input = getPasswordInput();
+         const toggleButton = screen.getByRole("button", {
+           name: /show password/i,
+         });
+
+         expect(input).toHaveAttribute("type", "password");
+
+         await user.click(toggleButton);
+         expect(input).toHaveAttribute("type", "text");
+
+         await user.click(toggleButton);
+         expect(input).toHaveAttribute("type", "password");
+       });
    });
 });
