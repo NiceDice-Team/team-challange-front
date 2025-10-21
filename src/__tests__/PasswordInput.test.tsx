@@ -21,5 +21,10 @@ describe("PasswordInput", () => {
       const passInput = getPasswordInput();
       expect(passInput).toHaveClass("custom-class");
     });
+    test("renders input with disabled state", () => {
+      render(<PasswordInput disabled id="test-input" />);
+      const input = getPasswordInput();
+      expect(input).toBeDisabled();
+    });
   });
 });
