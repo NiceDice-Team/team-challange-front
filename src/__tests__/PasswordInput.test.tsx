@@ -141,5 +141,14 @@ describe("PasswordInput", () => {
       await user.type(input, "test");
       expect(handleChange).toHaveBeenCalledTimes(4);
     });
+    test("handles onBlur events", async () => {
+      const handleBlur = jest.fn();
+      const user = userEvent.setup();
+      render(<PasswordInput onBlur={handleBlur} id="test-input" />);
+      const input = getPasswordInput();
+      await user.click(input);
+      await user.tab();
+      expect(handleBlur).toHaveBeenCalledTimes(1);
+    });
   });
 });
