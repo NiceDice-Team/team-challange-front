@@ -206,5 +206,11 @@ describe("PasswordInput", () => {
       expect(input).toBeInTheDocument();
       expect(input).not.toHaveClass("border-error");
     });
+     test("renders with null error", () => {
+       render(<PasswordInput error={null} id="test-input" />);
+       const input = getPasswordInput();
+       expect(input).toBeInTheDocument();
+       expect(input).not.toHaveClass("border-error");
+     });
   });
 });
