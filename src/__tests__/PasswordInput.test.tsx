@@ -111,5 +111,17 @@ describe("PasswordInput", () => {
       expect(screen.getByText("Error 2")).toBeInTheDocument();
       expect(screen.getByText("Error 3")).toBeInTheDocument();
     });
+
+    test("applies error styles to input when error exists", () => {
+      render(<PasswordInput error={["Test error"]} id="test-input" />);
+      const input = getPasswordInput();
+      const inputContainer = getPasswordInput().closest("div");
+      expect(input).toHaveClass(
+        "border-error",
+        "focus:ring-red-500",
+        "focus-visible:ring-red-500"
+      );
+      expect(inputContainer).toHaveClass("border-4", "border-error-border");
+    });
   });
 });
