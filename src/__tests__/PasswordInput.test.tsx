@@ -182,4 +182,15 @@ describe("PasswordInput", () => {
       expect(input).toHaveFocus();
     });
   });
+
+  describe("Props Handling", () => {
+     test("passes through additional props", () => {
+       render(
+         <PasswordInput data-testid="password-input" required id="test-input" />
+       );
+       const input = screen.getByTestId("password-input");
+       expect(input).toHaveAttribute("data-testid", "password-input");
+       expect(input).toBeRequired();
+     });
+  });
 });
