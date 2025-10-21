@@ -165,4 +165,15 @@ describe("PasswordInput", () => {
       expect(handleBlur).not.toHaveBeenCalled();
     });
   });
+
+  describe("Accessibility", () => {
+    test("associates label with input using htmlFor", () => {
+      render(<PasswordInput label="Test Label" id="test-input" />);
+      const label = screen.getByText("Test Label");
+      const input = getPasswordInput();
+
+      expect(label).toHaveAttribute("for", "test-input");
+      expect(input).toHaveAttribute("id", "test-input");
+    });
+  });
 });
