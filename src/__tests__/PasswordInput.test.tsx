@@ -60,5 +60,17 @@ describe("PasswordInput", () => {
         });
         expect(toggleButton).toBeInTheDocument();
       });
+       test("shows eye-off icon when password is visible", async () => {
+         const user = userEvent.setup();
+         render(<PasswordInput id="test-input" />);
+         const toggleButton = screen.getByRole("button", {
+           name: /show password/i,
+         });
+
+         await user.click(toggleButton);
+         expect(
+           screen.getByRole("button", { name: /hide password/i })
+         ).toBeInTheDocument();
+       });
    });
 });
