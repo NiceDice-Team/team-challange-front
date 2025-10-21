@@ -206,11 +206,24 @@ describe("PasswordInput", () => {
       expect(input).toBeInTheDocument();
       expect(input).not.toHaveClass("border-error");
     });
-     test("renders with null error", () => {
-       render(<PasswordInput error={null} id="test-input" />);
-       const input = getPasswordInput();
-       expect(input).toBeInTheDocument();
-       expect(input).not.toHaveClass("border-error");
-     });
+    test("renders with null error", () => {
+      render(<PasswordInput error={null} id="test-input" />);
+      const input = getPasswordInput();
+      expect(input).toBeInTheDocument();
+      expect(input).not.toHaveClass("border-error");
+    });
+    test("handles rapid toggle clicks", async () => {
+      const user = userEvent.setup();
+      render(<PasswordInput id="test-input" />);
+      const input = getPasswordInput();
+      const toggleButton = screen.getByRole("button", {
+        name: /show password/i,
+      });
+      await user.click(toggleButton);
+      await user.click(toggleButton);
+      await user.click(toggleButton);
+
+      expect(input).toHaveAttribute("type", "text");
+    });
   });
 });
