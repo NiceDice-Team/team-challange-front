@@ -226,4 +226,20 @@ describe("PasswordInput", () => {
       expect(input).toHaveAttribute("type", "text");
     });
   });
+
+  describe("Performance", () => {
+    test("does not re-render unnecessarily", () => {
+      const renderSpy = jest.fn();
+      const TestComponent = ({ value }) => {
+        renderSpy();
+        return (
+          <PasswordInput value={value} onChange={() => {}} id="test-input" />
+        );
+      };
+      const { rerender } = render(<TestComponent value="test" />);
+      expect(renderSpy).toHaveBeenCalledTimes(1);
+      rerender(<TestComponent value="test" />);
+      expect(renderSpy).toHaveBeenCalledTimes(2);
+    });
+  });
 });
