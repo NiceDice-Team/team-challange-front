@@ -93,4 +93,20 @@ describe("Login Page", () => {
     });
 
   });
+
+  describe("Form Validation", () => {
+    test("shows email validation error for invalid email", async () => {
+      const user = userEvent.setup();
+      render(<LoginPage />);
+      
+      const emailInput = screen.getByLabelText("Email");
+      
+      await user.type(emailInput, "invalid-email");
+      await user.tab();
+      
+      await waitFor(() => {
+        expect(screen.getByText("Invalid email")).toBeInTheDocument();
+      });
+    });
+  })
 });
