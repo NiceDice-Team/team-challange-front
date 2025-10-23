@@ -108,5 +108,19 @@ describe("Login Page", () => {
         expect(screen.getByText("Invalid email")).toBeInTheDocument();
       });
     });
+
+    test("shows password validation error for short password", async () => {
+      const user = userEvent.setup();
+      render(<LoginPage />);
+      
+      const passwordInput = screen.getByLabelText("password");
+      
+      await user.type(passwordInput, "123");
+      await user.tab();
+      
+      await waitFor(() => {
+        expect(screen.getByText("Password must be at least 8 characters")).toBeInTheDocument();
+      });
+    });
   })
 });
