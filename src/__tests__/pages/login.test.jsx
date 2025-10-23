@@ -136,5 +136,27 @@ describe("Login Page", () => {
         expect(screen.getByText("Contain at least one letter and one number.")).toBeInTheDocument();
       });
     });
-  })
+
+    test("clears validation errors when valid input is entered", async () => {
+      const user = userEvent.setup();
+      render(<LoginPage />);
+      const emailInput = screen.getByLabelText("Email");
+      
+      await user.type(emailInput, "invalid-email");
+      await user.tab();
+      
+      await waitFor(() => {
+        expect(screen.getByText("Invalid email")).toBeInTheDocument();
+      });
+      
+      await user.clear(emailInput);
+      await user.type(emailInput, "test@example.com");
+      await user.tab();
+      
+      await waitFor(() => {
+        expect(screen.queryByText("Invalid email")).not.toBeInTheDocument();
+      });
+    });
+  });
+  
 });
