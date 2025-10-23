@@ -122,5 +122,19 @@ describe("Login Page", () => {
         expect(screen.getByText("Password must be at least 8 characters")).toBeInTheDocument();
       });
     });
+
+    test("shows password validation error for password without letters and numbers", async () => {
+      const user = userEvent.setup();
+      render(<LoginPage />);
+      
+      const passwordInput = screen.getByLabelText("password");
+      
+      await user.type(passwordInput, "12345678");
+      await user.tab();
+      
+      await waitFor(() => {
+        expect(screen.getByText("Contain at least one letter and one number.")).toBeInTheDocument();
+      });
+    });
   })
 });
