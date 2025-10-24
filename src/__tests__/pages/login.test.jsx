@@ -208,5 +208,25 @@ describe("Login Page", () => {
       const forgotPasswordLink = screen.getByText("Forgot your password?");
       expect(forgotPasswordLink).toHaveAttribute("href", "/forgot-password");
     });
-  })
+
+    test("redirects to home page after successful login", async () => {
+      getTokens.mockReturnValue({
+        refreshToken: "test-token",
+      });
+      
+      render(<LoginPage />);
+      
+      await waitFor(() => {
+        expect(showCustomToast).toHaveBeenCalledWith({
+          type: "success",
+          title: "Success! You are logged in.",
+          description: "You can now continue your adventure",
+        });
+      });
+      
+      await waitFor(() => {
+        expect(mockPush).toHaveBeenCalledWith("/");
+      }, { timeout: 2000 });
+    });
+  });
 });
