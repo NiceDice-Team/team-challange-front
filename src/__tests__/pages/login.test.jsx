@@ -350,4 +350,18 @@ describe("Login Page", () => {
     });
   })
 
+  describe("Edge Cases", () => {
+    test("handles empty form submission", async () => {
+      const user = userEvent.setup();
+      render(<LoginPage />);
+      
+      const submitButton = screen.getByRole("button", { name: "SIGN IN" });
+      await user.click(submitButton);
+      
+      await waitFor(() => {
+        expect(screen.getByText("Email is required")).toBeInTheDocument();
+      });
+    });
+  })
+
 });
