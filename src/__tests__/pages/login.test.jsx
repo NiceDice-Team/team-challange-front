@@ -380,6 +380,20 @@ describe("Login Page", () => {
       
       expect(submitButton).toBeInTheDocument();
     });
+
+    test("handles special characters in inputs", async () => {
+      const user = userEvent.setup();
+      render(<LoginPage />);
+      
+      const emailInput = screen.getByLabelText("Email");
+      const passwordInput = screen.getByLabelText("password");
+      
+      await user.type(emailInput, "test+tag@example.com");
+      await user.type(passwordInput, "p@ssw0rd123");
+      
+      expect(emailInput).toHaveValue("test+tag@example.com");
+      expect(passwordInput).toHaveValue("p@ssw0rd123");
+    });
   })
 
 });
