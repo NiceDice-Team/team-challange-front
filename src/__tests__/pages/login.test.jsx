@@ -276,7 +276,7 @@ describe("Login Page", () => {
 
   })
 
-   describe("URL Parameters Handling", () => {
+  describe("URL Parameters Handling", () => {
     test("shows success toast for successful activation", async () => {
       mockSearchParams.set("message", "activation");
       mockSearchParams.set("activation_status", "success");
@@ -290,6 +290,21 @@ describe("Login Page", () => {
         });
       });
     });
-   })
+
+    test("shows error toast for failed activation", async () => {
+      mockSearchParams.set("message", "activation");
+      mockSearchParams.set("activation_status", "error");
+      
+      render(<LoginPage />);
+      
+      await waitFor(() => {
+        expect(showCustomToast).toHaveBeenCalledWith({
+          type: "error",
+          title: "Error! You are not logged in.",
+        });
+      });
+    });
+
+  });
 
 });
