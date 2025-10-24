@@ -174,5 +174,23 @@ describe("Login Page", () => {
       expect(passwordInput).toHaveValue("password123");
     });
 
+    test("submits form with valid data", async () => {
+      const user = userEvent.setup();
+      const mockSignin = require("../../app/actions/auth").signin;
+      mockSignin.mockResolvedValue({ refreshToken: "test-token", errors: {} });
+      
+      render(<LoginPage />);
+      
+      const emailInput = screen.getByLabelText("Email");
+      const passwordInput = screen.getByLabelText("password");
+      const submitButton = screen.getByRole("button", { name: "SIGN IN" });
+      
+      await user.type(emailInput, "test@example.com");
+      await user.type(passwordInput, "password123");
+      
+      await user.click(submitButton);
+      
+      expect(mockSignin).toHaveBeenCalled();
+    });
   })
 });
