@@ -275,4 +275,21 @@ describe("Login Page", () => {
     });
 
   })
+
+   describe("URL Parameters Handling", () => {
+    test("shows success toast for successful activation", async () => {
+      mockSearchParams.set("message", "activation");
+      mockSearchParams.set("activation_status", "success");
+      
+      render(<LoginPage />);
+      
+      await waitFor(() => {
+        expect(showCustomToast).toHaveBeenCalledWith({
+          type: "success",
+          title: "Success! You are logged in.",
+        });
+      });
+    });
+   })
+
 });
