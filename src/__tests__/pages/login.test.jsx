@@ -253,5 +253,26 @@ describe("Login Page", () => {
       });
     });
 
+      test("displays field error messages", async () => {
+      const user = userEvent.setup();
+      const mockSignin = require("../../app/actions/auth").signin;
+      mockSignin.mockResolvedValue({
+        errors: { 
+          email: "Email is required",
+          password: "Password is required" 
+        },
+      });
+      
+      render(<LoginPage />);
+      
+      const submitButton = screen.getByRole("button", { name: "SIGN IN" });
+      await user.click(submitButton);
+      
+      await waitFor(() => {
+        expect(screen.getByText("Email is required")).toBeInTheDocument();
+        expect(screen.getByText("Password is required")).toBeInTheDocument();
+      });
+    });
+
   })
 });
