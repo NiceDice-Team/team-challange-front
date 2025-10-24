@@ -304,7 +304,24 @@ describe("Login Page", () => {
         });
       });
     });
-
   });
+
+  describe("OAuth Integration", () => {
+    test("renders Google auth button", () => {
+      render(<LoginPage />);
+      
+      const googleButton = screen.getByTestId("google-auth-button");
+      expect(googleButton).toBeInTheDocument();
+      expect(googleButton).toHaveTextContent("Login with Google");
+    });
+
+    test("renders Facebook auth button", () => {
+      render(<LoginPage />);
+      
+      const facebookButton = screen.getByTestId("facebook-auth-button");
+      expect(facebookButton).toBeInTheDocument();
+      expect(facebookButton).toHaveTextContent("Login with Facebook");
+    });
+  })
 
 });
