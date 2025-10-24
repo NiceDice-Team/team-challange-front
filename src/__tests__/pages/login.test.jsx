@@ -334,6 +334,20 @@ describe("Login Page", () => {
       expect(emailInput).toBeInTheDocument();
       expect(passwordInput).toBeInTheDocument();
     });
+
+    test("has proper button roles", () => {
+      render(<LoginPage />);
+      
+      const submitButton = screen.getByRole("button", { name: "SIGN IN" });
+      expect(submitButton).toBeInTheDocument();
+    });
+
+    test("has proper link accessibility", () => {
+      render(<LoginPage />);
+      
+      const forgotPasswordLink = screen.getByText("Forgot your password?");
+      expect(forgotPasswordLink).toHaveAttribute("href");
+    });
   })
 
 });
