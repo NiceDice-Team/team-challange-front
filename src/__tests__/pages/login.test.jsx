@@ -159,4 +159,20 @@ describe("Login Page", () => {
     });
   });
   
+  describe("Form Interactions", () => {
+    test("updates input values when typing", async () => {
+      const user = userEvent.setup();
+      render(<LoginPage />);
+      
+      const emailInput = screen.getByLabelText("Email");
+      const passwordInput = screen.getByLabelText("password");
+      
+      await user.type(emailInput, "test@example.com");
+      await user.type(passwordInput, "password123");
+      
+      expect(emailInput).toHaveValue("test@example.com");
+      expect(passwordInput).toHaveValue("password123");
+    });
+
+  })
 });
