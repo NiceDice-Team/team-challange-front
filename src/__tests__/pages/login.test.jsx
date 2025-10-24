@@ -192,5 +192,12 @@ describe("Login Page", () => {
       
       expect(mockSignin).toHaveBeenCalled();
     });
+
+    test("submit button is initially enabled", () => {
+      render(<LoginPage />);
+      
+      const submitButton = screen.getByRole("button", { name: "SIGN IN" });
+      expect(submitButton).not.toBeDisabled();
+    });
   })
 });
