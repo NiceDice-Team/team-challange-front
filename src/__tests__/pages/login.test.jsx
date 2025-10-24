@@ -200,4 +200,13 @@ describe("Login Page", () => {
       expect(submitButton).not.toBeDisabled();
     });
   })
+
+  describe("Navigation and Links", () => {
+    test("forgot password link navigates to correct page", () => {
+      render(<LoginPage />);
+      
+      const forgotPasswordLink = screen.getByText("Forgot your password?");
+      expect(forgotPasswordLink).toHaveAttribute("href", "/forgot-password");
+    });
+  })
 });
