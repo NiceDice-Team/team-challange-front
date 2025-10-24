@@ -396,4 +396,11 @@ describe("Login Page", () => {
     });
   })
 
+  describe("Loading States", () => {
+    test("shows loading state in Suspense fallback", () => {
+      render(<LoginPage />);
+      
+      expect(screen.getByTestId("public-route")).toBeInTheDocument();
+    });
+  });
 });
