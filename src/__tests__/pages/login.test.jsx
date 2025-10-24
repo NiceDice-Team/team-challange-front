@@ -324,4 +324,16 @@ describe("Login Page", () => {
     });
   })
 
+  describe("Accessibility", () => {
+    test("has proper form labels", () => {
+      render(<LoginPage />);
+      
+      const emailInput = screen.getByLabelText("Email");
+      const passwordInput = screen.getByLabelText("password");
+      
+      expect(emailInput).toBeInTheDocument();
+      expect(passwordInput).toBeInTheDocument();
+    });
+  })
+
 });
