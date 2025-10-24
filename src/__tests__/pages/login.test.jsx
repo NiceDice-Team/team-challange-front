@@ -362,6 +362,24 @@ describe("Login Page", () => {
         expect(screen.getByText("Email is required")).toBeInTheDocument();
       });
     });
+
+    test("handles rapid form submissions", async () => {
+      const user = userEvent.setup();
+      render(<LoginPage />);
+      
+      const emailInput = screen.getByLabelText("Email");
+      const passwordInput = screen.getByLabelText("password");
+      const submitButton = screen.getByRole("button", { name: "SIGN IN" });
+      
+      await user.type(emailInput, "test@example.com");
+      await user.type(passwordInput, "password123");
+      
+      await user.click(submitButton);
+      await user.click(submitButton);
+      await user.click(submitButton);
+      
+      expect(submitButton).toBeInTheDocument();
+    });
   })
 
 });
