@@ -149,9 +149,13 @@ export default function CartDropdown({
                 >
                   View cart
                 </Link>
-                <button className="flex-1 py-3 px-4 bg-[#494791] border border-[#494791] text-white text-center text-sm sm:text-base font-normal uppercase hover:bg-[#494791]/90 transition-colors">
+                <Link
+                  href="/checkout-order"
+                  onClick={onClose}
+                  className="flex-1 py-3 px-4 bg-[#494791] border border-[#494791] text-white text-center text-sm sm:text-base font-normal uppercase hover:bg-[#494791]/90 transition-colors"
+                >
                   Checkout
-                </button>
+                </Link>
               </div>
             </>
           )}
