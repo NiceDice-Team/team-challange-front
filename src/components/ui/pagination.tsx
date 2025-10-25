@@ -1,6 +1,14 @@
 import React from "react";
 
-export function Pagination({ currentPage, totalPages, hasNext, onPageChange, className = "" }) {
+interface PaginationProps {
+  currentPage: number;
+  totalPages?: number;
+  hasNext?: boolean;
+  onPageChange: (page: number) => void;
+  className?: string;
+}
+
+export function Pagination({ currentPage, totalPages, hasNext, onPageChange, className = "" }: PaginationProps) {
   // Simple mode: only Previous/Current/Next without total pages
   const isSimpleMode = totalPages === undefined;
 

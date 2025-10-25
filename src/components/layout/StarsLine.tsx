@@ -1,6 +1,10 @@
 import { StarFilledIcon16, StarEmptyIcon16 } from "@/svgs/icons";
 
-const StarsLine = ({ rating = 0 }) => {
+interface StarsLineProps {
+  rating?: number;
+}
+
+const StarsLine = ({ rating = 0 }: StarsLineProps) => {
   return (
     <div className="flex">
       {Array.from({ length: 5 }).map((_, index) => (
