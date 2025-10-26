@@ -1,0 +1,21 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: frontend_dev
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL:-http://localhost:8000/api/}
+    volumes:
+      - .:/app          # live reload з хоста
+      - /app/node_modules  # уникає конфлікту node_modules
+    command: npm run dev
+    networks:
+      - nicedice_net
+
+networks:
+  nicedice_net:
+    external: true
