@@ -13,9 +13,3 @@ services:
       - .:/app          # live reload з хоста
       - /app/node_modules  # уникає конфлікту node_modules
     command: npm run dev
-    networks:
-      - nicedice_net
-
-networks:
-  nicedice_net:
-    external: true
