@@ -30,4 +30,19 @@ describe("CustomCheckbox", () => {
     });
   });
 
+   describe("Functionality", () => {
+     test("checkbox can be checked and unchecked", async () => {
+      const user = userEvent.setup();
+      render(<CustomCheckbox id="test-checkbox" />);
+      const checkbox = screen.getByRole("checkbox");
+
+      await user.click(checkbox);
+      expect(checkbox).toBeChecked();
+
+      await user.click(checkbox);
+      expect(checkbox).not.toBeChecked();
+    });
+   })
+
+
 });
