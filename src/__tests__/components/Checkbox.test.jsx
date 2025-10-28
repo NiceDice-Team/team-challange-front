@@ -117,4 +117,18 @@ describe("CustomCheckbox", () => {
       expect(checkbox).not.toBeChecked();
     });
   })
+
+  describe("Edge Cases", () => {
+    test("handles rapid clicks", async () => {
+      const user = userEvent.setup();
+      render(<CustomCheckbox id="test-checkbox" />);
+      const checkbox = screen.getByRole("checkbox");
+
+      await user.click(checkbox);
+      await user.click(checkbox);
+      await user.click(checkbox);
+
+      expect(checkbox).toBeChecked();
+    });
+  })
 });
