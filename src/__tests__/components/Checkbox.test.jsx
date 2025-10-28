@@ -1,5 +1,6 @@
-import CustomCheckbox from "@/components/shared/CustomCheckbox";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import CustomCheckbox from "../../components/shared/CustomCheckbox";
 
 describe("CustomCheckbox", () => {
   describe("Rendering", () => {
@@ -7,5 +8,13 @@ describe("CustomCheckbox", () => {
       render(<CustomCheckbox label="Test Label" id="test-checkbox" />);
       expect(screen.getByLabelText("Test Label")).toBeInTheDocument();
     });
+    test("renders checkbox without label", () => {
+      render(<CustomCheckbox id="test-checkbox" />);
+      const checkbox = screen.getByRole("checkbox");
+      expect(checkbox).toBeInTheDocument();
+    });
+
+
   });
+
 });
