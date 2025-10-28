@@ -59,5 +59,22 @@ describe("CustomCheckbox", () => {
       const checkbox = screen.getByRole("checkbox");
       expect(checkbox).toBeChecked();
     });
-})
+    test("checkbox can be disabled", async () => {
+      const user = userEvent.setup();
+      render(<CustomCheckbox id="test-checkbox" disabled />);
+      const checkbox = screen.getByRole("checkbox");
+
+      expect(checkbox).toBeDisabled();
+      await user.click(checkbox);
+      expect(checkbox).not.toBeChecked();
+    });
+    test("checkbox can be disabled and checked", async () => {
+      const user = userEvent.setup();
+      render(<CustomCheckbox id="test-checkbox" disabled checked />);
+      const checkbox = screen.getByRole("checkbox");
+
+      expect(checkbox).toBeDisabled();
+      expect(checkbox).toBeChecked();
+    });
+  })
 });
