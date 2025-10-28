@@ -103,5 +103,18 @@ describe("CustomCheckbox", () => {
       expect(label).toHaveAttribute("for", "terms-checkbox");
       expect(checkbox).toHaveAttribute("id", "terms-checkbox");
     });
+    test("clicking label toggles checkbox", async () => {
+      const user = userEvent.setup();
+      render(<CustomCheckbox label="Accept terms" id="terms-checkbox" />);
+
+      const label = screen.getByText("Accept terms");
+      const checkbox = screen.getByRole("checkbox");
+
+      await user.click(label);
+      expect(checkbox).toBeChecked();
+
+      await user.click(label);
+      expect(checkbox).not.toBeChecked();
+    });
   })
 });
