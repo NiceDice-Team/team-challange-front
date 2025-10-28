@@ -13,7 +13,11 @@ describe("CustomCheckbox", () => {
       const checkbox = screen.getByRole("checkbox");
       expect(checkbox).toBeInTheDocument();
     });
-
+    test("renders checkbox with custom className", () => {
+      render(<CustomCheckbox id="test-checkbox" className="custom-class" />);
+      const checkbox = screen.getByRole("checkbox");
+      expect(checkbox).toHaveClass("custom-class");
+    });
 
   });
 
