@@ -18,7 +18,16 @@ describe("CustomCheckbox", () => {
       const checkbox = screen.getByRole("checkbox");
       expect(checkbox).toHaveClass("custom-class");
     });
-
+    test("renders checkbox with checked state", () => {
+      render(<CustomCheckbox id="test-checkbox" checked />);
+      const checkbox = screen.getByRole("checkbox");
+      expect(checkbox).toBeChecked();
+    });
+    test("renders checkbox with error styling", () => {
+      render(<CustomCheckbox id="test-checkbox" error="Test error" />);
+      const checkbox = screen.getByRole("checkbox");
+      expect(checkbox).toHaveClass("border-error");
+    });
   });
 
 });
