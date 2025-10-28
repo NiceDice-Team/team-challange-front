@@ -30,7 +30,7 @@ describe("CustomCheckbox", () => {
     });
   });
 
-   describe("Functionality", () => {
+  describe("Functionality", () => {
      test("checkbox can be checked and unchecked", async () => {
       const user = userEvent.setup();
       render(<CustomCheckbox id="test-checkbox" />);
@@ -91,6 +91,17 @@ describe("CustomCheckbox", () => {
       await user.click(checkbox);
 
       expect(handleChange).not.toHaveBeenCalled();
+    });
+  })
+
+  describe("Label Association", () => {
+    test("associates label with checkbox using id", () => {
+      render(<CustomCheckbox label="Agree to terms" id="terms-checkbox" />);
+      const checkbox = screen.getByRole("checkbox");
+      const label = screen.getByText("Agree to terms");
+
+      expect(label).toHaveAttribute("for", "terms-checkbox");
+      expect(checkbox).toHaveAttribute("id", "terms-checkbox");
     });
   })
 });
