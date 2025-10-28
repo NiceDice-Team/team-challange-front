@@ -165,5 +165,37 @@ describe("CustomCheckbox", () => {
       const checkbox = screen.getByTestId("custom-checkbox");
       expect(checkbox).toBeInTheDocument();
     });
+
+    test("handles controlled component state", async () => {
+      const user = userEvent.setup();
+      let isChecked = false;
+      const handleChange = (checked) => {
+        isChecked = checked;
+      };
+
+      const { rerender } = render(
+        <CustomCheckbox
+          id="test"
+          checked={isChecked}
+          onCheckedChange={handleChange}
+        />
+      );
+
+      const checkbox = screen.getByRole("checkbox");
+      expect(checkbox).not.toBeChecked();
+
+      await user.click(checkbox);
+      expect(isChecked).toBe(true);
+
+      rerender(
+        <CustomCheckbox
+          id="test"
+          checked={isChecked}
+          onCheckedChange={handleChange}
+        />
+      );
+
+      expect(checkbox).toBeChecked();
+    });
   })
 });
