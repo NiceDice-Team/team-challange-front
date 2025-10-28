@@ -149,5 +149,11 @@ describe("CustomCheckbox", () => {
       render(<CustomCheckbox id="test" className="my-custom-class" />);
       const checkbox = screen.getByRole("checkbox");
       expect(checkbox).toHaveClass("my-custom-class");
-    });})
+    })
+    test("applies error border when error exists", () => {
+      render(<CustomCheckbox id="test" error="Required" />);
+      const checkbox = screen.getByRole("checkbox");
+      expect(checkbox).toHaveClass("border-error");
+    });
+  })
 });
