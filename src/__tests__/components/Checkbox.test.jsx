@@ -42,7 +42,18 @@ describe("CustomCheckbox", () => {
       await user.click(checkbox);
       expect(checkbox).not.toBeChecked();
     });
+    test("calls onCheckedChange when clicked", async () => {
+      const handleChange = jest.fn();
+      const user = userEvent.setup();
+      render(
+        <CustomCheckbox id="test-checkbox" onCheckedChange={handleChange} />
+      );
+
+      const checkbox = screen.getByRole("checkbox");
+      await user.click(checkbox);
+
+      expect(handleChange).toHaveBeenCalledWith(true);
+    });
+
    })
-
-
 });
