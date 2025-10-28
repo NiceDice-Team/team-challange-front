@@ -130,5 +130,12 @@ describe("CustomCheckbox", () => {
 
       expect(checkbox).toBeChecked();
     });
+    test("handles undefined onCheckedChange", async () => {
+      const user = userEvent.setup();
+      render(<CustomCheckbox id="test-checkbox" onCheckedChange={undefined} />);
+      const checkbox = screen.getByRole("checkbox");
+
+      await expect(user.click(checkbox)).resolves.not.toThrow();
+    });
   })
 });
