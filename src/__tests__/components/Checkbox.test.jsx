@@ -54,6 +54,10 @@ describe("CustomCheckbox", () => {
 
       expect(handleChange).toHaveBeenCalledWith(true);
     });
-
-   })
+    test("respects checked prop", () => {
+      render(<CustomCheckbox id="test-checkbox" checked={true} />);
+      const checkbox = screen.getByRole("checkbox");
+      expect(checkbox).toBeChecked();
+    });
+})
 });
