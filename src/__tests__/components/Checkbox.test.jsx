@@ -143,4 +143,11 @@ describe("CustomCheckbox", () => {
       expect(label).toHaveAttribute("for", "test-id");
     });
   })
+
+  describe("Styling", () => {
+    test("applies custom className", () => {
+      render(<CustomCheckbox id="test" className="my-custom-class" />);
+      const checkbox = screen.getByRole("checkbox");
+      expect(checkbox).toHaveClass("my-custom-class");
+    });})
 });
