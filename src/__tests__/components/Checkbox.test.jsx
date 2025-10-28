@@ -137,5 +137,10 @@ describe("CustomCheckbox", () => {
 
       await expect(user.click(checkbox)).resolves.not.toThrow();
     });
+    test("label has proper htmlFor attribute", () => {
+      render(<CustomCheckbox label="Test" id="test-id" />);
+      const label = screen.getByText("Test");
+      expect(label).toHaveAttribute("for", "test-id");
+    });
   })
 });
