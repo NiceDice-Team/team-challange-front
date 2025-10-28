@@ -156,4 +156,14 @@ describe("CustomCheckbox", () => {
       expect(checkbox).toHaveClass("border-error");
     });
   })
+
+  describe("Props Handling", () => {
+    test("passes through additional props", () => {
+      render(
+        <CustomCheckbox id="test" data-testid="custom-checkbox" name="test" />
+      );
+      const checkbox = screen.getByTestId("custom-checkbox");
+      expect(checkbox).toBeInTheDocument();
+    });
+  })
 });
