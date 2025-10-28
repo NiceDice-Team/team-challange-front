@@ -76,5 +76,21 @@ describe("CustomCheckbox", () => {
       expect(checkbox).toBeDisabled();
       expect(checkbox).toBeChecked();
     });
+    test("onCheckedChange is not called when disabled", async () => {
+      const handleChange = jest.fn();
+      const user = userEvent.setup();
+      render(
+        <CustomCheckbox
+          id="test-checkbox"
+          disabled
+          onCheckedChange={handleChange}
+        />
+      );
+
+      const checkbox = screen.getByRole("checkbox");
+      await user.click(checkbox);
+
+      expect(handleChange).not.toHaveBeenCalled();
+    });
   })
 });
