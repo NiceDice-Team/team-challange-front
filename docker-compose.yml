@@ -1,5 +1,5 @@
 services:
-  app:
+  frontend:
     build:
       context: .
       dockerfile: Dockerfile
@@ -10,4 +10,13 @@ services:
       - /app/node_modules
     environment:
       NODE_ENV: test
-      NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL}
+      NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL-localhost/api/}
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - frontend
