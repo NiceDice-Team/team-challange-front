@@ -1,14 +1,20 @@
-'use client";';
+"use client";
 import React, { useState, useRef } from "react";
 import useClickOutside from "../../utils/useClickOutside";
+
+interface Language {
+  lan: string;
+  id: number;
+}
+
 export default function LanguageSelector() {
-  const languages = [
+  const languages: Language[] = [
     { lan: "EN", id: 1 }, //🇬🇧
     { lan: "UA", id: 2 }, //🇺🇦
   ];
   const [isOpen, setIsOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(languages[0].lan);
-  const dropdownRef = useRef(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useClickOutside(dropdownRef, () => {
     setIsOpen(false);
