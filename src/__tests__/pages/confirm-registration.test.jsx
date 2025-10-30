@@ -42,7 +42,7 @@ describe("ConfirmSignUp Page", () => {
     expect(screen.getByText("Thank you for registering!")).toBeInTheDocument();
   });
 
-   test('displays confirmation message', async () => {
+  test('displays confirmation message', async () => {
         render(<ConfirmSignUpPage />);
 
         await waitFor(() => {
@@ -64,4 +64,14 @@ describe("ConfirmSignUp Page", () => {
         ).toBeInTheDocument();
     });
 
+    test('displays link to browse games', async () => {
+        render(<ConfirmSignUpPage />);
+
+        await waitFor(() => {
+            expect(screen.getByText('Browse games')).toBeInTheDocument();
+        });
+
+        const browseLink = screen.getByText('Browse games').closest('a');
+        expect(browseLink).toHaveAttribute('href', '/catalog');
+    });
 });
