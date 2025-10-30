@@ -87,4 +87,33 @@ describe("ConfirmSignUp Page", () => {
             });
         });
     });
+
+    test('renders all text elements', async () => {
+        render(<ConfirmSignUpPage />);
+
+        await waitFor(() => {
+            expect(screen.getByTestId('public-route')).toBeInTheDocument();
+        });
+
+        expect(
+            screen.getByText('Thank you for registering!')
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                'A confirmation email has been sent to your inbox.'
+            )
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                /Please click the link in that email to activate your account/i
+            )
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(/Check the message for 5-10 minutes/i)
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(/If you don't find the list/i)
+        ).toBeInTheDocument();
+        expect(screen.getByText('Browse games')).toBeInTheDocument();
+    });
 });
