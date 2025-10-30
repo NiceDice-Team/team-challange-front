@@ -276,4 +276,22 @@ describe("ForgotPassword Page", () => {
     });
   })
 
+  describe("Edge Cases", () => {
+    test("handles empty form submission", async () => {
+      const user = userEvent.setup();
+      render(<ForgotPasswordPage />);
+
+      await waitFor(() => {
+        expect(screen.getByRole("button", { name: /SUBMIT/i })).toBeInTheDocument();
+      });
+
+      const submitButton = screen.getByRole("button", { name: /SUBMIT/i });
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(/Invalid email/i)).toBeInTheDocument();
+      });
+    });
+  })
+
 });
