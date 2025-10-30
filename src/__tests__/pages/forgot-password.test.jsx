@@ -28,4 +28,16 @@ describe("ForgotPassword Page", () => {
     fetchAPI.mockResolvedValue({});
   });
 
+  describe("Rendering", () => {
+    test("renders ForgotPassword component", async () => {
+      render(<ForgotPasswordPage />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("public-route")).toBeInTheDocument();
+      });
+
+      expect(screen.getByText(/Forgot your password?/i)).toBeInTheDocument();
+    });
+  })
+
 });
