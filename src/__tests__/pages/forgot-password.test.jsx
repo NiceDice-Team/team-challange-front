@@ -38,6 +38,18 @@ describe("ForgotPassword Page", () => {
 
       expect(screen.getByText(/Forgot your password?/i)).toBeInTheDocument();
     });
+     test("displays main heading and description", async () => {
+      render(<ForgotPasswordPage />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("public-route")).toBeInTheDocument();
+      });
+
+      expect(screen.getByText(/🔒Forgot your password?/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/No problem! Just enter your email address/i)
+      ).toBeInTheDocument();
+    });
   })
 
 });
