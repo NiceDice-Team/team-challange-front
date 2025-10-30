@@ -130,6 +130,26 @@ describe("ForgotPassword Page", () => {
         });
       });
     });
+    test("redirects to success page after successful submission", async () => {
+      const user = userEvent.setup();
+      fetchAPI.mockResolvedValue({ success: true });
+
+      render(<ForgotPasswordPage />);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText("Email")).toBeInTheDocument();
+      });
+
+      const emailInput = screen.getByLabelText("Email");
+      const submitButton = screen.getByRole("button", { name: /SUBMIT/i });
+
+      await user.type(emailInput, "test@example.com");
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockPush).toHaveBeenCalledWith("/forgot-password/success");
+      });
+    });
   })
 
 });
