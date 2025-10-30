@@ -89,6 +89,19 @@ describe("ForgotPassword Page", () => {
         expect(screen.getByText(/Invalid email/i)).toBeInTheDocument();
       });
     });
+    test("allows valid email submission", async () => {
+      const user = userEvent.setup();
+      render(<ForgotPasswordPage />);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText("Email")).toBeInTheDocument();
+      });
+
+      const emailInput = screen.getByLabelText("Email");
+      await user.type(emailInput, "test@example.com");
+
+      expect(emailInput).toHaveValue("test@example.com");
+    });
   })
 
 });
