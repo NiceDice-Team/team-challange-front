@@ -257,6 +257,13 @@ describe("ForgotPassword Page", () => {
         expect(screen.getByLabelText("Email")).toBeInTheDocument();
       });
     });
+    test("has proper button roles", async () => {
+      render(<ForgotPasswordPage />);
+
+      await waitFor(() => {
+        expect(screen.getByRole("button", { name: /SUBMIT/i })).toBeInTheDocument();
+      });
+    });
   })
 
 });
