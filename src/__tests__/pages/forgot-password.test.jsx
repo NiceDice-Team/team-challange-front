@@ -61,6 +61,13 @@ describe("ForgotPassword Page", () => {
       expect(emailInput).toBeInTheDocument();
       expect(emailInput).toHaveAttribute("placeholder", "Enter email address");
     });
+    test("renders submit button", async () => {
+      render(<ForgotPasswordPage />);
+
+      await waitFor(() => {
+        expect(screen.getByRole("button", { name: /SUBMIT/i })).toBeInTheDocument();
+      });
+    });
   })
 
 });
