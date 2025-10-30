@@ -292,6 +292,29 @@ describe("ForgotPassword Page", () => {
         expect(screen.getByText(/Invalid email/i)).toBeInTheDocument();
       });
     });
+
+    test("handles network errors gracefully", async () => {
+      const user = userEvent.setup();
+      fetchAPI.mockRejectedValue(new Error("Network error"));
+
+      render(<ForgotPasswordPage />);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText("Email")).toBeInTheDocument();
+      });
+
+      const emailInput = screen.getByLabelText("Email");
+      const submitButton = screen.getByRole("button", { name: /SUBMIT/i });
+
+      await user.type(emailInput, "test@example.com");
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText("Error sending reset email. Try again.")
+        ).toBeInTheDocument();
+      });
+    });
   })
 
 });
