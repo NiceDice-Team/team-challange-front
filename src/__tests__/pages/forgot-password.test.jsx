@@ -249,4 +249,14 @@ describe("ForgotPassword Page", () => {
     });
   })
 
+  describe("Accessibility", () => {
+    test("has proper form labels", async () => {
+      render(<ForgotPasswordPage />);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText("Email")).toBeInTheDocument();
+      });
+    });
+  })
+
 });
