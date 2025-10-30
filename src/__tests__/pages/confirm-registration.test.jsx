@@ -74,4 +74,17 @@ describe("ConfirmSignUp Page", () => {
         const browseLink = screen.getByText('Browse games').closest('a');
         expect(browseLink).toHaveAttribute('href', '/catalog');
     });
+
+    test('calls showCustomToast on mount', async () => {
+        render(<ConfirmSignUpPage />);
+
+        await waitFor(() => {
+            expect(showCustomToast).toHaveBeenCalledWith({
+                type: 'success',
+                title: 'Success! You are registered.',
+                description:
+                    'A confirmation email has been sent to your inbox.',
+            });
+        });
+    });
 });
