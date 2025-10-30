@@ -70,4 +70,25 @@ describe("ForgotPassword Page", () => {
     });
   })
 
+  describe("Form Validation", () => {
+    test("shows validation error for invalid email", async () => {
+      const user = userEvent.setup();
+      render(<ForgotPasswordPage />);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText("Email")).toBeInTheDocument();
+      });
+
+      const emailInput = screen.getByLabelText("Email");
+      const submitButton = screen.getByRole("button", { name: /SUBMIT/i });
+
+      await user.type(emailInput, "invalid-email");
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(/Invalid email/i)).toBeInTheDocument();
+      });
+    });
+  })
+
 });
