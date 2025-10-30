@@ -150,6 +150,28 @@ describe("ForgotPassword Page", () => {
         expect(mockPush).toHaveBeenCalledWith("/forgot-password/success");
       });
     });
+    test("shows error message on API failure", async () => {
+      const user = userEvent.setup();
+      fetchAPI.mockRejectedValue(new Error("API Error"));
+
+      render(<ForgotPasswordPage />);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText("Email")).toBeInTheDocument();
+      });
+
+      const emailInput = screen.getByLabelText("Email");
+      const submitButton = screen.getByRole("button", { name: /SUBMIT/i });
+
+      await user.type(emailInput, "test@example.com");
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText("Error sending reset email. Try again.")
+        ).toBeInTheDocument();
+      });
+    });
   })
 
 });
