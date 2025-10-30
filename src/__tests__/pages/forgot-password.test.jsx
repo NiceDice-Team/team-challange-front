@@ -172,6 +172,32 @@ describe("ForgotPassword Page", () => {
         ).toBeInTheDocument();
       });
     });
+     test("disables submit button during submission", async () => {
+      const user = userEvent.setup();
+      let resolvePromise;
+      const promise = new Promise((resolve) => {
+        resolvePromise = resolve;
+      });
+      fetchAPI.mockReturnValue(promise);
+
+      render(<ForgotPasswordPage />);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText("Email")).toBeInTheDocument();
+      });
+
+      const emailInput = screen.getByLabelText("Email");
+      const submitButton = screen.getByRole("button", { name: /SUBMIT/i });
+
+      await user.type(emailInput, "test@example.com");
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(submitButton).toBeDisabled();
+      });
+
+      resolvePromise({});
+    });
   })
 
 });
