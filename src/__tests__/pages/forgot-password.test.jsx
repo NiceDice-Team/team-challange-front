@@ -215,6 +215,38 @@ describe("ForgotPassword Page", () => {
 
       expect(emailInput).toHaveValue("user@example.com");
     });
+    test("clears error when resubmitting after error", async () => {
+      const user = userEvent.setup();
+      fetchAPI
+        .mockRejectedValueOnce(new Error("API Error"))
+        .mockResolvedValueOnce({ success: true });
+
+      render(<ForgotPasswordPage />);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText("Email")).toBeInTheDocument();
+      });
+
+      const emailInput = screen.getByLabelText("Email");
+      const submitButton = screen.getByRole("button", { name: /SUBMIT/i });
+
+      await user.type(emailInput, "test@example.com");
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText("Error sending reset email. Try again.")
+        ).toBeInTheDocument();
+      });
+
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(
+          screen.queryByText("Error sending reset email. Try again.")
+        ).not.toBeInTheDocument();
+      });
+    });
   })
 
 });
