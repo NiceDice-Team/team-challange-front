@@ -264,6 +264,16 @@ describe("ForgotPassword Page", () => {
         expect(screen.getByRole("button", { name: /SUBMIT/i })).toBeInTheDocument();
       });
     });
+    test("has proper link accessibility", async () => {
+      render(<ForgotPasswordPage />);
+
+      await waitFor(() => {
+        expect(screen.getByText(/Sign in/i)).toBeInTheDocument();
+      });
+
+      const loginLink = screen.getByText(/Sign in/i).closest("a");
+      expect(loginLink).toHaveAttribute("href", "/login");
+    });
   })
 
 });
