@@ -116,4 +116,16 @@ describe("ConfirmSignUp Page", () => {
         ).toBeInTheDocument();
         expect(screen.getByText('Browse games')).toBeInTheDocument();
     });
+
+    test('has proper heading structure', async () => {
+        render(<ConfirmSignUpPage />);
+
+        await waitFor(() => {
+            expect(
+                screen.getByRole('heading', {
+                    name: /Thank you for registering!/i,
+                })
+            ).toBeInTheDocument();
+        });
+    });
 });
