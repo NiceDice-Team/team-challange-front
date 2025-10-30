@@ -172,7 +172,7 @@ describe("ForgotPassword Page", () => {
         ).toBeInTheDocument();
       });
     });
-     test("disables submit button during submission", async () => {
+    test("disables submit button during submission", async () => {
       const user = userEvent.setup();
       let resolvePromise;
       const promise = new Promise((resolve) => {
@@ -197,6 +197,23 @@ describe("ForgotPassword Page", () => {
       });
 
       resolvePromise({});
+    });
+  })
+
+  describe("Form Interactions", () => {
+    test("updates email input value when typing", async () => {
+      const user = userEvent.setup();
+      render(<ForgotPasswordPage />);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText("Email")).toBeInTheDocument();
+      });
+
+      const emailInput = screen.getByLabelText("Email");
+
+      await user.type(emailInput, "user@example.com");
+
+      expect(emailInput).toHaveValue("user@example.com");
     });
   })
 
