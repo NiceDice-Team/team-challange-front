@@ -122,5 +122,16 @@ describe("ForgotPassword Success Page", () => {
         expect(screen.getByText('Continue shopping')).toBeInTheDocument();
     });
 
+    test('has proper heading structure', async () => {
+        render(<ForgotPasswordSuccess />);
+
+        await waitFor(() => {
+            expect(
+                screen.getByRole('heading', { name: /Check Your Inbox/i })
+            ).toBeInTheDocument();
+        });
+    });
+
+
 });
 
