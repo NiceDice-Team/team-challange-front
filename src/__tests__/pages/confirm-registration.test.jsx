@@ -1,0 +1,44 @@
+import { render, screen, waitFor } from "@testing-library/react";
+import ConfirmSignUpPage from "../../app/(auth)/confirm-signup/page";
+
+jest.mock("../../components/auth/RouteGuards", () => ({
+  PublicRoute: ({ children }) => <div data-testid="public-route">{children}</div>,
+}));
+
+jest.mock("../../components/shared/Toast", () => ({
+  showCustomToast: jest.fn(),
+}));
+
+jest.mock("next/image", () => ({
+  __esModule: true,
+  default: ({ src, alt }) => <img src={src} alt={alt} />,
+}));
+
+jest.mock("next/link", () => ({
+  __esModule: true,
+  default: ({ href, children, className }) => (
+    <a href={href} className={className}>
+      {children}
+    </a>
+  ),
+}));
+
+jest.mock("../../../../public/icons/ArrowNext.svg", () => "ArrowNext.svg");
+
+describe("ConfirmSignUp Page", () => {
+  const { showCustomToast } = require("../../components/shared/Toast");
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test("renders ConfirmSignUp component", async () => {
+    render(<ConfirmSignUpPage />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("public-route")).toBeInTheDocument();
+    });
+
+    expect(screen.getByText("Thank you for registering!")).toBeInTheDocument();
+  });
+});
