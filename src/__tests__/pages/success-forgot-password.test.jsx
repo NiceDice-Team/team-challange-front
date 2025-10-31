@@ -76,5 +76,16 @@ describe("ForgotPassword Success Page", () => {
         expect(resendLink).toHaveAttribute('href', '/forgot-password');
     });
 
+    test('displays continue shopping link', async () => {
+        render(<ForgotPasswordSuccess />);
+
+        await waitFor(() => {
+            expect(screen.getByText('Continue shopping')).toBeInTheDocument();
+        });
+
+        const catalogLink = screen.getByText('Continue shopping').closest('a');
+        expect(catalogLink).toHaveAttribute('href', '/catalog');
+    });
+
 });
 
