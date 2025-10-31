@@ -87,5 +87,18 @@ describe("ForgotPassword Success Page", () => {
         expect(catalogLink).toHaveAttribute('href', '/catalog');
     });
 
+    test('calls showCustomToast on mount', async () => {
+        render(<ForgotPasswordSuccess />);
+
+        await waitFor(() => {
+            expect(showCustomToast).toHaveBeenCalledWith({
+                type: 'success',
+                title: 'Success! You are logged.',
+                description:
+                    'A password reset link has been sent to your inbox.',
+            });
+        });
+    });
+
 });
 
