@@ -46,5 +46,24 @@ describe("ForgotPassword Success Page", () => {
         });
     });
 
+    test('displays success messages', async () => {
+        render(<ForgotPasswordSuccess />);
+
+        await waitFor(() => {
+            expect(
+                screen.getByText(
+                    /If the email address you entered is associated with an account/i
+                )
+            ).toBeInTheDocument();
+        });
+
+        expect(
+            screen.getByText(/Check the message for 5-10 minutes/i)
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(/If you don't find the list/i)
+        ).toBeInTheDocument();
+    });
+
 });
 
