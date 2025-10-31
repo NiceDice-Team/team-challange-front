@@ -65,5 +65,16 @@ describe("ForgotPassword Success Page", () => {
         ).toBeInTheDocument();
     });
 
+    test('displays resend link', async () => {
+        render(<ForgotPasswordSuccess />);
+
+        await waitFor(() => {
+            expect(screen.getByText('Resend')).toBeInTheDocument();
+        });
+
+        const resendLink = screen.getByText('Resend').closest('a');
+        expect(resendLink).toHaveAttribute('href', '/forgot-password');
+    });
+
 });
 
