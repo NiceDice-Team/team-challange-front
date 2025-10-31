@@ -132,6 +132,18 @@ describe("ForgotPassword Success Page", () => {
         });
     });
 
+    test('has proper link accessibility', async () => {
+        render(<ForgotPasswordSuccess />);
 
+        await waitFor(() => {
+            expect(screen.getByText('Resend')).toBeInTheDocument();
+        });
+
+        const resendLink = screen.getByText('Resend').closest('a');
+        expect(resendLink).toHaveAttribute('href');
+
+        const catalogLink = screen.getByText('Continue shopping').closest('a');
+        expect(catalogLink).toHaveAttribute('href');
+    });
 });
 
