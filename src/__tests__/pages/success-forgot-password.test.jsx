@@ -36,5 +36,15 @@ describe("ForgotPassword Success Page", () => {
     });
   });
 
+  test('displays main heading', async () => {
+        render(<ForgotPasswordSuccess />);
+
+        await waitFor(() => {
+            expect(
+                screen.getByText(/✉️ Check Your Inbox/i)
+            ).toBeInTheDocument();
+        });
+    });
+
 });
 
