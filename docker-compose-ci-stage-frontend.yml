@@ -2,7 +2,7 @@ services:
   frontend:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfilestage
     container_name: frontend_stage
     ports:
       - "3000:3000"
