@@ -14,8 +14,5 @@ module.exports = {
     return config;
   },
 
-  // додаємо лише конфіг для stage, прод цього не має відчувати
-  basePath: isStage ? "/frontend" : "",
-  assetPrefix: isStage ? "/frontend/" : "",
 };
 
