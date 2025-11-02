@@ -1,40 +1,166 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# NiceDice Frontend
 
-## Getting Started
+A Next.js e-commerce frontend application for the NiceDice project.
 
-First, run the development server:
+## 🚀 Quick Start
+
+### Local Development
 
 ```bash
+# Install dependencies
+npm install
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## 🐳 Docker Usage
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+We use a single, flexible Dockerfile that can handle both development and production scenarios through build arguments and environment variables.
 
-## Learn More
+### Development with Docker
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
-
-# Build and start the containers
+```bash
+# Build and run development container
 docker-compose up --build
+
+# Or run individual container
+docker build -t nicedice-frontend .
+docker run -p 3000:3000 -v $(pwd):/app -v /app/node_modules nicedice-frontend
+```
+
+### Production Build
+
+```bash
+# Build for production
+docker build \
+  --build-arg NODE_ENV=production \
+  --build-arg NEXT_PUBLIC_BACKEND_URL=https://your-api.com/api/ \
+  -t nicedice-frontend-prod .
+
+# Run production container
+docker run -p 3000:3000 \
+  -e NODE_ENV=production \
+  nicedice-frontend-prod \
+  sh -c "npm run build && npm start"
+```
+
+### CI/CD Production
+
+```bash
+# Use the CI-specific docker-compose file
+docker-compose -f docker-compose-ci-stage-frontend.yml up --build
+```
+
+## 🔧 Environment Variables
+
+| Variable | Description | Default | Required |
+|----------|-------------|---------|----------|
+| `NODE_ENV` | Environment mode | `development` | No |
+| `NEXT_PUBLIC_BACKEND_URL` | Backend API URL | `http://localhost:8000/api/` | No |
+| `NEXT_TELEMETRY_DISABLED` | Disable Next.js telemetry | `1` | No |
+
+### Setting Environment Variables
+
+**For development:**
+```bash
+export NEXT_PUBLIC_BACKEND_URL=http://localhost:8000/api/
+docker-compose up --build
+```
+
+**For production:**
+```bash
+export NEXT_PUBLIC_BACKEND_URL=https://your-production-api.com/api/
+docker-compose -f docker-compose-ci-stage-frontend.yml up --build
+```
+
+## 📁 Project Structure
+
+```
+src/
+├── app/                    # Next.js app directory
+│   ├── (auth)/            # Authentication pages
+│   ├── (cart)/            # Shopping cart pages
+│   ├── (catalog)/         # Product catalog
+│   └── ...
+├── components/            # Reusable components
+├── hooks/                 # Custom React hooks
+├── lib/                   # Utility libraries
+├── services/              # API services
+└── utils/                 # Helper functions
+```
+
+## 🧪 Testing
+
+```bash
+# Run tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run Playwright E2E tests (requires Docker services)
+npx playwright test
+```
+
+## 🏗️ Build Commands
+
+```bash
+# Development
+npm run dev
+
+# Production build
+npm run build
+
+# Start production server
+npm start
+
+# Lint code
+npm run lint
+```
+
+## 🐛 Troubleshooting
+
+### Docker Build Issues
+
+1. **Environment variable not found**: Ensure `NEXT_PUBLIC_BACKEND_URL` is set before building
+2. **SSR errors**: Make sure client-side only code is wrapped with `typeof window !== 'undefined'`
+3. **Build fails**: Clear Docker cache with `docker system prune -a`
+
+### Common Solutions
+
+```bash
+# Clear everything and rebuild
+docker-compose down --volumes --remove-orphans
+docker system prune -a
+docker-compose up --build
+
+# Check logs
+docker-compose logs frontend
+
+# Access container shell
+docker-compose exec frontend sh
+```
+
+## 🔗 Related Documentation
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Docker Documentation](https://docs.docker.com/)
+- [Backend API Documentation](../backend/README.md)
+
+## 🚀 Deployment
+
+The application is automatically deployed via GitHub Actions when code is pushed to the main branch. The workflow:
+
+1. Builds the Docker container with production settings
+2. Runs E2E tests with Playwright
+3. Deploys to the staging/production environment
+
+For manual deployment, use the production docker-compose configuration:
+
+```bash
+# Production deployment
+docker-compose -f docker-compose-ci-stage-frontend.yml up -d --build
+```
