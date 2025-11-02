@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { useShallow } from "zustand/react/shallow";
 
 export interface AddressData {
   country: string;
@@ -17,6 +18,14 @@ export interface DeliveryOption {
   name: string;
   price: number;
   description: string;
+}
+
+export interface PaymentCardData {
+  firstName: string;
+  lastName: string;
+  cardNumber: string;
+  expiryDate: string;
+  cvv: string;
 }
 
 export interface CheckoutFormData {
@@ -47,12 +56,14 @@ interface CheckoutState {
   formData: CheckoutFormData;
 
   paymentMethod: DeliveryOption | null;
+  paymentCard: PaymentCardData | null;
 
   updateFormData: (data: Partial<CheckoutFormData>) => void;
   setFormData: (data: CheckoutFormData) => void;
   resetFormData: () => void;
 
   setPaymentMethod: (method: DeliveryOption) => void;
+  setPaymentCard: (card: PaymentCardData) => void;
 
   copyShippingToBilling: () => void;
 
@@ -84,6 +95,7 @@ const initialFormData: CheckoutFormData = {
 export const useCheckoutStore = create<CheckoutState>()((set, get) => ({
   formData: initialFormData,
   paymentMethod: null,
+  paymentCard: null,
 
   updateFormData: (data) =>
     set((state) => ({
@@ -124,6 +136,11 @@ export const useCheckoutStore = create<CheckoutState>()((set, get) => ({
       paymentMethod: method,
     }),
 
+  setPaymentCard: (card) =>
+    set({
+      paymentCard: card,
+    }),
+
   copyShippingToBilling: () =>
     set((state) => {
       const { formData } = state;
@@ -148,6 +165,7 @@ export const useCheckoutStore = create<CheckoutState>()((set, get) => ({
     set({
       formData: initialFormData,
       paymentMethod: null,
+      paymentCard: null,
     }),
 }));
 
@@ -155,12 +173,20 @@ export const useCheckoutFormData = () =>
   useCheckoutStore((state) => state.formData);
 export const usePaymentMethod = () =>
   useCheckoutStore((state) => state.paymentMethod);
+export const usePaymentCard = () =>
+  useCheckoutStore((state) => state.paymentCard);
+
+// useShallow prevents infinite re-renders by caching the object reference
+// Without it, returning a new object {...} on every render causes components to re-render infinitely
 export const useCheckoutActions = () =>
-  useCheckoutStore((state) => ({
-    updateFormData: state.updateFormData,
-    setFormData: state.setFormData,
-    resetFormData: state.resetFormData,
-    setPaymentMethod: state.setPaymentMethod,
-    copyShippingToBilling: state.copyShippingToBilling,
-    resetCheckout: state.resetCheckout,
-  }));
+  useCheckoutStore(
+    useShallow((state) => ({
+      updateFormData: state.updateFormData,
+      setFormData: state.setFormData,
+      resetFormData: state.resetFormData,
+      setPaymentMethod: state.setPaymentMethod,
+      setPaymentCard: state.setPaymentCard,
+      copyShippingToBilling: state.copyShippingToBilling,
+      resetCheckout: state.resetCheckout,
+    }))
+  );
