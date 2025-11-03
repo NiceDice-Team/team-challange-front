@@ -21,6 +21,7 @@ import { showCustomToast } from "@/components/shared/Toast";
 import OrdersTable from "@/components/profile/OrdersTable";
 import { useUpdateProfile } from "@/hooks/useUpdateProfile";
 import Modal from "@/components/shared/Modal";
+import ChangePass from "@/components/profile/ChangePass";
 
 const breadcrumbItems = [
   { label: "Home", href: "/" },
@@ -272,21 +273,7 @@ function ProfileContent() {
         </div>
       </div>
 
-      {modalOpen && (
-        <Modal
-          open={modalOpen}
-          title="Change Password"
-          description="Update your password to keep your account secure."
-          onConfirm={() => {}}
-          onCancel={() => setModalOpen(false)}
-          confirmButtonText="Update Password"
-        >
-          <div>
-            <h3>Change Password</h3>
-            <p>Change your password</p>
-          </div>
-        </Modal>
-      )}
+      {modalOpen && <ChangePass open={modalOpen} onClose={() => setModalOpen(false)} />}
     </>
   );
 }
