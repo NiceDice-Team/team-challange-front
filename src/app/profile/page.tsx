@@ -120,6 +120,10 @@ function ProfileContent() {
     }
   };
 
+  const handleChangePassword = () => {
+  
+  };
+
   return (
     <div className="py-8 min-h-screen">
       <div className="flex justify-between items-center">
@@ -157,7 +161,7 @@ function ProfileContent() {
               {isLoading ? "Loading..." : userData?.email || ""}
             </p>
           </div>
-          <CustomButton styleType="whiteButton" disabled={isLoading}>
+          <CustomButton styleType="whiteButton" disabled={isLoading} onClick={handleChangePassword}>
             CHANGE PASSWORD
           </CustomButton>
         </div>
