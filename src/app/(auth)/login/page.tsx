@@ -48,7 +48,7 @@ function LoginPageContent() {
       });
       setTimeout(() => router.push("/"), 1000);
     }
-  }, [formState, refreshToken]);
+  }, [formState, refreshToken, router]);
 
   useEffect(() => {
     if (message) {

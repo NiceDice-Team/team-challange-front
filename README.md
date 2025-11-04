@@ -2,6 +2,9 @@
 
 A Next.js e-commerce frontend application for the NiceDice project.
 
+[![CI](https://github.com/NiceDice-Team/team-challange-front/actions/workflows/ci.yml/badge.svg)](https://github.com/NiceDice-Team/team-challange-front/actions/workflows/ci.yml)
+[![E2E Tests](https://github.com/NiceDice-Team/team-challange-front/actions/workflows/playwright.yml/badge.svg)](https://github.com/NiceDice-Team/team-challange-front/actions/workflows/playwright.yml)
+
 ## Quick Start
 
 ### Local Development
@@ -18,17 +21,21 @@ Open [http://localhost:3000](http://localhost:3000) to view the application.
 
 ## 🐳 Docker Usage
 
-We use a single, flexible Dockerfile that can handle both development and production scenarios through build arguments and environment variables.
+We use separate Dockerfiles for development and production scenarios.
 
 ### Development with Docker
 
 ```bash
-# Build and run development container
+# Quick start with build script
+./build.sh
+
+# Or manually with docker-compose
+export NEXT_PUBLIC_BACKEND_URL=http://localhost:8000/api/
 docker-compose up --build
 
-# Or run individual container
-docker build -t nicedice-frontend .
-docker run -p 3000:3000 -v $(pwd):/app -v /app/node_modules nicedice-frontend
+# Or run individual development container
+docker build -f Dockerfile.dev -t nicedice-frontend-dev .
+docker run -p 3000:3000 -v $(pwd):/app -v /app/node_modules nicedice-frontend-dev
 ```
 
 ### Production Build
