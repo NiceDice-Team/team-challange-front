@@ -1,9 +1,21 @@
 import React from "react";
 
-export function Pagination({ currentPage, totalPages, onPageChange, className = "" }) {
+interface PaginationProps {
+  currentPage: number;
+  totalPages?: number;
+  hasNext?: boolean;
+  onPageChange: (page: number) => void;
+  className?: string;
+}
+
+export function Pagination({ currentPage, totalPages, hasNext, onPageChange, className = "" }: PaginationProps) {
+  // Simple mode: only Previous/Current/Next without total pages
+  const isSimpleMode = totalPages === undefined;
+
   const getVisiblePages = () => {
+    if (isSimpleMode) return [];
+
     const pages = [];
-    const maxVisiblePages = Math.min(totalPages, 5); // Show up to 5 pages
 
     if (totalPages <= 5) {
       // If total pages is 5 or less, show all pages
@@ -33,6 +45,7 @@ export function Pagination({ currentPage, totalPages, onPageChange, className = 
   };
 
   const visiblePages = getVisiblePages();
+  const isNextDisabled = isSimpleMode ? !hasNext : currentPage === totalPages;
 
   return (
     <div className={`flex items-center gap-1 ${className}`}>
@@ -46,26 +59,32 @@ export function Pagination({ currentPage, totalPages, onPageChange, className = 
         &lt;
       </button>
 
-      {/* Page numbers */}
-      {visiblePages.map((page) => (
-        <button
-          key={page}
-          onClick={() => onPageChange(page)}
-          className={`w-10 h-10 flex items-center justify-center border transition-colors ${
-            currentPage === page
-              ? "bg-[color:var(--color-purple)] text-white border-[color:var(--color-purple)]"
-              : "border-[color:var(--color-purple)] text-[color:var(--color-purple)] hover:bg-[color:var(--color-purple)] hover:text-white"
-          }`}
-          style={{ fontSize: "16px" }}
-        >
-          {page}
-        </button>
-      ))}
+      {/* Page numbers or current page indicator */}
+      {isSimpleMode ? (
+        <div className="w-10 h-10 flex items-center justify-center border bg-[color:var(--color-purple)] text-white border-[color:var(--color-purple)]">
+          {currentPage}
+        </div>
+      ) : (
+        visiblePages.map((page) => (
+          <button
+            key={page}
+            onClick={() => onPageChange(page)}
+            className={`w-10 h-10 flex items-center justify-center border transition-colors ${
+              currentPage === page
+                ? "bg-[color:var(--color-purple)] text-white border-[color:var(--color-purple)]"
+                : "border-[color:var(--color-purple)] text-[color:var(--color-purple)] hover:bg-[color:var(--color-purple)] hover:text-white"
+            }`}
+            style={{ fontSize: "16px" }}
+          >
+            {page}
+          </button>
+        ))
+      )}
 
       {/* Next button */}
       <button
         onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
+        disabled={isNextDisabled}
         className="w-10 h-10 flex items-center justify-center border border-[color:var(--color-purple)] text-[color:var(--color-purple)] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[color:var(--color-purple)] hover:text-white transition-colors"
         style={{ fontSize: "16px" }}
       >
