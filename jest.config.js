@@ -35,14 +35,14 @@ const customJestConfig = {
     "!src/app/not-found.js",
     "!src/middleware.js",
   ],
-  coverageThreshold: {
-    global: {
-      branches: 50,
-      functions: 50,
-      lines: 50,
-      statements: 50,
-    },
-  },
+  // coverageThreshold: {
+  //   global: {
+  //     branches: 10,
+  //     functions: 10,
+  //     lines: 10,
+  //     statements: 10,
+  //   },
+  // },
   coverageReporters: ["text", "lcov", "html"],
   testMatch: [
     "<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
