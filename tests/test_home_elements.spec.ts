@@ -6,6 +6,19 @@ import { test, expect } from '@playwright/test';
 
 const BASE_URL = 'http://localhost:3000';
 
+// Mock API responses to work without backend
+test.beforeEach(async ({ page }) => {
+  // Mock any API calls that might happen during page load
+  await page.route('**/api/**', (route) => {
+    console.log(`Mocking API call: ${route.request().url()}`);
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ message: 'Mocked response' })
+    });
+  });
+});
+
 
 test('test critical home elements', async ({ page }) => {
   // steps

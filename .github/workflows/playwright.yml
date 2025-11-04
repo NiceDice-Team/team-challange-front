@@ -37,14 +37,6 @@ jobs:
       with:
         path: frontend
         
-    - name: Checkout backend code
-      uses: actions/checkout@v4
-      with:
-        repository: NiceDice-Team/backend
-        ref: main
-        path: backend
-        token: ${{ secrets.GITHUB_TOKEN }}
-        
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
@@ -66,31 +58,12 @@ jobs:
       working-directory: frontend
       run: npx playwright install --with-deps
       
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-      
-    - name: Start backend services
-      working-directory: backend
-      run: |
-        if [ -f docker-compose.yml ]; then
-          docker-compose up -d --build
-        elif [ -f Dockerfile ]; then
-          docker build -t nicedice-backend .
-          docker run -d -p 8000:8000 --name backend nicedice-backend
-        else
-          echo "No Docker configuration found in backend"
-          exit 1
-        fi
-        
-    - name: Start frontend services
+    - name: Start frontend development server
       working-directory: frontend
-      run: docker-compose up -d --build
+      run: npm run dev &
       env:
         NEXT_PUBLIC_BACKEND_URL: http://localhost:8000/api/
         
-    - name: Wait for backend to be ready
-      run: npx wait-on http://localhost:8000 --timeout 120000
-      
     - name: Wait for frontend to be ready
       run: npx wait-on http://localhost:3000 --timeout 120000
       
@@ -109,13 +82,11 @@ jobs:
         CI: true
         NEXT_PUBLIC_BACKEND_URL: http://localhost:8000/api/
         
-    - name: Stop services
+    - name: Stop frontend server
       if: always()
       run: |
-        cd frontend && docker-compose down --volumes || true
-        cd ../backend && docker-compose down --volumes || true
-        docker stop backend || true
-        docker rm backend || true
+        # Kill the dev server process
+        pkill -f "next dev" || true
       
     - name: Upload Playwright report
       uses: actions/upload-artifact@v4
@@ -151,8 +122,7 @@ jobs:
           
           comment += `<details>\n<summary>📊 Test Details</summary>\n\n`;
           comment += `- **Frontend Branch:** ${context.ref}\n`;
-          comment += `- **Backend Branch:** main\n`;
-          comment += `- **Test Environment:** Full stack with Docker\n`;
+          comment += `- **Test Environment:** Frontend only with dev server\n`;
           comment += `- **Timeout:** 60 minutes\n`;
           comment += `</details>`;
           

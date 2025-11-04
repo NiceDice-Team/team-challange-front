@@ -35,6 +35,15 @@ export interface OAuthProvider {
 export interface OAuthResponse extends ApiResponse<AuthTokens> {
   access?: string;
   refresh?: string;
+  access_token?: string;
+  refresh_token?: string;
+  user?: {
+    id?: string;
+    user_id?: string;
+    email?: string;
+    first_name?: string;
+    last_name?: string;
+  };
 }
 
 // User types
