@@ -2,7 +2,7 @@
 
 A Next.js e-commerce frontend application for the NiceDice project.
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Local Development
 
@@ -92,18 +92,76 @@ src/
 └── utils/                 # Helper functions
 ```
 
-## 🧪 Testing
+## Testing
+
+We use Jest with React Testing Library for comprehensive unit and integration testing.
+
+### Running Tests
 
 ```bash
-# Run tests
+# Run all tests
 npm test
 
-# Run tests in watch mode
+# Run tests with coverage
+npm run test:coverage
+
+# Run tests in watch mode (development)
 npm run test:watch
+
+# Debug tests
+npm run test:debug
 
 # Run Playwright E2E tests (requires Docker services)
 npx playwright test
 ```
+
+### Writing Tests
+
+Tests are located in `src/__tests__/` with the following structure:
+
+```
+src/__tests__/
+├── components/     # Component unit tests
+├── pages/         # Page integration tests  
+├── services/      # API service tests
+├── hooks/         # Custom hook tests
+├── utils/         # Utility function tests
+└── integration/   # End-to-end flow tests
+```
+
+Follow our established patterns for new tests:
+
+```javascript
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+
+describe('ComponentName', () => {
+  describe('Rendering', () => {
+    it('should render correctly', () => {
+      render(<ComponentName />);
+      expect(screen.getByRole('button')).toBeInTheDocument();
+    });
+  });
+
+  describe('Interactions', () => {
+    it('should handle user interactions', async () => {
+      const user = userEvent.setup();
+      const handleClick = jest.fn();
+      
+      render(<ComponentName onClick={handleClick} />);
+      await user.click(screen.getByRole('button'));
+      
+      expect(handleClick).toHaveBeenCalled();
+    });
+  });
+});
+```
+
+### Coverage Goals
+
+- **Current Coverage**: 4.26% overall, 18.12% for shared components
+- **Target Coverage**: 50% minimum, 80% for critical paths
+- **Priority**: User interactions, component rendering, API services, authentication flows
 
 ## 🏗️ Build Commands
 
@@ -156,7 +214,7 @@ The application is automatically deployed via GitHub Actions when code is pushed
 
 1. Builds the Docker container with production settings
 2. Runs E2E tests with Playwright
-3. Deploys to the staging/production environment
+3. Deploys to the staging environment
 
 For manual deployment, use the production docker-compose configuration:
 

@@ -1,8 +1,14 @@
-export const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+import { API_BASE_URL } from '@/config/api';
+import { ApiRequestOptions, HttpMethod } from '@/types/api';
+
+export const API_URL: string = API_BASE_URL;
 
 // const API_URL = "/api/";
 
-export async function fetchAPI(endpoint, options = {}) {
+export async function fetchAPI<T = any>(
+  endpoint: string, 
+  options: ApiRequestOptions = {}
+): Promise<T> {
   const url = `${API_URL}${endpoint}`;
   const response = await fetch(url, {
     method: options.method || "GET",

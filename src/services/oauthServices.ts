@@ -1,12 +1,13 @@
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+import { API_BASE_URL, API_ENDPOINTS, buildApiUrl } from '@/config/api';
+import { OAuthProvider, OAuthResponse } from '@/types/api';
 
-export const sendOAuthToken = async (provider) => {
+export const sendOAuthToken = async (provider: OAuthProvider): Promise<OAuthResponse> => {
   const body = {
     provider: provider.provider,
     access_token: provider.token,
   };
 
-  const response = await fetch(`${API_URL}users/oauth/`, {
+  const response = await fetch(buildApiUrl(API_ENDPOINTS.oauth), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
