@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, Suspense } from "react";
+import React, { useState, Suspense, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -18,6 +18,8 @@ function ResetPasswordForm() {
   const [error, setError] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [token, setToken] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
 
   const {
     register,
@@ -32,13 +34,28 @@ function ResetPasswordForm() {
     },
   });
 
+  useEffect(() => {
+    const tokenParam = searchParams.get("token");
+    const uidParam = searchParams.get("uid");
+
+    let decodedUid: string | null = null;
+
+    if (uidParam) {
+      try {
+        decodedUid = atob(uidParam);
+      } catch (err) {
+        console.warn("Invalid Base64 uid:", uidParam);
+      }
+    }
+
+    setToken(tokenParam);
+    setUserId(decodedUid);
+  }, [searchParams]);
+
   const onSubmit = async (data: ResetPasswordFormData) => {
     setError("");
 
     try {
-      const token = searchParams.get("token");
-      const userId = searchParams.get("uid");
-
       const response = await fetchAPI("users/reset-password/", {
         method: "POST",
         body: { userId, token, password: data.password },
