@@ -2,7 +2,7 @@ name: E2E Tests (Playwright)
 
 on:
   push:
-    branches: [ main, master, develop ]  # Only main branches for direct pushes
+    branches: [ main, master, develop, ci_changes, tests_improvements ]  # Include your test branches
   pull_request:
     # Run on ALL pull requests regardless of source/target branches
     types: [ opened, synchronize, reopened, ready_for_review ]
