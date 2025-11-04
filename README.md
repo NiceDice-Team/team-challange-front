@@ -2,7 +2,6 @@
 
 A Next.js e-commerce frontend application for the NiceDice project.
 
-[![CI](https://github.com/NiceDice-Team/team-challange-front/actions/workflows/ci.yml/badge.svg)](https://github.com/NiceDice-Team/team-challange-front/actions/workflows/ci.yml)
 [![E2E Tests](https://github.com/NiceDice-Team/team-challange-front/actions/workflows/playwright.yml/badge.svg)](https://github.com/NiceDice-Team/team-challange-front/actions/workflows/playwright.yml)
 
 ## Quick Start
@@ -215,13 +214,35 @@ docker-compose exec frontend sh
 - [Docker Documentation](https://docs.docker.com/)
 - [Backend API Documentation](../backend/README.md)
 
-## 🚀 Deployment
+## 🚀 Deployment & CI/CD
 
-The application is automatically deployed via GitHub Actions when code is pushed to the main branch. The workflow:
+### Current Setup
 
-1. Builds the Docker container with production settings
-2. Runs E2E tests with Playwright
-3. Deploys to the staging environment
+**Active Workflows:**
+
+- **Playwright E2E Testing**: Comprehensive end-to-end testing with full backend integration
+
+**Available Templates:**
+
+- CI Pipeline (unit tests, build validation, linting)
+- Production Deployment (Vercel integration)
+- Staging Deployment (Jenkins + AWS integration)
+
+### Quick CI/CD Setup
+
+To activate additional workflows when needed:
+
+```bash
+# Run the interactive setup script
+./.github/setup-workflows.sh
+
+# Or manually copy templates
+cp .github/workflow-templates/ci.yml.template .github/workflows/ci.yml
+```
+
+See `.github/workflow-templates/README.md` for detailed configuration instructions.
+
+### Manual Deployment
 
 For manual deployment, use the production docker-compose configuration:
 
