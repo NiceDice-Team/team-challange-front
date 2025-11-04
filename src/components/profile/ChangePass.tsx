@@ -39,17 +39,20 @@ const ChangePass = ({
     },
   });
 
+  const onSubmit = (data: ChangePasswordFormState) => {
+    console.log(data);
+  };
+
   return (
     <Modal
       open={open}
       title="Change Password"
       description="Update your password to keep your account secure."
-      onConfirm={() => {}}
+      onConfirm={handleSubmit(onSubmit)}
       onCancel={onClose}
       confirmButtonText="Update Password"
     >
-      <div>
-        <h3>Current Password</h3>
+      <div className="flex flex-col gap-4">
         <CustomInput
           label="Current Password"
           id="currentPassword"
@@ -58,7 +61,22 @@ const ChangePass = ({
           type="password"
           {...register("currentPassword")}
         />
-        <p>Change your password</p>
+        <CustomInput
+          label="New Password"
+          id="newPassword"
+          name="newPassword"
+          placeholder="Enter your new password"
+          type="password"
+          {...register("newPassword")}
+        />
+        <CustomInput
+          label="Confirm New Password"
+          id="confirmNewPassword"
+          name="confirmNewPassword"
+          placeholder="Enter your confirm new password"
+          type="password"
+          {...register("confirmPassword")}
+        />
       </div>
     </Modal>
   );

@@ -38,19 +38,21 @@ const Modal = ({
   };
 
   return (
-    <Dialog open={open}>
+    <Dialog open={open} onOpenChange={onCancel}>
       <DialogContent
         aria-describedby={undefined}
-        onPointerDownOutside={(e) => e.preventDefault()}
         aria-labelledby="dialog-content"
-        className="z-50 bg-white p-6 border-red"
+        className="z-50 bg-white p-6"
       >
-        <DialogClose className="top-24 right-24 absolute focus-visible:outline-none focus:outline-none pointer"></DialogClose>
+        <DialogClose
+          className="top-24 right-24 absolute focus-visible:outline-none focus:outline-none pointer"
+          onClick={onCancel}
+        ></DialogClose>
         <DialogHeader>
           <DialogTitle className="flex justify-start text-black text-lg">
             {title}
           </DialogTitle>
-          <p className="mb-[47px] text-gray-2 text-base">{description}</p>
+          <p className="mb-4 text-gray-2 text-base">{description}</p>
         </DialogHeader>
         {children}
         <DialogFooter>
