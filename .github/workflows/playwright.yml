@@ -24,9 +24,10 @@ jobs:
     steps:
     - name: 📝 E2E Test Info
       run: |
-        echo "🎭 Running Playwright E2E Tests"
+        echo "🎭 Running Playwright E2E Tests (Frontend Only)"
         echo "📂 Event: ${{ github.event_name }}"
         echo "🌿 Branch: ${{ github.ref_name }}"
+        echo "ℹ️  Note: Unit tests run separately in CI Pipeline workflow"
         if [ "${{ github.event_name }}" = "pull_request" ]; then
           echo "🔀 PR #${{ github.event.number }}: ${{ github.event.pull_request.title }}"
           echo "👤 Author: ${{ github.event.pull_request.user.login }}"
@@ -47,12 +48,6 @@ jobs:
     - name: Install frontend dependencies
       working-directory: frontend
       run: npm ci
-      
-    - name: Run unit tests before E2E
-      working-directory: frontend
-      run: npm run test:ci
-      env:
-        CI: true
       
     - name: Install Playwright Browsers
       working-directory: frontend
@@ -112,6 +107,7 @@ jobs:
           comment += `**Status:** ${statusText}\n`;
           comment += `**Workflow:** [${context.runNumber}](${context.payload.repository.html_url}/actions/runs/${context.runId})\n`;
           comment += `**Commit:** ${context.sha.substring(0, 7)}\n\n`;
+          comment += `ℹ️  **Note:** This workflow only runs E2E tests. Unit tests and coverage are handled by the CI Pipeline workflow.\n\n`;
           
           if (status === 'success') {
             comment += '🎉 All E2E tests passed! Your changes look good.\n\n';
@@ -121,8 +117,10 @@ jobs:
           }
           
           comment += `<details>\n<summary>📊 Test Details</summary>\n\n`;
+          comment += `- **Test Type:** End-to-End (E2E) only\n`;
           comment += `- **Frontend Branch:** ${context.ref}\n`;
-          comment += `- **Test Environment:** Frontend only with dev server\n`;
+          comment += `- **Test Environment:** Frontend dev server with API mocking\n`;
+          comment += `- **Unit Tests:** Run separately in CI Pipeline workflow\n`;
           comment += `- **Timeout:** 60 minutes\n`;
           comment += `</details>`;
           
