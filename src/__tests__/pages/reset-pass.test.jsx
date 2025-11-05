@@ -101,5 +101,24 @@ describe("ResetPassword Page", () => {
       expect(passwordInput).toBeInTheDocument();
       expect(passwordInput).toHaveAttribute("placeholder", "Enter password");
     });
+    test("renders confirm password input field", async () => {
+      const mockSearchParams = new URLSearchParams();
+      mockSearchParams.set("token", "test-token");
+      mockSearchParams.set("uid", btoa("test-user-id"));
+      useSearchParams.mockReturnValue(mockSearchParams);
+
+      render(<ResetPassword />);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText("Confirm Password")).toBeInTheDocument();
+      });
+
+      const confirmPasswordInput = screen.getByLabelText("Confirm Password");
+      expect(confirmPasswordInput).toBeInTheDocument();
+      expect(confirmPasswordInput).toHaveAttribute(
+        "placeholder",
+        "Enter password"
+      );
+    });
 
 });
