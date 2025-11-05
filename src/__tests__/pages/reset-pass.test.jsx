@@ -510,6 +510,44 @@ describe("ResetPassword Page", () => {
 
       expect(confirmPasswordInput).toHaveValue("newpassword123");
     });
+    test("clears error when resubmitting after error", async () => {
+      const user = userEvent.setup();
+      const mockSearchParams = new URLSearchParams();
+      mockSearchParams.set("token", "test-token");
+      mockSearchParams.set("uid", btoa("test-user-id"));
+      useSearchParams.mockReturnValue(mockSearchParams);
+      fetchAPI
+        .mockRejectedValueOnce({
+          errors: [{ detail: "Token has expired" }],
+        })
+        .mockResolvedValueOnce({ success: true });
+
+      render(<ResetPassword />);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText("Password")).toBeInTheDocument();
+      });
+
+      const passwordInput = screen.getByLabelText("Password");
+      const confirmPasswordInput = screen.getByLabelText("Confirm Password");
+      const submitButton = screen.getByRole("button", { name: /RESET/i });
+
+      await user.type(passwordInput, "password123");
+      await user.type(confirmPasswordInput, "password123");
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByText("Token has expired")).toBeInTheDocument();
+      });
+
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(
+          screen.queryByText("Token has expired")
+        ).not.toBeInTheDocument();
+      });
+    });
   })
 
 });
