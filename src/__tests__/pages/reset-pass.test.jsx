@@ -469,7 +469,28 @@ describe("ResetPassword Page", () => {
           });
         });
       });
-
     })
+
+    describe("Form Interactions", () => {
+    test("updates password input value when typing", async () => {
+      const user = userEvent.setup();
+      const mockSearchParams = new URLSearchParams();
+      mockSearchParams.set("token", "test-token");
+      mockSearchParams.set("uid", btoa("test-user-id"));
+      useSearchParams.mockReturnValue(mockSearchParams);
+
+      render(<ResetPassword />);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText("Password")).toBeInTheDocument();
+      });
+
+      const passwordInput = screen.getByLabelText("Password");
+
+      await user.type(passwordInput, "newpassword123");
+
+      expect(passwordInput).toHaveValue("newpassword123");
+    }); 
+  })
 
 });
