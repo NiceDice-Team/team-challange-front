@@ -308,4 +308,40 @@ describe("ResetPassword Page", () => {
       });
     })
 
+    describe("URL Parameters Handling", () => {
+      test("extracts token from URL parameters", async () => {
+        const user = userEvent.setup();
+        const mockSearchParams = new URLSearchParams();
+        mockSearchParams.set("token", "test-token-123");
+        mockSearchParams.set("uid", btoa("test-user-id"));
+        useSearchParams.mockReturnValue(mockSearchParams);
+        fetchAPI.mockResolvedValue({ success: true });
+
+        render(<ResetPassword />);
+
+        await waitFor(() => {
+          expect(screen.getByLabelText("Password")).toBeInTheDocument();
+        });
+
+        const passwordInput = screen.getByLabelText("Password");
+        const confirmPasswordInput = screen.getByLabelText("Confirm Password");
+        const submitButton = screen.getByRole("button", { name: /RESET/i });
+
+        await user.type(passwordInput, "password123");
+        await user.type(confirmPasswordInput, "password123");
+        await user.click(submitButton);
+
+        await waitFor(() => {
+          expect(fetchAPI).toHaveBeenCalledWith("users/reset-password/", {
+            method: "POST",
+            body: {
+              userId: "test-user-id",
+              token: "test-token-123",
+              password: "password123",
+            },
+          });
+        });
+      });
+    })
+
 });
