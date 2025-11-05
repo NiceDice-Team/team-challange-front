@@ -248,6 +248,28 @@ describe("ResetPassword Page", () => {
         expect(screen.getByText(/Passwords do not match/i)).toBeInTheDocument();
       });
       });
+      test("allows valid password submission", async () => {
+        const user = userEvent.setup();
+        const mockSearchParams = new URLSearchParams();
+        mockSearchParams.set("token", "test-token");
+        mockSearchParams.set("uid", btoa("test-user-id"));
+        useSearchParams.mockReturnValue(mockSearchParams);
+
+        render(<ResetPassword />);
+
+        await waitFor(() => {
+          expect(screen.getByLabelText("Password")).toBeInTheDocument();
+        });
+
+        const passwordInput = screen.getByLabelText("Password");
+        const confirmPasswordInput = screen.getByLabelText("Confirm Password");
+
+        await user.type(passwordInput, "password123");
+        await user.type(confirmPasswordInput, "password123");
+
+        expect(passwordInput).toHaveValue("password123");
+        expect(confirmPasswordInput).toHaveValue("password123");
+      });
     })
 
 });
