@@ -132,5 +132,20 @@ describe("ResetPassword Page", () => {
         expect(screen.getByRole("button", { name: /RESET/i })).toBeInTheDocument();
       });
     });
+    test("renders sign in link", async () => {
+      const mockSearchParams = new URLSearchParams();
+      mockSearchParams.set("token", "test-token");
+      mockSearchParams.set("uid", btoa("test-user-id"));
+      useSearchParams.mockReturnValue(mockSearchParams);
+
+      render(<ResetPassword />);
+
+      await waitFor(() => {
+        expect(screen.getByText(/Sign in/i)).toBeInTheDocument();
+      });
+
+      const signInLink = screen.getByText(/Sign in/i).closest("a");
+      expect(signInLink).toHaveAttribute("href", "/login");
+    });
 
 });
