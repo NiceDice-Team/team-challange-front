@@ -70,5 +70,20 @@ describe("ResetPassword Page", () => {
       });
     });
   })
+    test("displays description text", async () => {
+      const mockSearchParams = new URLSearchParams();
+      mockSearchParams.set("token", "test-token");
+      mockSearchParams.set("uid", btoa("test-user-id"));
+      useSearchParams.mockReturnValue(mockSearchParams);
+
+      render(<ResetPassword />);
+
+      await waitFor(() => {
+        expect(screen.getByText(/You've made it!/i)).toBeInTheDocument();
+        expect(
+          screen.getByText(/Now enter a new password to continue your quest/i)
+        ).toBeInTheDocument();
+      });
+    });
 
 });
