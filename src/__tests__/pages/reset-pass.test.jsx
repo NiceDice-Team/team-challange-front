@@ -148,4 +148,29 @@ describe("ResetPassword Page", () => {
       expect(signInLink).toHaveAttribute("href", "/login");
     });
 
+    describe("Form Validation", () => {
+      test("shows validation error for empty password", async () => {
+        const user = userEvent.setup();
+        const mockSearchParams = new URLSearchParams();
+        mockSearchParams.set("token", "test-token");
+        mockSearchParams.set("uid", btoa("test-user-id"));
+        useSearchParams.mockReturnValue(mockSearchParams);
+
+        render(<ResetPassword />);
+
+        await waitFor(() => {
+          expect(screen.getByLabelText("Password")).toBeInTheDocument();
+        });
+
+        const submitButton = screen.getByRole("button", { name: /RESET/i });
+        await user.click(submitButton);
+
+        await waitFor(() => {
+          expect(
+            screen.getByText(/Password must be at least 8 characters/i)
+          ).toBeInTheDocument();
+        });
+      });
+    })
+
 });
