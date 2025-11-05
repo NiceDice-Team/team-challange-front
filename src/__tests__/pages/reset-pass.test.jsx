@@ -375,6 +375,37 @@ describe("ResetPassword Page", () => {
           });
         });
       });
+      test("handles missing token parameter", async () => {
+        const mockSearchParams = new URLSearchParams();
+        mockSearchParams.set("uid", btoa("test-user-id"));
+        useSearchParams.mockReturnValue(mockSearchParams);
+
+        render(<ResetPassword />);
+
+        await waitFor(() => {
+          expect(screen.getByLabelText("Password")).toBeInTheDocument();
+        });
+
+        const passwordInput = screen.getByLabelText("Password");
+        const confirmPasswordInput = screen.getByLabelText("Confirm Password");
+        const submitButton = screen.getByRole("button", { name: /RESET/i });
+
+        const user = userEvent.setup();
+        await user.type(passwordInput, "password123");
+        await user.type(confirmPasswordInput, "password123");
+        await user.click(submitButton);
+
+        await waitFor(() => {
+          expect(fetchAPI).toHaveBeenCalledWith("users/reset-password/", {
+            method: "POST",
+            body: {
+              userId: "test-user-id",
+              token: null,
+              password: "password123",
+            },
+          });
+        });
+      });
     })
 
 });
