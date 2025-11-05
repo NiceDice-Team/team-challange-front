@@ -171,6 +171,31 @@ describe("ResetPassword Page", () => {
           ).toBeInTheDocument();
         });
       });
+      test("shows validation error for short password", async () => {
+      const user = userEvent.setup();
+      const mockSearchParams = new URLSearchParams();
+      mockSearchParams.set("token", "test-token");
+      mockSearchParams.set("uid", btoa("test-user-id"));
+      useSearchParams.mockReturnValue(mockSearchParams);
+
+      render(<ResetPassword />);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText("Password")).toBeInTheDocument();
+      });
+
+      const passwordInput = screen.getByLabelText("Password");
+      const submitButton = screen.getByRole("button", { name: /RESET/i });
+
+      await user.type(passwordInput, "123");
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(/Password must be at least 8 characters/i)
+        ).toBeInTheDocument();
+      });
+    });
     })
 
 });
