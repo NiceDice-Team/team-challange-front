@@ -2,9 +2,10 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [ main, master, develop, ci_changes, staging, tests_improvements ]
+    # Run on pushes to any branch (no branch restriction)
   pull_request:
     branches: [ main, master, develop ]
+    types: [opened, synchronize, reopened]
 
 jobs:
   # Job 1: Unit Tests and Coverage
