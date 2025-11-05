@@ -437,6 +437,38 @@ describe("ResetPassword Page", () => {
           });
         });
       });
+      test("handles invalid base64 uid gracefully", async () => {
+        const mockSearchParams = new URLSearchParams();
+        mockSearchParams.set("token", "test-token");
+        mockSearchParams.set("uid", "invalid-base64!!!");
+        useSearchParams.mockReturnValue(mockSearchParams);
+
+        render(<ResetPassword />);
+
+        await waitFor(() => {
+          expect(screen.getByLabelText("Password")).toBeInTheDocument();
+        });
+
+        const passwordInput = screen.getByLabelText("Password");
+        const confirmPasswordInput = screen.getByLabelText("Confirm Password");
+        const submitButton = screen.getByRole("button", { name: /RESET/i });
+
+        const user = userEvent.setup();
+        await user.type(passwordInput, "password123");
+        await user.type(confirmPasswordInput, "password123");
+        await user.click(submitButton);
+
+        await waitFor(() => {
+          expect(fetchAPI).toHaveBeenCalledWith("users/reset-password/", {
+            method: "POST",
+            body: {
+              userId: null,
+              token: "test-token",
+              password: "password123",
+            },
+          });
+        });
+      });
 
     })
 
