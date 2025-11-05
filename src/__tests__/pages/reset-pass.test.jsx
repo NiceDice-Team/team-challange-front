@@ -614,6 +614,35 @@ describe("ResetPassword Page", () => {
         ).toBeInTheDocument();
       });
     });
+    test("handles network errors gracefully", async () => {
+      const user = userEvent.setup();
+      const mockSearchParams = new URLSearchParams();
+      mockSearchParams.set("token", "test-token");
+      mockSearchParams.set("uid", btoa("test-user-id"));
+      useSearchParams.mockReturnValue(mockSearchParams);
+      fetchAPI.mockRejectedValue(new Error("Network error"));
+
+      render(<ResetPassword />);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText("Password")).toBeInTheDocument();
+      });
+
+      const passwordInput = screen.getByLabelText("Password");
+      const confirmPasswordInput = screen.getByLabelText("Confirm Password");
+      const submitButton = screen.getByRole("button", { name: /RESET/i });
+
+      await user.type(passwordInput, "password123");
+      await user.type(confirmPasswordInput, "password123");
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText("Error resetting password. Try again.")
+        ).toBeInTheDocument();
+      });
+    });
+
   })
 
 });
