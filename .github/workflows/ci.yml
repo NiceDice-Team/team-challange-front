@@ -19,12 +19,18 @@ jobs:
         echo "🔧 Running CI Pipeline - Unit Tests & Coverage"
         echo "📂 Event: ${{ github.event_name }}"
         echo "🌿 Branch: ${{ github.ref_name }}"
-        echo "💻 Runner: ${{ runner.os }}"
+        echo "🎯 Full Ref: ${{ github.ref }}"
+        echo "� Commit SHA: ${{ github.sha }}"
+        echo "📂 Repository: ${{ github.repository }}"
+        echo "�💻 Runner: ${{ runner.os }}"
         if [ "${{ github.event_name }}" = "pull_request" ]; then
           echo "🔀 PR #${{ github.event.number }}: ${{ github.event.pull_request.title }}"
           echo "👤 Author: ${{ github.event.pull_request.user.login }}"
-          echo "📋 Base Branch: ${{ github.event.pull_request.base.ref }}"
-          echo "🎯 Head Branch: ${{ github.event.pull_request.head.ref }}"
+          echo "🎯 Source Branch: ${{ github.event.pull_request.head.ref }}"
+          echo "🎯 Target Branch: ${{ github.event.pull_request.base.ref }}"
+          echo "📝 Source SHA: ${{ github.event.pull_request.head.sha }}"
+        else
+          echo "🚀 Push to branch: ${{ github.ref_name }}"
         fi
         
     - name: Checkout code

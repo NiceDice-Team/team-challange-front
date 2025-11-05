@@ -27,10 +27,18 @@ jobs:
         echo "🎭 Running Playwright E2E Tests (Frontend Only)"
         echo "📂 Event: ${{ github.event_name }}"
         echo "🌿 Branch: ${{ github.ref_name }}"
+        echo "🎯 Full Ref: ${{ github.ref }}"
+        echo "📝 Commit SHA: ${{ github.sha }}"
+        echo "📂 Repository: ${{ github.repository }}"
         echo "ℹ️  Note: Unit tests run separately in CI Pipeline workflow"
         if [ "${{ github.event_name }}" = "pull_request" ]; then
           echo "🔀 PR #${{ github.event.number }}: ${{ github.event.pull_request.title }}"
           echo "👤 Author: ${{ github.event.pull_request.user.login }}"
+          echo "🎯 Source Branch: ${{ github.event.pull_request.head.ref }}"
+          echo "🎯 Target Branch: ${{ github.event.pull_request.base.ref }}"
+          echo "📝 Source SHA: ${{ github.event.pull_request.head.sha }}"
+        else
+          echo "🚀 Push to branch: ${{ github.ref_name }}"
         fi
         
     - name: Checkout frontend code
