@@ -120,5 +120,17 @@ describe("ResetPassword Page", () => {
         "Enter password"
       );
     });
+    test("renders submit button", async () => {
+      const mockSearchParams = new URLSearchParams();
+      mockSearchParams.set("token", "test-token");
+      mockSearchParams.set("uid", btoa("test-user-id"));
+      useSearchParams.mockReturnValue(mockSearchParams);
+
+      render(<ResetPassword />);
+
+      await waitFor(() => {
+        expect(screen.getByRole("button", { name: /RESET/i })).toBeInTheDocument();
+      });
+    });
 
 });
