@@ -69,7 +69,6 @@ describe("ResetPassword Page", () => {
         ).toBeInTheDocument();
       });
     });
-  })
     test("displays description text", async () => {
       const mockSearchParams = new URLSearchParams();
       mockSearchParams.set("token", "test-token");
@@ -147,6 +146,7 @@ describe("ResetPassword Page", () => {
       const signInLink = screen.getByText(/Sign in/i).closest("a");
       expect(signInLink).toHaveAttribute("href", "/login");
     });
+  })
 
     describe("Form Validation", () => {
       test("shows validation error for empty password", async () => {
@@ -222,7 +222,32 @@ describe("ResetPassword Page", () => {
           )
         ).toBeInTheDocument();
       });
-    });
+      });
+      test("shows validation error when passwords do not match", async () => {
+      const user = userEvent.setup();
+      const mockSearchParams = new URLSearchParams();
+      mockSearchParams.set("token", "test-token");
+      mockSearchParams.set("uid", btoa("test-user-id"));
+      useSearchParams.mockReturnValue(mockSearchParams);
+
+      render(<ResetPassword />);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText("Password")).toBeInTheDocument();
+      });
+
+      const passwordInput = screen.getByLabelText("Password");
+      const confirmPasswordInput = screen.getByLabelText("Confirm Password");
+      const submitButton = screen.getByRole("button", { name: /RESET/i });
+
+      await user.type(passwordInput, "password123");
+      await user.type(confirmPasswordInput, "password456");
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(/Passwords do not match/i)).toBeInTheDocument();
+      });
+      });
     })
 
 });
