@@ -491,6 +491,25 @@ describe("ResetPassword Page", () => {
 
       expect(passwordInput).toHaveValue("newpassword123");
     }); 
+    test("updates confirm password input value when typing", async () => {
+      const user = userEvent.setup();
+      const mockSearchParams = new URLSearchParams();
+      mockSearchParams.set("token", "test-token");
+      mockSearchParams.set("uid", btoa("test-user-id"));
+      useSearchParams.mockReturnValue(mockSearchParams);
+
+      render(<ResetPassword />);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText("Confirm Password")).toBeInTheDocument();
+      });
+
+      const confirmPasswordInput = screen.getByLabelText("Confirm Password");
+
+      await user.type(confirmPasswordInput, "newpassword123");
+
+      expect(confirmPasswordInput).toHaveValue("newpassword123");
+    });
   })
 
 });
