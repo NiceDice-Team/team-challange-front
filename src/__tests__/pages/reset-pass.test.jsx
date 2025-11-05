@@ -85,5 +85,21 @@ describe("ResetPassword Page", () => {
         ).toBeInTheDocument();
       });
     });
+    test("renders password input field", async () => {
+      const mockSearchParams = new URLSearchParams();
+      mockSearchParams.set("token", "test-token");
+      mockSearchParams.set("uid", btoa("test-user-id"));
+      useSearchParams.mockReturnValue(mockSearchParams);
+
+      render(<ResetPassword />);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText("Password")).toBeInTheDocument();
+      });
+
+      const passwordInput = screen.getByLabelText("Password");
+      expect(passwordInput).toBeInTheDocument();
+      expect(passwordInput).toHaveAttribute("placeholder", "Enter password");
+    });
 
 });
