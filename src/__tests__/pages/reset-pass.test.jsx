@@ -40,6 +40,21 @@ describe("ResetPassword Page", () => {
     useSearchParams.mockReturnValue(mockSearchParams);
     fetchAPI.mockResolvedValue({});
   });
+  describe("Rendering", () => {
+    test("renders ResetPassword component", async () => {
+      const mockSearchParams = new URLSearchParams();
+      mockSearchParams.set("token", "test-token");
+      mockSearchParams.set("uid", btoa("test-user-id"));
+      useSearchParams.mockReturnValue(mockSearchParams);
 
+      render(<ResetPassword />);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(/🔐 Reset Your Password/i)
+        ).toBeInTheDocument();
+      });
+    });
+  })
 
 });
