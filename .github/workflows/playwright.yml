@@ -1,35 +1,140 @@
-name: Playwright Tests
+name: E2E Tests (Playwright)
+
 on:
   push:
-    branches: [ main, master, aqa ]
+    # Run on pushes to any branch (no branch restriction)
   pull_request:
-    branches: [ main, master, aqa ]
+    # Run on ALL pull requests regardless of source/target branches
+    types: [ opened, synchronize, reopened, ready_for_review ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
 jobs:
-  test:
+  e2e-tests:
+    name: Playwright E2E Tests
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    # Skip draft PRs
+    if: github.event.pull_request.draft == false || github.event_name != 'pull_request'
+    
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
+    - name: 📝 E2E Test Info
+      run: |
+        echo "🎭 Running Playwright E2E Tests (Frontend Only)"
+        echo "📂 Event: ${{ github.event_name }}"
+        echo "🌿 Branch: ${{ github.ref_name }}"
+        echo "🎯 Full Ref: ${{ github.ref }}"
+        echo "📝 Commit SHA: ${{ github.sha }}"
+        echo "📂 Repository: ${{ github.repository }}"
+        echo "ℹ️  Note: Unit tests run separately in CI Pipeline workflow"
+        if [ "${{ github.event_name }}" = "pull_request" ]; then
+          echo "🔀 PR #${{ github.event.number }}: ${{ github.event.pull_request.title }}"
+          echo "👤 Author: ${{ github.event.pull_request.user.login }}"
+          echo "🎯 Source Branch: ${{ github.event.pull_request.head.ref }}"
+          echo "🎯 Target Branch: ${{ github.event.pull_request.base.ref }}"
+          echo "📝 Source SHA: ${{ github.event.pull_request.head.sha }}"
+        else
+          echo "🚀 Push to branch: ${{ github.ref_name }}"
+        fi
+        
+    - name: Checkout frontend code
+      uses: actions/checkout@v4
       with:
-        node-version: lts/*
-    - name: Install dependencies
+        path: frontend
+        
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+        
+    - name: Install frontend dependencies
+      working-directory: frontend
       run: npm ci
+      
     - name: Install Playwright Browsers
+      working-directory: frontend
       run: npx playwright install --with-deps
-    - name: Install Docker Compose
-      run: sudo apt-get update && sudo apt-get install -y docker-compose
-    - name: Start services with Docker Compose
-      run: docker-compose up -d
+      
+    - name: Start frontend development server
+      working-directory: frontend
+      run: npm run dev &
       env:
-        NEXT_PUBLIC_BACKEND_URL: ${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
-    - name: Wait for services to be ready
-      run: npx wait-on http://localhost:3000
+        NEXT_PUBLIC_BACKEND_URL: http://localhost:8000/api/
+        
+    - name: Wait for frontend to be ready
+      run: npx wait-on http://localhost:3000 --timeout 120000
+      
     - name: Run Playwright tests
-      run: npx playwright test
-    - uses: actions/upload-artifact@v4
+      working-directory: frontend
+      run: |
+        if [ "${{ github.event_name }}" = "pull_request" ]; then
+          echo "🔀 Running E2E tests for Pull Request"
+          # For PRs, run tests with better output formatting
+          npx playwright test --reporter=github
+        else
+          echo "🚀 Running E2E tests for push to ${{ github.ref_name }}"
+          npx playwright test
+        fi
+      env:
+        CI: true
+        NEXT_PUBLIC_BACKEND_URL: http://localhost:8000/api/
+        
+    - name: Stop frontend server
+      if: always()
+      run: |
+        # Kill the dev server process
+        pkill -f "next dev" || true
+      
+    - name: Upload Playwright report
+      uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
         name: playwright-report
-        path: playwright-report/
-        retention-days: 30
+        path: frontend/playwright-report/
+        retention-days: 14
+        
+    - name: Comment on PR
+      uses: actions/github-script@v7
+      if: github.event_name == 'pull_request' && !cancelled()
+      with:
+        script: |
+          const fs = require('fs');
+          const path = require('path');
+          
+          let status = '${{ job.status }}';
+          let emoji = status === 'success' ? '✅' : '❌';
+          let statusText = status === 'success' ? 'PASSED' : 'FAILED';
+          
+          let comment = `## 🎭 Playwright E2E Tests ${emoji}\n\n`;
+          comment += `**Status:** ${statusText}\n`;
+          comment += `**Workflow:** [${context.runNumber}](${context.payload.repository.html_url}/actions/runs/${context.runId})\n`;
+          comment += `**Commit:** ${context.sha.substring(0, 7)}\n\n`;
+          comment += `ℹ️  **Note:** This workflow only runs E2E tests. Unit tests and coverage are handled by the CI Pipeline workflow.\n\n`;
+          
+          if (status === 'success') {
+            comment += '🎉 All E2E tests passed! Your changes look good.\n\n';
+          } else {
+            comment += '❌ Some E2E tests failed. Please check the [test report]';
+            comment += `(${context.payload.repository.html_url}/actions/runs/${context.runId}) for details.\n\n`;
+          }
+          
+          comment += `<details>\n<summary>📊 Test Details</summary>\n\n`;
+          comment += `- **Test Type:** End-to-End (E2E) only\n`;
+          comment += `- **Frontend Branch:** ${context.ref}\n`;
+          comment += `- **Test Environment:** Frontend dev server with API mocking\n`;
+          comment += `- **Unit Tests:** Run separately in CI Pipeline workflow\n`;
+          comment += `- **Timeout:** 60 minutes\n`;
+          comment += `</details>`;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });

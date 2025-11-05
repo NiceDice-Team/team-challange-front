@@ -2,6 +2,7 @@
 
 import { clearTokens } from "@/lib/tokenManager";
 import { cookies } from "next/headers";
+import { API_ENDPOINTS, buildApiUrl } from '@/config/api';
 
 interface LogoutActionParams {
   provider?: string;
@@ -15,8 +16,7 @@ export async function logoutAction({ provider }: LogoutActionParams = {}) {
 
     if (accessToken && refreshToken) {
       try {
-        const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
-        const response = await fetch(`${API_URL}users/logout/`, {
+        const response = await fetch(buildApiUrl(API_ENDPOINTS.logout), {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
