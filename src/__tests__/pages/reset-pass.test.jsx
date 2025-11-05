@@ -549,5 +549,20 @@ describe("ResetPassword Page", () => {
       });
     });
   })
+  describe("Accessibility", () => {
+    test("has proper form labels", async () => {
+      const mockSearchParams = new URLSearchParams();
+      mockSearchParams.set("token", "test-token");
+      mockSearchParams.set("uid", btoa("test-user-id"));
+      useSearchParams.mockReturnValue(mockSearchParams);
+
+      render(<ResetPassword />);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText("Password")).toBeInTheDocument();
+        expect(screen.getByLabelText("Confirm Password")).toBeInTheDocument();
+      });
+    });
+  })
 
 });
