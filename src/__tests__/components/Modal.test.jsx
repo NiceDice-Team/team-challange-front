@@ -130,6 +130,23 @@ describe("Modal Component", () => {
       expect(screen.getByTestId("modal-children")).toBeInTheDocument();
       expect(screen.getByText("Custom Content")).toBeInTheDocument();
     });
+    test("renders close button", () => {
+      render(
+        <Modal
+          open={true}
+          title="Test Title"
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div>Content</div>
+        </Modal>
+      );
+
+      const closeButton = screen.getByTestId("dialog-close");
+      expect(closeButton).toBeInTheDocument();
+      expect(closeButton).toHaveAttribute("aria-label", "Close");
+    });
   })
 
 });
