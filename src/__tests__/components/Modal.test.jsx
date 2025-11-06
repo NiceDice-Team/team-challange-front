@@ -181,6 +181,21 @@ describe("Modal Component", () => {
       expect(screen.getByRole("button", { name: /save/i })).toBeInTheDocument();
       expect(screen.getByRole("button", { name: /dismiss/i })).toBeInTheDocument();
     });
+    test("renders dialog header", () => {
+      render(
+        <Modal
+          open={true}
+          title="Test Title"
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div>Content</div>
+        </Modal>
+      );
+
+      expect(screen.getByTestId("dialog-header")).toBeInTheDocument();
+    });
   })
 
 });
