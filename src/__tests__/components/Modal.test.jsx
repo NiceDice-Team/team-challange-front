@@ -82,6 +82,23 @@ describe("Modal Component", () => {
       expect(screen.getByTestId("dialog")).toBeInTheDocument();
       expect(screen.queryByTestId("dialog-content")).not.toBeInTheDocument();
     });
+    test("displays title correctly", () => {
+      render(
+        <Modal
+          open={true}
+          title="Test Modal Title"
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div>Content</div>
+        </Modal>
+      );
+
+      const title = screen.getByTestId("dialog-title");
+      expect(title).toBeInTheDocument();
+      expect(title).toHaveTextContent("Test Modal Title");
+    });
   })
 
 });
