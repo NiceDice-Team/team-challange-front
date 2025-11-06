@@ -99,6 +99,21 @@ describe("Modal Component", () => {
       expect(title).toBeInTheDocument();
       expect(title).toHaveTextContent("Test Modal Title");
     });
+    test("displays description correctly", () => {
+      render(
+        <Modal
+          open={true}
+          title="Test Title"
+          description="This is a test description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div>Content</div>
+        </Modal>
+      );
+
+      expect(screen.getByText("This is a test description")).toBeInTheDocument();
+    });
   })
 
 });
