@@ -147,6 +147,22 @@ describe("Modal Component", () => {
       expect(closeButton).toBeInTheDocument();
       expect(closeButton).toHaveAttribute("aria-label", "Close");
     });
+    test("renders confirm and cancel buttons with default text", () => {
+      render(
+        <Modal
+          open={true}
+          title="Test Title"
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div>Content</div>
+        </Modal>
+      );
+
+      expect(screen.getByRole("button", { name: /confirm/i })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /cancel/i })).toBeInTheDocument();
+    });
   })
 
 });
