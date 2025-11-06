@@ -6,9 +6,15 @@ import FeatureSectionBottom from "../../components/home/FeatureSectionBottom.jsx
 import PartnersScroller from "../../components/home/PartnersScroller.jsx";
 import SubscribeSection from "../../components/home/SubscribeSection.jsx";
 
+interface AuthLayoutProps {
+  children: React.ReactNode;
+}
 
-
-export default function AuthLayout({ children }) {
+/**
+ * Authentication layout wrapper
+ * Used for login, register, and other auth pages
+ */
+export default function AuthLayout({ children }: AuthLayoutProps): React.ReactElement {
   return (
     <div className="min-h-screen flex flex-col">
       <div className="px-8 lg:px-16 py-6">

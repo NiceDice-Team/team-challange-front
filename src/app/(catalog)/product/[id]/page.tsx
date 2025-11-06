@@ -4,7 +4,19 @@ import Footer from "../../../../components/layout/Footer.jsx";
 import ReviewsProduct from "../../../../components/catalog/ReviewsProduct.jsx";
 import ReviewsComments from "../../../../components/catalog/ReviewsComments.jsx";
 
-export default async function ProductDetailPage({ params }) {
+interface ProductDetailPageProps {
+  params: Promise<{
+    id: string;
+  }>;
+}
+
+/**
+ * Product detail page component with full layout
+ * Displays product details, reviews, and comments
+ */
+export default async function ProductDetailPage({
+  params,
+}: ProductDetailPageProps): Promise<React.ReactElement> {
   // In Next.js App Router, params is a Promise and needs to be awaited
   const resolvedParams = await params;
 
@@ -13,10 +25,16 @@ export default async function ProductDetailPage({ params }) {
 
   return (
     <div className="py-6">
-      <Navbar className="px-8  lg:px-50" />
+      <div className="px-8  lg:px-50">
+        <Navbar />
+      </div>
       <ProductPage params={resolvedParams} />
-      <ReviewsProduct />
-      <ReviewsComments />
+      <ReviewsProduct>
+        <></>
+      </ReviewsProduct>
+      <ReviewsComments>
+        <></>
+      </ReviewsComments>
 
       <Footer />
     </div>

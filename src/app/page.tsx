@@ -10,7 +10,11 @@ import FeatureSection from "../components/home/FeaturesSection.jsx";
 import FeatureSectionBottom from "../components/home/FeatureSectionBottom.jsx";
 import CommingSoonSection from "../components/home/CommingSoonSection.jsx";
 
-export default function Home() {
+/**
+ * Home page component
+ * Main landing page with hero, features, products, and other sections
+ */
+export default function Home(): React.ReactElement {
   return (
     <div className="py-6 lg:py-6 font-[family-name:var(--font-noto-sans)]">
       <div className="h-dvh  flex flex-col gap-4 px-8  lg:px-50">
