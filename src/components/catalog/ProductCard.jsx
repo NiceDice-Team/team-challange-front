@@ -69,6 +69,14 @@ export default function ProductCard({ product = {} }) {
     stockStyle = "text-[#3A9B25]";
   }
 
+  const availableImages = product?.images?.slice(0, 3) || [];
+  const imageCount = availableImages.length;
+
+  // Reset active image when product changes
+  useEffect(() => {
+    setActiveImage(0);
+  }, [product?.id]);
+
   const goToPrevImage = () => {
     if (activeImage > 0) {
       scrollToImage(activeImage - 1);
@@ -76,7 +84,7 @@ export default function ProductCard({ product = {} }) {
   };
 
   const goToNextImage = () => {
-    if (activeImage < 2) {
+    if (activeImage < imageCount - 1) {
       scrollToImage(activeImage + 1);
     }
   };
@@ -89,13 +97,13 @@ export default function ProductCard({ product = {} }) {
     const handleScroll = () => {
       const scrollPosition = gallery.scrollLeft;
       const imageWidth = gallery.clientWidth;
-      const imageIndex = Math.round(scrollPosition / imageWidth);
+      const imageIndex = Math.min(Math.round(scrollPosition / imageWidth), imageCount - 1);
       setActiveImage(imageIndex);
     };
 
     gallery.addEventListener("scroll", handleScroll);
     return () => gallery.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [imageCount]);
 
   // Function to scroll to a specific image
   const scrollToImage = (index) => {
@@ -147,31 +155,24 @@ export default function ProductCard({ product = {} }) {
               }
             `}</style>
 
-            {/* Individual images */}
-            <div className="min-w-full h-full flex-shrink-0 relative snap-center">
-              <Image
-                src={product?.images?.[0] ? `/api/media/${product.images[0]}` : "/FirstPlaceholder.svg"}
-                alt={product?.name || "Product"}
-                fill
-                className="object-contain"
-              />
-            </div>
-            <div className="min-w-full h-full flex-shrink-0 relative snap-center">
-              <Image
-                src={product?.images?.[1] ? `/api/media/${product.images[1]}` : "/SecondPlaceholder.svg"}
-                alt={product?.name || "Product"}
-                fill
-                className="object-contain"
-              />
-            </div>
-            <div className="min-w-full h-full flex-shrink-0 relative snap-center">
-              <Image
-                src={product?.images?.[2] ? `/api/media/${product.images[2]}` : "/ThirdPlaceholder.svg"}
-                alt={product?.name || "Product"}
-                fill
-                className="object-contain"
-              />
-            </div>
+            {/* Individual images - show only available images (max 3) */}
+            {availableImages.length > 0 ? (
+              availableImages.map((image, index) => (
+                <div key={image.id || index} className="min-w-full h-full flex-shrink-0 relative snap-center">
+                  <Image
+                    src={image.url_sm}
+                    alt={image.alt || product?.name || "Product"}
+                    fill
+                    className="object-contain"
+                    unoptimized={image.url_sm?.includes('placehold.co')}
+                  />
+                </div>
+              ))
+            ) : (
+              <div className="min-w-full h-full flex-shrink-0 relative snap-center flex items-center justify-center bg-gray-100">
+                <span className="text-gray-400">No image</span>
+              </div>
+            )}
           </div>
 
           {/* Left click area */}
@@ -209,37 +210,28 @@ export default function ProductCard({ product = {} }) {
           </CustomButton>
 
           {/* Navigation lines - positioned within image container */}
-          <div className="absolute bottom-0 left-0 right-0 w-full h-0 flex justify-center items-start z-10">
-            <div className="flex justify-center items-start gap-0">
-              <CustomButton
-                onClick={(e) => {
-                  e.preventDefault();
-                  scrollToImage(0);
-                }}
-                styleType="navigation"
-                className={`w-[78px] h-[3px] border-0 ${activeImage === 0 ? "bg-[#494791]" : "bg-[#A4A3C8]"}`}
-                aria-label="View image 1"
-              />
-              <CustomButton
-                onClick={(e) => {
-                  e.preventDefault();
-                  scrollToImage(1);
-                }}
-                styleType="navigation"
-                className={`w-[78px] h-[3px] border-0 ${activeImage === 1 ? "bg-[#494791]" : "bg-[#A4A3C8]"}`}
-                aria-label="View image 2"
-              />
-              <CustomButton
-                onClick={(e) => {
-                  e.preventDefault();
-                  scrollToImage(2);
-                }}
-                styleType="navigation"
-                className={`w-[84px] h-[3px] border-0 ${activeImage === 2 ? "bg-[#494791]" : "bg-[#A4A3C8]"}`}
-                aria-label="View image 3"
-              />
+          {imageCount > 1 && (
+            <div className="absolute bottom-0 left-0 right-0 w-full h-0 flex justify-center items-start z-10">
+              <div className="flex justify-center items-start gap-0">
+                {availableImages.map((_, index) => {
+                  const isLast = index === imageCount - 1;
+                  const width = isLast ? "w-[84px]" : "w-[78px]";
+                  return (
+                    <CustomButton
+                      key={index}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        scrollToImage(index);
+                      }}
+                      styleType="navigation"
+                      className={`${width} h-[3px] border-0 ${activeImage === index ? "bg-[#494791]" : "bg-[#A4A3C8]"}`}
+                      aria-label={`View image ${index + 1}`}
+                    />
+                  );
+                })}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Product Card Details */}

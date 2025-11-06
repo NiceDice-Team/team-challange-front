@@ -7,20 +7,10 @@ import { ProductAccordion } from "./ProductPageAccordion";
 import { CustomBreadcrumb } from "../shared/CustomBreadcrumb";
 import { useAddToCart } from "@/hooks/useCartQuery";
 
-// Import test images
-import testImg1 from "../../../public/DynamicProduct/product_id_page_test_img_1.jpg";
-import testImg2 from "../../../public/DynamicProduct/product_id_page_test_img_2.jpg";
-import testImg3 from "../../../public/DynamicProduct/product_id_page_test_img_3.jpg";
-import testImg4 from "../../../public/DynamicProduct/product_id_page_test_img_4.jpg";
-import testImg5 from "../../../public/DynamicProduct/product_id_page_test_img_5.jpg";
-
 export default function ProductPage({ params }) {
   const [quantity, setQuantity] = useState(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const addToCartMutation = useAddToCart();
-
-  // Test images array
-  const testImages = [testImg1, testImg2, testImg3, testImg4, testImg5];
 
   let productId = params?.id;
 
@@ -180,7 +170,7 @@ export default function ProductPage({ params }) {
             {/* Back Button */}
             <button
               onClick={() =>
-                setSelectedImageIndex(selectedImageIndex === 0 ? testImages.length - 1 : selectedImageIndex - 1)
+                setSelectedImageIndex(selectedImageIndex === 0 ? (product?.images?.length || 1) - 1 : selectedImageIndex - 1)
               }
               className="flex-shrink-0 transition-opacity hover:opacity-80"
               disabled={selectedImageIndex === 0}
@@ -218,23 +208,24 @@ export default function ProductPage({ params }) {
             {/* Square aspect ratio container */}
             <div className="aspect-square flex-1 relative">
               <Image
-                src={testImages[selectedImageIndex]}
-                alt={product?.name || "Product image"}
+                src={product?.images?.[selectedImageIndex]?.url_lg}
+                alt={product?.images?.[selectedImageIndex]?.alt || product?.name || "Product image"}
                 fill
                 className="object-contain "
                 priority
+                unoptimized={product?.images?.[selectedImageIndex]?.url_lg?.includes('placehold.co')}
               />
             </div>
 
             {/* Forward Button */}
             <button
               onClick={() =>
-                setSelectedImageIndex(selectedImageIndex === testImages.length - 1 ? 0 : selectedImageIndex + 1)
+                setSelectedImageIndex(selectedImageIndex === (product?.images?.length || 1) - 1 ? 0 : selectedImageIndex + 1)
               }
               className="flex-shrink-0 transition-opacity hover:opacity-80"
-              disabled={selectedImageIndex === testImages.length - 1}
+              disabled={selectedImageIndex === (product?.images?.length || 1) - 1}
             >
-              {selectedImageIndex === testImages.length - 1 ? (
+              {selectedImageIndex === (product?.images?.length || 1) - 1 ? (
                 // Disabled state
                 <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <rect width="40" height="40" rx="20" fill="#494791" fillOpacity="0.5" />
@@ -258,15 +249,21 @@ export default function ProductPage({ params }) {
 
           {/* Thumbnail images */}
           <div className="flex gap-1 overflow-x-auto max-w-[600px] mx-auto">
-            {testImages.map((image, index) => (
+            {product?.images?.map((image, index) => (
               <div
-                key={index}
+                key={image.id || index}
                 className={`flex-shrink-0 w-[104px] h-[104px] overflow-hidden cursor-pointer relative transition-opacity ${
                   selectedImageIndex === index ? "opacity-100" : "opacity-50 hover:opacity-75"
                 }`}
                 onClick={() => setSelectedImageIndex(index)}
               >
-                <Image src={image} alt={`Product image ${index + 1}`} fill className="object-contain p-1" />
+                <Image
+                  src={image.url_sm}
+                  alt={image.alt || `Product image ${index + 1}`}
+                  fill
+                  className="object-contain p-1"
+                  unoptimized={image.url_sm?.includes('placehold.co')}
+                />
               </div>
             ))}
           </div>

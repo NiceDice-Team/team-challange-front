@@ -33,9 +33,18 @@ export const catalogServices = {
   getBrands: async (params = {}, fetchOpts = {}) => {
     const queryParams = new URLSearchParams();
     if (params.page) queryParams.append('page', params.page);
-    
+
     const endpoint = queryParams.toString() ? `brands/?${queryParams.toString()}` : 'brands/';
     const response = await fetchAPI(endpoint, fetchOpts);
     return response.results || response;
+  },
+
+  getProductCount: async (params = {}, fetchOpts = {}) => {
+    const queryParams = new URLSearchParams();
+    if (params.category_id) queryParams.append('category_id', params.category_id);
+
+    const endpoint = queryParams.toString() ? `products/count/?${queryParams.toString()}` : 'products/count/';
+    const response = await fetchAPI(endpoint, fetchOpts);
+    return response;
   },
 };

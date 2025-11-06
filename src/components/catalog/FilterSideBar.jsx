@@ -17,6 +17,30 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
     retry: 1,
   });
 
+  // Fetch product counts for all categories
+  const { data: categoryCounts = {}, isLoading: countsLoading } = useQuery({
+    queryKey: ["category-counts", categories.map(cat => cat.id)],
+    queryFn: async ({ signal }) => {
+      if (categories.length === 0) return {};
+
+      const countPromises = categories.map(category =>
+        catalogServices.getProductCount({ category_id: category.id }, { signal })
+          .then(response => ({ id: category.id, count: response.count }))
+          .catch(() => ({ id: category.id, count: 0 }))
+      );
+
+      const counts = await Promise.all(countPromises);
+      return counts.reduce((acc, { id, count }) => {
+        acc[id] = count;
+        return acc;
+      }, {});
+    },
+    enabled: categories.length > 0,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000,
+    retry: 1,
+  });
+
   const { data: audiences = [], isLoading: audiencesLoading } = useQuery({
     queryKey: ["audiences"],
     queryFn: ({ signal }) => catalogServices.getAudiences({}, { signal }),
@@ -47,7 +71,7 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
     retry: 1,
   });
 
-  const isLoading = categoriesLoading || audiencesLoading || gameTypesLoading || brandsLoading;
+  const isLoading = categoriesLoading || audiencesLoading || gameTypesLoading || brandsLoading || countsLoading;
 
   // Toggle filter value with scroll position preservation
   const toggleFilter = (filterType, value, event) => {
@@ -119,6 +143,18 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
       toggleFilter(filterType, value, e);
     };
 
+    // Get count based on filter type
+    const getCount = () => {
+      if (filterType === 'categories' && item.id) {
+        // Only return count if it exists in categoryCounts
+        return item.id in categoryCounts ? categoryCounts[item.id] : null;
+      }
+      // For other filter types, return count if it exists
+      return item.count !== undefined ? item.count : null;
+    };
+
+    const count = getCount();
+
     return (
       <div className="flex flex-row justify-between items-center gap-2 h-5">
         <div className="flex flex-row items-center gap-2">
@@ -141,9 +177,11 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
             {item.name}
           </button>
         </div>
-        <span className="text-base font-normal text-[#717171]">
-          {item.count || Math.floor(Math.random() * 20) + 1}
-        </span>
+        {count !== null && (
+          <span className="text-base font-normal text-[#717171]">
+            {count}
+          </span>
+        )}
       </div>
     );
   };
