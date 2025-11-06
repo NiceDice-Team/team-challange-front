@@ -114,6 +114,22 @@ describe("Modal Component", () => {
 
       expect(screen.getByText("This is a test description")).toBeInTheDocument();
     });
+    test("renders children content", () => {
+      render(
+        <Modal
+          open={true}
+          title="Test Title"
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div data-testid="modal-children">Custom Content</div>
+        </Modal>
+      );
+
+      expect(screen.getByTestId("modal-children")).toBeInTheDocument();
+      expect(screen.getByText("Custom Content")).toBeInTheDocument();
+    });
   })
 
 });
