@@ -196,6 +196,21 @@ describe("Modal Component", () => {
 
       expect(screen.getByTestId("dialog-header")).toBeInTheDocument();
     });
+    test("renders dialog footer", () => {
+      render(
+        <Modal
+          open={true}
+          title="Test Title"
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div>Content</div>
+        </Modal>
+      );
+
+      expect(screen.getByTestId("dialog-footer")).toBeInTheDocument();
+    });
   })
 
 });
