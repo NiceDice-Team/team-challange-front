@@ -66,6 +66,22 @@ describe("Modal Component", () => {
       expect(screen.getByTestId("dialog")).toBeInTheDocument();
       expect(screen.getByTestId("dialog-content")).toBeInTheDocument();
     }); 
+    test("does not render modal content when open is false", () => {
+      render(
+        <Modal
+          open={false}
+          title="Test Title"
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div>Test Content</div>
+        </Modal>
+      );
+
+      expect(screen.getByTestId("dialog")).toBeInTheDocument();
+      expect(screen.queryByTestId("dialog-content")).not.toBeInTheDocument();
+    });
   })
-  
+
 });
