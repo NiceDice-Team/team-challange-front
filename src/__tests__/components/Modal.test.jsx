@@ -163,6 +163,24 @@ describe("Modal Component", () => {
       expect(screen.getByRole("button", { name: /confirm/i })).toBeInTheDocument();
       expect(screen.getByRole("button", { name: /cancel/i })).toBeInTheDocument();
     });
+    test("renders buttons with custom text", () => {
+      render(
+        <Modal
+          open={true}
+          title="Test Title"
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+          confirmButtonText="Save"
+          cancelButtonText="Dismiss"
+        >
+          <div>Content</div>
+        </Modal>
+      );
+
+      expect(screen.getByRole("button", { name: /save/i })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /dismiss/i })).toBeInTheDocument();
+    });
   })
 
 });
