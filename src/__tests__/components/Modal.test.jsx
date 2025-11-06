@@ -49,5 +49,23 @@ describe("Modal Component", () => {
     jest.clearAllMocks();
   });
 
- 
+ describe("Rendering", () => {
+    test("renders modal when open is true", () => {
+      render(
+        <Modal
+          open={true}
+          title="Test Title"
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div>Test Content</div>
+        </Modal>
+      );
+
+      expect(screen.getByTestId("dialog")).toBeInTheDocument();
+      expect(screen.getByTestId("dialog-content")).toBeInTheDocument();
+    }); 
+  })
+  
 });
