@@ -468,4 +468,23 @@ describe("Modal Component", () => {
     });
   })
 
+  describe("Styling", () => {
+    test("applies correct classes to dialog content", () => {
+      render(
+        <Modal
+          open={true}
+          title="Test Title"
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div>Content</div>
+        </Modal>
+      );
+
+      const dialogContent = screen.getByTestId("dialog-content");
+      expect(dialogContent).toHaveClass("z-50", "bg-white", "p-6");
+    });
+  })
+
 });
