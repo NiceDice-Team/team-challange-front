@@ -625,6 +625,25 @@ describe("Modal Component", () => {
       expect(screen.getByRole("button", { name: /confirm/i })).toBeInTheDocument();
       expect(screen.getByRole("button", { name: /cancel/i })).toBeInTheDocument();
     });
-  })
+    test("overrides default button text when provided", () => {
+      render(
+        <Modal
+          open={true}
+          title="Test Title"
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+          confirmButtonText="Submit"
+          cancelButtonText="Dismiss"
+        >
+          <div>Content</div>
+        </Modal>
+      );
 
+      expect(screen.getByRole("button", { name: /submit/i })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /dismiss/i })).toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: /confirm/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: /cancel/i })).not.toBeInTheDocument();
+    });
+  })
 });
