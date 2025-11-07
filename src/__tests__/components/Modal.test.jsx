@@ -234,5 +234,25 @@ describe("Modal Component", () => {
       expect(mockOnConfirm).toHaveBeenCalledTimes(1);
       expect(mockOnCancel).not.toHaveBeenCalled();
     });
+    test("calls onCancel when cancel button is clicked", async () => {
+      const user = userEvent.setup();
+      render(
+        <Modal
+          open={true}
+          title="Test Title"
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div>Content</div>
+        </Modal>
+      );
+
+      const cancelButton = screen.getByRole("button", { name: /cancel/i });
+      await user.click(cancelButton);
+
+      expect(mockOnCancel).toHaveBeenCalledTimes(1);
+      expect(mockOnConfirm).not.toHaveBeenCalled();
+    });
   })
 });
