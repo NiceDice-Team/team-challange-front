@@ -362,6 +362,35 @@ describe("Modal Component", () => {
 
       expect(screen.getByTestId("dialog-content")).toBeInTheDocument();
     });
+    test("updates when open prop changes from true to false", () => {
+      const { rerender } = render(
+        <Modal
+          open={true}
+          title="Test Title"
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div>Content</div>
+        </Modal>
+      );
+
+      expect(screen.getByTestId("dialog-content")).toBeInTheDocument();
+
+      rerender(
+        <Modal
+          open={false}
+          title="Test Title"
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div>Content</div>
+        </Modal>
+      );
+
+      expect(screen.queryByTestId("dialog-content")).not.toBeInTheDocument();
+    });
   })
 
 });
