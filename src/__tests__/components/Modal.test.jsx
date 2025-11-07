@@ -311,5 +311,25 @@ describe("Modal Component", () => {
 
       expect(mockOnConfirm).toHaveBeenCalledTimes(3);
     });
+    test("handles multiple cancel clicks", async () => {
+      const user = userEvent.setup();
+      render(
+        <Modal
+          open={true}
+          title="Test Title"
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div>Content</div>
+        </Modal>
+      );
+
+      const cancelButton = screen.getByRole("button", { name: /cancel/i });
+      await user.click(cancelButton);
+      await user.click(cancelButton);
+
+      expect(mockOnCancel).toHaveBeenCalledTimes(2);
+    });
   })
 });
