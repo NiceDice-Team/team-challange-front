@@ -564,12 +564,12 @@ describe("Modal Component", () => {
       expect(screen.getByText("Paragraph 1")).toBeInTheDocument();
       expect(screen.getByText("Action")).toBeInTheDocument();
     });
-    test("handles long title text", () => {
-      const longTitle = "This is a very long title that might wrap to multiple lines";
+    test("handles rapid button clicks", async () => {
+      const user = userEvent.setup();
       render(
         <Modal
           open={true}
-          title={longTitle}
+          title="Test Title"
           description="Test Description"
           onConfirm={mockOnConfirm}
           onCancel={mockOnCancel}
@@ -578,7 +578,36 @@ describe("Modal Component", () => {
         </Modal>
       );
 
-      expect(screen.getByText(longTitle)).toBeInTheDocument();
+      const confirmButton = screen.getByRole("button", { name: /confirm/i });
+      const cancelButton = screen.getByRole("button", { name: /cancel/i });
+
+      await user.click(confirmButton);
+      await user.click(cancelButton);
+      await user.click(confirmButton);
+      await user.click(cancelButton);
+
+      expect(mockOnConfirm).toHaveBeenCalledTimes(2);
+      expect(mockOnCancel).toHaveBeenCalledTimes(2);
+    });
+  })
+
+  describe("Props Validation", () => {
+    test("renders with all required props", () => {
+      render(
+        <Modal
+          open={true}
+          title="Required Title"
+          description="Required Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div>Required Content</div>
+        </Modal>
+      );
+
+      expect(screen.getByText("Required Title")).toBeInTheDocument();
+      expect(screen.getByText("Required Description")).toBeInTheDocument();
+      expect(screen.getByText("Required Content")).toBeInTheDocument();
     });
   })
 
