@@ -485,6 +485,22 @@ describe("Modal Component", () => {
       const dialogContent = screen.getByTestId("dialog-content");
       expect(dialogContent).toHaveClass("z-50", "bg-white", "p-6");
     });
+    test("applies correct classes to title", () => {
+      render(
+        <Modal
+          open={true}
+          title="Test Title"
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div>Content</div>
+        </Modal>
+      );
+
+      const title = screen.getByTestId("dialog-title");
+      expect(title).toHaveClass("flex", "justify-start", "text-black", "text-lg");
+    });
   })
 
 });
