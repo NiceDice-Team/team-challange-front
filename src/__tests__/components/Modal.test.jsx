@@ -501,6 +501,29 @@ describe("Modal Component", () => {
       const title = screen.getByTestId("dialog-title");
       expect(title).toHaveClass("flex", "justify-start", "text-black", "text-lg");
     });
+    test("applies correct classes to close button", () => {
+      render(
+        <Modal
+          open={true}
+          title="Test Title"
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div>Content</div>
+        </Modal>
+      );
+
+      const closeButton = screen.getByTestId("dialog-close");
+      expect(closeButton).toHaveClass(
+        "top-24",
+        "right-24",
+        "absolute",
+        "focus-visible:outline-none",
+        "focus:outline-none",
+        "pointer"
+      );
+    });
   })
 
 });
