@@ -49,7 +49,7 @@ describe("Modal Component", () => {
     jest.clearAllMocks();
   });
 
- describe("Rendering", () => {
+  describe("Rendering", () => {
     test("renders modal when open is true", () => {
       render(
         <Modal
@@ -213,4 +213,26 @@ describe("Modal Component", () => {
     });
   })
 
+  describe("Interactions", () => {
+    test("calls onConfirm when confirm button is clicked", async () => {
+      const user = userEvent.setup();
+      render(
+        <Modal
+          open={true}
+          title="Test Title"
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div>Content</div>
+        </Modal>
+      );
+
+      const confirmButton = screen.getByRole("button", { name: /confirm/i });
+      await user.click(confirmButton);
+
+      expect(mockOnConfirm).toHaveBeenCalledTimes(1);
+      expect(mockOnCancel).not.toHaveBeenCalled();
+    });
+  })
 });
