@@ -443,6 +443,29 @@ describe("Modal Component", () => {
       expect(title).toBeInTheDocument();
       expect(title).toHaveTextContent("Accessible Title");
     });
+    test("buttons are keyboard accessible", async () => {
+      const user = userEvent.setup();
+      render(
+        <Modal
+          open={true}
+          title="Test Title"
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div>Content</div>
+        </Modal>
+      );
+
+      const cancelButton = screen.getByRole("button", { name: /cancel/i });
+      const confirmButton = screen.getByRole("button", { name: /confirm/i });
+      
+      cancelButton.focus();
+      expect(cancelButton).toHaveFocus();
+
+      confirmButton.focus();
+      expect(confirmButton).toHaveFocus();
+    });
   })
 
 });
