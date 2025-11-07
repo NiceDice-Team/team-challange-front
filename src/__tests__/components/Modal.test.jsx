@@ -290,5 +290,26 @@ describe("Modal Component", () => {
       const dialog = screen.getByTestId("dialog");
       expect(dialog).toBeInTheDocument();
     });
+    test("handles multiple confirm clicks", async () => {
+      const user = userEvent.setup();
+      render(
+        <Modal
+          open={true}
+          title="Test Title"
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div>Content</div>
+        </Modal>
+      );
+
+      const confirmButton = screen.getByRole("button", { name: /confirm/i });
+      await user.click(confirmButton);
+      await user.click(confirmButton);
+      await user.click(confirmButton);
+
+      expect(mockOnConfirm).toHaveBeenCalledTimes(3);
+    });
   })
 });
