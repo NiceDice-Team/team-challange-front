@@ -564,6 +564,22 @@ describe("Modal Component", () => {
       expect(screen.getByText("Paragraph 1")).toBeInTheDocument();
       expect(screen.getByText("Action")).toBeInTheDocument();
     });
+    test("handles long title text", () => {
+      const longTitle = "This is a very long title that might wrap to multiple lines";
+      render(
+        <Modal
+          open={true}
+          title={longTitle}
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div>Content</div>
+        </Modal>
+      );
+
+      expect(screen.getByText(longTitle)).toBeInTheDocument();
+    });
   })
 
 });
