@@ -254,5 +254,25 @@ describe("Modal Component", () => {
       expect(mockOnCancel).toHaveBeenCalledTimes(1);
       expect(mockOnConfirm).not.toHaveBeenCalled();
     });
+    test("calls onCancel when close button is clicked", async () => {
+      const user = userEvent.setup();
+      render(
+        <Modal
+          open={true}
+          title="Test Title"
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div>Content</div>
+        </Modal>
+      );
+
+      const closeButton = screen.getByTestId("dialog-close");
+      await user.click(closeButton);
+
+      expect(mockOnCancel).toHaveBeenCalledTimes(1);
+      expect(mockOnConfirm).not.toHaveBeenCalled();
+    });
   })
 });
