@@ -426,6 +426,23 @@ describe("Modal Component", () => {
       const closeButton = screen.getByTestId("dialog-close");
       expect(closeButton).toHaveAttribute("aria-label", "Close");
     });
+    test("title is accessible", () => {
+      render(
+        <Modal
+          open={true}
+          title="Accessible Title"
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div>Content</div>
+        </Modal>
+      );
+
+      const title = screen.getByTestId("dialog-title");
+      expect(title).toBeInTheDocument();
+      expect(title).toHaveTextContent("Accessible Title");
+    });
   })
 
 });
