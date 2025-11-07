@@ -609,6 +609,22 @@ describe("Modal Component", () => {
       expect(screen.getByText("Required Description")).toBeInTheDocument();
       expect(screen.getByText("Required Content")).toBeInTheDocument();
     });
+    test("uses default button text when not provided", () => {
+      render(
+        <Modal
+          open={true}
+          title="Test Title"
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div>Content</div>
+        </Modal>
+      );
+
+      expect(screen.getByRole("button", { name: /confirm/i })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /cancel/i })).toBeInTheDocument();
+    });
   })
 
 });
