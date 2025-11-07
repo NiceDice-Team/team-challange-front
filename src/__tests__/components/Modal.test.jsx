@@ -392,5 +392,24 @@ describe("Modal Component", () => {
       expect(screen.queryByTestId("dialog-content")).not.toBeInTheDocument();
     });
   })
+  describe("Accessibility", () => {
+    test("has proper ARIA attributes", () => {
+      render(
+        <Modal
+          open={true}
+          title="Test Title"
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div>Content</div>
+        </Modal>
+      );
+
+      const dialogContent = screen.getByTestId("dialog-content");
+      expect(dialogContent).toHaveAttribute("aria-labelledby", "dialog-content");
+      expect(dialogContent).not.toHaveAttribute("aria-describedby");
+    });
+  })
 
 });
