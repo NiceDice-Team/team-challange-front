@@ -410,6 +410,22 @@ describe("Modal Component", () => {
       expect(dialogContent).toHaveAttribute("aria-labelledby", "dialog-content");
       expect(dialogContent).not.toHaveAttribute("aria-describedby");
     });
+    test("close button has aria-label", () => {
+      render(
+        <Modal
+          open={true}
+          title="Test Title"
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div>Content</div>
+        </Modal>
+      );
+
+      const closeButton = screen.getByTestId("dialog-close");
+      expect(closeButton).toHaveAttribute("aria-label", "Close");
+    });
   })
 
 });
