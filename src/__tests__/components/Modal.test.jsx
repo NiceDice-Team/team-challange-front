@@ -543,6 +543,27 @@ describe("Modal Component", () => {
       expect(screen.getByTestId("dialog-content")).toBeInTheDocument();
       expect(screen.getByTestId("dialog-title")).toBeInTheDocument();
     });
+    test("handles complex children content", () => {
+      render(
+        <Modal
+          open={true}
+          title="Test Title"
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div>
+            <h3>Section 1</h3>
+            <p>Paragraph 1</p>
+            <button>Action</button>
+          </div>
+        </Modal>
+      );
+
+      expect(screen.getByText("Section 1")).toBeInTheDocument();
+      expect(screen.getByText("Paragraph 1")).toBeInTheDocument();
+      expect(screen.getByText("Action")).toBeInTheDocument();
+    });
   })
 
 });
