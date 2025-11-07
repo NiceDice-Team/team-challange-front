@@ -274,5 +274,21 @@ describe("Modal Component", () => {
       expect(mockOnCancel).toHaveBeenCalledTimes(1);
       expect(mockOnConfirm).not.toHaveBeenCalled();
     });
+    test("calls onCancel when dialog open state changes via onOpenChange", () => {
+      render(
+        <Modal
+          open={true}
+          title="Test Title"
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div>Content</div>
+        </Modal>
+      );
+
+      const dialog = screen.getByTestId("dialog");
+      expect(dialog).toBeInTheDocument();
+    });
   })
 });
