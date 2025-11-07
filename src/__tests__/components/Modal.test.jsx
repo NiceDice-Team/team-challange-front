@@ -332,4 +332,36 @@ describe("Modal Component", () => {
       expect(mockOnCancel).toHaveBeenCalledTimes(2);
     });
   })
+  describe("State Management", () => {
+    test("updates when open prop changes from false to true", () => {
+      const { rerender } = render(
+        <Modal
+          open={false}
+          title="Test Title"
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div>Content</div>
+        </Modal>
+      );
+
+      expect(screen.queryByTestId("dialog-content")).not.toBeInTheDocument();
+
+      rerender(
+        <Modal
+          open={true}
+          title="Test Title"
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          <div>Content</div>
+        </Modal>
+      );
+
+      expect(screen.getByTestId("dialog-content")).toBeInTheDocument();
+    });
+  })
+
 });
