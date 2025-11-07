@@ -526,4 +526,23 @@ describe("Modal Component", () => {
     });
   })
 
+  describe("Edge Cases", () => {
+    test("handles empty children", () => {
+      render(
+        <Modal
+          open={true}
+          title="Test Title"
+          description="Test Description"
+          onConfirm={mockOnConfirm}
+          onCancel={mockOnCancel}
+        >
+          {null}
+        </Modal>
+      );
+
+      expect(screen.getByTestId("dialog-content")).toBeInTheDocument();
+      expect(screen.getByTestId("dialog-title")).toBeInTheDocument();
+    });
+  })
+
 });
