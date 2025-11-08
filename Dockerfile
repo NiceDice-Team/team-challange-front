@@ -17,9 +17,11 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # Build arguments for flexibility
 ARG NODE_ENV=production
 ARG NEXT_PUBLIC_BACKEND_URL=http://localhost:8000/api/
+ARG NEXTAUTH_URL=http://localhost:3000
 
 ENV NODE_ENV=$NODE_ENV
 ENV NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL
+ENV NEXTAUTH_URL=$NEXTAUTH_URL
 
 # Build the Next.js application
 RUN npm run build
