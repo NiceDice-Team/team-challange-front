@@ -1,15 +1,21 @@
-import { fetchAPI } from "./api.js";
+import { fetchAPI } from "./api";
 
 // Guest cart management using localStorage
 const GUEST_CART_KEY = "guest_cart";
 
+type GuestCartItem = {
+  id: string;
+  product: { id: number | string } & Record<string, any>;
+  quantity: number;
+};
+
 const guestCartManager = {
   // Get guest cart from localStorage
-  getGuestCart() {
+  getGuestCart(): GuestCartItem[] {
     if (typeof window === "undefined") return [];
     try {
       const cart = localStorage.getItem(GUEST_CART_KEY);
-      return cart ? JSON.parse(cart) : [];
+      return cart ? (JSON.parse(cart) as GuestCartItem[]) : [];
     } catch (error) {
       console.error("Error reading guest cart:", error);
       return [];
@@ -17,7 +23,7 @@ const guestCartManager = {
   },
 
   // Save guest cart to localStorage
-  saveGuestCart(cartItems) {
+  saveGuestCart(cartItems: GuestCartItem[]) {
     if (typeof window === "undefined") return;
     try {
       localStorage.setItem(GUEST_CART_KEY, JSON.stringify(cartItems));
@@ -27,7 +33,7 @@ const guestCartManager = {
   },
 
   // Add item to guest cart
-  addToGuestCart(productId, quantity = 1) {
+  addToGuestCart(productId: number | string, quantity = 1) {
     const cart = this.getGuestCart();
     const existingItemIndex = cart.findIndex((item) => item.product.id === productId);
 
@@ -36,7 +42,7 @@ const guestCartManager = {
       cart[existingItemIndex].quantity += quantity;
     } else {
       // Add new item (we'll need to fetch product details)
-      const newItem = {
+      const newItem: GuestCartItem = {
         id: `guest_${productId}_${Date.now()}`, // Generate unique ID
         product: { id: productId }, // Basic product info, will be enriched later
         quantity: quantity,
@@ -49,7 +55,7 @@ const guestCartManager = {
   },
 
   // Update guest cart item quantity
-  updateGuestCartItem(cartItemId, quantity) {
+  updateGuestCartItem(cartItemId: string, quantity: number) {
     const cart = this.getGuestCart();
     const itemIndex = cart.findIndex((item) => item.id === cartItemId);
 
@@ -66,7 +72,7 @@ const guestCartManager = {
   },
 
   // Remove item from guest cart
-  removeFromGuestCart(cartItemId) {
+  removeFromGuestCart(cartItemId: string) {
     const cart = this.getGuestCart();
     const filteredCart = cart.filter((item) => item.id !== cartItemId);
     this.saveGuestCart(filteredCart);
@@ -84,7 +90,7 @@ const isAuthenticated = () => {
 // Cart API services
 export const cartServices = {
   // Get all cart items for the current user
-  async getCartItems() {
+  async getCartItems(): Promise<any[]> {
     if (!isAuthenticated()) {
       // Return guest cart for non-authenticated users
       const guestCart = guestCartManager.getGuestCart();
@@ -105,21 +111,21 @@ export const cartServices = {
             }
           })
         );
-        return enrichedCart;
+        return enrichedCart as any[];
       } catch (error) {
         console.error("Error enriching guest cart:", error);
-        return guestCart;
+        return guestCart as any[];
       }
     }
 
     try {
-      const response = await fetchAPI("carts/", {
+      const response: any = await fetchAPI("carts/", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      return response.results || response;
+      return (response.results || response) as any[];
     } catch (error) {
       console.error("Error fetching cart items:", error);
       return [];
@@ -127,7 +133,7 @@ export const cartServices = {
   },
 
   // Add item to cart
-  async addToCart(productId, quantity = 1) {
+  async addToCart(productId: number | string, quantity = 1) {
     if (!isAuthenticated()) {
       // Handle guest cart
       try {
@@ -159,7 +165,7 @@ export const cartServices = {
   },
 
   // Update cart item quantity
-  async updateCartItem(cartItemId, quantity) {
+  async updateCartItem(cartItemId: string, quantity: number) {
     if (!isAuthenticated()) {
       // Handle guest cart
       try {
@@ -189,7 +195,7 @@ export const cartServices = {
   },
 
   // Remove item from cart
-  async removeFromCart(cartItemId) {
+  async removeFromCart(cartItemId: string) {
     if (!isAuthenticated()) {
       // Handle guest cart
       try {
@@ -219,10 +225,10 @@ export const cartServices = {
 // Product API services for recommendations
 export const productServices = {
   // Get single product by ID
-  async getProductById(productId) {
+  async getProductById(productId: number | string) {
     try {
       const response = await fetchAPI(`products/${productId}/`);
-      return response;
+      return response as any;
     } catch (error) {
       console.error(`Error fetching product ${productId}:`, error);
       throw error;
@@ -232,7 +238,7 @@ export const productServices = {
   // Get random products for recommendations
   async getRandomProducts(limit = 5) {
     try {
-      const response = await fetchAPI(`products/?limit=20&ordering=-created_at`);
+      const response: any = await fetchAPI(`products/?limit=20&ordering=-created_at`);
       const products = response.results || response;
 
       // Randomly select 5 from the fetched products
@@ -240,12 +246,12 @@ export const productServices = {
       return shuffled.slice(0, limit);
     } catch (error) {
       console.error("Error fetching random products:", error);
-      return [];
+      return [] as any[];
     }
   },
 
   // Get products with filtering
-  async getProducts(params = {}) {
+  async getProducts(params: Record<string, any> = {}) {
     try {
       const queryParams = new URLSearchParams();
 
@@ -258,11 +264,11 @@ export const productServices = {
       if (params.limit) queryParams.append("limit", params.limit);
       if (params.offset) queryParams.append("offset", params.offset);
 
-      const response = await fetchAPI(`products/?${queryParams.toString()}`);
+      const response: any = await fetchAPI(`products/?${queryParams.toString()}`);
       return response.results || response;
     } catch (error) {
       console.error("Error fetching products:", error);
-      return [];
+      return [] as any[];
     }
   },
 };

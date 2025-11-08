@@ -2,7 +2,12 @@ export const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 // const API_URL = "/api/";
 
-export async function fetchAPI(endpoint, options = {}) {
+export type FetchOptions = Omit<RequestInit, 'body'> & {
+  body?: unknown;
+  headers?: HeadersInit;
+};
+
+export async function fetchAPI<T = any>(endpoint: string, options: FetchOptions = {}): Promise<T> {
   const url = `${API_URL}${endpoint}`;
   const response = await fetch(url, {
     method: options.method || "GET",
@@ -15,19 +20,19 @@ export async function fetchAPI(endpoint, options = {}) {
     signal: options.signal,
     cache: "no-store",
   });
-  
+
   if (!response.ok) {
     let errorMessage = `API Error! status: ${response.status}`;
     try {
       const errorData = await response.json();
-      if (errorData.errors && errorData.errors.length > 0) {
-        errorMessage = errorData.errors[0].detail || errorMessage;
+      if ((errorData as any).errors && (errorData as any).errors.length > 0) {
+        errorMessage = (errorData as any).errors[0].detail || errorMessage;
       }
     } catch {
       // If error response isn't JSON, use default message
     }
     throw new Error(errorMessage);
   }
-  
-  return response.json();
+
+  return response.json() as Promise<T>;
 }
