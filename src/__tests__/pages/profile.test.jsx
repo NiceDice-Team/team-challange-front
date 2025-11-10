@@ -197,6 +197,16 @@ describe("Profile Page", () => {
 
       expect(screen.getByTestId("logout-button")).toBeInTheDocument();
     });
+    test("renders profile card with user information", () => {
+      render(<ProfilePage />);
+
+      expect(screen.getByText("Your Profile")).toBeInTheDocument();
+      expect(screen.getByText("Quick view of your account details")).toBeInTheDocument();
+      expect(screen.getByText("NAME")).toBeInTheDocument();
+      expect(screen.getByText("John Doe")).toBeInTheDocument();
+      expect(screen.getByText("EMAIL")).toBeInTheDocument();
+      expect(screen.getByText("john.doe@example.com")).toBeInTheDocument();
+    });
   })
 
 });
