@@ -214,6 +214,14 @@ describe("Profile Page", () => {
         screen.getByRole("button", { name: /CHANGE PASSWORD/i })
       ).toBeInTheDocument();
     });
+    test("renders tabs", () => {
+      render(<ProfilePage />);
+
+      expect(screen.getByTestId("tabs")).toBeInTheDocument();
+      expect(screen.getByTestId("tabs-list")).toBeInTheDocument();
+      expect(screen.getByTestId("tab-trigger-history")).toBeInTheDocument();
+      expect(screen.getByTestId("tab-trigger-edit")).toBeInTheDocument();
+    });
   })
 
 });
