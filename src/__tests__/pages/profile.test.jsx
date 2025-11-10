@@ -207,6 +207,13 @@ describe("Profile Page", () => {
       expect(screen.getByText("EMAIL")).toBeInTheDocument();
       expect(screen.getByText("john.doe@example.com")).toBeInTheDocument();
     });
+    test("renders change password button", () => {
+      render(<ProfilePage />);
+
+      expect(
+        screen.getByRole("button", { name: /CHANGE PASSWORD/i })
+      ).toBeInTheDocument();
+    });
   })
 
 });
