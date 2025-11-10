@@ -163,11 +163,18 @@ describe("Profile Page", () => {
     };
   });
 
-   describe("Rendering", () => {
+  describe("Rendering", () => {
     test("renders ProfilePage component", () => {
       render(<ProfilePage />);
 
       expect(screen.getByTestId("protected-route")).toBeInTheDocument();
+    });
+    test("displays welcome message with user name", () => {
+      render(<ProfilePage />);
+
+      expect(
+        screen.getByText(/Welcome, John!/i)
+      ).toBeInTheDocument();
     });
   })
 
