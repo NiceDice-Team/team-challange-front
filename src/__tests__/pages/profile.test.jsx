@@ -192,6 +192,11 @@ describe("Profile Page", () => {
       expect(screen.getByText("Home")).toBeInTheDocument();
       expect(screen.getByText("My account")).toBeInTheDocument();
     });
+    test("renders logout button", () => {
+      render(<ProfilePage />);
+
+      expect(screen.getByTestId("logout-button")).toBeInTheDocument();
+    });
   })
 
 });
