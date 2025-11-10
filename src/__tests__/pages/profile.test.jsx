@@ -163,5 +163,12 @@ describe("Profile Page", () => {
     };
   });
 
+   describe("Rendering", () => {
+    test("renders ProfilePage component", () => {
+      render(<ProfilePage />);
+
+      expect(screen.getByTestId("protected-route")).toBeInTheDocument();
+    });
+  })
 
 });
