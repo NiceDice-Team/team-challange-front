@@ -233,6 +233,21 @@ describe("Profile Page", () => {
       ).toBeInTheDocument();
       expect(screen.getByTestId("orders-table")).toBeInTheDocument();
     });
+    test("renders edit profile tab content when clicked", async () => {
+      const user = userEvent.setup();
+      render(<ProfilePage />);
+
+      const editTab = screen.getByTestId("tab-trigger-edit");
+      await user.click(editTab);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("tab-content-edit")).toBeInTheDocument();
+      });
+      expect(screen.getByText("Edit Your Profile")).toBeInTheDocument();
+      expect(
+        screen.getByText("Update your personal information and account details")
+      ).toBeInTheDocument();
+    });
   })
 
 });
