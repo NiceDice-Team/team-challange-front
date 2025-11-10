@@ -222,6 +222,17 @@ describe("Profile Page", () => {
       expect(screen.getByTestId("tab-trigger-history")).toBeInTheDocument();
       expect(screen.getByTestId("tab-trigger-edit")).toBeInTheDocument();
     });
+    test("renders order history tab by default", () => {
+      render(<ProfilePage />);
+
+      expect(screen.getByTestId("tab-content-history")).toBeInTheDocument();
+      const orderHistoryHeadings = screen.getAllByText("ORDER HISTORY");
+      expect(orderHistoryHeadings.length).toBeGreaterThan(0);
+      expect(
+        screen.getByText("View and track all your previous orders")
+      ).toBeInTheDocument();
+      expect(screen.getByTestId("orders-table")).toBeInTheDocument();
+    });
   })
 
 });
