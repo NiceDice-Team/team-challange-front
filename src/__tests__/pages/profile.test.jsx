@@ -176,6 +176,15 @@ describe("Profile Page", () => {
         screen.getByText(/Welcome, John!/i)
       ).toBeInTheDocument();
     });
+    test("displays account dashboard description", () => {
+      render(<ProfilePage />);
+
+      expect(
+        screen.getByText(
+          /🧩 Your account dashboard - manage your profile, track orders, and update your preferences/i
+        )
+      ).toBeInTheDocument();
+    });
   })
 
 });
