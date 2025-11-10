@@ -185,6 +185,13 @@ describe("Profile Page", () => {
         )
       ).toBeInTheDocument();
     });
+    test("renders breadcrumb", () => {
+      render(<ProfilePage />);
+
+      expect(screen.getByTestId("breadcrumb")).toBeInTheDocument();
+      expect(screen.getByText("Home")).toBeInTheDocument();
+      expect(screen.getByText("My account")).toBeInTheDocument();
+    });
   })
 
 });
