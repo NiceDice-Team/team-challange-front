@@ -272,6 +272,13 @@ describe("Profile Page", () => {
       const emailSection = screen.getByText("EMAIL").closest("div");
       expect(emailSection).toHaveTextContent("john.doe@example.com");
     });
+    test("handles missing user data gracefully", () => {
+      mockStoreState.userData = null;
+
+      render(<ProfilePage />);
+
+      expect(screen.getByText(/Welcome, !/i)).toBeInTheDocument();
+    });
   })
 
 });
