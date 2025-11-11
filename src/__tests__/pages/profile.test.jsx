@@ -480,6 +480,21 @@ describe("Profile Page", () => {
         title: "Success! Your profile has been updated.",
       });
     });
+    test("shows error toast on submission failure", async () => {
+      const user = userEvent.setup();
+      mockUpdateProfile.isError = true;
+      mockUpdateProfile.error = { message: "Update failed" };
+
+      render(<ProfilePage />);
+
+      await waitFor(() => {
+        expect(showCustomToast).toHaveBeenCalledWith({
+          type: "error",
+          title: "Failed to update profile",
+          description: "Update failed",
+        });
+      });
+    });
   })
 
 });
