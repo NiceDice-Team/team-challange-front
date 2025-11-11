@@ -537,4 +537,27 @@ describe("Profile Page", () => {
     });
   })
 
+  describe("Tab Navigation", () => {
+    test("switches between order history and edit profile tabs", async () => {
+      const user = userEvent.setup();
+      render(<ProfilePage />);
+
+      expect(screen.getByTestId("tab-content-history")).toBeInTheDocument();
+
+      const editTab = screen.getByTestId("tab-trigger-edit");
+      await user.click(editTab);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("tab-content-edit")).toBeInTheDocument();
+      });
+
+      const historyTab = screen.getByTestId("tab-trigger-history");
+      await user.click(historyTab);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("tab-content-history")).toBeInTheDocument();
+      });
+    });
+  });
+
 });
