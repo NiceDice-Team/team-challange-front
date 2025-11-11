@@ -249,5 +249,17 @@ describe("Profile Page", () => {
       ).toBeInTheDocument();
     });
   })
+  
+  describe("User Data Display", () => {
+    test("displays loading state when isLoading is true", () => {
+      mockStoreState.isLoading = true;
+
+      render(<ProfilePage />);
+
+      expect(screen.getByText(/Welcome, \.\.\.!/i)).toBeInTheDocument();
+      const loadingTexts = screen.getAllByText("Loading...");
+      expect(loadingTexts.length).toBeGreaterThan(0);
+    });
+  })
 
 });
