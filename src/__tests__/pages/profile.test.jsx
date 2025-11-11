@@ -317,6 +317,23 @@ describe("Profile Page", () => {
         expect(emailInput).toHaveValue("john.doe@example.com");
       });
     });
+    test("allows editing form fields", async () => {
+      const user = userEvent.setup();
+      render(<ProfilePage />);
+
+      const editTab = screen.getByTestId("tab-trigger-edit");
+      await user.click(editTab);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText("First Name")).toBeInTheDocument();
+      });
+
+      const firstNameInput = screen.getByLabelText("First Name");
+      await user.clear(firstNameInput);
+      await user.type(firstNameInput, "Jane");
+
+      expect(firstNameInput).toHaveValue("Jane");
+    });
 
   })
 
