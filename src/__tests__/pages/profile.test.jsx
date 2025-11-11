@@ -497,4 +497,20 @@ describe("Profile Page", () => {
     });
   })
 
+  describe("Change Password Modal", () => {
+    test("opens change password modal when button is clicked", async () => {
+      const user = userEvent.setup();
+      render(<ProfilePage />);
+
+      const changePasswordButton = screen.getByRole("button", {
+        name: /CHANGE PASSWORD/i,
+      });
+      await user.click(changePasswordButton);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("change-pass-modal")).toBeInTheDocument();
+      });
+    });
+  })
+
 });
