@@ -366,4 +366,31 @@ describe("Profile Page", () => {
 
   })
 
+  describe("Form Validation", () => {
+    test("shows validation error for invalid first name", async () => {
+      const user = userEvent.setup();
+      render(<ProfilePage />);
+
+      const editTab = screen.getByTestId("tab-trigger-edit");
+      await user.click(editTab);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText("First Name")).toBeInTheDocument();
+      });
+
+      const firstNameInput = screen.getByLabelText("First Name");
+      await user.clear(firstNameInput);
+      await user.type(firstNameInput, "A");
+
+      const submitButton = screen.getByRole("button", { name: /MAKE CHANGES/i });
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(/First name must be at least 2 characters/i)
+        ).toBeInTheDocument();
+      }, { timeout: 3000 });
+    });
+  })
+
 });
