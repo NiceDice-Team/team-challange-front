@@ -249,7 +249,7 @@ describe("Profile Page", () => {
       ).toBeInTheDocument();
     });
   })
-  
+
   describe("User Data Display", () => {
     test("displays loading state when isLoading is true", () => {
       mockStoreState.isLoading = true;
@@ -259,6 +259,12 @@ describe("Profile Page", () => {
       expect(screen.getByText(/Welcome, \.\.\.!/i)).toBeInTheDocument();
       const loadingTexts = screen.getAllByText("Loading...");
       expect(loadingTexts.length).toBeGreaterThan(0);
+    });
+    test("displays user name correctly", () => {
+      render(<ProfilePage />);
+
+      const nameSection = screen.getByText("NAME").closest("div");
+      expect(nameSection).toHaveTextContent("John Doe");
     });
   })
 
