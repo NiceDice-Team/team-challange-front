@@ -295,6 +295,28 @@ describe("Profile Page", () => {
       expect(screen.getByLabelText("Last Name")).toBeInTheDocument();
       expect(screen.getByLabelText("Email")).toBeInTheDocument();
     });
+    test("pre-fills form with user data", async () => {
+      const user = userEvent.setup();
+      render(<ProfilePage />);
+
+      const editTab = screen.getByTestId("tab-trigger-edit");
+      await user.click(editTab);
+
+      await waitFor(() => {
+        const firstNameInput = screen.getByLabelText("First Name");
+        expect(firstNameInput).toHaveValue("John");
+      });
+      
+      await waitFor(() => {
+        const lastNameInput = screen.getByLabelText("Last Name");
+        expect(lastNameInput).toHaveValue("Doe");
+      });
+      
+      await waitFor(() => {
+        const emailInput = screen.getByLabelText("Email");
+        expect(emailInput).toHaveValue("john.doe@example.com");
+      });
+    });
 
   })
 
