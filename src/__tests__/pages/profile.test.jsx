@@ -391,6 +391,28 @@ describe("Profile Page", () => {
         ).toBeInTheDocument();
       }, { timeout: 3000 });
     });
+    test("shows validation error for invalid email", async () => {
+      const user = userEvent.setup();
+      render(<ProfilePage />);
+
+      const editTab = screen.getByTestId("tab-trigger-edit");
+      await user.click(editTab);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText("Email")).toBeInTheDocument();
+      });
+
+      const emailInput = screen.getByLabelText("Email");
+      await user.clear(emailInput);
+      await user.type(emailInput, "invalid-email");
+
+      const submitButton = screen.getByRole("button", { name: /MAKE CHANGES/i });
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(/Invalid email/i)).toBeInTheDocument();
+      }, { timeout: 3000 });
+    });
   })
 
 });
