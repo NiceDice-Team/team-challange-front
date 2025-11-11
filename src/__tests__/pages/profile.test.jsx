@@ -511,6 +511,30 @@ describe("Profile Page", () => {
         expect(screen.getByTestId("change-pass-modal")).toBeInTheDocument();
       });
     });
+    test("closes change password modal when close is clicked", async () => {
+      const user = userEvent.setup();
+      render(<ProfilePage />);
+
+      const changePasswordButton = screen.getByRole("button", {
+        name: /CHANGE PASSWORD/i,
+      });
+      await user.click(changePasswordButton);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("change-pass-modal")).toBeInTheDocument();
+      });
+
+      const closeButton = screen.getByRole("button", {
+        name: /Close Change Pass/i,
+      });
+      await user.click(closeButton);
+
+      await waitFor(() => {
+        expect(
+          screen.queryByTestId("change-pass-modal")
+        ).not.toBeInTheDocument();
+      });
+    });
   })
 
 });
