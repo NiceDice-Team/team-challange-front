@@ -415,4 +415,43 @@ describe("Profile Page", () => {
     });
   })
 
+  describe("Form Submission", () => {
+    test("submits form with valid data", async () => {
+      const user = userEvent.setup();
+      mockMutateAsync.mockResolvedValue({
+        id: "user-123",
+        first_name: "Jane",
+        last_name: "Smith",
+        email: "jane.smith@example.com",
+      });
+
+      render(<ProfilePage />);
+
+      const editTab = screen.getByTestId("tab-trigger-edit");
+      await user.click(editTab);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText("First Name")).toBeInTheDocument();
+      });
+
+      const firstNameInput = screen.getByLabelText("First Name");
+      await user.clear(firstNameInput);
+      await user.type(firstNameInput, "Jane");
+
+      const submitButton = screen.getByRole("button", { name: /MAKE CHANGES/i });
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockMutateAsync).toHaveBeenCalledWith({
+          userId: "user-123",
+          data: {
+            first_name: "Jane",
+            last_name: "Doe",
+            email: "john.doe@example.com",
+          },
+        });
+      });
+    });
+  })
+
 });
