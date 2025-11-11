@@ -347,6 +347,22 @@ describe("Profile Page", () => {
         ).toBeInTheDocument();
       });
     });
+    test("disables submit button when loading", async () => {
+      const user = userEvent.setup();
+      mockUpdateProfile.isPending = true;
+
+      render(<ProfilePage />);
+
+      const editTab = screen.getByTestId("tab-trigger-edit");
+      await user.click(editTab);
+
+      await waitFor(() => {
+        const submitButton = screen.getByRole("button", {
+          name: /UPDATING.../i,
+        });
+        expect(submitButton).toBeDisabled();
+      });
+    });
 
   })
 
