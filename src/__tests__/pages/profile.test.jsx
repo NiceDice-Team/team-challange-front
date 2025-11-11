@@ -281,4 +281,21 @@ describe("Profile Page", () => {
     });
   })
 
+  describe("Edit Profile Form", () => {
+    test("renders all form fields", async () => {
+      const user = userEvent.setup();
+      render(<ProfilePage />);
+
+      const editTab = screen.getByTestId("tab-trigger-edit");
+      await user.click(editTab);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText("First Name")).toBeInTheDocument();
+      });
+      expect(screen.getByLabelText("Last Name")).toBeInTheDocument();
+      expect(screen.getByLabelText("Email")).toBeInTheDocument();
+    });
+
+  })
+
 });
