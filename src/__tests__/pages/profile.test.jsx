@@ -452,6 +452,34 @@ describe("Profile Page", () => {
         });
       });
     });
+    test("updates user data on successful submission", async () => {
+      const user = userEvent.setup();
+      const updatedData = {
+        id: "user-123",
+        first_name: "Jane",
+        last_name: "Smith",
+        email: "jane.smith@example.com",
+      };
+
+      mockUpdateProfile.isSuccess = true;
+      mockUpdateProfile.data = updatedData;
+
+      render(<ProfilePage />);
+
+      await waitFor(() => {
+        expect(mockSetUserData).toHaveBeenCalledWith({
+          id: updatedData.id,
+          first_name: updatedData.first_name,
+          last_name: updatedData.last_name,
+          email: updatedData.email,
+        });
+      });
+
+      expect(showCustomToast).toHaveBeenCalledWith({
+        type: "success",
+        title: "Success! Your profile has been updated.",
+      });
+    });
   })
 
 });
