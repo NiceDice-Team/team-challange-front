@@ -266,6 +266,12 @@ describe("Profile Page", () => {
       const nameSection = screen.getByText("NAME").closest("div");
       expect(nameSection).toHaveTextContent("John Doe");
     });
+    test("displays user email correctly", () => {
+      render(<ProfilePage />);
+
+      const emailSection = screen.getByText("EMAIL").closest("div");
+      expect(emailSection).toHaveTextContent("john.doe@example.com");
+    });
   })
 
 });
