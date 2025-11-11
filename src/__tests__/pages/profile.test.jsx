@@ -334,6 +334,19 @@ describe("Profile Page", () => {
 
       expect(firstNameInput).toHaveValue("Jane");
     });
+    test("renders submit button", async () => {
+      const user = userEvent.setup();
+      render(<ProfilePage />);
+
+      const editTab = screen.getByTestId("tab-trigger-edit");
+      await user.click(editTab);
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole("button", { name: /MAKE CHANGES/i })
+        ).toBeInTheDocument();
+      });
+    });
 
   })
 
