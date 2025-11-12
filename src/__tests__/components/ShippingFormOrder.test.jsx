@@ -165,6 +165,11 @@ describe("ShippingForm", () => {
         "/cart"
       );
     });
+    test("does not render billing address fields by default (when copyBilling = true)", () => {
+      render(<ShippingForm paymentMethod={mockPaymentMethod} />);
+
+      expect(screen.queryByText("Billing adress")).not.toBeInTheDocument();
+    });
   })
 
 });
