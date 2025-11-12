@@ -241,4 +241,23 @@ describe("ShippingForm", () => {
     });
   })
 
+  describe("Form validation", () => {
+    test("shows validation error for empty first name", async () => {
+      const user = userEvent.setup();
+      render(<ShippingForm paymentMethod={mockPaymentMethod} />);
+
+      const firstNameInput = screen.getByTestId("shippingFirstName");
+      await user.clear(firstNameInput);
+
+      const submitButton = screen.getByTestId("submit-button");
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(/Name must be at least 2 characters/i)
+        ).toBeInTheDocument();
+      });
+    });
+  })
+
 });
