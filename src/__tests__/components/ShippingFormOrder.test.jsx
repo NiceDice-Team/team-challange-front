@@ -170,6 +170,17 @@ describe("ShippingForm", () => {
 
       expect(screen.queryByText("Billing adress")).not.toBeInTheDocument();
     });
+    test("renders billing address fields when copyBilling is false", async () => {
+      const user = userEvent.setup();
+      render(<ShippingForm paymentMethod={mockPaymentMethod} />);
+
+      const checkbox = screen.getByTestId("copyBilling");
+      await user.click(checkbox);
+
+      await waitFor(() => {
+        expect(screen.getByText("Billing adress")).toBeInTheDocument();
+      });
+    });
   })
 
 });
