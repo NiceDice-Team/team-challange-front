@@ -290,6 +290,23 @@ describe("ShippingForm", () => {
         ).toBeInTheDocument();
       });
     });
+    test("shows validation error for short address", async () => {
+        const user = userEvent.setup();
+        render(<ShippingForm paymentMethod={mockPaymentMethod} />);
+
+        const addressInput = screen.getByTestId("shippingAddress");
+        await user.clear(addressInput);
+        await user.type(addressInput, "123");
+
+        const submitButton = screen.getByTestId("submit-button");
+        await user.click(submitButton);
+
+        await waitFor(() => {
+          expect(
+            screen.getByText(/Address must be at least 5 characters/i)
+          ).toBeInTheDocument();
+        });
+    });
   })
 
 });
