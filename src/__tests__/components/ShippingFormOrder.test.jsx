@@ -408,6 +408,16 @@ describe("ShippingForm", () => {
 
       expect(countrySelect).toHaveValue("Canada");
     });
+    test("allows changing phone number", async () => {
+      const user = userEvent.setup();
+      render(<ShippingForm paymentMethod={mockPaymentMethod} />);
+
+      const phoneInput = screen.getByTestId("shippingPhone");
+      await user.clear(phoneInput);
+      await user.type(phoneInput, "+1987654321");
+
+      expect(phoneInput).toHaveValue("+1987654321");
+    });
   })
 
 });
