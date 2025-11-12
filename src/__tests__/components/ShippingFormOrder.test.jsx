@@ -258,6 +258,21 @@ describe("ShippingForm", () => {
         ).toBeInTheDocument();
       });
     });
+    test("shows validation error for invalid email", async () => {
+      const user = userEvent.setup();
+      render(<ShippingForm paymentMethod={mockPaymentMethod} />);
+
+      const emailInput = screen.getByTestId("shippingEmail");
+      await user.clear(emailInput);
+      await user.type(emailInput, "invalid-email");
+
+      const submitButton = screen.getByTestId("submit-button");
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(/Invalid email/i)).toBeInTheDocument();
+      });
+    });
   })
 
 });
