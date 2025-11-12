@@ -568,6 +568,20 @@ describe("Profile Page", () => {
 
       expect(screen.getByText(/Welcome, !/i)).toBeInTheDocument();
     });
+    test("disables form fields when loading", async () => {
+      const user = userEvent.setup();
+      mockStoreState.isLoading = true;
+
+      render(<ProfilePage />);
+
+      const editTab = screen.getByTestId("tab-trigger-edit");
+      await user.click(editTab);
+
+      await waitFor(() => {
+        const firstNameInput = screen.getByLabelText("First Name");
+        expect(firstNameInput).toBeDisabled();
+      });
+    });
   })
 
 });
