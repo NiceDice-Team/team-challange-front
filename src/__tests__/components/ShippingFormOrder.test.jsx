@@ -323,6 +323,25 @@ describe("ShippingForm", () => {
         expect(mockPush).toHaveBeenCalledWith("/checkout-order/order-review");
       });
     });
+    test("does not submit the form if there are validation errors", async () => {
+      const user = userEvent.setup();
+      render(<ShippingForm paymentMethod={mockPaymentMethod} />);
+
+      const firstNameInput = screen.getByTestId("shippingFirstName");
+      await user.clear(firstNameInput);
+
+      const submitButton = screen.getByTestId("submit-button");
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(/Name must be at least 2 characters/i)
+        ).toBeInTheDocument();
+      });
+
+      expect(mockSetFormData).not.toHaveBeenCalled();
+      expect(mockPush).not.toHaveBeenCalled();
+    });
   })
 
 });
