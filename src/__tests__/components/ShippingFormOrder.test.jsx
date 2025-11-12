@@ -222,6 +222,23 @@ describe("ShippingForm", () => {
         expect(callArgs.billingAddress).toBe("123 Main Street");
       });
     });
+    test("hides billing address fields when checkbox is checked", async () => {
+      const user = userEvent.setup();
+      render(<ShippingForm paymentMethod={mockPaymentMethod} />);
+
+      const checkbox = screen.getByTestId("copyBilling");
+      await user.click(checkbox);
+
+      await waitFor(() => {
+        expect(screen.getByText("Billing adress")).toBeInTheDocument();
+      });
+
+      await user.click(checkbox);
+
+      await waitFor(() => {
+        expect(screen.queryByText("Billing adress")).not.toBeInTheDocument();
+      });
+    });
   })
 
 });
