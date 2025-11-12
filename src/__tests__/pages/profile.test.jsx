@@ -592,6 +592,13 @@ describe("Profile Page", () => {
       });
       expect(changePasswordButton).toBeDisabled();
     });
+    test("fetches user data when authenticated but data is incomplete", () => {
+      mockStoreState.userData = { id: "user-123" };
+
+      render(<ProfilePage />);
+
+      expect(mockFetchUserData).toHaveBeenCalledWith("user-123");
+    });
   })
 
 });
