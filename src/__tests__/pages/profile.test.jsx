@@ -560,4 +560,14 @@ describe("Profile Page", () => {
     });
   });
 
+  describe("Edge Cases", () => {
+    test("handles empty user data", () => {
+      mockStoreState.userData = { id: "user-123" };
+
+      render(<ProfilePage />);
+
+      expect(screen.getByText(/Welcome, !/i)).toBeInTheDocument();
+    });
+  })
+
 });
