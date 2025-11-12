@@ -309,4 +309,20 @@ describe("ShippingForm", () => {
     });
   })
 
+  describe("Form submission", () => {
+    test("submits form with valid data", async () => {
+      const user = userEvent.setup();
+      render(<ShippingForm paymentMethod={mockPaymentMethod} />);
+
+      const submitButton = screen.getByTestId("submit-button");
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockSetFormData).toHaveBeenCalled();
+        expect(mockSetPaymentMethod).toHaveBeenCalledWith(mockPaymentMethod);
+        expect(mockPush).toHaveBeenCalledWith("/checkout-order/order-review");
+      });
+    });
+  })
+
 });
