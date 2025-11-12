@@ -582,6 +582,16 @@ describe("Profile Page", () => {
         expect(firstNameInput).toBeDisabled();
       });
     });
+    test("disables change password button when loading", () => {
+      mockStoreState.isLoading = true;
+
+      render(<ProfilePage />);
+
+      const changePasswordButton = screen.getByRole("button", {
+        name: /CHANGE PASSWORD/i,
+      });
+      expect(changePasswordButton).toBeDisabled();
+    });
   })
 
 });
