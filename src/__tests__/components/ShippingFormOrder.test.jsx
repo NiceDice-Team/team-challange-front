@@ -155,6 +155,16 @@ describe("ShippingForm", () => {
         screen.getByRole("button", { name: /Order review/i })
       ).toBeInTheDocument();
     });
+
+    test("renders link to return to cart", () => {
+      render(<ShippingForm paymentMethod={mockPaymentMethod} />);
+
+      expect(screen.getByText("Return to cart")).toBeInTheDocument();
+      expect(screen.getByRole("link", { name: /Return to cart/i })).toHaveAttribute(
+        "href",
+        "/cart"
+      );
+    });
   })
 
 });
