@@ -342,6 +342,50 @@ describe("ShippingForm", () => {
       expect(mockSetFormData).not.toHaveBeenCalled();
       expect(mockPush).not.toHaveBeenCalled();
     });
+    test("submits form with billing address when copyBilling is false", async () => {
+      const user = userEvent.setup();
+      render(<ShippingForm paymentMethod={mockPaymentMethod} />);
+
+      const checkbox = screen.getByTestId("copyBilling");
+      await user.click(checkbox);
+
+      await waitFor(() => {
+        expect(screen.getByText("Billing adress")).toBeInTheDocument();
+      });
+
+      const billingCountry = screen.getByTestId("billingCountry");
+      const billingFirstName = screen.getByTestId("billingFirstName");
+      const billingLastName = screen.getByTestId("billingLastName");
+      const billingAddress = screen.getByTestId("billingAddress");
+      const billingCity = screen.getByTestId("billingCity");
+      const billingZipCode = screen.getByTestId("billingZipCode");
+      const billingEmail = screen.getByTestId("billingEmail");
+      const billingPhone = screen.getByTestId("billingPhone");
+
+      await user.selectOptions(billingCountry, "Canada");
+      await user.clear(billingFirstName);
+      await user.type(billingFirstName, "Jane");
+      await user.clear(billingLastName);
+      await user.type(billingLastName, "Smith");
+      await user.clear(billingAddress);
+      await user.type(billingAddress, "456 Oak Avenue");
+      await user.clear(billingCity);
+      await user.type(billingCity, "Los Angeles");
+      await user.clear(billingZipCode);
+      await user.type(billingZipCode, "90210");
+      await user.clear(billingEmail);
+      await user.type(billingEmail, "jane.smith@example.com");
+      await user.clear(billingPhone);
+      await user.type(billingPhone, "+1987654321");
+
+      const submitButton = screen.getByTestId("submit-button");
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockSetFormData).toHaveBeenCalled();
+        expect(mockPush).toHaveBeenCalledWith("/checkout-order/order-review");
+      });
+    });
   })
 
 });
