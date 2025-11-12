@@ -420,4 +420,13 @@ describe("ShippingForm", () => {
     });
   })
 
+  describe("Submit button state", () => {
+    test("submit button is not disabled by default", () => {
+      render(<ShippingForm paymentMethod={mockPaymentMethod} />);
+
+      const submitButton = screen.getByTestId("submit-button");
+      expect(submitButton).not.toBeDisabled();
+    });
+  });
+
 });
