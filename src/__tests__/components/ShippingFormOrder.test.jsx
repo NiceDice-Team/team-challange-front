@@ -121,5 +121,26 @@ describe("ShippingForm", () => {
     jest.clearAllMocks();
     console.log = jest.fn();
   });
+  describe("Rendering", () => {
+    test("renders form with Shipping title", () => {
+      render(<ShippingForm paymentMethod={mockPaymentMethod} />);
+
+      expect(screen.getByText("Shipping")).toBeInTheDocument();
+    });
+
+    test("отображает все поля формы доставки", () => {
+      render(<ShippingForm paymentMethod={mockPaymentMethod} />);
+
+      expect(screen.getByLabelText("First Name")).toBeInTheDocument();
+      expect(screen.getByLabelText("Last Name")).toBeInTheDocument();
+      expect(screen.getByLabelText("Address")).toBeInTheDocument();
+      expect(screen.getByLabelText("Apartment, suite, etc")).toBeInTheDocument();
+      expect(screen.getByLabelText("Zip Code")).toBeInTheDocument();
+      expect(screen.getByLabelText("Town / City")).toBeInTheDocument();
+      expect(screen.getByLabelText("Email")).toBeInTheDocument();
+      expect(screen.getByTestId("shippingCountry")).toBeInTheDocument();
+      expect(screen.getByTestId("shippingPhone")).toBeInTheDocument();
+    });
+  })
 
 });
