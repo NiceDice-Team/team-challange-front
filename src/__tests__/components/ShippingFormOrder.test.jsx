@@ -141,6 +141,13 @@ describe("ShippingForm", () => {
       expect(screen.getByTestId("shippingCountry")).toBeInTheDocument();
       expect(screen.getByTestId("shippingPhone")).toBeInTheDocument();
     });
+    test("renders checkbox for copying shipping address", () => {
+      render(<ShippingForm paymentMethod={mockPaymentMethod} />);
+
+      expect(
+        screen.getByLabelText(/Use shipping address as billing address/i)
+      ).toBeInTheDocument();
+    });
   })
 
 });
