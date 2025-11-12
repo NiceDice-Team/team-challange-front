@@ -148,6 +148,13 @@ describe("ShippingForm", () => {
         screen.getByLabelText(/Use shipping address as billing address/i)
       ).toBeInTheDocument();
     });
+    test("renders submit button", () => {
+      render(<ShippingForm paymentMethod={mockPaymentMethod} />);
+
+      expect(
+        screen.getByRole("button", { name: /Order review/i })
+      ).toBeInTheDocument();
+    });
   })
 
 });
