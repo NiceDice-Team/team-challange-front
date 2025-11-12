@@ -183,4 +183,19 @@ describe("ShippingForm", () => {
     });
   })
 
+  describe("Default values", () => {
+    test("fills form fields with default values", () => {
+      render(<ShippingForm paymentMethod={mockPaymentMethod} />);
+
+      expect(screen.getByTestId("shippingFirstName")).toHaveValue("John");
+      expect(screen.getByTestId("shippingLastName")).toHaveValue("Doe");
+      expect(screen.getByTestId("shippingAddress")).toHaveValue("123 Main Street");
+      expect(screen.getByTestId("shippingApartment")).toHaveValue("Apt 4B");
+      expect(screen.getByTestId("shippingZipCode")).toHaveValue("12345");
+      expect(screen.getByTestId("shippingCity")).toHaveValue("New York");
+      expect(screen.getByTestId("shippingEmail")).toHaveValue("john.doe@example.com");
+      expect(screen.getByTestId("shippingPhone")).toHaveValue("+1234567890");
+    });
+  })
+
 });
