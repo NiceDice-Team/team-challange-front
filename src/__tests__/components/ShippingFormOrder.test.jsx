@@ -273,6 +273,23 @@ describe("ShippingForm", () => {
         expect(screen.getByText(/Invalid email/i)).toBeInTheDocument();
       });
     });
+    test("shows validation error for short zip code", async () => {
+      const user = userEvent.setup();
+      render(<ShippingForm paymentMethod={mockPaymentMethod} />);
+
+      const zipCodeInput = screen.getByTestId("shippingZipCode");
+      await user.clear(zipCodeInput);
+      await user.type(zipCodeInput, "12");
+
+      const submitButton = screen.getByTestId("submit-button");
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(/Zip code must be at least 3 characters/i)
+        ).toBeInTheDocument();
+      });
+    });
   })
 
 });
