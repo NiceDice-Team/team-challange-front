@@ -399,6 +399,15 @@ describe("ShippingForm", () => {
 
       expect(firstNameInput).toHaveValue("Jane");
     });
+    test("allows changing shipping country", async () => {
+      const user = userEvent.setup();
+      render(<ShippingForm paymentMethod={mockPaymentMethod} />);
+
+      const countrySelect = screen.getByTestId("shippingCountry");
+      await user.selectOptions(countrySelect, "Canada");
+
+      expect(countrySelect).toHaveValue("Canada");
+    });
   })
 
 });
