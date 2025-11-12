@@ -203,4 +203,25 @@ describe("ShippingForm", () => {
     });
   })
 
+  describe("Copying billing address", () => {
+    test("copies shipping data to billing address when copyBilling = true", async () => {
+      const user = userEvent.setup();
+      render(<ShippingForm paymentMethod={mockPaymentMethod} />);
+
+      const checkbox = screen.getByTestId("copyBilling");
+      expect(checkbox).toBeChecked();
+
+      const submitButton = screen.getByTestId("submit-button");
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockSetFormData).toHaveBeenCalled();
+        const callArgs = mockSetFormData.mock.calls[0][0];
+        expect(callArgs.billingFirstName).toBe("John");
+        expect(callArgs.billingLastName).toBe("Doe");
+        expect(callArgs.billingAddress).toBe("123 Main Street");
+      });
+    });
+  })
+
 });
