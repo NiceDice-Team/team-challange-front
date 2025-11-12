@@ -196,6 +196,11 @@ describe("ShippingForm", () => {
       expect(screen.getByTestId("shippingEmail")).toHaveValue("john.doe@example.com");
       expect(screen.getByTestId("shippingPhone")).toHaveValue("+1234567890");
     });
+    test("checkbox copyBilling is checked by default", () => {
+      render(<ShippingForm paymentMethod={mockPaymentMethod} />);
+
+      expect(screen.getByTestId("copyBilling")).toBeChecked();
+    });
   })
 
 });
