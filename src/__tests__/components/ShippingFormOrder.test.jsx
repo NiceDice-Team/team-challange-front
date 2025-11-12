@@ -388,4 +388,17 @@ describe("ShippingForm", () => {
     });
   })
 
+  describe("Editing fields", () => {
+    test("allows editing form fields", async () => {
+      const user = userEvent.setup();
+      render(<ShippingForm paymentMethod={mockPaymentMethod} />);
+
+      const firstNameInput = screen.getByTestId("shippingFirstName");
+      await user.clear(firstNameInput);
+      await user.type(firstNameInput, "Jane");
+
+      expect(firstNameInput).toHaveValue("Jane");
+    });
+  })
+
 });
