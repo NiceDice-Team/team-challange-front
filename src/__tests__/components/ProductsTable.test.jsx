@@ -353,4 +353,18 @@ describe("ProductsTable", () => {
     });
   })
 
+  describe("Edge cases", () => {
+    test("handles undefined cartItems gracefully", () => {
+      mockUseCartQuery.mockReturnValue({
+        data: undefined,
+        isLoading: false,
+      });
+
+      render(<ProductsTable setSubtotal={mockSetSubtotal} />);
+
+      expect(screen.getByText("No items in cart")).toBeInTheDocument();
+    });
+
+  })
+
 });
