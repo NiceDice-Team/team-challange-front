@@ -106,6 +106,18 @@ describe("ProductsTable", () => {
 
       expect(screen.getByText("No items in cart")).toBeInTheDocument();
     }); 
+    test("calls setSubtotal with 0 when cart is empty", async () => {
+      mockUseCartQuery.mockReturnValue({
+        data: [],
+        isLoading: false,
+      });
+
+      render(<ProductsTable setSubtotal={mockSetSubtotal} />);
+
+      await waitFor(() => {
+        expect(mockSetSubtotal).toHaveBeenCalledWith(0);
+      });
+    });
   })
 
 
