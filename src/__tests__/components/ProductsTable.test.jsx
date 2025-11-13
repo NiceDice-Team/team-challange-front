@@ -118,6 +118,16 @@ describe("ProductsTable", () => {
         expect(mockSetSubtotal).toHaveBeenCalledWith(0);
       });
     });
+    test("displays subtotal as $0.00 when cart is empty", () => {
+      mockUseCartQuery.mockReturnValue({
+        data: [],
+        isLoading: false,
+      });
+
+      render(<ProductsTable setSubtotal={mockSetSubtotal} />);
+
+      expect(screen.getByText("$0.00")).toBeInTheDocument();
+    });
   })
 
 
