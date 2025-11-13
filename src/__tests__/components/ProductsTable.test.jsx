@@ -95,5 +95,18 @@ describe("ProductsTable", () => {
     });
   })
 
+  describe("Empty cart", () => {
+    test("shows empty cart message when cart is empty", () => {
+      mockUseCartQuery.mockReturnValue({
+        data: [],
+        isLoading: false,
+      });
+
+      render(<ProductsTable setSubtotal={mockSetSubtotal} />);
+
+      expect(screen.getByText("No items in cart")).toBeInTheDocument();
+    }); 
+  })
+
 
 });
