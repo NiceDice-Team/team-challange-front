@@ -130,5 +130,19 @@ describe("ProductsTable", () => {
     });
   })
 
+  describe("Cart items display", () => {
+    test("renders all cart items", () => {
+      mockUseCartQuery.mockReturnValue({
+        data: mockCartItems,
+        isLoading: false,
+      });
+
+      render(<ProductsTable setSubtotal={mockSetSubtotal} />);
+
+      expect(screen.getByText("Test Product 1")).toBeInTheDocument();
+      expect(screen.getByText("Test Product 2")).toBeInTheDocument();
+    });
+  })
+
 
 });
