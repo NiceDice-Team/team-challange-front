@@ -82,6 +82,17 @@ describe("ProductsTable", () => {
 
       expect(screen.getByText("Loading order...")).toBeInTheDocument();
     });
+     test("does not show table content when loading", () => {
+      mockUseCartQuery.mockReturnValue({
+        data: mockCartItems,
+        isLoading: true,
+      });
+
+      render(<ProductsTable setSubtotal={mockSetSubtotal} />);
+
+      expect(screen.getByText("Loading order...")).toBeInTheDocument();
+      expect(screen.queryByText("Test Product 1")).not.toBeInTheDocument();
+    });
   })
 
 
