@@ -210,6 +210,26 @@ describe("ProductsTable", () => {
       const zeroPrices = screen.getAllByText("$0.00");
       expect(zeroPrices.length).toBeGreaterThan(0);
     });
+    test("handles missing product object gracefully", () => {
+      const itemsWithMissingProduct = [
+        {
+          id: 1,
+          quantity: 1,
+        },
+      ];
+
+      mockUseCartQuery.mockReturnValue({
+        data: itemsWithMissingProduct,
+        isLoading: false,
+      });
+
+      render(<ProductsTable setSubtotal={mockSetSubtotal} />);
+
+      const productNames = screen.getAllByText("Product");
+      expect(productNames.length).toBeGreaterThan(1);
+      const zeroPrices = screen.getAllByText("$0.00");
+      expect(zeroPrices.length).toBeGreaterThan(0);
+    });
   })
 
 
