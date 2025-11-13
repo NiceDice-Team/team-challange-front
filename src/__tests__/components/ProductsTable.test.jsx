@@ -364,7 +364,7 @@ describe("ProductsTable", () => {
 
       expect(screen.getByText("No items in cart")).toBeInTheDocument();
     });
-  test("handles items with zero quantity", async () => {
+    test("handles items with zero quantity", async () => {
       const itemsWithZeroQuantity = [
         {
           id: 1,
@@ -387,6 +387,33 @@ describe("ProductsTable", () => {
       await waitFor(() => {
         expect(mockSetSubtotal).toHaveBeenCalledWith(0);
       });
+    });
+    test("handles large quantities correctly", async () => {
+      const itemsWithLargeQuantity = [
+        {
+          id: 1,
+          quantity: 100,
+          product: {
+            id: 101,
+            name: "Test Product",
+            price: "5.50",
+          },
+        },
+      ];
+
+      mockUseCartQuery.mockReturnValue({
+        data: itemsWithLargeQuantity,
+        isLoading: false,
+      });
+
+      render(<ProductsTable setSubtotal={mockSetSubtotal} />);
+
+      await waitFor(() => {
+        expect(mockSetSubtotal).toHaveBeenCalledWith(550);
+      });
+
+      const prices = screen.getAllByText("$550.00");
+      expect(prices.length).toBeGreaterThan(0);
     });
   })
 
