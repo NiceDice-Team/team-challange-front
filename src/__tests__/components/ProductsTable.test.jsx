@@ -165,6 +165,28 @@ describe("ProductsTable", () => {
       expect(screen.getByText("$59.98")).toBeInTheDocument();
       expect(screen.getByText("$15.50")).toBeInTheDocument();
     });
+    test("handles missing product name gracefully", () => {
+      const itemsWithMissingName = [
+        {
+          id: 1,
+          quantity: 1,
+          product: {
+            id: 101,
+            price: "10.00",
+          },
+        },
+      ];
+
+      mockUseCartQuery.mockReturnValue({
+        data: itemsWithMissingName,
+        isLoading: false,
+      });
+
+      render(<ProductsTable setSubtotal={mockSetSubtotal} />);
+
+      const productNames = screen.getAllByText("Product");
+      expect(productNames.length).toBeGreaterThan(1);
+    });
   })
 
 
