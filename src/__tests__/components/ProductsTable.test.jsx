@@ -47,6 +47,18 @@ describe("ProductsTable", () => {
 
       expect(screen.getByText("Your order")).toBeInTheDocument();
     });
+    test("renders table headers", () => {
+      mockUseCartQuery.mockReturnValue({
+        data: [],
+        isLoading: false,
+      });
+
+      render(<ProductsTable setSubtotal={mockSetSubtotal} />);
+
+      expect(screen.getByText("Product")).toBeInTheDocument();
+      expect(screen.getByText("Quantity")).toBeInTheDocument();
+      expect(screen.getByText("Total")).toBeInTheDocument();
+    });
   })
 
 
