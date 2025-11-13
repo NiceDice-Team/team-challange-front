@@ -154,6 +154,17 @@ describe("ProductsTable", () => {
       expect(quantities.length).toBeGreaterThan(0);
       expect(screen.getByText("1")).toBeInTheDocument();
     });
+    test("calculates and displays total price for each item", () => {
+      mockUseCartQuery.mockReturnValue({
+        data: mockCartItems,
+        isLoading: false,
+      });
+
+      render(<ProductsTable setSubtotal={mockSetSubtotal} />);
+
+      expect(screen.getByText("$59.98")).toBeInTheDocument();
+      expect(screen.getByText("$15.50")).toBeInTheDocument();
+    });
   })
 
 
