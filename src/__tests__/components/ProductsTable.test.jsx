@@ -142,6 +142,18 @@ describe("ProductsTable", () => {
       expect(screen.getByText("Test Product 1")).toBeInTheDocument();
       expect(screen.getByText("Test Product 2")).toBeInTheDocument();
     });
+    test("displays product quantities correctly", () => {
+      mockUseCartQuery.mockReturnValue({
+        data: mockCartItems,
+        isLoading: false,
+      });
+
+      render(<ProductsTable setSubtotal={mockSetSubtotal} />);
+
+      const quantities = screen.getAllByText("2");
+      expect(quantities.length).toBeGreaterThan(0);
+      expect(screen.getByText("1")).toBeInTheDocument();
+    });
   })
 
 
