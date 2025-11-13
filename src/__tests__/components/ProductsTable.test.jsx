@@ -71,5 +71,18 @@ describe("ProductsTable", () => {
     });
   })
 
+  describe("Loading state", () => {
+    test("shows loading message when cart is loading", () => {
+      mockUseCartQuery.mockReturnValue({
+        data: [],
+        isLoading: true,
+      });
+
+      render(<ProductsTable setSubtotal={mockSetSubtotal} />);
+
+      expect(screen.getByText("Loading order...")).toBeInTheDocument();
+    });
+  })
+
 
 });
