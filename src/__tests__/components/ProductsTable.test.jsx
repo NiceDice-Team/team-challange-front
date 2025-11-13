@@ -59,6 +59,16 @@ describe("ProductsTable", () => {
       expect(screen.getByText("Quantity")).toBeInTheDocument();
       expect(screen.getByText("Total")).toBeInTheDocument();
     });
+    test("renders subtotal label", () => {
+      mockUseCartQuery.mockReturnValue({
+        data: [],
+        isLoading: false,
+      });
+
+      render(<ProductsTable setSubtotal={mockSetSubtotal} />);
+
+      expect(screen.getByText("Subtotal")).toBeInTheDocument();
+    });
   })
 
 
