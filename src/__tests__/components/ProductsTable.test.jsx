@@ -1,0 +1,40 @@
+import { render, screen, waitFor } from "@testing-library/react";
+import ProductsTable from "../../components/checkout/ProductsTable";
+
+const mockSetSubtotal = jest.fn();
+
+const mockCartItems = [
+  {
+    id: 1,
+    quantity: 2,
+    product: {
+      id: 101,
+      name: "Test Product 1",
+      price: "29.99",
+    },
+  },
+  {
+    id: 2,
+    quantity: 1,
+    product: {
+      id: 102,
+      name: "Test Product 2",
+      price: "15.50",
+    },
+  },
+];
+
+const mockUseCartQuery = jest.fn();
+
+jest.mock("../../hooks/useCartQuery", () => ({
+  useCartQuery: () => mockUseCartQuery(),
+}));
+
+describe("ProductsTable", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockSetSubtotal.mockClear();
+  });
+
+
+});
