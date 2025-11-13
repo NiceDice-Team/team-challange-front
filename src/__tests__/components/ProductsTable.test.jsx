@@ -328,6 +328,29 @@ describe("ProductsTable", () => {
       const prices = screen.getAllByText("$20.00");
       expect(prices.length).toBeGreaterThan(0);
     });
+    test("handles zero price correctly", () => {
+      const itemsWithZeroPrice = [
+        {
+          id: 1,
+          quantity: 5,
+          product: {
+            id: 101,
+            name: "Free Product",
+            price: "0",
+          },
+        },
+      ];
+
+      mockUseCartQuery.mockReturnValue({
+        data: itemsWithZeroPrice,
+        isLoading: false,
+      });
+
+      render(<ProductsTable setSubtotal={mockSetSubtotal} />);
+
+      const zeroPrices = screen.getAllByText("$0.00");
+      expect(zeroPrices.length).toBeGreaterThan(0);
+    });
   })
 
 });
