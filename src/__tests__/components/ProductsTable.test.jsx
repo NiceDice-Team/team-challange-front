@@ -36,5 +36,18 @@ describe("ProductsTable", () => {
     mockSetSubtotal.mockClear();
   });
 
+  describe("Rendering", () => {
+    test("renders component with title", () => {
+      mockUseCartQuery.mockReturnValue({
+        data: [],
+        isLoading: false,
+      });
+
+      render(<ProductsTable setSubtotal={mockSetSubtotal} />);
+
+      expect(screen.getByText("Your order")).toBeInTheDocument();
+    });
+  })
+
 
 });
