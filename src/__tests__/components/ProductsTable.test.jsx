@@ -232,5 +232,20 @@ describe("ProductsTable", () => {
     });
   })
 
+  describe("Subtotal calculation", () => {
+    test("calculates subtotal correctly for multiple items", async () => {
+      mockUseCartQuery.mockReturnValue({
+        data: mockCartItems,
+        isLoading: false,
+      });
+
+      render(<ProductsTable setSubtotal={mockSetSubtotal} />);
+
+      await waitFor(() => {
+        const expectedSubtotal = 29.99 * 2 + 15.50 * 1;
+        expect(mockSetSubtotal).toHaveBeenCalledWith(expectedSubtotal);
+      });
+    });
+  })
 
 });
