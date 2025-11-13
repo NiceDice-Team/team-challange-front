@@ -246,6 +246,17 @@ describe("ProductsTable", () => {
         expect(mockSetSubtotal).toHaveBeenCalledWith(expectedSubtotal);
       });
     });
+    test("displays subtotal with correct formatting", () => {
+      mockUseCartQuery.mockReturnValue({
+        data: mockCartItems,
+        isLoading: false,
+      });
+
+      render(<ProductsTable setSubtotal={mockSetSubtotal} />);
+
+      const expectedSubtotal = (29.99 * 2 + 15.50 * 1).toFixed(2);
+      expect(screen.getByText(`$${expectedSubtotal}`)).toBeInTheDocument();
+    });
   })
 
 });
