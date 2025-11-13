@@ -304,4 +304,30 @@ describe("ProductsTable", () => {
     });
   })
 
+  describe("Price formatting", () => {
+    test("formats prices to 2 decimal places", () => {
+      const itemsWithDecimalPrice = [
+        {
+          id: 1,
+          quantity: 1,
+          product: {
+            id: 101,
+            name: "Test Product",
+            price: "19.999",
+          },
+        },
+      ];
+
+      mockUseCartQuery.mockReturnValue({
+        data: itemsWithDecimalPrice,
+        isLoading: false,
+      });
+
+      render(<ProductsTable setSubtotal={mockSetSubtotal} />);
+
+      const prices = screen.getAllByText("$20.00");
+      expect(prices.length).toBeGreaterThan(0);
+    });
+  })
+
 });
