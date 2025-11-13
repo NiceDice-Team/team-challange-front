@@ -274,6 +274,34 @@ describe("ProductsTable", () => {
         expect(mockSetSubtotal).toHaveBeenCalledWith(expectedSubtotal);
       });
     });
+    test("handles decimal prices correctly", async () => {
+      const itemsWithDecimals = [
+        {
+          id: 1,
+          quantity: 3,
+          product: {
+            id: 101,
+            name: "Decimal Product",
+            price: "12.33",
+          },
+        },
+      ];
+
+      mockUseCartQuery.mockReturnValue({
+        data: itemsWithDecimals,
+        isLoading: false,
+      });
+
+      render(<ProductsTable setSubtotal={mockSetSubtotal} />);
+
+      await waitFor(() => {
+        const expectedSubtotal = 12.33 * 3;
+        expect(mockSetSubtotal).toHaveBeenCalledWith(expectedSubtotal);
+      });
+
+      const prices = screen.getAllByText("$36.99");
+      expect(prices.length).toBeGreaterThan(0);
+    });
   })
 
 });
