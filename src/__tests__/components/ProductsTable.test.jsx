@@ -364,7 +364,30 @@ describe("ProductsTable", () => {
 
       expect(screen.getByText("No items in cart")).toBeInTheDocument();
     });
+  test("handles items with zero quantity", async () => {
+      const itemsWithZeroQuantity = [
+        {
+          id: 1,
+          quantity: 0,
+          product: {
+            id: 101,
+            name: "Test Product",
+            price: "10.00",
+          },
+        },
+      ];
 
+      mockUseCartQuery.mockReturnValue({
+        data: itemsWithZeroQuantity,
+        isLoading: false,
+      });
+
+      render(<ProductsTable setSubtotal={mockSetSubtotal} />);
+
+      await waitFor(() => {
+        expect(mockSetSubtotal).toHaveBeenCalledWith(0);
+      });
+    });
   })
 
 });
