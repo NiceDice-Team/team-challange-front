@@ -257,6 +257,23 @@ describe("ProductsTable", () => {
       const expectedSubtotal = (29.99 * 2 + 15.50 * 1).toFixed(2);
       expect(screen.getByText(`$${expectedSubtotal}`)).toBeInTheDocument();
     });
+    test("updates subtotal when cart items change", async () => {
+      const { rerender } = render(
+        <ProductsTable setSubtotal={mockSetSubtotal} />
+      );
+
+      mockUseCartQuery.mockReturnValue({
+        data: [mockCartItems[0]],
+        isLoading: false,
+      });
+
+      rerender(<ProductsTable setSubtotal={mockSetSubtotal} />);
+
+      await waitFor(() => {
+        const expectedSubtotal = 29.99 * 2;
+        expect(mockSetSubtotal).toHaveBeenCalledWith(expectedSubtotal);
+      });
+    });
   })
 
 });
