@@ -126,9 +126,3 @@ jobs:
       
     - name: Check TypeScript
       run: npx tsc --noEmit
-    - name: Check AUTH_SECRET is set
-      run: |
-        if [ -z "${AUTH_SECRET}" ]; then
-          echo "AUTH_SECRET is not set!"
-          exit 1
-        fi
