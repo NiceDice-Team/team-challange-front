@@ -2,6 +2,12 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import FacebookProvider from "next-auth/providers/facebook";
 
+const authSecret = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET;
+
+if (!authSecret) {
+  throw new Error("❌ NEXTAUTH_SECRET or AUTH_SECRET must be set!");
+}
+
 const handler = NextAuth({
   providers: [
     GoogleProvider({
@@ -20,7 +26,7 @@ const handler = NextAuth({
   session: {
     strategy: "jwt",
   },
-  secret: process.env.AUTH_SECRET,
+  secret: authSecret,
 
   callbacks: {
     async jwt({ token, account }) {
