@@ -2,10 +2,10 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import FacebookProvider from "next-auth/providers/facebook";
 
-const authSecret = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET;
+const authSecret = process.env.AUTH_SECRET;
 
 if (!authSecret) {
-  throw new Error("❌ NEXTAUTH_SECRET or AUTH_SECRET must be set!");
+  throw new Error("❌ AUTH_SECRET missed !");
 }
 
 const handler = NextAuth({
