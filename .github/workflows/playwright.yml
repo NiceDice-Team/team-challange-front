@@ -85,7 +85,6 @@ jobs:
       env:
         CI: true
         NEXT_PUBLIC_BACKEND_URL: http://localhost:8000/api/
-        AUTH_SECRET: ${{ env.AUTH_SECRET }}
         
     - name: Stop frontend server
       if: always()

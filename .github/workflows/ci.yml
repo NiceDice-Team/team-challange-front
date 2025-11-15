@@ -12,6 +12,7 @@ jobs:
   unit-tests:
     name: Unit Tests & Coverage
     runs-on: ubuntu-latest
+    environment: Test env
     
     steps:
     - name: 📝 CI Pipeline Info
@@ -100,6 +101,7 @@ jobs:
   lint:
     name: Lint & Code Quality
     runs-on: ubuntu-latest
+    environment: Test env
     
     steps:
     - name: 📝 Lint Info
