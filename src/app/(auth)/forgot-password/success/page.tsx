@@ -12,7 +12,7 @@ export default function ForgotPasswordPage() {
     if (typeof window !== 'undefined') {
       showCustomToast({
         type: "success",
-        title: "Email Sent Successfully!",
+        title: "Success! You are logged.",
         description: "A password reset link has been sent to your inbox.",
       });
     }
