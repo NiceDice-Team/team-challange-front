@@ -18,6 +18,7 @@ jobs:
     name: Playwright E2E Tests
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    environment: Test env
     # Skip draft PRs
     if: github.event.pull_request.draft == false || github.event_name != 'pull_request'
     
@@ -84,6 +85,7 @@ jobs:
       env:
         CI: true
         NEXT_PUBLIC_BACKEND_URL: http://localhost:8000/api/
+        AUTH_SECRET: ${{ env.AUTH_SECRET }}
         
     - name: Stop frontend server
       if: always()
