@@ -95,13 +95,12 @@ jobs:
       run: npm run build
       env:
         NEXT_PUBLIC_BACKEND_URL: http://localhost:8000/api/
-        NODE_ENV: production
+        NODE_ENV: development
 
   # Job 3: Linting and Code Quality
   lint:
     name: Lint & Code Quality
     runs-on: ubuntu-latest
-    environment: Test env
     
     steps:
     - name: 📝 Lint Info
