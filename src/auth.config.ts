@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import FacebookProvider from "next-auth/providers/facebook";
 
-const authSecret = process.env.AUTH_SECRET;
+const authSecret = process.env.AUTH_SECRET || (process.env.NODE_ENV === "development" ? "dev-secret" : undefined);
 
 if (!authSecret) {
   throw new Error("❌ AUTH_SECRET missed !");
