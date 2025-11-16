@@ -95,7 +95,7 @@ jobs:
       run: npm run build
       env:
         NEXT_PUBLIC_BACKEND_URL: http://localhost:8000/api/
-        AUTH_SECRET: ${{ env.AUTH_SECRET }}
+        AUTH_SECRET: ${{ env.AUTH_SECRET || 'default-value' }}
 
   # Job 3: Linting and Code Quality
   lint:
