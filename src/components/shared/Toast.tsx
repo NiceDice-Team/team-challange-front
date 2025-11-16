@@ -28,6 +28,11 @@ export const showCustomToast = ({
   title,
   description,
 }: CustomToastProps) => {
+  // Only run on client-side to prevent SSR issues
+  if (typeof window === 'undefined') {
+    return;
+  }
+
   const { icon } = statusMap[type];
 
   toast.custom((t) => (
@@ -37,7 +42,11 @@ export const showCustomToast = ({
         <p className="font-medium text-lg">{title}</p>
         {description && <p className="font-normal text-base">{description}</p>}
       </div>
-      <button onClick={() => toast.dismiss(t)} className="self-start">
+      <button 
+        onClick={() => toast.dismiss(t)} 
+        className="self-start"
+        aria-label="Close notification"
+      >
         <X className="w-4 h-4" />
       </button>
     </div>

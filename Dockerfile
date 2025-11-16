@@ -1,23 +1,40 @@
-# Use the official Node.js image as the base image
-FROM node:18-alpine
+FROM node:20-alpine
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json (if available)
+# Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install
+RUN npm ci
 
-# Copy the rest of the application code
+# Copy source code
 COPY . .
 
-# Build the Next.js application
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Build arguments (можна передавати під час docker build)
+ARG NODE_ENV=production
+ARG NEXT_PUBLIC_BACKEND_URL
+ARG NEXTAUTH_URL
+ARG AUTH_SECRET
+ARG GOOGLE_CLIENT_ID
+ARG GOOGLE_CLIENT_SECRET
+ARG FACEBOOK_CLIENT_ID
+ARG FACEBOOK_CLIENT_SECRET
+
+# Export ARG -> ENV (щоб Next.js бачив ці змінні під час build)
+ENV NODE_ENV=$NODE_ENV
+ENV NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL
+ENV NEXTAUTH_URL=$NEXTAUTH_URL
+ENV AUTH_SECRET=$AUTH_SECRET
+ENV GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
+ENV GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
+ENV FACEBOOK_CLIENT_ID=$FACEBOOK_CLIENT_ID
+ENV FACEBOOK_CLIENT_SECRET=$FACEBOOK_CLIENT_SECRET
+
+# Build
 RUN npm run build
 
-# Expose the port the app runs on
 EXPOSE 3000
 
-# Start the application
-CMD ["npm", "run", "dev"]
+CMD ["npm", "start"]

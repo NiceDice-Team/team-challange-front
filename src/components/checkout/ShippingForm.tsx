@@ -79,7 +79,7 @@ export default function ShippingForm({ paymentMethod }: { paymentMethod: Deliver
       trigger("billingEmail");
       trigger("billingPhone");
     }
-  }, [copyBilling, trigger]);
+  }, [copyBilling, trigger, setValue, watch]);
 
   const onSubmit = (data: CombinedFormData) => {
     console.log("Form submitted successfully:", data);
