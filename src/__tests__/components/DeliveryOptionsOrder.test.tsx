@@ -102,4 +102,18 @@ describe("DeliveryOptions", () => {
       expect(prices.length).toBeGreaterThan(0);
     });
   });
+
+  describe("Default selection", () => {
+    test("selects first delivery option by default", () => {
+      render(
+        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
+      );
+
+      const firstRadio = screen.getByTestId(
+        `radio-input-${deliveryOptions[0].id}`
+      );
+      expect(firstRadio).toBeChecked();
+    });
+    
+  });
 });
