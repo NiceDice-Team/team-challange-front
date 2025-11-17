@@ -53,5 +53,14 @@ describe("DeliveryOptions", () => {
     jest.clearAllMocks();
   });
 
+  describe("Rendering", () => {
+    test("renders component with title", () => {
+      render(
+        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
+      );
 
+      expect(screen.getByText("Choose delivery option")).toBeInTheDocument();
+    });
+  });
+  
 });
