@@ -61,20 +61,28 @@ describe("DeliveryOptions", () => {
 
       expect(screen.getByText("Choose delivery option")).toBeInTheDocument();
     });
-        test("renders all delivery options", () => {
-          render(
-            <DeliveryOptions
-              onPaymentMethodChange={mockOnPaymentMethodChange}
-            />
-          );
+    test("renders all delivery options", () => {
+      render(
+        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
+      );
 
-          deliveryOptions.forEach((option) => {
-            expect(screen.getByText(option.name)).toBeInTheDocument();
-            const prices = screen.getAllByText(`$${option.price}`);
-            expect(prices.length).toBeGreaterThan(0);
-            expect(screen.getByText(option.description)).toBeInTheDocument();
-          });
-        });
+      deliveryOptions.forEach((option) => {
+        expect(screen.getByText(option.name)).toBeInTheDocument();
+        const prices = screen.getAllByText(`$${option.price}`);
+        expect(prices.length).toBeGreaterThan(0);
+        expect(screen.getByText(option.description)).toBeInTheDocument();
+      });
+    });
+    test("renders info message about customs duties", () => {
+      render(
+        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
+      );
+
+      expect(
+        screen.getByText(
+          /Please note that all international shipments may be subject to customs/i
+        )
+      ).toBeInTheDocument();
+    });
   });
-
 });
