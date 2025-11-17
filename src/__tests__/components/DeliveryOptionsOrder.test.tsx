@@ -61,6 +61,20 @@ describe("DeliveryOptions", () => {
 
       expect(screen.getByText("Choose delivery option")).toBeInTheDocument();
     });
+        test("renders all delivery options", () => {
+          render(
+            <DeliveryOptions
+              onPaymentMethodChange={mockOnPaymentMethodChange}
+            />
+          );
+
+          deliveryOptions.forEach((option) => {
+            expect(screen.getByText(option.name)).toBeInTheDocument();
+            const prices = screen.getAllByText(`$${option.price}`);
+            expect(prices.length).toBeGreaterThan(0);
+            expect(screen.getByText(option.description)).toBeInTheDocument();
+          });
+        });
   });
-  
+
 });
