@@ -84,5 +84,14 @@ describe("DeliveryOptions", () => {
         )
       ).toBeInTheDocument();
     });
+    test("renders info icon", () => {
+      render(
+        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
+      );
+
+      expect(screen.getByTestId("info-icon")).toBeInTheDocument();
+      expect(screen.getByTestId("info-icon")).toHaveAttribute("alt", "info");
+    });
   });
+  
 });
