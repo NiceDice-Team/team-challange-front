@@ -114,6 +114,15 @@ describe("DeliveryOptions", () => {
       );
       expect(firstRadio).toBeChecked();
     });
-    
+    test("displays first option price in shipping section by default", () => {
+      render(
+        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
+      );
+
+      const shippingPrices = screen.getAllByText(
+        `$${deliveryOptions[0].price}`
+      );
+      expect(shippingPrices.length).toBeGreaterThan(0);
+    });
   });
 });
