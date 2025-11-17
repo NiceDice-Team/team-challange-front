@@ -92,6 +92,14 @@ describe("DeliveryOptions", () => {
       expect(screen.getByTestId("info-icon")).toBeInTheDocument();
       expect(screen.getByTestId("info-icon")).toHaveAttribute("alt", "info");
     });
+    test("renders shipping section with price", () => {
+      render(
+        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
+      );
+
+      expect(screen.getByText("Shipping")).toBeInTheDocument();
+      const prices = screen.getAllByText(`$${deliveryOptions[0].price}`);
+      expect(prices.length).toBeGreaterThan(0);
+    });
   });
-  
 });
