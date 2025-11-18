@@ -236,4 +236,17 @@ describe("DeliveryOptions", () => {
       expect(screen.getByText(ukrOption.description)).toBeInTheDocument();
     });
   });
+
+  describe("Price display", () => {
+    test("displays correct price for each option", () => {
+      render(
+        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
+      );
+
+      deliveryOptions.forEach((option) => {
+        const prices = screen.getAllByText(`$${option.price}`);
+        expect(prices.length).toBeGreaterThan(0);
+      });
+    });
+  });
 });
