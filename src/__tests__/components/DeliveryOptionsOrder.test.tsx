@@ -200,5 +200,18 @@ describe("DeliveryOptions", () => {
       expect(prices.length).toBeGreaterThan(0);
       expect(screen.getByText(dhlOption.description)).toBeInTheDocument();
     });
+    test("renders Nova poshta option correctly", () => {
+      render(
+        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
+      );
+
+      const novaOption = deliveryOptions.find(
+        (opt) => opt.name === "Nova poshta"
+      );
+      expect(screen.getByText("Nova poshta")).toBeInTheDocument();
+      const prices = screen.getAllByText(`$${novaOption.price}`);
+      expect(prices.length).toBeGreaterThan(0);
+      expect(screen.getByText(novaOption.description)).toBeInTheDocument();
+    });
   });
 });
