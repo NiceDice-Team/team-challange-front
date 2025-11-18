@@ -187,4 +187,18 @@ describe("DeliveryOptions", () => {
       expect(secondRadio).toBeChecked();
     });
   });
+
+  describe("All delivery options", () => {
+    test("renders DHL option correctly", () => {
+      render(
+        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
+      );
+
+      const dhlOption = deliveryOptions.find((opt) => opt.name === "DHL");
+      expect(screen.getByText("DHL")).toBeInTheDocument();
+      const prices = screen.getAllByText(`$${dhlOption.price}`);
+      expect(prices.length).toBeGreaterThan(0);
+      expect(screen.getByText(dhlOption.description)).toBeInTheDocument();
+    });
+  });
 });
