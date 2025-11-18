@@ -1,10 +1,29 @@
 import { jwtDecode } from "jwt-decode";
 import { getCookie, deleteCookie } from "@/utils/auth";
+import { API_ENDPOINTS, buildApiUrl } from '@/config/api';
+import { AuthTokens } from '@/types/api';
+
+interface TokenPayload {
+  exp: number;
+  user_id: string;
+  email?: string;
+  [key: string]: any;
+}
+
+interface TokensResult {
+  accessToken: string | null;
+  refreshToken: string | null;
+}
+
+interface UserInfo {
+  userId: string;
+  email?: string;
+}
 
 /**
  * Получает токены из кукисов
  */
-export function getTokens() {
+export function getTokens(): TokensResult {
   const accessToken = getCookie("access_token");
   const refreshToken = getCookie("refresh_token");
 
@@ -14,7 +33,7 @@ export function getTokens() {
 /**
  * Сохраняет токены в кукисы
  */
-export function setTokens(accessToken, refreshToken) {
+export function setTokens(accessToken: string, refreshToken: string): void {
   if (typeof document === "undefined") return;
 
   if (accessToken) {
@@ -29,7 +48,7 @@ export function setTokens(accessToken, refreshToken) {
 /**
  * Очищает токены из кукисов
  */
-export function clearTokens() {
+export function clearTokens(): void {
   deleteCookie("access_token");
   deleteCookie("refresh_token");
   deleteCookie("userId");
@@ -38,11 +57,11 @@ export function clearTokens() {
 /**
  * Проверяет, истек ли токен
  */
-function isTokenExpired(token) {
+function isTokenExpired(token: string | null): boolean {
   if (!token) return true;
 
   try {
-    const decoded = jwtDecode(token);
+    const decoded = jwtDecode<TokenPayload>(token);
     const currentTime = Date.now() / 1000;
 
     return decoded.exp <= currentTime + 60;
@@ -55,7 +74,7 @@ function isTokenExpired(token) {
 /**
  * Обновляет access token используя refresh token
  */
-async function refreshAccessToken() {
+async function refreshAccessToken(): Promise<AuthTokens> {
   const { refreshToken } = getTokens();
 
   if (!refreshToken) {
@@ -68,7 +87,7 @@ async function refreshAccessToken() {
 
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}users/token/refresh/`,
+      buildApiUrl(API_ENDPOINTS.tokenRefresh),
       {
         method: "POST",
         headers: {
@@ -131,24 +150,24 @@ export async function getValidAccessToken() {
   }
 }
 
-export function isAuthenticated() {
+export function isAuthenticated(): boolean {
   const { refreshToken } = getTokens();
   return refreshToken && !isTokenExpired(refreshToken);
 }
 
-export function logout() {
+export function logout(): void {
   clearTokens();
   if (typeof window !== "undefined") {
     window.location.href = "/login";
   }
 }
 
-export function getUserFromToken(token = null) {
+export function getUserFromToken(token: string | null = null): UserInfo | null {
   try {
     const tokenToUse = token || getTokens().accessToken;
     if (!tokenToUse) return null;
 
-    const decoded = jwtDecode(tokenToUse);
+    const decoded = jwtDecode<TokenPayload>(tokenToUse);
     return {
       userId: decoded.user_id,
       email: decoded.email,

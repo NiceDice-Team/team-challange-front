@@ -262,7 +262,7 @@ export const productServices = {
       if (params.types) queryParams.append("types", params.types);
       if (params.ordering) queryParams.append("ordering", params.ordering);
       if (params.limit) queryParams.append("limit", params.limit);
-      if (params.offset) queryParams.append("offset", params.offset);
+      if (params.offset !== undefined) queryParams.append("offset", params.offset);
 
       const response: any = await fetchAPI(`products/?${queryParams.toString()}`);
       return response.results || response;

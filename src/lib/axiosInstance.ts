@@ -1,11 +1,8 @@
-import axios from "axios";
+import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 import { getValidAccessToken } from "./tokenManager";
+import { API_CONFIG } from '@/config/api';
 
-const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
-  timeout: 10000,
-  headers: { "Content-Type": "application/json" },
-});
+const axiosInstance: AxiosInstance = axios.create(API_CONFIG);
 
 axiosInstance.interceptors.request.use(
   async function (config) {
