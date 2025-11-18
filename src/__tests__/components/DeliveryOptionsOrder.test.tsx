@@ -224,5 +224,16 @@ describe("DeliveryOptions", () => {
       expect(prices.length).toBeGreaterThan(0);
       expect(screen.getByText(fedexOption.description)).toBeInTheDocument();
     });
+    test("renders Ukrposhta option correctly", () => {
+      render(
+        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
+      );
+
+      const ukrOption = deliveryOptions.find((opt) => opt.name === "Ukrposhta");
+      expect(screen.getByText("Ukrposhta")).toBeInTheDocument();
+      const prices = screen.getAllByText(`$${ukrOption.price}`);
+      expect(prices.length).toBeGreaterThan(0);
+      expect(screen.getByText(ukrOption.description)).toBeInTheDocument();
+    });
   });
 });
