@@ -213,5 +213,16 @@ describe("DeliveryOptions", () => {
       expect(prices.length).toBeGreaterThan(0);
       expect(screen.getByText(novaOption.description)).toBeInTheDocument();
     });
+    test("renders Fedex option correctly", () => {
+      render(
+        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
+      );
+
+      const fedexOption = deliveryOptions.find((opt) => opt.name === "Fedex");
+      expect(screen.getByText("Fedex")).toBeInTheDocument();
+      const prices = screen.getAllByText(`$${fedexOption.price}`);
+      expect(prices.length).toBeGreaterThan(0);
+      expect(screen.getByText(fedexOption.description)).toBeInTheDocument();
+    });
   });
 });
