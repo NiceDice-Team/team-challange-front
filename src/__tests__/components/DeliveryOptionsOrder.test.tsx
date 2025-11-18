@@ -165,5 +165,26 @@ describe("DeliveryOptions", () => {
 
       expect(mockOnPaymentMethodChange).toHaveBeenCalledWith(secondOption);
     });
+    test("unchecks previous option when new option is selected", async () => {
+      const user = userEvent.setup();
+      render(
+        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
+      );
+
+      const firstRadio = screen.getByTestId(
+        `radio-input-${deliveryOptions[0].id}`
+      );
+      const secondRadio = screen.getByTestId(
+        `radio-input-${deliveryOptions[1].id}`
+      );
+
+      expect(firstRadio).toBeChecked();
+      expect(secondRadio).not.toBeChecked();
+
+      await user.click(secondRadio);
+
+      expect(firstRadio).not.toBeChecked();
+      expect(secondRadio).toBeChecked();
+    });
   });
 });
