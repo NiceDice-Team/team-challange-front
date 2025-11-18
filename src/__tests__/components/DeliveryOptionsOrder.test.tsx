@@ -248,5 +248,18 @@ describe("DeliveryOptions", () => {
         expect(prices.length).toBeGreaterThan(0);
       });
     });
+    test("updates shipping price correctly when switching options", async () => {
+      const user = userEvent.setup();
+      render(
+        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
+      );
+
+      const thirdOption = deliveryOptions[2];
+      const thirdRadio = screen.getByTestId(`radio-input-${thirdOption.id}`);
+      await user.click(thirdRadio);
+
+      const shippingPrices = screen.getAllByText(`$${thirdOption.price}`);
+      expect(shippingPrices.length).toBeGreaterThan(0);
+    });
   });
 });
