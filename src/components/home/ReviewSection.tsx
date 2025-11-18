@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import ReviewCard from "../../components/home/ReviewCard.jsx";
+import ReviewCard from "../../components/home/ReviewCard";
 import PERSON1_IMG from "../../../public/Reviews/person1.png";
 import PERSON2_IMG from "../../../public/Reviews/person2.png";
 import PERSON3_IMG from "../../../public/Reviews/person3.png";
@@ -14,9 +14,22 @@ import REVIEW_2_IMG2 from "../../../public/Reviews/review2_2.png";
 import REVIEW_3_IMG1 from "../../../public/Reviews/review3_1.png";
 import REVIEW_3_IMG2 from "../../../public/Reviews/review3_2.png";
 import REVIEW_3_IMG3 from "../../../public/Reviews/review3_3.png";
+import { StaticImageData } from "next/image";
+
+interface Review {
+  rating: number;
+  date: string;
+  avatarSrc: StaticImageData | string;
+  name: string;
+  aboutHref: string;
+  aboutText: string;
+  title: string;
+  body: string;
+  images: (StaticImageData | string)[];
+}
 
 // ─────────────────── DEMO DATA ───────────────────
-const demo = [
+const demo: Review[] = [
   {
     rating: 5,
     date: "March 28, 2025",
@@ -63,8 +76,12 @@ const demo = [
   },
 ];
 
+interface ArrowProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  className?: string;
+}
+
 // ─────────────── SVG‑кнопки лишаються без змін ───────────────
-const PrevArrow = ({ className = "", ...rest }) => (
+const PrevArrow = ({ className = "", ...rest }: ArrowProps) => (
   <button
     aria-label="Previous reviews"
     className={`disabled:opacity-30 transition hover:scale-105 focus:outline-none ${className}`}
@@ -89,7 +106,7 @@ const PrevArrow = ({ className = "", ...rest }) => (
   </button>
 );
 
-const NextArrow = ({ className = "", ...rest }) => (
+const NextArrow = ({ className = "", ...rest }: ArrowProps) => (
   <button
     aria-label="Next reviews"
     className={`disabled:opacity-30 transition hover:scale-105 focus:outline-none ${className}`}
@@ -105,8 +122,12 @@ const NextArrow = ({ className = "", ...rest }) => (
   </button>
 );
 
+interface ReviewSectionProps {
+  reviews?: Review[];
+}
+
 // ────────────────── MAIN SECTION ──────────────────
-export default function ReviewSection({ reviews = [] }) {
+export default function ReviewSection({ reviews = [] }: ReviewSectionProps) {
   // якщо нічого не прийшло через пропи — падаємо на demo
   const data = reviews.length ? reviews : demo;
 

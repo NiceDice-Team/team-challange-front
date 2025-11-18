@@ -3,18 +3,31 @@ import GAME_IMG1 from "../../../public/ComingSoon/Img1.png";
 import GAME_IMG2 from "../../../public/ComingSoon/Img2.png";
 import GAME_IMG3 from "../../../public/ComingSoon/Img3.png";
 import GAME_IMG4 from "../../../public/ComingSoon/Img4.png";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
+
+interface Game {
+  id: number;
+  title: string;
+  image: StaticImageData;
+  url: string;
+}
 
 // Demo data
-const demoGames = [
+const demoGames: Game[] = [
   { id: 1, title: "Game Title 1", image: GAME_IMG4, url: "/games/game-1" },
   { id: 2, title: "Game Title 2", image: GAME_IMG2, url: "/games/game-2" },
   { id: 3, title: "Game Title 3", image: GAME_IMG3, url: "/games/game-3" },
   { id: 4, title: "Game Title 4", image: GAME_IMG1, url: "/games/game-4" },
 ];
 
+interface ComingSoonCardProps {
+  image: StaticImageData;
+  title: string;
+  url: string;
+}
+
 // Card component
-const ComingSoonCard = ({ image, title, url }) => {
+const ComingSoonCard = ({ image, title, url }: ComingSoonCardProps) => {
   return (
     <div className="flex gap-2 sm:gap-2.5 md:gap-3 flex-col">
       <div className="relative w-full aspect-square">

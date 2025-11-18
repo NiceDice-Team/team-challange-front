@@ -7,9 +7,13 @@ import NEW_GAME2_IMG from "../../../public/New_Arrivals/New_arrivals_2.png";
 import NEW_GAME3_IMG from "../../../public/New_Arrivals/New_arrivals_3.png";
 import NEW_GAME4_IMG from "../../../public/New_Arrivals/New_arrivals_4.png";
 
+interface CaptionProps {
+  label: string;
+}
+
 export default function NewArrivals() {
   // Caption helper function inside the main component
-  const Caption = ({ label }) => (
+  const Caption = ({ label }: CaptionProps) => (
     <div className="mt-4 text-sm">
       <p className="font-semibold">{label}</p>
       <p className="text-[#494791]">

@@ -3,12 +3,21 @@ import { useEffect, useState, useRef } from "react";
 import HERO_IMG1 from "../../../public/HeroScroller/HeroScroll1.png";
 import HERO_IMG2 from "../../../public/HeroScroller/HeroScroll2.png";
 import HERO_IMG3 from "../../../public/HeroScroller/HeroScroll3.png";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
+
+interface ScrollerItem {
+  id: number;
+  image: StaticImageData;
+  category: string;
+  title: string;
+  description: string;
+  buttonText: string;
+}
 
 export default function HeroScroller() {
   const aspectRatio = 1320 / 704;
 
-  const scrollerData = [
+  const scrollerData: ScrollerItem[] = [
     {
       id: 1,
       image: HERO_IMG1,
@@ -40,7 +49,7 @@ export default function HeroScroller() {
   const [currentSection, setCurrentSection] = useState(0);
   const [isScrollable, setIsScrollable] = useState(true);
   const [isCardVisible, setIsCardVisible] = useState(true);
-  const scrollerRef = useRef(null);
+  const scrollerRef = useRef<HTMLDivElement>(null);
   const directionRef = useRef(1);
 
   useEffect(() => {
@@ -109,10 +118,10 @@ export default function HeroScroller() {
 
       setTimeout(() => {
         const newIndex = Math.max(0, currentSection - 1); // 0 or previous section
-        const sectionWidth = scrollerRef.current.clientWidth; // Width of each section
+        const sectionWidth = scrollerRef.current?.clientWidth || 0; // Width of each section
 
         setIsScrollable(false);
-        scrollerRef.current.scrollTo({ left: sectionWidth * newIndex, behavior: "smooth" });
+        scrollerRef.current?.scrollTo({ left: sectionWidth * newIndex, behavior: "smooth" });
       }, 300);
     }
   }
@@ -124,10 +133,10 @@ export default function HeroScroller() {
 
       setTimeout(() => {
         const newIndex = Math.min(scrollerData.length - 1, currentSection + 1); // max section or next section
-        const sectionWidth = scrollerRef.current.clientWidth; // Width of each section
+        const sectionWidth = scrollerRef.current?.clientWidth || 0; // Width of each section
         setIsScrollable(false);
 
-        scrollerRef.current.scrollTo({ left: sectionWidth * newIndex, behavior: "smooth" });
+        scrollerRef.current?.scrollTo({ left: sectionWidth * newIndex, behavior: "smooth" });
       }, 300);
     }
   }

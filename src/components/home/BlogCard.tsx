@@ -1,7 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
+import { StaticImageData } from "next/image";
 
-export default function BlogCard({ date, readingTime, name, category, imageSrc, blogUrl }) {
+interface BlogCardProps {
+  date: string;
+  readingTime: number;
+  name: string;
+  category: string;
+  imageSrc: StaticImageData | string;
+  blogUrl: string;
+}
+
+export default function BlogCard({ date, readingTime, name, category, imageSrc, blogUrl }: BlogCardProps) {
   return (
     <article className=" flex flex-col ">
       {/* Blog Card Image */}
