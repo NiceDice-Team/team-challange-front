@@ -153,6 +153,17 @@ describe("DeliveryOptions", () => {
       const shippingPrices = screen.getAllByText(`$${secondOption.price}`);
       expect(shippingPrices.length).toBeGreaterThan(0);
     });
-    
+    test("calls onPaymentMethodChange when option is selected", async () => {
+      const user = userEvent.setup();
+      render(
+        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
+      );
+
+      const secondOption = deliveryOptions[1];
+      const secondRadio = screen.getByTestId(`radio-input-${secondOption.id}`);
+      await user.click(secondRadio);
+
+      expect(mockOnPaymentMethodChange).toHaveBeenCalledWith(secondOption);
+    });
   });
 });
