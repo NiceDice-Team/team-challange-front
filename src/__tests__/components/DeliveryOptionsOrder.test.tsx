@@ -125,4 +125,20 @@ describe("DeliveryOptions", () => {
       expect(shippingPrices.length).toBeGreaterThan(0);
     });
   });
+
+  describe("Option selection", () => {
+    test("allows selecting different delivery option", async () => {
+      const user = userEvent.setup();
+      render(
+        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
+      );
+
+      const secondRadio = screen.getByTestId(
+        `radio-input-${deliveryOptions[1].id}`
+      );
+      await user.click(secondRadio);
+
+      expect(secondRadio).toBeChecked();
+    });
+  });
 });
