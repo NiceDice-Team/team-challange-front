@@ -16,12 +16,12 @@ const demoGames = [
 // Card component
 const ComingSoonCard = ({ image, title, url }) => {
   return (
-    <div className="flex gap-2 flex-col ">
+    <div className="flex gap-2 sm:gap-2.5 md:gap-3 flex-col">
       <div className="relative w-full aspect-square">
         <Image src={image} alt={title} fill className="object-cover" />
       </div>
-      <h3 className="uppercase">{title}</h3>
-      <a href={url} className="text-[#494791]">
+      <h3 className="uppercase text-sm sm:text-base font-medium">{title}</h3>
+      <a href={url} className="text-[#494791] text-sm sm:text-base hover:underline transition-all">
         Learn more<span className="inline-block ml-1">→</span>
       </a>
     </div>
@@ -30,9 +30,9 @@ const ComingSoonCard = ({ image, title, url }) => {
 
 export default function CommingSoonSection() {
   return (
-    <section className="mb-25 flex flex-col items-center px-8  lg:px-50">
-      <h2 className="text-title font-semibold tracking-wide mb-8 uppercase self-start">Coming soon</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full ">
+    <section className="mb-12 sm:mb-16 md:mb-20 lg:mb-24 flex flex-col items-center px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-24">
+      <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[40px] font-semibold tracking-wide mb-6 sm:mb-7 md:mb-8 uppercase self-start">Coming soon</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6 w-full max-w-[1320px]">
         {demoGames.map((game) => (
           <ComingSoonCard key={game.id} title={game.title} image={game.image} url={game.url} />
         ))}

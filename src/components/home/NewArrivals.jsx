@@ -19,14 +19,14 @@ export default function NewArrivals() {
   );
 
   return (
-    <section className="mb-25 px-8  lg:px-50">
-      <div className="flex gap-6 justify-center">
-        <div className="w-[648px]">
-          {/*  Left Card */}
-          <Link href="/products/new-arrivals" className="flex h-[648px] flex-col">
+    <section className="mb-12 sm:mb-16 md:mb-20 lg:mb-24 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-24">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 md:gap-6 max-w-[1320px] mx-auto">
+        {/* Left Card - NEW ARRIVALS */}
+        <div className="w-full">
+          <Link href="/products/new-arrivals" className="flex flex-col h-64 sm:h-80 md:h-[400px] lg:h-[500px] xl:h-[648px]">
             <div className="relative flex-grow overflow-hidden">
-              <Image src={NEW_GAME2_IMG} alt="" fill className="object-cover" />
-              <span className="absolute top-6 left-6 bg-white px-4 py-2 text-title font-medium text-[#494791]">
+              <Image src={NEW_GAME2_IMG} alt="New Arrivals" fill className="object-cover object-left" />
+              <span className="absolute top-4 left-4 sm:top-5 sm:left-5 md:top-6 md:left-6 bg-white px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base md:text-lg lg:text-xl font-medium text-[#494791]">
                 NEW ARRIVALS
               </span>
             </div>
@@ -34,30 +34,31 @@ export default function NewArrivals() {
           </Link>
         </div>
 
-        {/* RIGHT Card*/}
-        <div className="flex w-[648px] flex-col gap-6">
-          <div className="flex gap-6">
-            {/* First Right Card */}
-            <Link href="/products/bestsellers" className="flex h-[312px] flex-1 flex-col">
+        {/* Right Cards Container */}
+        <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 gap-4 sm:gap-5 md:gap-6">
+          {/* Top Row on Desktop / Stacked on Mobile */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 md:gap-6">
+            {/* BESTSELLERS Card */}
+            <Link href="/products/bestsellers" className="flex flex-col h-48 sm:h-36 md:h-40 lg:h-48 xl:h-[312px]">
               <div className="relative flex-grow overflow-hidden">
-                <Image src={NEW_GAME1_IMG} alt="" fill className="object-cover" />
+                <Image src={NEW_GAME1_IMG} alt="Bestsellers" fill className="object-cover" />
               </div>
               <Caption label="BESTSELLERS" />
             </Link>
 
-            {/* Second Right Card */}
-            <Link href="/products/sale" className="flex h-[312px] flex-1 flex-col">
+            {/* SALE Card */}
+            <Link href="/products/sale" className="flex flex-col h-48 sm:h-36 md:h-40 lg:h-48 xl:h-[312px]">
               <div className="relative flex-grow overflow-hidden">
-                <Image src={NEW_GAME3_IMG} alt="" fill className="object-cover" />
+                <Image src={NEW_GAME3_IMG} alt="Sale" fill className="object-cover" />
               </div>
               <Caption label="SALE" />
             </Link>
           </div>
 
-          {/* Right Bottom Card */}
-          <Link href="/products/board-games" className="flex h-[312px] w-full flex-col">
+          {/* BOARD GAMES Card */}
+          <Link href="/products/board-games" className="flex w-full flex-col h-48 sm:h-40 md:h-44 lg:h-52 xl:h-[312px]">
             <div className="relative flex-grow overflow-hidden">
-              <Image src={NEW_GAME4_IMG} alt="" fill className="object-cover" />
+              <Image src={NEW_GAME4_IMG} alt="Board Games" fill className="object-cover" />
             </div>
             <Caption label="BOARD GAMES" />
           </Link>

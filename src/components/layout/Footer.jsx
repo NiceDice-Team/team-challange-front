@@ -1,8 +1,8 @@
 export default function Footer() {
   return (
-    <footer className="mt-25 flex flex-row justify-between pb-5 px-4 lg:px-8 max-w-full overflow-hidden">
-      <div>
-        <svg width="330" height="54" viewBox="0 0 330 54" fill="none">
+    <footer className="mt-12 sm:mt-16 md:mt-20 lg:mt-24 flex flex-col lg:flex-row justify-between items-start gap-6 sm:gap-8 md:gap-10 lg:gap-12 pb-5 sm:pb-6 md:pb-8 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-24 max-w-full overflow-hidden">
+      <div className="w-full lg:w-auto flex-shrink-0">
+        <svg className="w-48 sm:w-56 md:w-64 lg:w-80 h-auto" viewBox="0 0 330 54" fill="none">
           <rect width="157.288" height="45.627" fill="#494791" />
           <path
             d="M136.273 18.9022C136.753 18.5821 137.265 18.2301 137.809 17.8461C138.353 17.4621 138.849 17.0301 139.297 16.5501C139.745 16.0701 140.113 15.5421 140.401 14.9661C140.689 14.3581 140.833 13.6861 140.833 12.9501C140.833 11.9581 140.481 11.1101 139.777 10.4061C139.073 9.67015 138.113 9.30215 136.897 9.30215C135.937 9.30215 135.041 9.60615 134.209 10.2142C133.377 10.7901 132.961 11.7021 132.961 12.9501C132.961 13.4621 133.057 13.9741 133.249 14.4861C133.473 14.9981 133.745 15.5101 134.065 16.0222C134.385 16.5022 134.737 16.9821 135.121 17.4621C135.505 17.9421 135.889 18.4221 136.273 18.9022ZM145.057 35.7022C144.033 37.3022 142.625 38.5022 140.833 39.3022C139.073 40.1021 137.249 40.5022 135.361 40.5022C133.057 40.5022 131.201 40.1502 129.793 39.4462C128.385 38.7422 127.297 37.8942 126.529 36.9022C125.761 35.9102 125.249 34.8862 124.993 33.8302C124.769 32.7742 124.657 31.8942 124.657 31.1902C124.657 29.8462 124.865 28.6622 125.281 27.6382C125.729 26.6142 126.305 25.7021 127.009 24.9021C127.745 24.0701 128.593 23.3341 129.553 22.6941C130.545 22.0221 131.585 21.3982 132.673 20.8222C132.193 20.1502 131.729 19.5101 131.281 18.9022C130.833 18.2941 130.417 17.6861 130.033 17.0781C129.681 16.4381 129.393 15.7822 129.169 15.1102C128.977 14.4061 128.881 13.6221 128.881 12.7581C128.881 11.8301 129.041 10.9501 129.361 10.1181C129.713 9.25415 130.209 8.50215 130.849 7.86215C131.521 7.19015 132.337 6.66215 133.297 6.27815C134.257 5.89415 135.361 5.70215 136.609 5.70215C137.665 5.70215 138.689 5.84615 139.681 6.13415C140.705 6.42215 141.601 6.87015 142.369 7.47815C143.137 8.05415 143.745 8.79015 144.193 9.68615C144.673 10.5501 144.913 11.5582 144.913 12.7102C144.913 13.7342 144.737 14.6941 144.385 15.5901C144.033 16.4541 143.553 17.2541 142.945 17.9901C142.337 18.7261 141.649 19.3981 140.881 20.0062C140.113 20.5821 139.313 21.1101 138.481 21.5901L144.673 29.1262C145.313 27.3342 145.681 25.5581 145.777 23.7981H149.665C149.569 24.8221 149.457 25.7022 149.329 26.4382C149.233 27.1422 149.089 27.7982 148.897 28.4062C148.737 29.0142 148.529 29.6222 148.273 30.2302C148.017 30.8062 147.713 31.4782 147.361 32.2462L154.033 39.9742H148.705L145.057 35.7022ZM134.929 23.4142C134.129 23.8622 133.361 24.3261 132.625 24.8061C131.921 25.2861 131.297 25.8302 130.753 26.4382C130.209 27.0462 129.777 27.7342 129.457 28.5022C129.137 29.2382 128.977 30.1182 128.977 31.1422C128.977 32.0062 129.153 32.8062 129.505 33.5422C129.889 34.2462 130.385 34.8541 130.993 35.3661C131.601 35.8461 132.289 36.2302 133.057 36.5182C133.857 36.8062 134.673 36.9502 135.505 36.9502C137.073 36.9502 138.465 36.5822 139.681 35.8462C140.929 35.1102 141.969 34.1182 142.801 32.8702L134.929 23.4142Z"
@@ -44,10 +44,10 @@ export default function Footer() {
           />
         </svg>
       </div>
-      <div className="flex flex-row justify-between gap-4 lg:gap-12 xl:gap-20 flex-wrap lg:flex-nowrap">
+      <div className="flex flex-row justify-between gap-4 sm:gap-6 md:gap-8 lg:gap-12 xl:gap-20 flex-wrap lg:flex-nowrap w-full lg:w-auto">
         <div>
-          <h3 className="uppercase mb-2 font-bold">products</h3>
-          <ul className="flex flex-col gap-2">
+          <h3 className="uppercase mb-2 font-bold text-sm sm:text-base">products</h3>
+          <ul className="flex flex-col gap-1.5 sm:gap-2 text-xs sm:text-sm">
             <li>New Arrivals</li>
             <li>Bestsellers</li>
             <li>Board Games</li>
@@ -56,8 +56,8 @@ export default function Footer() {
           </ul>
         </div>
         <div>
-          <h3 className="uppercase mb-2 font-bold">clients</h3>
-          <ul className="flex flex-col gap-2">
+          <h3 className="uppercase mb-2 font-bold text-sm sm:text-base">clients</h3>
+          <ul className="flex flex-col gap-1.5 sm:gap-2 text-xs sm:text-sm">
             <li>Blog</li>
             <li>Reviews</li>
             <li>Shipping</li>
@@ -65,17 +65,17 @@ export default function Footer() {
           </ul>
         </div>
         <div>
-          <h3 className="uppercase mb-2 font-bold">company</h3>
-          <ul className="flex flex-col gap-2">
+          <h3 className="uppercase mb-2 font-bold text-sm sm:text-base">company</h3>
+          <ul className="flex flex-col gap-1.5 sm:gap-2 text-xs sm:text-sm">
             <li>About</li>
             <li>Contact Us</li>
             <li>Terms of Service</li>
-            <li>Privecy Policy</li>
+            <li>Privacy Policy</li>
           </ul>
         </div>
       </div>
       <div className="flex-shrink-0">
-        <h3 className="uppercase mb-2 font-bold">follow us</h3>
+        <h3 className="uppercase mb-2 font-bold text-sm sm:text-base">follow us</h3>
         <div className="flex flex-row gap-3">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g clipPath="url(#clip0_220_832)">

@@ -133,47 +133,65 @@ export default function HeroScroller() {
   }
 
   return (
-    <section className="w-full h-full relative">
+    <section className="w-full h-full relative ">
       {/* Aspect ratio container */}
       <div
-        className="w-full relative overflow-hidden"
+        className="w-full relative overflow-hidden "
         style={{
-          paddingBottom: `min(${(1 / aspectRatio) * 100}%, 80vh)`, // Creates the aspect ratio with max height
+          paddingBottom: `min(${(1 / aspectRatio) * 100}%, 60vh)`, // Creates the aspect ratio with max height
         }}
       >
         {/* Dynamic info card */}
         <div
-          className={`absolute bottom-10 right-20 z-10 bg-black/85 px-8 py-6 max-w-sm text-white transition-opacity duration-300 ${
+          className={`hidden sm:block absolute sm:bottom-6 sm:right-6 md:bottom-8 md:right-12 lg:bottom-10 lg:right-20 z-10 bg-black/85 sm:px-6 sm:py-5 md:px-8 md:py-6 sm:max-w-md md:max-w-lg lg:max-w-xl text-white transition-opacity duration-300 ${
             isCardVisible ? "opacity-100" : "opacity-0"
           }`}
         >
-          <h3 className="uppercase text-base text-[#FF5F00] mb-4">{scrollerData[currentSection].category}</h3>
-          <h4 className="text-xl mb-3">{scrollerData[currentSection].title}</h4>
-          <p className="text-lg mb-3">{scrollerData[currentSection].description}</p>
-          <button className="bg-white text-slate-700 py-3 px-8 font-medium hover:bg-[#FF5F00]/80 hover:text-white transition-all duration-150">
+          <h3 className="uppercase text-sm md:text-base text-[#FF5F00] mb-3 md:mb-4">
+            {scrollerData[currentSection].category}
+          </h3>
+          <h4 className="text-lg md:text-xl lg:text-2xl mb-3 font-semibold leading-tight line-clamp-2">
+            {scrollerData[currentSection].title}
+          </h4>
+          <p className="text-base md:text-lg mb-4 line-clamp-3">
+            {scrollerData[currentSection].description}
+          </p>
+          <button className="bg-white text-slate-700 py-2.5 px-6 md:py-3 md:px-8 text-base font-medium hover:bg-[#FF5F00]/80 hover:text-white transition-all duration-150 w-auto">
             {scrollerData[currentSection].buttonText}
           </button>
         </div>
 
         <button
           onClick={handleLeftClick}
-          className={`absolute left-4 top-1/2 z-10 -translate-y-1/2 rounded-full shadow-lg transition-all duration-200 p-2 ${
+          className={`absolute left-2 sm:left-3 md:left-4 top-1/2 z-10 -translate-y-1/2 rounded-full shadow-lg transition-all duration-200 p-1.5 sm:p-2 ${
             currentSection === 0 ? "bg-[#4a479189]" : "bg-[#494791]"
           }`}
           aria-label="Previous slide"
         >
-          <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg
+            className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-white"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
         </button>
         <button
           onClick={handleRightClick}
-          className={`absolute right-4 top-1/2 z-10 -translate-y-1/2 rounded-full shadow-lg transition-all duration-200 p-2 ${
+          className={`absolute right-2 sm:right-3 md:right-4 top-1/2 z-10 -translate-y-1/2 rounded-full shadow-lg transition-all duration-200 p-1.5 sm:p-2 ${
             currentSection === scrollerData.length - 1 ? "bg-[#4a479189]" : "bg-[#494791]"
           }`}
           aria-label="Next slide"
         >
-          <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg
+            className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-white"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
           </svg>
         </button>

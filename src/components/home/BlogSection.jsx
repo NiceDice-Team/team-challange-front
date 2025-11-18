@@ -41,7 +41,7 @@ export default function BlogSection() {
       <div className="container mx-auto ">
         <div className="flex items-center justify-between">
           <h2 className="text-title font-semibold tracking-wide uppercase mb-8">Check out our blogs</h2>
-          <div className="self-start underline underline-offset-2">view all</div>
+          <div className="self-end mb-8 md:mb-0  md:self-start underline underline-offset-2 text-nowrap">view all</div>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">

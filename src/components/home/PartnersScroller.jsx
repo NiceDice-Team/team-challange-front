@@ -21,12 +21,12 @@ const PARTNERS = [
 
 export default function PartnersScroller() {
   return (
-    <section className="w-full group flex flex-col gap-2 lg:gap-10 px-8  lg:px-50">
-      <h2 className="uppercase text-lg lg:text-title">Our Trusted Brands & Partners</h2>
+    <section className="w-full group flex flex-col gap-2 sm:gap-4 md:gap-6 lg:gap-10 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-24">
+      <h2 className="uppercase text-base sm:text-lg md:text-xl lg:text-2xl xl:text-[40px]">Our Trusted Brands & Partners</h2>
 
       <div
         className="flex relative overflow-hidden w-full mx-auto group py-4  
-        before:absolute before:left-0 before:top-0 before:z-10 before:h-full before:w-6
+        before:absolute before:-left-0 before:top-0 before:z-10 before:h-full before:w-6
         before:bg-gradient-to-r before:from-background before:to-transparent before:content-[''] 
         after:absolute after:right-0 after:top-0 after:h-full after:w-6 
         after:bg-gradient-to-l after:from-background after:to-transparent after:content-['']"
@@ -39,7 +39,7 @@ export default function PartnersScroller() {
                 alt={partner.alt}
                 width={88}
                 height={88}
-                className=" object-contain"
+                className=" object-contain "
                 priority={partner.id <= 4}
               />
             </div>
