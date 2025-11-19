@@ -106,4 +106,14 @@ describe("CheckoutPage", () => {
     });
   })
 
+  describe("Order Total calculation", () => {
+    test("displays initial order total as subtotal when paymentMethod is null", async () => {
+      render(<CheckoutPage />);
+
+      await waitFor(() => {
+        expect(screen.getByText("$100")).toBeInTheDocument();
+      });
+    });
+  })
+
 });
