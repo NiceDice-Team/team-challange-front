@@ -62,5 +62,15 @@ describe("CheckoutPage", () => {
     jest.clearAllMocks();
   });
 
+  describe("Rendering", () => {
+    test("renders page with checkout title", () => {
+      render(<CheckoutPage />);
+
+      const checkoutTitles = screen.getAllByText("Checkout");
+      expect(checkoutTitles.length).toBeGreaterThan(0);
+      const title = screen.getByRole("heading", { name: /Checkout/i });
+      expect(title).toBeInTheDocument();
+    });
+  })
 
 });
