@@ -143,4 +143,21 @@ describe("CheckoutPage", () => {
     });
   })
 
+  describe("Component integration", () => {
+    test("passes paymentMethod to ShippingForm", async () => {
+      const user = userEvent.setup();
+      render(<CheckoutPage />);
+
+      const paymentMethodDisplay = screen.getByTestId("shipping-form-payment-method");
+      expect(paymentMethodDisplay).toHaveTextContent("null");
+
+      const selectButton = screen.getByTestId("select-delivery-option");
+      await user.click(selectButton);
+
+      await waitFor(() => {
+        expect(paymentMethodDisplay).toHaveTextContent("DHL");
+      });
+    });
+  })
+
 });
