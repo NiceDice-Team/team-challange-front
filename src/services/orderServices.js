@@ -1,9 +1,10 @@
-import { fetchAPI } from "./api.js";
+import { fetchAPI } from "./api";
 import { getTokens } from "@/lib/tokenManager";
 
-const { accessToken } = getTokens();
 export const orderServices = {
   async getOrders(userId) {
+    const { accessToken } = getTokens() || {};
+    
     if (!userId) {
       throw new Error("User must be authenticated to fetch orders");
     }

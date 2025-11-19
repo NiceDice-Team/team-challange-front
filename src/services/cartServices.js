@@ -1,4 +1,4 @@
-import { fetchAPI } from "./api.js";
+import { fetchAPI } from "./api";
 
 // Guest cart management using localStorage
 const GUEST_CART_KEY = "guest_cart";
@@ -256,7 +256,7 @@ export const productServices = {
       if (params.types) queryParams.append("types", params.types);
       if (params.ordering) queryParams.append("ordering", params.ordering);
       if (params.limit) queryParams.append("limit", params.limit);
-      if (params.offset) queryParams.append("offset", params.offset);
+      if (params.offset !== undefined) queryParams.append("offset", params.offset);
 
       const response = await fetchAPI(`products/?${queryParams.toString()}`);
       return response.results || response;

@@ -9,4 +9,6 @@ module.exports = {
 
     return config;
   },
+  // Enable standalone output for Docker
+  output: 'standalone',
 };
