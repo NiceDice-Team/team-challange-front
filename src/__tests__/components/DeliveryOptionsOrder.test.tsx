@@ -262,4 +262,37 @@ describe("DeliveryOptions", () => {
       expect(shippingPrices.length).toBeGreaterThan(0);
     });
   });
+
+    describe("Multiple selections", () => {
+      test("handles multiple option changes correctly", async () => {
+        const user = userEvent.setup();
+        render(
+          <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
+        );
+
+        const secondOption = deliveryOptions[1];
+        const thirdOption = deliveryOptions[2];
+        const fourthOption = deliveryOptions[3];
+
+        const secondRadio = screen.getByTestId(
+          `radio-input-${secondOption.id}`
+        );
+        const thirdRadio = screen.getByTestId(`radio-input-${thirdOption.id}`);
+        const fourthRadio = screen.getByTestId(
+          `radio-input-${fourthOption.id}`
+        );
+
+        await user.click(secondRadio);
+        expect(secondRadio).toBeChecked();
+        expect(mockOnPaymentMethodChange).toHaveBeenCalledWith(secondOption);
+
+        await user.click(thirdRadio);
+        expect(thirdRadio).toBeChecked();
+        expect(mockOnPaymentMethodChange).toHaveBeenCalledWith(thirdOption);
+
+        await user.click(fourthRadio);
+        expect(fourthRadio).toBeChecked();
+        expect(mockOnPaymentMethodChange).toHaveBeenCalledWith(fourthOption);
+      });
+    });
 });
