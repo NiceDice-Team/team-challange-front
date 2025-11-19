@@ -263,36 +263,51 @@ describe("DeliveryOptions", () => {
     });
   });
 
-    describe("Multiple selections", () => {
-      test("handles multiple option changes correctly", async () => {
-        const user = userEvent.setup();
-        render(
-          <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
-        );
+  describe("Multiple selections", () => {
+    test("handles multiple option changes correctly", async () => {
+      const user = userEvent.setup();
+      render(
+        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
+      );
 
-        const secondOption = deliveryOptions[1];
-        const thirdOption = deliveryOptions[2];
-        const fourthOption = deliveryOptions[3];
+      const secondOption = deliveryOptions[1];
+      const thirdOption = deliveryOptions[2];
+      const fourthOption = deliveryOptions[3];
 
-        const secondRadio = screen.getByTestId(
-          `radio-input-${secondOption.id}`
-        );
-        const thirdRadio = screen.getByTestId(`radio-input-${thirdOption.id}`);
-        const fourthRadio = screen.getByTestId(
-          `radio-input-${fourthOption.id}`
-        );
+      const secondRadio = screen.getByTestId(`radio-input-${secondOption.id}`);
+      const thirdRadio = screen.getByTestId(`radio-input-${thirdOption.id}`);
+      const fourthRadio = screen.getByTestId(`radio-input-${fourthOption.id}`);
 
-        await user.click(secondRadio);
-        expect(secondRadio).toBeChecked();
-        expect(mockOnPaymentMethodChange).toHaveBeenCalledWith(secondOption);
+      await user.click(secondRadio);
+      expect(secondRadio).toBeChecked();
+      expect(mockOnPaymentMethodChange).toHaveBeenCalledWith(secondOption);
 
-        await user.click(thirdRadio);
-        expect(thirdRadio).toBeChecked();
-        expect(mockOnPaymentMethodChange).toHaveBeenCalledWith(thirdOption);
+      await user.click(thirdRadio);
+      expect(thirdRadio).toBeChecked();
+      expect(mockOnPaymentMethodChange).toHaveBeenCalledWith(thirdOption);
 
-        await user.click(fourthRadio);
-        expect(fourthRadio).toBeChecked();
-        expect(mockOnPaymentMethodChange).toHaveBeenCalledWith(fourthOption);
-      });
+      await user.click(fourthRadio);
+      expect(fourthRadio).toBeChecked();
+      expect(mockOnPaymentMethodChange).toHaveBeenCalledWith(fourthOption);
     });
+  });
+
+  describe("Edge cases", () => {
+    test("handles clicking on already selected option", async () => {
+      const user = userEvent.setup();
+      render(
+        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
+      );
+
+      const firstRadio = screen.getByTestId(
+        `radio-input-${deliveryOptions[0].id}`
+      );
+      expect(firstRadio).toBeChecked();
+
+      await user.click(firstRadio);
+
+      expect(firstRadio).toBeChecked();
+      expect(mockOnPaymentMethodChange).toHaveBeenCalled();
+    });
+  });
 });
