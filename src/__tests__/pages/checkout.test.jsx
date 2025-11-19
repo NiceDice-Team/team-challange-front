@@ -129,6 +129,18 @@ describe("CheckoutPage", () => {
         expect(screen.getByText("$135")).toBeInTheDocument();
       });
     });
+    test("displays correct order total with paymentMethod price and subtotal", async () => {
+      const user = userEvent.setup();
+      render(<CheckoutPage />);
+
+      const selectButton = screen.getByTestId("select-delivery-option");
+      await user.click(selectButton);
+
+      await waitFor(() => {
+        const orderTotal = screen.getByText("$135");
+        expect(orderTotal).toBeInTheDocument();
+      });
+    });
   })
 
 });
