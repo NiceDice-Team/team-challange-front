@@ -114,6 +114,21 @@ describe("CheckoutPage", () => {
         expect(screen.getByText("$100")).toBeInTheDocument();
       });
     });
+    test("updates order total when paymentMethod is selected", async () => {
+      const user = userEvent.setup();
+      render(<CheckoutPage />);
+
+      await waitFor(() => {
+        expect(screen.getByText("$100")).toBeInTheDocument();
+      });
+
+      const selectButton = screen.getByTestId("select-delivery-option");
+      await user.click(selectButton);
+
+      await waitFor(() => {
+        expect(screen.getByText("$135")).toBeInTheDocument();
+      });
+    });
   })
 
 });
