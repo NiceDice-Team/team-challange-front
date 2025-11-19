@@ -188,6 +188,22 @@ describe("CheckoutPage", () => {
       const deliveryOptions = screen.getByTestId("delivery-options");
       expect(deliveryOptions).toBeInTheDocument();
     });
-  })
+    test("renders all main sections in correct order", () => {
+      render(<CheckoutPage />);
 
+      const breadcrumb = screen.getByTestId("custom-breadcrumb");
+      const title = screen.getByRole("heading", { name: /Checkout/i });
+      const shippingForm = screen.getByTestId("shipping-form");
+      const productsTable = screen.getByTestId("products-table");
+      const deliveryOptions = screen.getByTestId("delivery-options");
+      const orderTotal = screen.getByText("Order Total");
+
+      expect(breadcrumb).toBeInTheDocument();
+      expect(title).toBeInTheDocument();
+      expect(shippingForm).toBeInTheDocument();
+      expect(productsTable).toBeInTheDocument();
+      expect(deliveryOptions).toBeInTheDocument();
+      expect(orderTotal).toBeInTheDocument();
+    });
+  })
 });
