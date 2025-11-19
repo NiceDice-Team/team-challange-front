@@ -89,7 +89,11 @@ describe("CheckoutPage", () => {
 
       expect(screen.getByTestId("shipping-form")).toBeInTheDocument();
     });
+    test("renders ProductsTable component", () => {
+      render(<CheckoutPage />);
 
+      expect(screen.getByTestId("products-table")).toBeInTheDocument();
+    });
   })
 
 });
