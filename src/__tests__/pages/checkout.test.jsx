@@ -99,6 +99,11 @@ describe("CheckoutPage", () => {
 
       expect(screen.getByTestId("delivery-options")).toBeInTheDocument();
     });
+    test("renders Order Total section", () => {
+      render(<CheckoutPage />);
+
+      expect(screen.getByText("Order Total")).toBeInTheDocument();
+    });
   })
 
 });
