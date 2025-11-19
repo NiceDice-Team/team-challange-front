@@ -76,6 +76,14 @@ describe("CheckoutPage", () => {
 
       expect(screen.getByTestId("custom-breadcrumb")).toBeInTheDocument();
     });
+    test("renders breadcrumb items correctly", () => {
+      render(<CheckoutPage />);
+
+      expect(screen.getByTestId("breadcrumb-item-0")).toHaveTextContent("Home");
+      expect(screen.getByTestId("breadcrumb-item-1")).toHaveTextContent("Board games");
+      expect(screen.getByTestId("breadcrumb-item-2")).toHaveTextContent("Cart");
+      expect(screen.getByTestId("breadcrumb-item-3")).toHaveTextContent("Checkout");
+    });
   })
 
 });
