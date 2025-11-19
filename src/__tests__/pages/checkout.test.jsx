@@ -84,6 +84,12 @@ describe("CheckoutPage", () => {
       expect(screen.getByTestId("breadcrumb-item-2")).toHaveTextContent("Cart");
       expect(screen.getByTestId("breadcrumb-item-3")).toHaveTextContent("Checkout");
     });
+    test("renders ShippingForm component", () => {
+      render(<CheckoutPage />);
+
+      expect(screen.getByTestId("shipping-form")).toBeInTheDocument();
+    });
+
   })
 
 });
