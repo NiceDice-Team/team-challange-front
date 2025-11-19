@@ -94,6 +94,11 @@ describe("CheckoutPage", () => {
 
       expect(screen.getByTestId("products-table")).toBeInTheDocument();
     });
+    test("renders DeliveryOptions component", () => {
+      render(<CheckoutPage />);
+
+      expect(screen.getByTestId("delivery-options")).toBeInTheDocument();
+    });
   })
 
 });
