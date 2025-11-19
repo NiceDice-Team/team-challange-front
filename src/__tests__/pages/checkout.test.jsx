@@ -71,6 +71,11 @@ describe("CheckoutPage", () => {
       const title = screen.getByRole("heading", { name: /Checkout/i });
       expect(title).toBeInTheDocument();
     });
+    test("renders CustomBreadcrumb component", () => {
+      render(<CheckoutPage />);
+
+      expect(screen.getByTestId("custom-breadcrumb")).toBeInTheDocument();
+    });
   })
 
 });
