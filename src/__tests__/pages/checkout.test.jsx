@@ -1,0 +1,66 @@
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import CheckoutPage from "../../app/checkout-order/page";
+
+jest.mock("../../components/shared/CustomBreadcrumb", () => ({
+  CustomBreadcrumb: ({ items }) => (
+    <nav data-testid="custom-breadcrumb">
+      {items.map((item, index) => (
+        <span key={index} data-testid={`breadcrumb-item-${index}`}>
+          {item.label}
+        </span>
+      ))}
+    </nav>
+  ),
+}));
+
+jest.mock("../../components/checkout/ShippingForm", () => ({
+  __esModule: true,
+  default: ({ paymentMethod }) => (
+    <div data-testid="shipping-form">
+      <span data-testid="shipping-form-payment-method">
+        {paymentMethod ? paymentMethod.name : "null"}
+      </span>
+    </div>
+  ),
+}));
+
+jest.mock("../../components/checkout/ProductsTable", () => {
+  const React = require("react");
+  return {
+    __esModule: true,
+    default: ({ setSubtotal }) => {
+      React.useEffect(() => {
+        if (setSubtotal) {
+          setSubtotal(100);
+        }
+      }, [setSubtotal]);
+      return <div data-testid="products-table">Products Table</div>;
+    },
+  };
+});
+
+jest.mock("../../components/checkout/DeliveryOptions", () => ({
+  __esModule: true,
+  default: ({ onPaymentMethodChange }) => {
+    const mockOption = { id: 1, name: "DHL", price: 35, description: "1-3 days" };
+    return (
+      <div data-testid="delivery-options">
+        <button
+          data-testid="select-delivery-option"
+          onClick={() => onPaymentMethodChange(mockOption)}
+        >
+          Select DHL
+        </button>
+      </div>
+    );
+  },
+}));
+
+describe("CheckoutPage", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+
+});
