@@ -309,5 +309,20 @@ describe("DeliveryOptions", () => {
       expect(firstRadio).toBeChecked();
       expect(mockOnPaymentMethodChange).toHaveBeenCalled();
     });
+    test("maintains selection state correctly", async () => {
+      const user = userEvent.setup();
+      render(
+        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
+      );
+
+      const secondOption = deliveryOptions[1];
+      const secondRadio = screen.getByTestId(`radio-input-${secondOption.id}`);
+
+      await user.click(secondRadio);
+      expect(secondRadio).toBeChecked();
+
+      await user.click(secondRadio);
+      expect(secondRadio).toBeChecked();
+    });
   });
 });
