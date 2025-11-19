@@ -158,6 +158,18 @@ describe("CheckoutPage", () => {
         expect(paymentMethodDisplay).toHaveTextContent("DHL");
       });
     });
+    test("updates paymentMethod when DeliveryOptions calls onPaymentMethodChange", async () => {
+      const user = userEvent.setup();
+      render(<CheckoutPage />);
+
+      const selectButton = screen.getByTestId("select-delivery-option");
+      await user.click(selectButton);
+
+      await waitFor(() => {
+        const paymentMethodDisplay = screen.getByTestId("shipping-form-payment-method");
+        expect(paymentMethodDisplay).toHaveTextContent("DHL");
+      });
+    });
   })
 
 });
