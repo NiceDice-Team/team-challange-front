@@ -172,4 +172,22 @@ describe("CheckoutPage", () => {
     });
   })
 
+  describe("Layout structure", () => {
+    test("renders page with correct layout structure", () => {
+      render(<CheckoutPage />);
+
+      const checkoutTitle = screen.getByRole("heading", { name: /Checkout/i });
+      expect(checkoutTitle).toBeInTheDocument();
+
+      const shippingForm = screen.getByTestId("shipping-form");
+      expect(shippingForm).toBeInTheDocument();
+
+      const productsTable = screen.getByTestId("products-table");
+      expect(productsTable).toBeInTheDocument();
+
+      const deliveryOptions = screen.getByTestId("delivery-options");
+      expect(deliveryOptions).toBeInTheDocument();
+    });
+  })
+
 });
