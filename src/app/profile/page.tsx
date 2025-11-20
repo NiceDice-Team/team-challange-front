@@ -138,7 +138,7 @@ function ProfileContent() {
           update your preferences
         </p>
         <div className="flex lg:flex-row flex-col justify-between gap-6 mt-6 h-fit">
-          <div className="flex flex-col gap-6 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.05)] pb-6 w-1/3">
+          <div className="flex flex-col gap-6 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.05)] pb-6 w-full lg:w-1/3">
             <div className="flex flex-col bg-purple p-6 text-white">
               <div className="flex items-center gap-2 text-xl uppercase">
                 <ProfileSVG color="white" />
@@ -174,7 +174,7 @@ function ProfileContent() {
             </CustomButton>
           </div>
 
-          <div className="flex flex-col gap-4 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.05)] w-2/3">
+          <div className="flex flex-col gap-4 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.05)] w-full lg:w-2/3">
             <Tabs defaultValue="history" className="w-full">
               <TabsList className="bg-[#f3f3f3] mb-7 rounded-none w-full h-[40px]">
                 <TabsTrigger
