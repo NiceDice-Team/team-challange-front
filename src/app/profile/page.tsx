@@ -212,7 +212,10 @@ function ProfileContent() {
                 </div>
                 {error && <p className="text-red-500">{error}</p>}
 
-                <form className="px-7" onSubmit={handleSubmit(onSubmit)}>
+                <form
+                  className="lg:px-7 px-0"
+                  onSubmit={handleSubmit(onSubmit)}
+                >
                   <div className="gap-6 grid grid-cols-1 md:grid-cols-2 mb-6">
                     <CustomInput
                       label="First Name"
@@ -241,7 +244,7 @@ function ProfileContent() {
                       }
                     />
                   </div>
-                  <div className="w-1/2">
+                  <div className="w-full lg:w-1/2">
                     <CustomInput
                       label="Email"
                       id="email"
