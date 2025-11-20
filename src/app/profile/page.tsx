@@ -130,14 +130,14 @@ function ProfileContent() {
           <CustomBreadcrumb items={breadcrumbItems} />
           <LogoutButton showText={true} showIcon={true} />
         </div>
-        <h3 className="mb-4 text-title uppercase">
+        <h3 className="mb-4 md:text-title text-2xl uppercase">
           Welcome, {isLoading ? "..." : userData?.first_name}!
         </h3>
         <p>
           🧩 Your account dashboard - manage your profile, track orders, and
           update your preferences
         </p>
-        <div className="flex flex-row justify-between gap-6 mt-6 h-fit">
+        <div className="flex lg:flex-row flex-col justify-between gap-6 mt-6 h-fit">
           <div className="flex flex-col gap-6 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.05)] pb-6 w-1/3">
             <div className="flex flex-col bg-purple p-6 text-white">
               <div className="flex items-center gap-2 text-xl uppercase">
@@ -273,7 +273,9 @@ function ProfileContent() {
         </div>
       </div>
 
-      {modalOpen && <ChangePass open={modalOpen} onClose={() => setModalOpen(false)} />}
+      {modalOpen && (
+        <ChangePass open={modalOpen} onClose={() => setModalOpen(false)} />
+      )}
     </>
   );
 }
