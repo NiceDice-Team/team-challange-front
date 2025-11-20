@@ -59,7 +59,7 @@ const Modal = ({
           <CustomButton
             onClick={handleCancel}
             styleType="whiteButton"
-            className="w-fit"
+            className="mt-4 sm:mt-0 w-fit"
           >
             {cancelButtonText}
           </CustomButton>
