@@ -82,7 +82,7 @@ function LoginPageContent() {
 
   return (
     <div className="flex flex-col items-center mx-auto mt-20">
-      <h1 className="mb-9 font-normal text-2xl md:text-4xl text-center uppercase">
+      <h1 className="mb-9 font-normal md:text-title text-2xl text-center uppercase">
         {mode === "back" ? (
           "👋 Welcome back!"
         ) : (
