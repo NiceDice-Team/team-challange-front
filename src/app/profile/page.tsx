@@ -130,15 +130,15 @@ function ProfileContent() {
           <CustomBreadcrumb items={breadcrumbItems} />
           <LogoutButton showText={true} showIcon={true} />
         </div>
-        <h3 className="mb-4 text-title uppercase">
+        <h3 className="mb-4 md:text-title text-2xl uppercase">
           Welcome, {isLoading ? "..." : userData?.first_name}!
         </h3>
         <p>
           🧩 Your account dashboard - manage your profile, track orders, and
           update your preferences
         </p>
-        <div className="flex flex-row justify-between gap-6 mt-6 h-fit">
-          <div className="flex flex-col gap-6 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.05)] pb-6 w-1/3">
+        <div className="flex lg:flex-row flex-col justify-between gap-6 mt-6 h-fit">
+          <div className="flex flex-col gap-6 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.05)] pb-6 w-full lg:w-1/3">
             <div className="flex flex-col bg-purple p-6 text-white">
               <div className="flex items-center gap-2 text-xl uppercase">
                 <ProfileSVG color="white" />
@@ -174,7 +174,7 @@ function ProfileContent() {
             </CustomButton>
           </div>
 
-          <div className="flex flex-col gap-4 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.05)] w-2/3">
+          <div className="flex flex-col gap-4 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.05)] w-full lg:w-2/3">
             <Tabs defaultValue="history" className="w-full">
               <TabsList className="bg-[#f3f3f3] mb-7 rounded-none w-full h-[40px]">
                 <TabsTrigger
@@ -212,7 +212,10 @@ function ProfileContent() {
                 </div>
                 {error && <p className="text-red-500">{error}</p>}
 
-                <form className="px-7" onSubmit={handleSubmit(onSubmit)}>
+                <form
+                  className="lg:px-7 px-0"
+                  onSubmit={handleSubmit(onSubmit)}
+                >
                   <div className="gap-6 grid grid-cols-1 md:grid-cols-2 mb-6">
                     <CustomInput
                       label="First Name"
@@ -241,7 +244,7 @@ function ProfileContent() {
                       }
                     />
                   </div>
-                  <div className="w-1/2">
+                  <div className="w-full lg:w-1/2">
                     <CustomInput
                       label="Email"
                       id="email"
@@ -273,7 +276,9 @@ function ProfileContent() {
         </div>
       </div>
 
-      {modalOpen && <ChangePass open={modalOpen} onClose={() => setModalOpen(false)} />}
+      {modalOpen && (
+        <ChangePass open={modalOpen} onClose={() => setModalOpen(false)} />
+      )}
     </>
   );
 }

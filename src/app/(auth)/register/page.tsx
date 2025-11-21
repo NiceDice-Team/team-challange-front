@@ -49,7 +49,7 @@ function RegisterPageContent() {
 
   return (
     <div className="mx-auto mt-20">
-      <h1 className="mb-9 font-normal text-title text-center uppercase">
+      <h1 className="mb-9 font-normal md:text-title text-2xl text-center uppercase">
         Create account
       </h1>
       <div className="mb-12 text-base text-center">
@@ -59,7 +59,7 @@ function RegisterPageContent() {
 
       <div className="flex flex-col justify-center items-center mb-28">
         <form
-          className="flex flex-col gap-4 mb-12 w-[500px]"
+          className="flex flex-col gap-4 mb-12 md:w-[500px] w-xs"
           onSubmit={handleSubmit(onSubmit)}
         >
           <CustomInput

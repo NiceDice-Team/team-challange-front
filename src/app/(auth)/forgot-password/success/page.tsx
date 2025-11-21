@@ -9,7 +9,7 @@ import { showCustomToast } from "@/components/shared/Toast";
 export default function ForgotPasswordPage() {
   useEffect(() => {
     // Only run on client-side
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       showCustomToast({
         type: "success",
         title: "Success! You are logged.",
@@ -17,10 +17,12 @@ export default function ForgotPasswordPage() {
       });
     }
   }, []);
-  
+
   return (
-    <div className="flex flex-col items-center mx-auto mt-32 mb-32 w-[464px]">
-      <h1 className="uppercase mb-9 text-title">✉️ Check Your Inbox</h1>
+    <div className="flex flex-col items-center mx-auto mt-32 mb-32 md:w-[464px] w-xs">
+      <h1 className="mb-9 md:text-title text-2xl uppercase">
+        ✉️ Check Your Inbox
+      </h1>
       <p className="mb-12 text-base text-center">
         If the email address you entered is associated with an account, you’ll
         receive a password reset link shortly
@@ -29,7 +31,7 @@ export default function ForgotPasswordPage() {
         Check the message for 5-10 minutes. If you don&apos;t find the list,
         please check your spam folder and resend it again.
       </p>
-      <div className="flex flex-row items-center justify-center gap-1 mb-12">
+      <div className="flex flex-row justify-center items-center gap-1 mb-12">
         <p className="text-base">Didn’t receive the email?</p>
         <Link href="/forgot-password" className="flex gap-1">
           <span className="underline">Resend</span>
@@ -37,7 +39,7 @@ export default function ForgotPasswordPage() {
       </div>
 
       <Link href="/catalog" className="flex gap-1">
-        <span className="underline text-purple">Continue shopping</span>
+        <span className="text-purple underline">Continue shopping</span>
         <Image src={ArrowNext} alt="arrow" />
       </Link>
     </div>

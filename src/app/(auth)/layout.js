@@ -6,16 +6,14 @@ import FeatureSectionBottom from "../../components/home/FeatureSectionBottom.jsx
 import PartnersScroller from "../../components/home/PartnersScroller.jsx";
 import SubscribeSection from "../../components/home/SubscribeSection.jsx";
 
-
-
 export default function AuthLayout({ children }) {
   return (
     <div className="min-h-screen flex flex-col">
-      <div className="px-8 lg:px-16 py-6">
-        <Navbar />
-      </div>
+      <div className="px-8 lg:px-16 py-6"><Navbar /></div>
 
-      <main className="flex-1 px-8 lg:px-16 py-10">{children}</main>
+      <main className="flex-1 px-4 md:px-8 lg:px-16 py-4 md:py-10">
+        {children}
+      </main>
       <FeatureSection />
       <BlogSection />
       <FeatureSectionBottom />

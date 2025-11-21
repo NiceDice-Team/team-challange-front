@@ -48,7 +48,7 @@ function ForgotPasswordPageContent() {
 
   return (
     <div className="flex flex-col items-center mx-auto mt-20 mb-32">
-      <h1 className="mb-9 font-normal text-4xl text-center uppercase">
+      <h1 className="mb-9 font-normal md:text-title text-2xl text-center uppercase">
         🔒Forgot your password?
       </h1>
       <div className="mb-12 text-base text-center">
@@ -56,7 +56,10 @@ function ForgotPasswordPageContent() {
         you a link to reset your password
       </div>
 
-      <form className="space-y-6 w-[504px]" onSubmit={handleSubmit(onSubmit)}>
+      <form
+        className="space-y-6 md:w-[500px] w-xs"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <CustomInput
           placeholder="Enter email address"
           id="email"
