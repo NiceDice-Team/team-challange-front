@@ -96,26 +96,31 @@ export const cartServices = {
       const guestCart = guestCartManager.getGuestCart();
 
       // Enrich guest cart items with full product data
-      try {
-        const enrichedCart = await Promise.all(
-          guestCart.map(async (item) => {
-            try {
-              const product = await productServices.getProductById(item.product.id);
-              return {
-                ...item,
-                product: product,
-              };
-            } catch (error) {
-              console.error(`Error fetching product ${item.product.id}:`, error);
-              return item; // Return item with basic product info if fetch fails
-            }
-          })
-        );
-        return enrichedCart as any[];
-      } catch (error) {
-        console.error("Error enriching guest cart:", error);
-        return guestCart as any[];
+      const enrichedCart = await Promise.all(
+        guestCart.map(async (item) => {
+          try {
+            const product = await productServices.getProductById(item.product.id);
+            return {
+              ...item,
+              product: product,
+            };
+          } catch (error) {
+            console.error(`Error fetching product ${item.product.id}, removing from cart:`, error);
+            // Return null for items that no longer exist
+            return null;
+          }
+        })
+      );
+
+      // Filter out null items (products that no longer exist)
+      const validCart = enrichedCart.filter((item): item is NonNullable<typeof item> => item !== null);
+
+      // Update localStorage if some items were removed
+      if (validCart.length !== guestCart.length) {
+        guestCartManager.saveGuestCart(validCart as GuestCartItem[]);
       }
+
+      return validCart as any[];
     }
 
     try {
