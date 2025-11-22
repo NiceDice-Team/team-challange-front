@@ -2,12 +2,13 @@
 import LanguageSelector from "./LanguageSelector";
 import Link from "next/link";
 import { useUserStore } from "@/store/user";
-import { LogoIcon, SearchIcon, ProfileIcon, CartIcon } from "@/svgs/icons";
+import { LogoIcon, ProfileIcon, CartIcon } from "@/svgs/icons";
 import { useState, useEffect } from "react";
 import CartDropdown from "@/components/cart/CartDropdown";
 import { useCartSummary } from "@/hooks/useCartQuery";
 import { getTokens } from "@/lib/tokenManager";
 import decodeToken from "@/lib/decodeToken";
+import SearchBar from "@/components/shared/SearchBar";
 
 export default function Navbar({isPagination = true}) {
   const { userData } = useUserStore((state) => state);
@@ -36,28 +37,7 @@ export default function Navbar({isPagination = true}) {
           <Link href="/" className="flex-shrink-0">
             <img src={LogoIcon} alt="DICE DECKS Logo" className="w-auto h-8 sm:h-10 md:h-12" />
           </Link>
-          <form
-            className="hidden sm:flex flex-row flex-1 justify-between items-center p-1 border border-[#494791] max-w-xs md:max-w-md lg:max-w-lg mx-2 md:mx-4"
-            onSubmit={(e) => {
-              e.preventDefault();
-              const formData = new FormData(e.target);
-              const searchQuery = formData.get("search");
-              if (searchQuery.trim()) {
-                window.location.href = `/catalog?search=${encodeURIComponent(searchQuery.trim())}`;
-              }
-            }}
-          >
-            <input
-              type="search"
-              name="search"
-              id="default-search"
-              className="ml-1 outline-[#494791] outline-0 w-full text-sm md:text-base"
-              placeholder="Search games..."
-            />
-            <button className="bg-[#494791] hover:bg-[#4a479170] p-1 rounded-[2px]" type="submit">
-              <img src={SearchIcon} alt="Search" className="w-5 h-5 sm:w-6 sm:h-6" />
-            </button>
-          </form>
+          <SearchBar className="hidden sm:flex flex-1 max-w-xs md:max-w-md lg:max-w-lg mx-2 md:mx-4" />
           <div className="flex flex-row items-center gap-1 sm:gap-2 md:gap-3 lg:gap-4">
             {/* Language Selector */}
             <LanguageSelector />
