@@ -20,7 +20,9 @@ function ConfirmSignUpContent() {
   }, []);
   return (
     <div className="flex flex-col items-center mt-23 mb-65">
-      <h1 className="mb-9 text-title uppercase">Thank you for registering!</h1>
+      <h1 className="mb-9 md:text-title text-2xl text-center uppercase">
+        Thank you for registering!
+      </h1>
       <p className="text-base">
         A confirmation email has been sent to your inbox.
       </p>

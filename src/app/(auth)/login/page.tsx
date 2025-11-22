@@ -19,20 +19,18 @@ const INITIAL_STATE: LoginFormState = {
   errors: {},
 };
 
-
 function LoginPageContent() {
   const params = useSearchParams();
   const router = useRouter();
   const mode = params.get("mode");
   const message = params.get("message");
   const activationStatus = params.get("activation_status");
-  const {refreshToken} = getTokens();
+  const { refreshToken } = getTokens();
   const [formState, formAction, pending] = useActionState<
     LoginFormState,
     FormData
   >(signin, INITIAL_STATE);
 
-  
   const [values, setValues] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState<{
     email?: string;
@@ -69,26 +67,26 @@ function LoginPageContent() {
     }
   }, [message, activationStatus]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { name, value } = e.target;
-      setValues((prev) => ({ ...prev, [name]: value }));
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setValues((prev) => ({ ...prev, [name]: value }));
 
-      const result = loginFrontSchema.safeParse({ ...values, [name]: value });
-      if (!result.success) {
-        const fieldError = result.error.flatten().fieldErrors[name]?.[0];
-        setErrors((prev) => ({ ...prev, [name]: fieldError }));
-      } else {
-        setErrors((prev) => ({ ...prev, [name]: undefined }));
-      }
-    };
+    const result = loginFrontSchema.safeParse({ ...values, [name]: value });
+    if (!result.success) {
+      const fieldError = result.error.flatten().fieldErrors[name]?.[0];
+      setErrors((prev) => ({ ...prev, [name]: fieldError }));
+    } else {
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
+    }
+  };
 
   return (
     <div className="flex flex-col items-center mx-auto mt-20">
-      <h1 className="mb-9 font-normal text-4xl text-center uppercase">
+      <h1 className="mb-9 font-normal md:text-title text-2xl text-center uppercase">
         {mode === "back" ? (
           "👋 Welcome back!"
         ) : (
-          <div className="flex items-center gap-2">
+          <div className="flex md:flex-row flex-col items-center gap-2">
             Log in here or{" "}
             <Link href="/register" className="underline">
               create account
@@ -108,7 +106,7 @@ function LoginPageContent() {
         </div>
       )}
 
-      <div className="flex flex-col justify-center items-center mb-28 w-[500px]">
+      <div className="flex flex-col justify-center items-center mb-28 md:w-[500px] w-xs">
         <form className="flex flex-col gap-2 w-full" action={formAction}>
           <CustomInput
             placeholder="Enter email address"
