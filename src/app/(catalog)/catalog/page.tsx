@@ -1,7 +1,7 @@
 "use client";
-import ProductsGrid from "../../../components/catalog/ProductsGrid.jsx";
-import FilterSideBar from "../../../components/catalog/FilterSideBar.jsx";
-import { useUrlFilters } from "../../../hooks/useUrlFilters.js";
+import ProductsGrid from "../../../components/catalog/ProductsGrid";
+import FilterSideBar from "../../../components/catalog/FilterSideBar";
+import { useUrlFilters } from "../../../hooks/useUrlFilters";
 import { Suspense } from "react";
 
 function CatalogContent() {

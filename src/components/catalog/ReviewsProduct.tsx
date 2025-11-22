@@ -1,6 +1,10 @@
 import StarRating from "../layout/StarsLine";
 
-export default function ReviewsProduct({ children }) {
+interface ReviewsProductProps {
+  children?: React.ReactNode;
+}
+
+export default function ReviewsProduct({ children }: ReviewsProductProps) {
   return (
     <section className="flex flex-col items-center justify-center  max-w-6xl mx-auto mb-10">
       {children}

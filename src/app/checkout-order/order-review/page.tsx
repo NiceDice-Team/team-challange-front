@@ -12,8 +12,15 @@ import { useRouter } from "next/navigation";
 import { useCartQuery } from "@/hooks/useCartQuery";
 import { useCheckoutFormData, usePaymentMethod, usePaymentCard, useCheckoutActions } from "@/store/checkout";
 
+interface SectionProps {
+  title: string;
+  onEdit?: () => void;
+  children: React.ReactNode;
+  className?: string;
+}
+
 // Section Component for consistent styling
-const Section = ({ title, onEdit, children, className = "" }) => {
+const Section = ({ title, onEdit, children, className = "" }: SectionProps) => {
   return (
     <div className={`flex flex-col gap-6 ${className}`}>
       <div className="flex justify-between items-center">
@@ -37,10 +44,18 @@ const breadcrumbItems = [
   { label: "Order review", current: true },
 ];
 
+interface PaymentCardData {
+  firstName: string;
+  lastName: string;
+  cardNumber: string;
+  expiryDate: string;
+  cvv: string;
+}
+
 export default function OrderReviewPage() {
   const router = useRouter();
-  const [paymentMethodType, setPaymentMethodType] = useState("credit-card");
-  const [isPaymentExpanded, setIsPaymentExpanded] = useState(true);
+  const [paymentMethodType, setPaymentMethodType] = useState<string>("credit-card");
+  const [isPaymentExpanded, setIsPaymentExpanded] = useState<boolean>(true);
 
   // Get data from Zustand store
   const formData = useCheckoutFormData();
@@ -52,7 +67,7 @@ export default function OrderReviewPage() {
   const { data: cartItems = [], isLoading: cartLoading } = useCartQuery();
 
   // Local state for payment form
-  const [paymentCardData, setPaymentCardData] = useState({
+  const [paymentCardData, setPaymentCardData] = useState<PaymentCardData>({
     firstName: savedPaymentCard?.firstName || "",
     lastName: savedPaymentCard?.lastName || "",
     cardNumber: savedPaymentCard?.cardNumber || "",
@@ -185,7 +200,7 @@ export default function OrderReviewPage() {
                       name="payment-method"
                       value="google-pay"
                       checked={paymentMethodType === "google-pay"}
-                      onChange={(e) => setPaymentMethodType(e.target.value)}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPaymentMethodType(e.target.value)}
                       className="py-2 px-4 gap-6"
                     >
                       <div className="flex items-center gap-1">
@@ -200,7 +215,7 @@ export default function OrderReviewPage() {
                       name="payment-method"
                       value="apple-pay"
                       checked={paymentMethodType === "apple-pay"}
-                      onChange={(e) => setPaymentMethodType(e.target.value)}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPaymentMethodType(e.target.value)}
                       className="py-2 px-4 gap-6"
                     >
                       <div className="flex items-center gap-1">
@@ -215,7 +230,7 @@ export default function OrderReviewPage() {
                       name="payment-method"
                       value="credit-card"
                       checked={paymentMethodType === "credit-card"}
-                      onChange={(e) => setPaymentMethodType(e.target.value)}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPaymentMethodType(e.target.value)}
                       className="bg-white py-2 px-4 gap-6"
                     >
                       <div className="flex items-center gap-1">

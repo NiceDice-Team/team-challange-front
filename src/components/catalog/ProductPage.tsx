@@ -6,8 +6,9 @@ import Image from "next/image";
 import { ProductAccordion } from "./ProductPageAccordion";
 import { CustomBreadcrumb } from "../shared/CustomBreadcrumb";
 import { useAddToCart } from "@/hooks/useCartQuery";
+import type { ProductPageProps, StockStatus } from "@/types/product";
 
-export default function ProductPage({ params }) {
+export default function ProductPage({ params }: ProductPageProps) {
   const [quantity, setQuantity] = useState(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const addToCartMutation = useAddToCart();
@@ -113,7 +114,7 @@ export default function ProductPage({ params }) {
   const isInStock = stockQuantity > 0;
 
   // Determine stock status based on quantity
-  const getStockStatus = (stock) => {
+  const getStockStatus = (stock: number): StockStatus => {
     if (stock === 0) {
       return {
         message: "Sold out",

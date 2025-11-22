@@ -53,9 +53,9 @@ export const PlusIcon = ({ className = "w-4 h-4" }) => (
   </svg>
 );
 
-export const CloseIcon = ({ className = "w-4 h-4" }) => (
+export const CloseIcon = ({ className = "w-4 h-4", strokeWidth = 2 }) => (
   <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={strokeWidth} d="M6 18L18 6M6 6l12 12" />
   </svg>
 );
 
@@ -141,6 +141,37 @@ export const CreditCardIcon = ({ className = "" }) => {
         strokeWidth="1.5"
       />
       <path d="M9 13H5M13 13H11.5M1 7H21" stroke="black" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+};
+
+export const LoadingSpinner = ({ className = "w-8 h-8" }) => {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 50 50"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle
+        cx="25"
+        cy="25"
+        r="20"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="4"
+        strokeLinecap="round"
+        strokeDasharray="31.415, 31.415"
+        transform="rotate(-90 25 25)"
+      >
+        <animateTransform
+          attributeName="transform"
+          type="rotate"
+          from="0 25 25"
+          to="360 25 25"
+          dur="1s"
+          repeatCount="indefinite"
+        />
+      </circle>
     </svg>
   );
 };

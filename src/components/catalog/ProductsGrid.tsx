@@ -6,15 +6,17 @@ import ProductCard from "../catalog/ProductCard";
 import ProductCardSkeleton from "../catalog/ProductCardSkeleton";
 import { Pagination } from "../ui/pagination";
 import { CustomSelect } from "../shared/CustomSelect";
+import type { SelectedFilters, ProductsGridProps } from "@/types/catalog";
+import type { Product } from "@/types/product";
 
-export default function ProductsGrid({ selectedFilters, setSelectedFilters }) {
+export default function ProductsGrid({ selectedFilters, setSelectedFilters }: ProductsGridProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [maxVisitedPage, setMaxVisitedPage] = useState(1);
   const productsPerPage = 12;
 
   const sortBy = selectedFilters.sortBy || "relevance";
 
-  const setSortBy = (newSortBy) => {
+  const setSortBy = (newSortBy: string): void => {
     setSelectedFilters({
       ...selectedFilters,
       sortBy: newSortBy
@@ -116,7 +118,7 @@ export default function ProductsGrid({ selectedFilters, setSelectedFilters }) {
 
         {!showLoading &&
           currentProducts &&
-          currentProducts.map((product) => <ProductCard product={product} key={product.id} />)}
+          currentProducts.map((product: Product) => <ProductCard product={product} key={product.id} />)}
       </div>
 
       {/* Pagination - Shows page numbers for visited pages */}

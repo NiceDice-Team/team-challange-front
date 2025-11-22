@@ -62,7 +62,11 @@ const reviewComments = [
 
 const REVIEWS_PER_PAGE = 2;
 
-export default function ReviewsComments({ children }) {
+interface ReviewsCommentsProps {
+  children?: React.ReactNode;
+}
+
+export default function ReviewsComments({ children }: ReviewsCommentsProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState("most-recent");
 
@@ -72,11 +76,11 @@ export default function ReviewsComments({ children }) {
   const endIndex = startIndex + REVIEWS_PER_PAGE;
   const currentReviews = reviewComments.slice(startIndex, endIndex);
 
-  const handlePageChange = (page) => {
+  const handlePageChange = (page: number): void => {
     setCurrentPage(page);
   };
 
-  const handleSortChange = (e) => {
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
     setSortBy(e.target.value);
     setCurrentPage(1); // Reset to first page when sorting changes
   };

@@ -12,8 +12,9 @@ import {
 import { Heart } from "lucide-react";
 import { useAddToCart } from "@/hooks/useCartQuery";
 import { CustomButton } from "@/components/shared/CustomButton";
+import type { Product, ProductCardProps } from "@/types/product";
 
-export default function ProductCard({ product = {} }) {
+export default function ProductCard({ product = {} as Product }: ProductCardProps) {
   const [activeImage, setActiveImage] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
   const galleryRef = useRef(null);
@@ -41,7 +42,7 @@ export default function ProductCard({ product = {} }) {
   const displayPrice = product?.price ? `$${parseFloat(product.price).toFixed(2)}` : "$35.99";
 
   // Truncate product name if too long (approximately 30 characters for 2 lines)
-  const truncateName = (name) => {
+  const truncateName = (name: string | undefined): string => {
     const maxLength = 20;
     if (!name) return "PRODUCT NAME";
     return name.length > maxLength ? name.substring(0, maxLength) + "..." : name;
@@ -106,7 +107,7 @@ export default function ProductCard({ product = {} }) {
   }, [imageCount]);
 
   // Function to scroll to a specific image
-  const scrollToImage = (index) => {
+  const scrollToImage = (index: number): void => {
     if (galleryRef.current) {
       galleryRef.current.scrollTo({
         left: index * galleryRef.current.clientWidth,
@@ -116,7 +117,7 @@ export default function ProductCard({ product = {} }) {
   };
 
   // Handler for adding product to cart
-  const handleAddToCart = async (e) => {
+  const handleAddToCart = async (e: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
     e.preventDefault();
     if (addToCartMutation.isPending) return; // Prevent multiple rapid clicks
 

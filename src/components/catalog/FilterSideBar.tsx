@@ -4,8 +4,9 @@ import { catalogServices } from "../../services/catalogServices";
 import { useQuery } from "@tanstack/react-query";
 import { FilterCheckmarkIcon, ChevronDownIcon, CloseIcon } from "../../svgs/icons";
 import FilterSideBarSkeleton from "./FilterSideBarSkeleton";
+import type { SelectedFilters, FilterItem, FilterSideBarProps } from "@/types/catalog";
 
-export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
+export default function FilterSideBar({ selectedFilters, setSelectedFilters }: FilterSideBarProps) {
   // Fetch all filter data
   const { data: categories = [], isLoading: categoriesLoading } = useQuery({
     queryKey: ["categories"],
@@ -18,22 +19,22 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
   });
 
   // Fetch product counts for all categories
-  const { data: categoryCounts = {}, isLoading: countsLoading } = useQuery({
-    queryKey: ["category-counts", categories.map(cat => cat.id)],
+  const { data: categoryCounts = {} as Record<number, number>, isLoading: countsLoading } = useQuery({
+    queryKey: ["category-counts", categories.map((cat: any) => cat.id)],
     queryFn: async ({ signal }) => {
       if (categories.length === 0) return {};
 
-      const countPromises = categories.map(category =>
+      const countPromises = categories.map((category: any) =>
         catalogServices.getProductCount({ category_id: category.id }, { signal })
-          .then(response => ({ id: category.id, count: response.count }))
+          .then((response: any) => ({ id: category.id, count: response.count }))
           .catch(() => ({ id: category.id, count: 0 }))
       );
 
       const counts = await Promise.all(countPromises);
-      return counts.reduce((acc, { id, count }) => {
+      return counts.reduce((acc: Record<number, number>, { id, count }) => {
         acc[id] = count;
         return acc;
-      }, {});
+      }, {} as Record<number, number>);
     },
     enabled: categories.length > 0,
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -74,7 +75,7 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
   const isLoading = categoriesLoading || audiencesLoading || gameTypesLoading || brandsLoading || countsLoading;
 
   // Toggle filter value with scroll position preservation
-  const toggleFilter = (filterType, value, event) => {
+  const toggleFilter = (filterType: string, value: number | string, event?: React.MouseEvent): void => {
     if (event) {
       event.preventDefault();
       event.stopPropagation();
@@ -82,9 +83,9 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
     
     const newFilters = {
       ...selectedFilters,
-      [filterType]: selectedFilters[filterType]?.includes(value)
-        ? selectedFilters[filterType].filter((item) => item !== value)
-        : [...(selectedFilters[filterType] || []), value],
+      [filterType]: (selectedFilters[filterType as keyof SelectedFilters] as any)?.includes(value)
+        ? (selectedFilters[filterType as keyof SelectedFilters] as any).filter((item: any) => item !== value)
+        : [...((selectedFilters[filterType as keyof SelectedFilters] as any) || []), value],
     };
     setSelectedFilters(newFilters);
   };
@@ -112,12 +113,12 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
     (selectedFilters.sortBy && selectedFilters.sortBy !== 'relevance');
 
   // Render filter tag with remove button
-  const FilterTag = ({ name, filterType, value }) => (
+  const FilterTag = ({ name, filterType, value }: { name: string; filterType: string; value: number | string }) => (
     <div className="bg-white border-[1px] border-[var(--color-light-purple-2)] p-2 text-[var(--color-purple)] text-sm flex justify-center items-center gap-2">
       {name}
       <button
         type="button"
-        tabIndex="-1"
+        tabIndex={-1}
         className="h-3 w-3 inline-block ml-1 cursor-pointer text-current hover:opacity-70"
         onClick={(e) => toggleFilter(filterType, value, e)}
       >
@@ -127,17 +128,17 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
   );
 
   // Render checkbox for filter option
-  const FilterCheckbox = ({ item, filterType }) => {
+  const FilterCheckbox = ({ item, filterType }: { item: FilterItem; filterType: string }) => {
     const value = item.id || item.name;
     const isChecked = selectedFilters[filterType]?.includes(value);
 
-    const handleCheckboxClick = (e) => {
+    const handleCheckboxClick = (e: React.MouseEvent) => {
       e.preventDefault();
       e.stopPropagation();
       toggleFilter(filterType, value, e);
     };
 
-    const handleLabelClick = (e) => {
+    const handleLabelClick = (e: React.MouseEvent) => {
       e.preventDefault();
       e.stopPropagation();
       toggleFilter(filterType, value, e);
@@ -162,7 +163,7 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
             <input
               type="checkbox"
               checked={isChecked}
-              onChange={handleCheckboxClick}
+              onClick={handleCheckboxClick}
               className="w-5 h-5 border border-[#494791] bg-white checked:bg-[#494791] checked:border-[#494791] appearance-none cursor-pointer"
             />
             {isChecked && (
@@ -187,10 +188,10 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
   };
 
   // Render filter section with collapsible functionality
-  const FilterSection = ({ title, items, filterType }) => {
+  const FilterSection = ({ title, items, filterType }: { title: string; items: FilterItem[]; filterType: string }) => {
     const [isExpanded, setIsExpanded] = useState(true);
-    
-    const handleToggleExpanded = (e) => {
+
+    const handleToggleExpanded = (e: React.MouseEvent) => {
       e.preventDefault();
       e.stopPropagation();
       setIsExpanded(!isExpanded);
@@ -243,8 +244,8 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
 
           {/* Active Filters */}
           <div className="flex flex-wrap gap-2" style={{ overflowAnchor: 'none' }}>
-            {selectedFilters.categories.map((id) => {
-              const category = categories.find((cat) => cat.id === id);
+            {selectedFilters.categories.map((id: number) => {
+              const category = categories.find((cat: any) => cat.id === id);
               return category && <FilterTag key={id} name={category.name} filterType="categories" value={id} />;
             })}
             {selectedFilters.gameTypes.map((name) => (
@@ -258,15 +259,15 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
             ))}
             {selectedFilters.search && (
               <div className="bg-white border-[1px] border-[var(--color-light-purple-2)] p-2 text-[var(--color-purple)] text-sm flex justify-center items-center gap-2">
-                Search: "{selectedFilters.search}"
+                Search: &quot;{selectedFilters.search}&quot;
                 <button
                   type="button"
-                  tabIndex="-1"
+                  tabIndex={-1}
                   className="h-3 w-3 inline-block ml-1 cursor-pointer text-current hover:opacity-70"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    setSelectedFilters(prev => ({ ...prev, search: '' }));
+                    setSelectedFilters((prev: SelectedFilters) => ({ ...prev, search: '' }));
                   }}
                 >
                   <CloseIcon className="h-3 w-3" />
@@ -275,15 +276,15 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
             )}
             {selectedFilters.sortBy && selectedFilters.sortBy !== 'relevance' && (
               <div className="bg-white border-[1px] border-[var(--color-light-purple-2)] p-2 text-[var(--color-purple)] text-sm flex justify-center items-center gap-2">
-                Sort: {selectedFilters.sortBy.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                Sort: {selectedFilters.sortBy.replace('-', ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())}
                 <button
                   type="button"
-                  tabIndex="-1"
+                  tabIndex={-1}
                   className="h-3 w-3 inline-block ml-1 cursor-pointer text-current hover:opacity-70"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    setSelectedFilters(prev => ({ ...prev, sortBy: 'relevance' }));
+                    setSelectedFilters((prev: SelectedFilters) => ({ ...prev, sortBy: 'relevance' }));
                   }}
                 >
                   <CloseIcon className="h-3 w-3" />
@@ -295,12 +296,12 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }) {
                 Price: ${selectedFilters.priceRange.min} - ${selectedFilters.priceRange.max}
                 <button
                   type="button"
-                  tabIndex="-1"
+                  tabIndex={-1}
                   className="h-3 w-3 inline-block ml-1 cursor-pointer text-current hover:opacity-70"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    setSelectedFilters(prev => ({ ...prev, priceRange: { min: 0, max: 200 } }));
+                    setSelectedFilters((prev: SelectedFilters) => ({ ...prev, priceRange: { min: 0, max: 200 } }));
                   }}
                 >
                   <CloseIcon className="h-3 w-3" />

@@ -6,8 +6,9 @@ import {
   CustomAccordionItem,
   CustomAccordionTrigger,
 } from "@/components/shared/CustomAccordion";
+import type { ProductAccordionProps } from "@/types/product";
 
-export const ProductAccordion = ({ accordionParams }) => {
+export const ProductAccordion = ({ accordionParams }: ProductAccordionProps) => {
   return (
     <CustomAccordion collapsible="true" className="w-full">
       {/* Description */}
