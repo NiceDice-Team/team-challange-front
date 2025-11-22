@@ -1,23 +1,34 @@
-export interface Product {
-  id: string | number;
-  name: string;
-  price: number;
-  image?: string;
-  images?: string[];
-  description?: string;
-  brand?: string;
-  categories?: string[];
-  audiences?: string[];
-  types?: string[];
-  stock?: number;
-  created_at?: string;
-  updated_at?: string;
-}
+import { Product } from './product';
 
 export interface CartItem {
   id: string;
   product: Product;
   quantity: number;
+}
+
+// Mutation variable types for React Query hooks
+export interface AddToCartVariables {
+  productId: number | string;
+  quantity?: number;
+  productData?: Product | null;
+}
+
+export interface UpdateCartQuantityVariables {
+  cartItemId: string;
+  quantity: number;
+}
+
+// Context type for optimistic updates rollback
+export interface CartMutationContext {
+  previousCart: CartItem[] | undefined;
+}
+
+// Return type for useCartSummary hook
+export interface CartSummary {
+  cartItems: CartItem[];
+  itemCount: number;
+  subtotal: number;
+  isEmpty: boolean;
 }
 
 export interface CartContextValue {

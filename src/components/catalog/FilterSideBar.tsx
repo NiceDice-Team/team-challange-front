@@ -18,14 +18,20 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
     retry: 1,
   });
 
-  // Fetch product counts for all categories
+  // Fetch product counts for all categories (includes search filter)
   const { data: categoryCounts = {} as Record<number, number>, isLoading: countsLoading } = useQuery({
-    queryKey: ["category-counts", categories.map((cat: any) => cat.id)],
+    queryKey: ["category-counts", categories.map((cat: any) => cat.id), selectedFilters.search],
     queryFn: async ({ signal }) => {
       if (categories.length === 0) return {};
 
       const countPromises = categories.map((category: any) =>
-        catalogServices.getProductCount({ category_id: category.id }, { signal })
+        catalogServices.getProductCount(
+          {
+            category_id: category.id,
+            search: selectedFilters.search || undefined,
+          },
+          { signal }
+        )
           .then((response: any) => ({ id: category.id, count: response.count }))
           .catch(() => ({ id: category.id, count: 0 }))
       );
@@ -163,6 +169,7 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
             <input
               type="checkbox"
               checked={isChecked}
+              onChange={() => {}} // Handled by onClick for better UX
               onClick={handleCheckboxClick}
               className="w-5 h-5 border border-[#494791] bg-white checked:bg-[#494791] checked:border-[#494791] appearance-none cursor-pointer"
             />

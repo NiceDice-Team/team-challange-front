@@ -41,11 +41,17 @@ export const catalogServices = {
 
   getProductCount: async (params: Record<string, any> = {}, fetchOpts: any = {}) => {
     const queryParams = new URLSearchParams();
-    if (params.category_id) queryParams.append('category_id', params.category_id);
+    // Note: Don't use limit parameter - it incorrectly affects total_count in this API
 
-    const endpoint = queryParams.toString() ? `products/count/?${queryParams.toString()}` : 'products/count/';
+    if (params.category_id) queryParams.append('categories', params.category_id);
+    if (params.search) queryParams.append('search', params.search);
+    if (params.audiences?.length > 0) queryParams.append('audiences', params.audiences.join(','));
+    if (params.gameTypes?.length > 0) queryParams.append('types', params.gameTypes.join(','));
+    if (params.brands?.length > 0) queryParams.append('brand', params.brands[0]);
+
+    const endpoint = queryParams.toString() ? `products/?${queryParams.toString()}` : 'products/';
     const response: any = await fetchAPI(endpoint, fetchOpts);
-    return response;
+    return { count: response.total_count ?? 0 };
   },
 };
 
