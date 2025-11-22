@@ -7,6 +7,7 @@ import FilterSideBarSkeleton from "./FilterSideBarSkeleton";
 import type { SelectedFilters, FilterItem, FilterSideBarProps } from "@/types/catalog";
 
 export default function FilterSideBar({ selectedFilters, setSelectedFilters }: FilterSideBarProps) {
+  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   // Fetch all filter data
   const { data: categories = [], isLoading: categoriesLoading } = useQuery({
     queryKey: ["categories"],
@@ -205,11 +206,11 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
     };
     
     return (
-      <div className="flex flex-col items-start p-4 gap-6 w-[247px] bg-white shadow-[0px_4px_4px_rgba(0,0,0,0.05)]">
+      <div className="flex flex-col items-start p-4 gap-4 sm:gap-6 w-full lg:w-[247px] bg-white shadow-[0px_4px_4px_rgba(0,0,0,0.05)]">
         {/* Header with toggle arrow */}
         <div className="flex flex-row justify-between items-center w-full">
-          <h4 className="text-base font-medium uppercase text-black font-['Noto_Sans_JP']">{title}</h4>
-          <button 
+          <h4 className="text-sm sm:text-base font-medium uppercase text-black font-['Noto_Sans_JP']">{title}</h4>
+          <button
             type="button"
             onClick={handleToggleExpanded}
             className="w-6 h-6 flex items-center justify-center hover:opacity-70"
@@ -217,7 +218,7 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
             <ChevronDownIcon className="w-6 h-6" isExpanded={isExpanded} />
           </button>
         </div>
-        
+
         {/* Filter items */}
         {isExpanded && (
           <div className="flex flex-col items-start gap-2 w-full">
@@ -233,7 +234,19 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
   if (isLoading) return <FilterSideBarSkeleton />;
 
   return (
-    <section className="w-[247px] flex flex-col gap-6">
+    <section className="w-full lg:w-[247px] flex-shrink-0">
+      {/* Mobile Filter Toggle */}
+      <button
+        type="button"
+        onClick={() => setIsMobileFiltersOpen(!isMobileFiltersOpen)}
+        className="lg:hidden w-full flex items-center justify-between p-4 bg-white shadow-[0px_4px_4px_rgba(0,0,0,0.05)] mb-4"
+      >
+        <span className="text-sm sm:text-base font-medium uppercase">Filters</span>
+        <ChevronDownIcon className="w-6 h-6" isExpanded={isMobileFiltersOpen} />
+      </button>
+
+      {/* Filter content - hidden on mobile unless toggled */}
+      <div className={`${isMobileFiltersOpen ? 'flex' : 'hidden'} lg:flex flex-col gap-4 sm:gap-6`}>
       {/* Active Filters Display Card */}
       {hasActiveFilters && (
         <div className="bg-white shadow-md p-4 flex flex-col gap-6">
@@ -329,9 +342,9 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
       <FilterSection title="Brands" items={brands} filterType="brands" />
 
       {/* Price Filter Card */}
-      <div className="flex flex-col items-start p-4 gap-6 w-[247px] bg-white shadow-[0px_4px_4px_rgba(0,0,0,0.05)]">
+      <div className="flex flex-col items-start p-4 gap-4 sm:gap-6 w-full lg:w-[247px] bg-white shadow-[0px_4px_4px_rgba(0,0,0,0.05)]">
         <div className="flex flex-row justify-between items-center w-full">
-          <h4 className="text-base font-medium uppercase text-black font-['Noto_Sans_JP']">Price</h4>
+          <h4 className="text-sm sm:text-base font-medium uppercase text-black font-['Noto_Sans_JP']">Price</h4>
         </div>
         <div className="flex items-center gap-2 w-full">
           <input
@@ -346,9 +359,9 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
               };
               setSelectedFilters(newFilters);
             }}
-            className="flex-1 px-3 py-2 border border-[#494791] text-base font-normal focus:outline-none focus:ring-2 focus:ring-[#494791]"
+            className="w-20 sm:w-24 lg:flex-1 px-2 sm:px-3 py-2 border border-[#494791] text-sm sm:text-base font-normal focus:outline-none focus:ring-2 focus:ring-[#494791]"
           />
-          <span className="text-[#717171] text-base">-</span>
+          <span className="text-[#717171] text-sm sm:text-base">-</span>
           <input
             type="number"
             min="0"
@@ -361,9 +374,10 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
               };
               setSelectedFilters(newFilters);
             }}
-            className="flex-1 px-3 py-2 border border-[#494791] text-base font-normal focus:outline-none focus:ring-2 focus:ring-[#494791]"
+            className="w-20 sm:w-24 lg:flex-1 px-2 sm:px-3 py-2 border border-[#494791] text-sm sm:text-base font-normal focus:outline-none focus:ring-2 focus:ring-[#494791]"
           />
         </div>
+      </div>
       </div>
     </section>
   );

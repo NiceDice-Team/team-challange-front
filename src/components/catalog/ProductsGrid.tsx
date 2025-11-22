@@ -76,8 +76,8 @@ export default function ProductsGrid({ selectedFilters, setSelectedFilters }: Pr
 
   return (
     <section className="w-full">
-      <div className="w-full flex flex-row justify-end items-center gap-4 mb-12">
-        <span className="uppercase text-lg font-medium">Sort by</span>
+      <div className="w-full flex flex-row justify-end items-center gap-2 sm:gap-4 mb-6 sm:mb-8 lg:mb-12">
+        <span className="uppercase text-sm sm:text-base lg:text-lg font-medium">Sort by</span>
         <CustomSelect
           placeholder="Relevance"
           value={sortBy}
@@ -91,7 +91,7 @@ export default function ProductsGrid({ selectedFilters, setSelectedFilters }: Pr
           ]}
         />
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 gap-6 min-h-[400px]">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 min-h-[400px]">
         {showLoading &&
           // Show skeleton cards while loading
           Array.from({ length: productsPerPage }).map((_, index) => <ProductCardSkeleton key={`skeleton-${index}`} />)}
@@ -123,7 +123,7 @@ export default function ProductsGrid({ selectedFilters, setSelectedFilters }: Pr
 
       {/* Pagination - Shows page numbers for visited pages */}
       {!showLoading && (currentPage > 1 || hasNext) && (
-        <div className="flex justify-center mt-12 mb-4">
+        <div className="flex justify-center mt-6 sm:mt-8 lg:mt-12 mb-4">
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
