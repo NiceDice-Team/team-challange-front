@@ -1,8 +1,8 @@
-import ProductPage from "../../../../components/catalog/ProductPage.jsx";
-import Navbar from "../../../../components/layout/Navbar.jsx";
-import Footer from "../../../../components/layout/Footer.jsx";
-import ReviewsProduct from "../../../../components/catalog/ReviewsProduct.jsx";
-import ReviewsComments from "../../../../components/catalog/ReviewsComments.jsx";
+import ProductPage from "@/components/catalog/ProductPage";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import ReviewsProduct from "@/components/catalog/ReviewsProduct";
+import ReviewsComments from "@/components/catalog/ReviewsComments";
 
 interface ProductDetailPageProps {
   params: Promise<{

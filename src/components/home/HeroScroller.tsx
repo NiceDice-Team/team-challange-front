@@ -15,7 +15,7 @@ interface ScrollerItem {
 }
 
 export default function HeroScroller() {
-  const aspectRatio = 1320 / 704;
+  const aspectRatio = 1320 / 700;
 
   const scrollerData: ScrollerItem[] = [
     {
@@ -142,12 +142,13 @@ export default function HeroScroller() {
   }
 
   return (
-    <section className="w-full h-full relative ">
+    <section className="w-full relative max-w-[1320px] mx-auto">
       {/* Aspect ratio container */}
       <div
-        className="w-full relative overflow-hidden "
+        className="w-full relative overflow-hidden"
         style={{
-          paddingBottom: `min(${(1 / aspectRatio) * 100}%, 60vh)`, // Creates the aspect ratio with max height
+          aspectRatio: `${aspectRatio}`,
+          maxHeight: "70vh",
         }}
       >
         {/* Dynamic info card */}
@@ -162,9 +163,7 @@ export default function HeroScroller() {
           <h4 className="text-lg md:text-xl lg:text-2xl mb-3 font-semibold leading-tight line-clamp-2">
             {scrollerData[currentSection].title}
           </h4>
-          <p className="text-base md:text-lg mb-4 line-clamp-3">
-            {scrollerData[currentSection].description}
-          </p>
+          <p className="text-base md:text-lg mb-4 line-clamp-3">{scrollerData[currentSection].description}</p>
           <button className="bg-white text-slate-700 py-2.5 px-6 md:py-3 md:px-8 text-base font-medium hover:bg-[#FF5F00]/80 hover:text-white transition-all duration-150 w-auto">
             {scrollerData[currentSection].buttonText}
           </button>
