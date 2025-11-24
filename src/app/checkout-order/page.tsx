@@ -30,13 +30,13 @@ function CheckoutPage() {
         Checkout
       </h3>
       <div className="flex md:flex-row flex-col gap-6">
-        <div className="flex flex-col p-6 md:py-0 w-full md:w-1/2">
+        <div className="flex flex-col order-2 md:order-1 p-6 md:py-0 w-full md:w-1/2">
           <div className="flex flex-col mb-10">
             <ShippingForm paymentMethod={paymentMethod} />
           </div>
         </div>
 
-        <div className="flex flex-col gap-10 p-6 border-1 w-full md:w-1/2 h-fit">
+        <div className="flex flex-col gap-10 order-1 md:order-2 p-6 border-1 w-full md:w-1/2 h-fit">
           <ProductsTable setSubtotal={setSubtotal} />
           <DeliveryOptions onPaymentMethodChange={setPaymentMethod} />
           <div className="flex justify-between items-center -mt-4 h-10 text-purple">
