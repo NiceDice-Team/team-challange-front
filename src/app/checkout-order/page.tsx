@@ -26,7 +26,7 @@ function CheckoutPage() {
     <div className="py-8 min-h-screen">
       <CustomBreadcrumb items={breadcrumbItems} />
 
-      <h3 className="mt-6 mb-4 text-title uppercase">Checkout</h3>
+      <h3 className="mt-6 mb-4 md:text-title text-2xl uppercase">Checkout</h3>
       <div className="flex md:flex-row flex-col gap-6">
         <div className="flex flex-col py-6 w-full md:w-1/2">
           <div className="flex flex-col mb-10">
