@@ -27,14 +27,14 @@ function CheckoutPage() {
       <CustomBreadcrumb items={breadcrumbItems} />
 
       <h3 className="mt-6 mb-4 text-title uppercase">Checkout</h3>
-      <div className="flex gap-6">
-        <div className="flex flex-col py-6 w-1/2">
+      <div className="flex md:flex-row flex-col gap-6">
+        <div className="flex flex-col py-6 w-full md:w-1/2">
           <div className="flex flex-col mb-10">
             <ShippingForm paymentMethod={paymentMethod} />
           </div>
         </div>
 
-        <div className="flex flex-col gap-10 p-6 border-1 w-1/2 h-fit">
+        <div className="flex flex-col gap-10 p-6 border-1 w-full md:w-1/2 h-fit">
           <ProductsTable setSubtotal={setSubtotal} />
           <DeliveryOptions onPaymentMethodChange={setPaymentMethod} />
           <div className="flex justify-between items-center -mt-4 h-10 text-purple">
