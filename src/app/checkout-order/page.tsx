@@ -24,11 +24,13 @@ function CheckoutPage() {
 
   return (
     <div className="py-8 min-h-screen">
-      <CustomBreadcrumb items={breadcrumbItems} />
+      <CustomBreadcrumb items={breadcrumbItems} className="px-6 md:px-0" />
 
-      <h3 className="mt-6 mb-4 md:text-title text-2xl uppercase">Checkout</h3>
+      <h3 className="mt-6 mb-4 px-6 md:px-0 md:text-title text-2xl uppercase">
+        Checkout
+      </h3>
       <div className="flex md:flex-row flex-col gap-6">
-        <div className="flex flex-col py-6 w-full md:w-1/2">
+        <div className="flex flex-col p-6 md:py-0 w-full md:w-1/2">
           <div className="flex flex-col mb-10">
             <ShippingForm paymentMethod={paymentMethod} />
           </div>
