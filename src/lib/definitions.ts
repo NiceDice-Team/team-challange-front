@@ -84,13 +84,17 @@ export type LoginFormState = {
 };
 
 export const loginFrontSchema = z.object({
-  email: z.string().email("Invalid email"),
+  email: z
+    .string()
+    .nonempty("Email is required")
+    .email("Please enter a valid email. Invalid email"),
   password: z
     .string()
+    .nonempty("Password is required")
     .min(8, "Password must be at least 8 characters")
     .max(128, { message: "Password must be less than 128 characters" })
     .regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/, {
-      message: "Contain at least one letter and one number.",
+      message: "Password must сontain at least one letter and one number.",
     }),
 });
 
