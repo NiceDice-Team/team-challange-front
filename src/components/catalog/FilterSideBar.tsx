@@ -170,7 +170,6 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
             <input
               type="checkbox"
               checked={isChecked}
-              onChange={() => {}} // Handled by onClick for better UX
               onClick={handleCheckboxClick}
               className="w-5 h-5 border border-[#494791] bg-white checked:bg-[#494791] checked:border-[#494791] appearance-none cursor-pointer"
             />
