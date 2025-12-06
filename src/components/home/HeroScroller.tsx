@@ -4,6 +4,7 @@ import HERO_IMG1 from "../../../public/HeroScroller/HeroScroll1.png";
 import HERO_IMG2 from "../../../public/HeroScroller/HeroScroll2.png";
 import HERO_IMG3 from "../../../public/HeroScroller/HeroScroll3.png";
 import Image, { StaticImageData } from "next/image";
+import { ChevronLeftIcon, ChevronRightIcon } from "@/svgs/icons";
 
 interface ScrollerItem {
   id: number;
@@ -176,15 +177,7 @@ export default function HeroScroller() {
           }`}
           aria-label="Previous slide"
         >
-          <svg
-            className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-white"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-          </svg>
+          <ChevronLeftIcon className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-white" />
         </button>
         <button
           onClick={handleRightClick}
@@ -193,15 +186,7 @@ export default function HeroScroller() {
           }`}
           aria-label="Next slide"
         >
-          <svg
-            className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-white"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
+          <ChevronRightIcon className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-white" />
         </button>
         <div
           ref={scrollerRef}

@@ -6,6 +6,7 @@ import Image from "next/image";
 import { ProductAccordion } from "./ProductPageAccordion";
 import { CustomBreadcrumb } from "../shared/CustomBreadcrumb";
 import { useAddToCart } from "@/hooks/useCartQuery";
+import { CircleChevronLeft, CircleChevronRight } from "@/svgs/icons";
 import type { ProductPageProps, StockStatus } from "@/types/product";
 
 export default function ProductPage({ params }: ProductPageProps) {
@@ -186,41 +187,10 @@ export default function ProductPage({ params }: ProductPageProps) {
             >
               {selectedImageIndex === 0 ? (
                 // Disabled state
-                <svg
-                  className="w-8 h-8 sm:w-10 sm:h-10"
-                  viewBox="0 0 40 40"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <rect
-                    x="40"
-                    y="40"
-                    width="40"
-                    height="40"
-                    rx="20"
-                    transform="rotate(-180 40 40)"
-                    fill="#494791"
-                    fillOpacity="0.5"
-                  />
-                  <path
-                    d="M24.122 10.6887L25.186 11.7527L16.941 19.9967L25.186 28.2407L24.122 29.3047L14.814 19.9967L24.122 10.6887Z"
-                    fill="white"
-                  />
-                </svg>
+                <CircleChevronLeft className="w-8 h-8 sm:w-10 sm:h-10" disabled={true} />
               ) : (
                 // Active state
-                <svg
-                  className="w-8 h-8 sm:w-10 sm:h-10"
-                  viewBox="0 0 40 40"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <rect x="40" y="40" width="40" height="40" rx="20" transform="rotate(-180 40 40)" fill="#494791" />
-                  <path
-                    d="M24.122 10.6887L25.186 11.7527L16.941 19.9967L25.186 28.2407L24.122 29.3047L14.814 19.9967L24.122 10.6887Z"
-                    fill="white"
-                  />
-                </svg>
+                <CircleChevronLeft className="w-8 h-8 sm:w-10 sm:h-10" disabled={false} />
               )}
             </button>
 
@@ -248,32 +218,10 @@ export default function ProductPage({ params }: ProductPageProps) {
             >
               {selectedImageIndex === (product?.images?.length || 1) - 1 ? (
                 // Disabled state
-                <svg
-                  className="w-8 h-8 sm:w-10 sm:h-10"
-                  viewBox="0 0 40 40"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <rect width="40" height="40" rx="20" fill="#494791" fillOpacity="0.5" />
-                  <path
-                    d="M15.878 29.3113L14.814 28.2473L23.059 20.0033L14.814 11.7593L15.878 10.6953L25.186 20.0033L15.878 29.3113Z"
-                    fill="white"
-                  />
-                </svg>
+                <CircleChevronRight className="w-8 h-8 sm:w-10 sm:h-10" disabled={true} />
               ) : (
                 // Active state
-                <svg
-                  className="w-8 h-8 sm:w-10 sm:h-10"
-                  viewBox="0 0 40 40"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <rect width="40" height="40" rx="20" fill="#494791" />
-                  <path
-                    d="M15.878 29.3113L14.814 28.2473L23.059 20.0033L14.814 11.7593L15.878 10.6953L25.186 20.0033L15.878 29.3113Z"
-                    fill="white"
-                  />
-                </svg>
+                <CircleChevronRight className="w-8 h-8 sm:w-10 sm:h-10" disabled={false} />
               )}
             </button>
           </div>
