@@ -6,8 +6,14 @@ import ProductCard from "../catalog/ProductCard";
 import ProductCardSkeleton from "../catalog/ProductCardSkeleton";
 import { Pagination } from "../ui/pagination";
 import { CustomSelect } from "../shared/CustomSelect";
-import type { SelectedFilters, ProductsGridProps } from "@/types/catalog";
+import type { SelectedFilters } from "@/types/catalog";
 import type { Product } from "@/types/product";
+
+// Component props
+interface ProductsGridProps {
+  selectedFilters: SelectedFilters;
+  setSelectedFilters: React.Dispatch<React.SetStateAction<SelectedFilters>>;
+}
 
 export default function ProductsGrid({ selectedFilters, setSelectedFilters }: ProductsGridProps) {
   const [currentPage, setCurrentPage] = useState(1);

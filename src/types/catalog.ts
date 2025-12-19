@@ -43,21 +43,3 @@ export interface SelectedFilters {
 
 // Sort options
 export type SortOption = 'relevance' | 'bestsellers' | 'price-high-low' | 'price-low-high' | 'newest';
-
-// Filter component props
-export interface FilterSideBarProps {
-  selectedFilters: SelectedFilters;
-  setSelectedFilters: React.Dispatch<React.SetStateAction<SelectedFilters>>;
-}
-
-export interface ProductsGridProps {
-  selectedFilters: SelectedFilters;
-  setSelectedFilters: React.Dispatch<React.SetStateAction<SelectedFilters>>;
-}
-
-// Hook return types
-export interface UseUrlFiltersReturn {
-  selectedFilters: SelectedFilters;
-  updateFilters: (filters: SelectedFilters) => void;
-  setSelectedFilters: (filters: SelectedFilters) => void;
-}

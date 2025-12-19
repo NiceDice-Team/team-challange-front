@@ -5,7 +5,17 @@ import { SearchIcon, CloseIcon, LoadingSpinner } from "@/svgs/icons";
 import { productServices } from "@/services/productServices";
 import { getSearchHistory, addToSearchHistory, removeFromSearchHistory } from "@/utils/searchHistory";
 import { useDebounce } from "@/utils/useDebounce";
-import type { SearchBarProps, SearchSuggestion, SearchHistoryItem } from "@/types/search";
+import type { SearchHistoryItem } from "@/types/search";
+
+// Component types
+interface SearchBarProps {
+  className?: string;
+}
+
+interface SearchSuggestion {
+  id: number;
+  name: string;
+}
 
 export default function SearchBar({ className = "" }: SearchBarProps) {
   const router = useRouter();

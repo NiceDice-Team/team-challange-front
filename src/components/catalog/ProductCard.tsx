@@ -12,7 +12,12 @@ import {
 import { Heart } from "lucide-react";
 import { useAddToCart } from "@/hooks/useCartQuery";
 import { CustomButton } from "@/components/shared/CustomButton";
-import type { Product, ProductCardProps } from "@/types/product";
+import type { Product } from "@/types/product";
+
+// Component props
+interface ProductCardProps {
+  product?: Product;
+}
 
 export default function ProductCard({ product = {} as Product }: ProductCardProps) {
   const [activeImage, setActiveImage] = useState(0);

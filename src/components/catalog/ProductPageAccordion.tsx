@@ -6,15 +6,23 @@ import {
   CustomAccordionItem,
   CustomAccordionTrigger,
 } from "@/components/shared/CustomAccordion";
-import type { ProductAccordionProps } from "@/types/product";
+
+// Component props
+interface ProductAccordionProps {
+  accordionParams?: {
+    description?: string;
+    brand?: string;
+    [key: string]: any;
+  };
+}
 
 export const ProductAccordion = ({ accordionParams }: ProductAccordionProps) => {
   return (
     <CustomAccordion collapsible="true" className="w-full">
       {/* Description */}
-      <CustomAccordionItem value="description">
-        <CustomAccordionTrigger>Description</CustomAccordionTrigger>
-        <CustomAccordionContent>
+      <CustomAccordionItem value="description" className="">
+        <CustomAccordionTrigger className="">Description</CustomAccordionTrigger>
+        <CustomAccordionContent className="">
           <span className="text-base text-pretty">
             {accordionParams?.description || "Product description is unavailable"}
           </span>
@@ -22,9 +30,9 @@ export const ProductAccordion = ({ accordionParams }: ProductAccordionProps) => 
       </CustomAccordionItem>
 
       {/* Game information */}
-      <CustomAccordionItem value="game-info">
-        <CustomAccordionTrigger>Game Information</CustomAccordionTrigger>
-        <CustomAccordionContent>
+      <CustomAccordionItem value="game-info" className="">
+        <CustomAccordionTrigger className="">Game Information</CustomAccordionTrigger>
+        <CustomAccordionContent className="">
           <div className="flex flex-col gap-4 text-base">
             <div>
               <span className="font-semibold">• Publisher: </span>
@@ -60,9 +68,9 @@ export const ProductAccordion = ({ accordionParams }: ProductAccordionProps) => 
       </CustomAccordionItem>
 
       {/* Delivery and payment */}
-      <CustomAccordionItem value="delivery">
-        <CustomAccordionTrigger>Delivery and payment</CustomAccordionTrigger>
-        <CustomAccordionContent>
+      <CustomAccordionItem value="delivery" className="">
+        <CustomAccordionTrigger className="">Delivery and payment</CustomAccordionTrigger>
+        <CustomAccordionContent className="">
           <div className="flex flex-col gap-6 text-base">
             {/* Shipping Within Ukraine */}
             <div className="flex flex-col gap-4 ">

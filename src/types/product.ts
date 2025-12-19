@@ -40,32 +40,6 @@ export interface Product {
   [key: string]: any; // Allow additional properties
 }
 
-// Stock status types
-export interface StockStatus {
-  message: string;
-  color: string;
-  status: 'sold-out' | 'very-low' | 'low' | 'in-stock';
-}
-
-// Component props
-export interface ProductCardProps {
-  product?: Product;
-}
-
-export interface ProductPageProps {
-  params: {
-    id: string;
-  };
-}
-
-export interface ProductAccordionProps {
-  accordionParams?: {
-    description?: string;
-    brand?: string;
-    [key: string]: any;
-  };
-}
-
 // API response types
 export interface ProductListResponse {
   results: Product[];

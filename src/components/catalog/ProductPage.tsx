@@ -7,7 +7,20 @@ import { ProductAccordion } from "./ProductPageAccordion";
 import { CustomBreadcrumb } from "../shared/CustomBreadcrumb";
 import { useAddToCart } from "@/hooks/useCartQuery";
 import { CircleChevronLeft, CircleChevronRight } from "@/svgs/icons";
-import type { ProductPageProps, StockStatus } from "@/types/product";
+
+// Component props
+interface ProductPageProps {
+  params: {
+    id: string;
+  };
+}
+
+// Stock status types
+interface StockStatus {
+  message: string;
+  color: string;
+  status: 'sold-out' | 'very-low' | 'low' | 'in-stock';
+}
 
 export default function ProductPage({ params }: ProductPageProps) {
   const [quantity, setQuantity] = useState(1);

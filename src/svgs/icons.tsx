@@ -1,11 +1,29 @@
 import React from "react";
-import type {
-  IconProps,
-  ChevronIconProps,
-  SimpleChevronIconProps,
-  CloseIconProps,
-  CircleChevronProps,
-} from "../types/icons";
+
+// Icon type definitions
+export interface IconProps {
+  className?: string;
+}
+
+export interface ChevronIconProps {
+  className?: string;
+  isExpanded?: boolean;
+}
+
+export interface SimpleChevronIconProps {
+  className?: string;
+  isOpen?: boolean;
+}
+
+export interface CloseIconProps {
+  className?: string;
+  strokeWidth?: number;
+}
+
+export interface CircleChevronProps {
+  className?: string;
+  disabled?: boolean;
+}
 
 // SVG icon paths (from public folder)
 export const LogoIcon = "/icons/logo.svg";

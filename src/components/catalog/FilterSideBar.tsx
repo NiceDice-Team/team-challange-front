@@ -4,7 +4,13 @@ import { catalogServices } from "../../services/catalogServices";
 import { useQuery } from "@tanstack/react-query";
 import { FilterCheckmarkIcon, ChevronDownIcon, CloseIcon } from "../../svgs/icons";
 import FilterSideBarSkeleton from "./FilterSideBarSkeleton";
-import type { SelectedFilters, FilterItem, FilterSideBarProps, Category } from "@/types/catalog";
+import type { SelectedFilters, FilterItem, Category } from "@/types/catalog";
+
+// Component props
+interface FilterSideBarProps {
+  selectedFilters: SelectedFilters;
+  setSelectedFilters: React.Dispatch<React.SetStateAction<SelectedFilters>>;
+}
 
 export default function FilterSideBar({ selectedFilters, setSelectedFilters }: FilterSideBarProps) {
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
