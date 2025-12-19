@@ -105,7 +105,7 @@ describe("Login Page", () => {
       await user.tab();
       
       await waitFor(() => {
-        expect(screen.getByText("Invalid email")).toBeInTheDocument();
+        expect(screen.getByText("Please enter a valid email. Invalid email")).toBeInTheDocument();
       });
     });
 
@@ -133,7 +133,7 @@ describe("Login Page", () => {
       await user.tab();
       
       await waitFor(() => {
-        expect(screen.getByText("Contain at least one letter and one number.")).toBeInTheDocument();
+        expect(screen.getByText("Password must сontain at least one letter and one number.")).toBeInTheDocument();
       });
     });
 
@@ -146,7 +146,7 @@ describe("Login Page", () => {
       await user.tab();
       
       await waitFor(() => {
-        expect(screen.getByText("Invalid email")).toBeInTheDocument();
+        expect(screen.getByText("Please enter a valid email. Invalid email")).toBeInTheDocument();
       });
       
       await user.clear(emailInput);
