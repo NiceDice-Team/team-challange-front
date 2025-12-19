@@ -103,7 +103,7 @@ export const ProductAccordion = ({ accordionParams }: ProductAccordionProps) => 
                   <span className="font-medium">$60</span>
                 </p>
                 <p className="ml-3">
-                  •&nbsp;&nbsp;<span className="font-medium">Orders under $60:</span> according to the carrier's rates
+                  •&nbsp;&nbsp;<span className="font-medium">Orders under $60:</span> according to the carrier&apos;s rates
                 </p>
                 <p className="ml-3">
                   •&nbsp;&nbsp;<span className="font-medium">International shipping:</span> calculated individually

@@ -22,7 +22,7 @@ export default function ProductCard({ product = {} as Product }: ProductCardProp
 
   // Create star rating display
   const renderStars = () => {
-    const rating = parseFloat(product?.stars || 0);
+    const rating = parseFloat(String(product?.stars || 0));
     const stars = [];
     for (let i = 1; i <= 5; i++) {
       stars.push(
@@ -39,7 +39,7 @@ export default function ProductCard({ product = {} as Product }: ProductCardProp
   };
 
   // Format price
-  const displayPrice = product?.price ? `$${parseFloat(product.price).toFixed(2)}` : "$35.99";
+  const displayPrice = product?.price ? `$${parseFloat(String(product.price)).toFixed(2)}` : "$35.99";
 
   // Truncate product name if too long (approximately 30 characters for 2 lines)
   const truncateName = (name: string | undefined): string => {
@@ -48,7 +48,7 @@ export default function ProductCard({ product = {} as Product }: ProductCardProp
     return name.length > maxLength ? name.substring(0, maxLength) + "..." : name;
   };
 
-  const stock = parseInt(product.stock, 10);
+  const stock = parseInt(String(product.stock), 10);
   let stockCircle;
   let stockMessage;
   let stockStyle;
@@ -165,7 +165,7 @@ export default function ProductCard({ product = {} as Product }: ProductCardProp
                     alt={image.alt || product?.name || "Product"}
                     fill
                     className="object-contain"
-                    unoptimized={image.url_sm?.includes('placehold.co')}
+                    unoptimized={image.url_sm?.includes("placehold.co")}
                   />
                 </div>
               ))
@@ -227,7 +227,7 @@ export default function ProductCard({ product = {} as Product }: ProductCardProp
                       styleType="navigation"
                       className={`${width} h-[3px] border-0 ${activeImage === index ? "bg-[#494791]" : "bg-[#A4A3C8]"}`}
                       aria-label={`View image ${index + 1}`}
-                    />
+                    ></CustomButton>
                   );
                 })}
               </div>

@@ -26,7 +26,7 @@ export default function FeatureSection() {
         </div>
         <div className="flex flex-col items-center justify-center gap-2 sm:gap-2.5 md:gap-3 w-full sm:w-auto sm:max-w-xs md:max-w-sm lg:max-w-md">
           <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 flex items-center justify-center">
-            <Image src={PHONE_IMG} alt="Arrows  icon" className="w-full h-full" />
+            <Image src={PHONE_IMG} alt="Arrows icon" className="w-full h-full" />
           </div>
           <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl mt-1">Easy Returns and Exchanges</h3>
           <p className="text-xs sm:text-sm md:text-base text-pretty">Hassle-free shopping experience</p>

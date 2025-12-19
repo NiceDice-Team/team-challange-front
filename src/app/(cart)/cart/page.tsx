@@ -71,7 +71,7 @@ export default function CartPage() {
   // Calculate totals
   const { subtotal, remainingForFreeShipping, shippingProgress } = useMemo(() => {
     const calculatedSubtotal = cartItems.reduce((sum, item) => {
-      const price = parseFloat(item.product?.price || 0);
+      const price = parseFloat(String(item.product?.price || 0));
       return sum + price * item.quantity;
     }, 0);
 
