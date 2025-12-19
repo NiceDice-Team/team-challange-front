@@ -120,7 +120,7 @@ export default function OrderReviewPage() {
   };
 
   return (
-    <div className="px-8 lg:px-16">
+    <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16">
       <div className="max-w-[1320px] mx-auto">
         {/* Breadcrumbs */}
         <div className="mt-6 mb-6">
@@ -142,18 +142,21 @@ export default function OrderReviewPage() {
             <Section title="Shipping" onEdit={handleEditShipping}>
               <div className="flex flex-col gap-2 text-base leading-[19px] text-gray-2">
                 <div>
-                  {formData.shippingFirstName || "Putin"} {formData.shippingLastName || "Huilo"}
+                  {formData.shippingFirstName} {formData.shippingLastName}
                 </div>
                 <div>
-                  {formData.shippingAddress || "Address"}
+                  {formData.shippingAddress}
                   {formData.shippingApartment && `, ${formData.shippingApartment}`}
                 </div>
                 <div>
-                  {formData.shippingCity || "City"}, {formData.shippingZipCode || "Zip code"},{" "}
-                  {formData.shippingCountry || "Country"}
+                  {formData.shippingCity}{formData.shippingCity && formData.shippingZipCode && ", "}
+                  {formData.shippingZipCode}{(formData.shippingCity || formData.shippingZipCode) && formData.shippingCountry && ", "}
+                  {formData.shippingCountry}
                 </div>
-                <div className="underline underline-offset-2">{formData.shippingEmail || "email@example.com"}</div>
-                <div>{formData.shippingPhone || "+380 00 000 0000"}</div>
+                {formData.shippingEmail && (
+                  <div className="underline underline-offset-2">{formData.shippingEmail}</div>
+                )}
+                {formData.shippingPhone && <div>{formData.shippingPhone}</div>}
               </div>
             </Section>
 
@@ -161,18 +164,21 @@ export default function OrderReviewPage() {
             <Section title="Billing address" onEdit={handleEditBilling}>
               <div className="flex flex-col gap-2 text-base leading-[19px] text-gray-2">
                 <div>
-                  {formData.billingFirstName || "First name"} {formData.billingLastName || "Last name"}
+                  {formData.billingFirstName} {formData.billingLastName}
                 </div>
                 <div>
-                  {formData.billingAddress || "Address"}
+                  {formData.billingAddress}
                   {formData.billingApartment && `, ${formData.billingApartment}`}
                 </div>
                 <div>
-                  {formData.billingCity || "City"}, {formData.billingZipCode || "Zip code"},{" "}
-                  {formData.billingCountry || "Country"}
+                  {formData.billingCity}{formData.billingCity && formData.billingZipCode && ", "}
+                  {formData.billingZipCode}{(formData.billingCity || formData.billingZipCode) && formData.billingCountry && ", "}
+                  {formData.billingCountry}
                 </div>
-                <div className="underline underline-offset-2">{formData.billingEmail || "email@example.com"}</div>
-                <div>{formData.billingPhone || "+380 00 000 0000"}</div>
+                {formData.billingEmail && (
+                  <div className="underline underline-offset-2">{formData.billingEmail}</div>
+                )}
+                {formData.billingPhone && <div>{formData.billingPhone}</div>}
               </div>
             </Section>
 
@@ -301,7 +307,7 @@ export default function OrderReviewPage() {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-row justify-between items-center w-full max-w-[648px] h-12">
+            <div className="flex flex-col-reverse sm:flex-row justify-between items-center gap-4 w-full max-w-[648px]">
               <Link
                 href="/checkout-order"
                 className="flex items-center gap-2 text-base leading-[19px] text-foreground hover:opacity-80"
@@ -312,7 +318,7 @@ export default function OrderReviewPage() {
               <CustomButton
                 type="button"
                 onClick={handlePlaceOrder}
-                className="w-72 h-12 bg-purple text-white border border-purple hover:bg-purple/90 text-base leading-[19px] uppercase"
+                className="w-full sm:w-72 h-12 bg-purple text-white border border-purple hover:bg-purple/90 text-base leading-[19px] uppercase"
               >
                 Place order
               </CustomButton>
@@ -332,10 +338,10 @@ export default function OrderReviewPage() {
                 {/* Product Table */}
                 <div className="flex flex-col gap-2">
                   {/* Table Header */}
-                  <div className="flex justify-between items-center h-12 text-base leading-[19px] font-normal uppercase text-foreground">
-                    <div className="w-[200px]">Product</div>
-                    <div className="w-[200px] text-center">Quantity</div>
-                    <div className="w-[200px] text-right">Total</div>
+                  <div className="flex justify-between items-center h-12 text-sm sm:text-base leading-[19px] font-normal uppercase text-foreground">
+                    <div className="flex-1 min-w-0">Product</div>
+                    <div className="w-16 sm:w-24 text-center shrink-0">Quantity</div>
+                    <div className="w-16 sm:w-24 text-right shrink-0">Total</div>
                   </div>
 
                   {/* Divider */}
@@ -344,10 +350,10 @@ export default function OrderReviewPage() {
                   {/* Product Rows - Dynamic from cart */}
                   {cartItems.map((item, index) => (
                     <div key={item.id || index}>
-                      <div className="flex justify-between items-center min-h-12 py-2 text-base leading-[19px] text-foreground">
-                        <div className="w-[200px]">{item.product?.name || "Product"}</div>
-                        <div className="w-[200px] text-center">{item.quantity}</div>
-                        <div className="w-[200px] text-right">
+                      <div className="flex justify-between items-center min-h-12 py-2 text-sm sm:text-base leading-[19px] text-foreground">
+                        <div className="flex-1 min-w-0 pr-2 break-words">{item.product?.name || "Product"}</div>
+                        <div className="w-16 sm:w-24 text-center shrink-0">{item.quantity}</div>
+                        <div className="w-16 sm:w-24 text-right shrink-0">
                           ${((Number(item.product?.price) || 0) * item.quantity).toFixed(2)}
                         </div>
                       </div>

@@ -32,15 +32,15 @@ export default function ShippingForm({ paymentMethod }: { paymentMethod: Deliver
     mode: "onSubmit",
     reValidateMode: "onChange",
     defaultValues: {
-      shippingCountry: "United States",
-      shippingFirstName: "John",
-      shippingLastName: "Doe",
-      shippingAddress: "123 Main Street",
-      shippingApartment: "Apt 4B",
-      shippingZipCode: "12345",
-      shippingCity: "New York",
-      shippingEmail: "john.doe@example.com",
-      shippingPhone: "+1234567890",
+      shippingCountry: "",
+      shippingFirstName: "",
+      shippingLastName: "",
+      shippingAddress: "",
+      shippingApartment: "",
+      shippingZipCode: "",
+      shippingCity: "",
+      shippingEmail: "",
+      shippingPhone: "",
       billingCountry: "",
       billingFirstName: "",
       billingLastName: "",
@@ -330,7 +330,7 @@ export default function ShippingForm({ paymentMethod }: { paymentMethod: Deliver
         </div>
         )}
 
-        <div className="flex justify-between items-center mt-12">
+        <div className="flex flex-col-reverse sm:flex-row justify-between items-center gap-4 mt-12">
           <Link
             href="/cart"
             className="flex items-center gap-2 hover:opacity-80 text-foreground text-base"
@@ -341,7 +341,7 @@ export default function ShippingForm({ paymentMethod }: { paymentMethod: Deliver
           <CustomButton
             type="submit"
             disabled={isSubmitting}
-            className="bg-purple hover:bg-purple/90 border border-purple w-72 h-12 text-white"
+            className="bg-purple hover:bg-purple/90 border border-purple w-full sm:w-72 h-12 text-white"
           >
             Order review
           </CustomButton>

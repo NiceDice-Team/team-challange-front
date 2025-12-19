@@ -6,7 +6,7 @@ const ProductsTable = ({ setSubtotal }: { setSubtotal: (subtotal: number) => voi
 
   const subtotal = useMemo(() => {
     const calculatedSubtotal = cartItems.reduce((sum, item) => {
-      const price = parseFloat(item.product?.price || 0);
+      const price = Number(item.product?.price) || 0;
       return sum + price * item.quantity;
     }, 0);
 
@@ -25,24 +25,24 @@ const ProductsTable = ({ setSubtotal }: { setSubtotal: (subtotal: number) => voi
       ) : (
         <>
           <div className="flex flex-col gap-2">
-            <div className="flex justify-between items-center h-12 font-normal text-foreground text-base uppercase">
-              <div>Product</div>
-              <div>Quantity</div>
-              <div>Total</div>
+            <div className="flex justify-between items-center h-12 font-normal text-foreground text-sm sm:text-base uppercase">
+              <div className="flex-1 min-w-0">Product</div>
+              <div className="w-16 sm:w-24 text-center shrink-0">Quantity</div>
+              <div className="w-16 sm:w-24 text-right shrink-0">Total</div>
             </div>
 
             <div className="border-purple/50 border-t w-full h-px"></div>
             {cartItems.map((item, index) => (
               <div key={item.id || index}>
-                <div className="flex justify-between items-center py-2 min-h-12 text-foreground text-base">
-                  <div className="w-[200px]">
+                <div className="flex justify-between items-center py-2 min-h-12 text-foreground text-sm sm:text-base">
+                  <div className="flex-1 min-w-0 pr-2 break-words">
                     {item.product?.name || "Product"}
                   </div>
-                  <div className="w-[200px] text-center">{item.quantity}</div>
-                  <div className="w-[200px] text-right">
+                  <div className="w-16 sm:w-24 text-center shrink-0">{item.quantity}</div>
+                  <div className="w-16 sm:w-24 text-right shrink-0">
                     $
                     {(
-                      parseFloat(item.product?.price || 0) * item.quantity
+                      (Number(item.product?.price) || 0) * item.quantity
                     ).toFixed(2)}
                   </div>
                 </div>
