@@ -227,7 +227,9 @@ export default function ProductCard({ product = {} as Product }: ProductCardProp
                       styleType="navigation"
                       className={`${width} h-[3px] border-0 ${activeImage === index ? "bg-[#494791]" : "bg-[#A4A3C8]"}`}
                       aria-label={`View image ${index + 1}`}
-                    ></CustomButton>
+                    >
+                      {""}
+                    </CustomButton>
                   );
                 })}
               </div>

@@ -1,4 +1,4 @@
-import ProductPage from "../../../../../components/catalog/ProductPage.jsx";
+import ProductPage from "../../../../../components/catalog/ProductPage";
 
 interface ProductDetailPageProps {
   params: Promise<{

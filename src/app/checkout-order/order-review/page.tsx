@@ -78,7 +78,7 @@ export default function OrderReviewPage() {
   // Calculate totals using the same logic as cart page
   const { subtotal, shipping, total } = useMemo(() => {
     const calculatedSubtotal = cartItems.reduce((sum, item) => {
-      const price = parseFloat(item.product?.price || 0);
+      const price = Number(item.product?.price) || 0;
       return sum + price * item.quantity;
     }, 0);
 
@@ -348,7 +348,7 @@ export default function OrderReviewPage() {
                         <div className="w-[200px]">{item.product?.name || "Product"}</div>
                         <div className="w-[200px] text-center">{item.quantity}</div>
                         <div className="w-[200px] text-right">
-                          ${(parseFloat(item.product?.price || 0) * item.quantity).toFixed(2)}
+                          ${((Number(item.product?.price) || 0) * item.quantity).toFixed(2)}
                         </div>
                       </div>
                       <div className="w-full h-px border-t border-purple/50"></div>

@@ -1,10 +1,10 @@
-import Navbar from "../../components/layout/Navbar.jsx";
-import Footer from "../../components/layout/Footer.jsx";
-import FeatureSection from "../../components/home/FeaturesSection.jsx";
-import BlogSection from "../../components/home/BlogSection.jsx";
-import FeatureSectionBottom from "../../components/home/FeatureSectionBottom.jsx";
-import PartnersScroller from "../../components/home/PartnersScroller.jsx";
-import SubscribeSection from "../../components/home/SubscribeSection.jsx";
+import Navbar from "../../components/layout/Navbar";
+import Footer from "../../components/layout/Footer";
+import FeatureSection from "../../components/home/FeaturesSection";
+import BlogSection from "../../components/home/BlogSection";
+import FeatureSectionBottom from "../../components/home/FeatureSectionBottom";
+import PartnersScroller from "../../components/home/PartnersScroller";
+import SubscribeSection from "../../components/home/SubscribeSection";
 
 interface AuthLayoutProps {
   children: React.ReactNode;

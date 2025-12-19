@@ -1,6 +1,6 @@
-import Navbar from "../../../components/layout/Navbar.jsx";
-import Footer from "../../../components/layout/Footer.jsx";
-import { CustomBreadcrumb } from "../../../components/shared/CustomBreadcrumb.jsx";
+import Navbar from "../../../components/layout/Navbar";
+import Footer from "../../../components/layout/Footer";
+import { CustomBreadcrumb } from "../../../components/shared/CustomBreadcrumb";
 
 export default function CatalogLayout({ children }) {
   const breadcrumbItems = [

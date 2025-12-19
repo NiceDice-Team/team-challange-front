@@ -4,7 +4,7 @@ import { catalogServices } from "../../services/catalogServices";
 import { useQuery } from "@tanstack/react-query";
 import { FilterCheckmarkIcon, ChevronDownIcon, CloseIcon } from "../../svgs/icons";
 import FilterSideBarSkeleton from "./FilterSideBarSkeleton";
-import type { SelectedFilters, FilterItem, FilterSideBarProps } from "@/types/catalog";
+import type { SelectedFilters, FilterItem, FilterSideBarProps, Category } from "@/types/catalog";
 
 export default function FilterSideBar({ selectedFilters, setSelectedFilters }: FilterSideBarProps) {
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
@@ -21,11 +21,11 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
 
   // Fetch product counts for all categories (includes search filter)
   const { data: categoryCounts = {} as Record<number, number>, isLoading: countsLoading } = useQuery({
-    queryKey: ["category-counts", categories.map((cat: any) => cat.id), selectedFilters.search],
+    queryKey: ["category-counts", categories.map((cat: Category) => cat.id), selectedFilters.search],
     queryFn: async ({ signal }) => {
       if (categories.length === 0) return {};
 
-      const countPromises = categories.map((category: any) =>
+      const countPromises = categories.map((category: Category) =>
         catalogServices.getProductCount(
           {
             category_id: category.id,
@@ -33,7 +33,7 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
           },
           { signal }
         )
-          .then((response: any) => ({ id: category.id, count: response.count }))
+          .then((response: { count: number }) => ({ id: category.id, count: response.count }))
           .catch(() => ({ id: category.id, count: 0 }))
       );
 
@@ -82,19 +82,24 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
   const isLoading = categoriesLoading || audiencesLoading || gameTypesLoading || brandsLoading || countsLoading;
 
   // Toggle filter value with scroll position preservation
-  const toggleFilter = (filterType: string, value: number | string, event?: React.MouseEvent): void => {
+  const toggleFilter = (filterType: string, value: number | string, event?: React.SyntheticEvent): void => {
     if (event) {
       event.preventDefault();
       event.stopPropagation();
     }
-    
-    const newFilters = {
+
+    const currentFilter = selectedFilters[filterType as keyof SelectedFilters];
+    const filterArray = Array.isArray(currentFilter) ? currentFilter : [];
+
+    const hasValue = filterArray.some((item) => item === value);
+    const newFilterArray = hasValue
+      ? filterArray.filter((item) => item !== value)
+      : [...filterArray, value as never];
+
+    setSelectedFilters({
       ...selectedFilters,
-      [filterType]: (selectedFilters[filterType as keyof SelectedFilters] as any)?.includes(value)
-        ? (selectedFilters[filterType as keyof SelectedFilters] as any).filter((item: any) => item !== value)
-        : [...((selectedFilters[filterType as keyof SelectedFilters] as any) || []), value],
-    };
-    setSelectedFilters(newFilters);
+      [filterType]: newFilterArray,
+    } as SelectedFilters);
   };
 
   // Clear all filters
@@ -139,8 +144,7 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
     const value = item.id || item.name;
     const isChecked = selectedFilters[filterType]?.includes(value);
 
-    const handleCheckboxClick = (e: React.MouseEvent) => {
-      e.preventDefault();
+    const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       e.stopPropagation();
       toggleFilter(filterType, value, e);
     };
@@ -170,7 +174,7 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
             <input
               type="checkbox"
               checked={isChecked}
-              onClick={handleCheckboxClick}
+              onChange={handleCheckboxChange}
               className="w-5 h-5 border border-[#494791] bg-white checked:bg-[#494791] checked:border-[#494791] appearance-none cursor-pointer"
             />
             {isChecked && (
