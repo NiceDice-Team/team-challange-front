@@ -21,3 +21,6 @@ services:
       NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
       NEXT_PUBLIC_STRIPE_KEY: ${NEXT_PUBLIC_STRIPE_KEY}
     command: ["sh", "-c", "npm run build && npm start"]
+    volumes:
+      - .:/app
+      - /app/node_modules
