@@ -6,7 +6,7 @@ import { isAuthenticated } from "@/lib/tokenManager";
 
 export function ProtectedRoute({ children }) {
   const router = useRouter();
-  const [allowed, setAllowed] = useState<boolean | null>(null);
+  const [allowed, setAllowed] = useState(null);
 
   useEffect(() => {
     const authenticated = isAuthenticated();

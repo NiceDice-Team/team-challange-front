@@ -7,6 +7,8 @@ import { PublicRoute } from "@/components/auth/RouteGuards";
 import { showCustomToast } from "@/components/shared/Toast";
 import { useEffect } from "react";
 
+export const dynamic = "force-dynamic";
+
 function ConfirmSignUpContent() {
   useEffect(() => {
     // Only run on client-side
@@ -20,11 +22,11 @@ function ConfirmSignUpContent() {
   }, []);
   return (
     <div className="flex flex-col items-center mt-23 mb-65">
-      <h1 className="mb-9 text-title uppercase">Thank you for registering!</h1>
+      <h1 className="uppercase mb-9 text-title">Thank you for registering!</h1>
       <p className="text-base">
         A confirmation email has been sent to your inbox.
       </p>
-      <p className="mb-9 text-base">
+      <p className="text-base mb-9">
         Please click the link in that email to activate your account.
       </p>
       <p className="mb-12 text-base">
@@ -32,7 +34,7 @@ function ConfirmSignUpContent() {
         please check your spam folder and resend it again.
       </p>
       <Link href="/catalog" className="flex gap-1">
-        <span className="text-purple underline">Browse games</span>
+        <span className="underline text-purple">Browse games</span>
         <Image src={ArrowNext} alt="arrow" />
       </Link>
     </div>
