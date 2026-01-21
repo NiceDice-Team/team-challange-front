@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile.dev
       args:
-        NODE_ENV: development
+        NODE_ENV: production
         NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL:-http://localhost:8000/api/}
     ports:
       - "3000:3000"
@@ -12,7 +12,7 @@ services:
       - .:/app
       - /app/node_modules
     environment:
-      NODE_ENV: development
+      NODE_ENV: production
       NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL:-http://localhost:8000/api/}
 
   nginx:
