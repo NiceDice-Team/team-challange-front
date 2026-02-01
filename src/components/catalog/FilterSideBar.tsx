@@ -274,7 +274,7 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
           {/* Active Filters */}
           <div className="flex flex-wrap gap-2" style={{ overflowAnchor: 'none' }}>
             {selectedFilters.categories.map((id: number) => {
-              const category = categories.find((cat: any) => cat.id === id);
+              const category = categories.find((cat: Category) => cat.id === id);
               return category && <FilterTag key={id} name={category.name} filterType="categories" value={id} />;
             })}
             {selectedFilters.gameTypes.map((name) => (
