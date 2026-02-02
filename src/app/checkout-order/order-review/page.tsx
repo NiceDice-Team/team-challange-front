@@ -10,10 +10,17 @@ import { CreditCardIcon, ChevronDownIcon } from "@/svgs/icons";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCartQuery } from "@/hooks/useCartQuery";
-import { useCheckoutFormData, usePaymentMethod, usePaymentCard, useCheckoutActions } from "@/store/checkout";
+import {
+  useCheckoutFormData,
+  usePaymentMethod,
+  usePaymentCard,
+  useCheckoutActions,
+} from "@/store/checkout";
 import PaymentWrapper from "@/components/checkout/PaymentWrapper";
 import { useQuery } from "@tanstack/react-query";
 import { orderServices, type PaymentMethod } from "@/services/orderServices";
+import { showCustomToast } from "@/components/shared/Toast";
+import { cartServices } from "@/services/cartServices";
 
 interface SectionProps {
   title: string;
@@ -27,9 +34,14 @@ const Section = ({ title, onEdit, children, className = "" }: SectionProps) => {
   return (
     <div className={`flex flex-col gap-6 ${className}`}>
       <div className="flex justify-between items-center">
-        <h3 className="font-normal text-foreground text-xl uppercase leading-6">{title}</h3>
+        <h3 className="font-normal text-foreground text-xl uppercase leading-6">
+          {title}
+        </h3>
         {onEdit && (
-          <button onClick={onEdit} className="hover:opacity-80 text-purple text-base underline leading-[19px]">
+          <button
+            onClick={onEdit}
+            className="hover:opacity-80 text-purple text-base underline leading-[19px]"
+          >
             Edit
           </button>
         )}
@@ -57,7 +69,10 @@ interface PaymentCardData {
 
 export default function OrderReviewPage() {
   const router = useRouter();
-  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<number | null>(null);
+
+  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<
+    number | null
+  >(null);
   const [isPaymentExpanded, setIsPaymentExpanded] = useState<boolean>(true);
 
   // Get data from Zustand store
@@ -65,7 +80,6 @@ export default function OrderReviewPage() {
   const deliveryMethod = usePaymentMethod();
   const savedPaymentCard = usePaymentCard();
   const { setPaymentCard } = useCheckoutActions();
-console.log('checkoutUserData', checkoutUserData);
   // Use existing cart functionality
   const { data: cartItems = [], isLoading: cartLoading } = useCartQuery();
 
@@ -123,22 +137,43 @@ console.log('checkoutUserData', checkoutUserData);
     router.push("/checkout-order");
   };
 
-  const handlePlaceOrder = () => {
-    console.log("🚀 Place Order button clicked!");
-
-    // Save payment card data before placing order
+  const handlePlaceOrder = async () => {
     setPaymentCard(paymentCardData);
 
-    // TODO: Integrate with actual payment/order API
-    console.log("Placing order with:", {
-      checkoutUserData,
-      deliveryMethod,
-      paymentCard: paymentCardData,
-      cartItems,
-      total,
-    });
+    let cartId = 0
+    try {
+      cartId = await cartServices.getCartId();
+    } catch (err) {
+      showCustomToast({
+        type: "error",
+        title: "Failed to load cart",
+      });
+      return;
+    }
 
-    alert("Order placed! Check the console for details.");
+    orderServices
+      .createOrder({
+        checkoutUserData,
+        deliveryOptionId: deliveryMethod?.id ?? 0,
+        paymentMethodId: selectedPaymentMethodId ?? 0,
+        cartId,
+        delivery_option: deliveryMethod?.id ?? 0,
+        payment_method: selectedPaymentMethodId,
+      })
+      .then((res) => {
+        showCustomToast({
+          type: "success",
+          title: "Order placed",
+          description: "Your order has been placed successfully.",
+        });
+      })
+      .catch((err) => {
+        showCustomToast({
+          type: "error",
+          title: "Failed to place order",
+          description: "Failed to place order. Please try again.",
+        });
+      });
   };
 
   return (
@@ -254,7 +289,9 @@ console.log('checkoutUserData', checkoutUserData);
                 <>
                   <div className="flex flex-col gap-1">
                     {paymentMethodsLoading ? (
-                      <div className="px-4 py-2 text-gray-2 text-base">Loading...</div>
+                      <div className="px-4 py-2 text-gray-2 text-base">
+                        Loading...
+                      </div>
                     ) : paymentMethodsError ? (
                       <div className="px-4 py-2 text-red-600 text-base">
                         Failed to load payment methods
@@ -286,9 +323,7 @@ console.log('checkoutUserData', checkoutUserData);
                     )}
                   </div>
 
-                  {selectedPaymentMethodId === 1 && (
-                    <PaymentWrapper />
-                  )}
+                  {selectedPaymentMethodId === 1 && <PaymentWrapper />}
                 </>
               )}
             </div>
