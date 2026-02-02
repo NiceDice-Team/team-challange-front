@@ -51,6 +51,8 @@ export async function signup(
     last_name: validatedFields.data.lastname,
     email: validatedFields.data.email,
     password: validatedFields.data.password,
+    password_confirm: validatedFields.data.confirmPassword,
+    privacy_policy: true
   };
 
   try {
@@ -74,7 +76,7 @@ console.log('response signup', response);
             lastname: res.error_message?.last_name,
             email: res.error_message?.email,
             password: res.error_message?.password,
-            confirmPassword: res.error_message?.confirm_password,
+            confirmPassword: res.error_message?.password_confirm,
           };
 
           return {
@@ -169,9 +171,9 @@ export async function signin(
       },
       body: JSON.stringify(requestBody),
     });
-
+console.log('response signin',  response.ok);
     const res = await response.json();
-
+console.log('res signin', res);
     if (!response.ok) {
       let errors: any = {};
       if (res.errors && res.errors.length > 0) {

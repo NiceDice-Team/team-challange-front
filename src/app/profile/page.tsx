@@ -192,7 +192,7 @@ function ProfileContent() {
                   Edit Profile
                 </TabsTrigger>
               </TabsList>
-              <TabsContent value="history" className="p-7">
+              <TabsContent value="history" className="p-3 md:p-7">
                 <h3 className="flex items-center gap-2 text-black text-xl uppercase">
                   <BoxSVG />
                   ORDER HISTORY
@@ -213,7 +213,7 @@ function ProfileContent() {
                 {error && <p className="text-red-500">{error}</p>}
 
                 <form
-                  className="lg:px-7 px-0"
+                  className="px-0 lg:px-7"
                   onSubmit={handleSubmit(onSubmit)}
                 >
                   <div className="gap-6 grid grid-cols-1 md:grid-cols-2 mb-6">
