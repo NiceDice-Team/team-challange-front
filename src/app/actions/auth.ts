@@ -171,7 +171,7 @@ export async function signin(
       },
       body: JSON.stringify(requestBody),
     });
-console.log('response signin',  response.ok);
+console.log('response signin',  response);
     const res = await response.json();
 console.log('res signin', res);
     if (!response.ok) {

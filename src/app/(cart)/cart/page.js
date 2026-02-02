@@ -7,6 +7,7 @@ import CartProductCard from "../../../components/cart/CartProductCard";
 import ProductCardSkeleton from "../../../components/catalog/ProductCardSkeleton";
 import { useCartQuery, useUpdateCartQuantity, useRemoveFromCart } from "../../../hooks/useCartQuery";
 import { productServices } from "../../../services/cartServices";
+import CheckoutModal from "@/components/cart/CheckoutModal";
 
 export default function CartPage() {
   const { data: cartItems = [], isLoading: cartLoading } = useCartQuery();
@@ -18,6 +19,7 @@ export default function CartPage() {
   const [specialNotes, setSpecialNotes] = useState("");
   const [recommendationsLoading, setRecommendationsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   // Load recommendations on component mount
   useEffect(() => {
@@ -101,6 +103,7 @@ export default function CartPage() {
   }
 
   return (
+    <>
     <div className="w-full max-w-[1320px] mx-auto ">
       {/* Error Message */}
       {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>}
@@ -261,7 +264,8 @@ export default function CartPage() {
               </div>
 
               {/* Checkout Button */}
-              <button className="w-full py-4 bg-[#494791] border border-[#494791] text-base font-normal text-white uppercase hover:bg-[#494791]/90 transition-colors">
+              <button className="w-full py-4 bg-[#494791] border border-[#494791] text-base font-normal text-white uppercase hover:bg-[#494791]/90 transition-colors"  
+                onClick={() => setModalOpen(true)}>
                 Checkout
               </button>
             </div>
@@ -285,5 +289,10 @@ export default function CartPage() {
         </div>
       )}
     </div>
+
+    {modalOpen && (
+        <CheckoutModal open={modalOpen} onClose={() => setModalOpen(false)} />
+      )}
+      </>
   );
 }

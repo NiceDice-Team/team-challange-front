@@ -31,6 +31,7 @@ const changePasswordSchema = z.object({
   });
 
 type ChangePasswordFormState = z.infer<typeof changePasswordSchema>;
+
 const ChangePass = ({
   open,
   onClose,
