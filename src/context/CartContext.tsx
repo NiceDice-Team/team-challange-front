@@ -2,11 +2,8 @@
 
 import React, { createContext, useContext, useMemo } from "react";
 import { useOptimisticCart } from "@/hooks/useOptimisticCart";
-import {
-  CartContextValue,
-  AddToCartResponse,
-  Product,
-} from "@/types/cart";
+import { CartContextValue, AddToCartResponse } from "@/types/cart";
+import { Product } from "@/types/product";
 
 const CartContext = createContext<CartContextValue | undefined>(undefined);
 
