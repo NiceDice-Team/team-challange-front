@@ -8,18 +8,21 @@ import ProductCardSkeleton from "../../../components/catalog/ProductCardSkeleton
 import { useCartQuery, useUpdateCartQuantity, useRemoveFromCart } from "../../../hooks/useCartQuery";
 import { productServices } from "../../../services/cartServices";
 import CheckoutModal from "@/components/cart/CheckoutModal";
+import { isAuthenticated } from "@/lib/tokenManager";
+import { useRouter } from "next/navigation";
 
 export default function CartPage() {
   const { data: cartItems = [], isLoading: cartLoading } = useCartQuery();
   const updateQuantityMutation = useUpdateCartQuantity();
   const removeItemMutation = useRemoveFromCart();
-
+  const router = useRouter();
   const [recommendedProducts, setRecommendedProducts] = useState([]);
   const [couponCode, setCouponCode] = useState("");
   const [specialNotes, setSpecialNotes] = useState("");
   const [recommendationsLoading, setRecommendationsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const isAuth = isAuthenticated();
 
   // Load recommendations on component mount
   useEffect(() => {
@@ -68,6 +71,14 @@ export default function CartPage() {
   const applyCoupon = () => {
     // Handle coupon application
     // TODO: Implement coupon logic
+  };
+
+  const handleCheckout = () => {
+    if (!!isAuth) {
+      router.push("/checkout-order");
+    } else {
+      setModalOpen(true);
+    }
   };
 
   // Calculate totals
@@ -265,7 +276,7 @@ export default function CartPage() {
 
               {/* Checkout Button */}
               <button className="bg-[#494791] hover:bg-[#494791]/90 py-4 border border-[#494791] w-full font-normal text-white text-base uppercase transition-colors"  
-                onClick={() => setModalOpen(true)}>
+                onClick={handleCheckout}>
                 Checkout
               </button>
             </div>
