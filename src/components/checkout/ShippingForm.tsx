@@ -17,7 +17,11 @@ import { DeliveryOption, useCheckoutStore } from "@/store/checkout";
 
 export type CombinedFormData = z.infer<typeof combinedFormSchema>;
 
-export default function ShippingForm({ paymentMethod }: { paymentMethod: DeliveryOption }) {
+export default function ShippingForm({
+  paymentMethod,
+}: {
+  paymentMethod: DeliveryOption;
+}) {
   const router = useRouter();
   const {
     register,
@@ -216,118 +220,118 @@ export default function ShippingForm({ paymentMethod }: { paymentMethod: Deliver
           onCheckedChange={(checked) => setValue("copyBilling", checked)}
         />
         {!copyBilling && (
-        <div className="flex flex-col gap-4 mt-6">
-          <div className="pb-6 text-xl uppercase">Billing adress</div>
+          <div className="flex flex-col gap-4 mt-6">
+            <div className="pb-6 text-xl uppercase">Billing adress</div>
 
-          <CountrySelectWithSearch
-            value={watch("billingCountry")}
-            onChange={(value) => setValue("billingCountry", value)}
-            name="billingCountry"
-            error={
-              errors.billingCountry?.message
-                ? [errors.billingCountry?.message]
-                : undefined
-            }
-          />
-          <div className="gap-4 grid grid-cols-1 md:grid-cols-2">
-            <CustomInput
-              label="First Name"
-              id="billingFirstName"
-              name="billingFirstName"
-              placeholder="Enter your first name"
-              {...register("billingFirstName")}
+            <CountrySelectWithSearch
+              value={watch("billingCountry")}
+              onChange={(value) => setValue("billingCountry", value)}
+              name="billingCountry"
               error={
-                errors.billingFirstName?.message
-                  ? [errors.billingFirstName?.message]
+                errors.billingCountry?.message
+                  ? [errors.billingCountry?.message]
+                  : undefined
+              }
+            />
+            <div className="gap-4 grid grid-cols-1 md:grid-cols-2">
+              <CustomInput
+                label="First Name"
+                id="billingFirstName"
+                name="billingFirstName"
+                placeholder="Enter your first name"
+                {...register("billingFirstName")}
+                error={
+                  errors.billingFirstName?.message
+                    ? [errors.billingFirstName?.message]
+                    : undefined
+                }
+              />
+              <CustomInput
+                label="Last Name"
+                id="billingLastName"
+                name="billingLastName"
+                placeholder="Enter your last name"
+                {...register("billingLastName")}
+                error={
+                  errors.billingLastName?.message
+                    ? [errors.billingLastName?.message]
+                    : undefined
+                }
+              />
+            </div>
+            <CustomInput
+              label="Address"
+              id="billingAddress"
+              name="billingAddress"
+              placeholder="Enter your address"
+              {...register("billingAddress")}
+              error={
+                errors.billingAddress?.message
+                  ? [errors.billingAddress?.message]
                   : undefined
               }
             />
             <CustomInput
-              label="Last Name"
-              id="billingLastName"
-              name="billingLastName"
-              placeholder="Enter your last name"
-              {...register("billingLastName")}
+              label="Apartment, suite, etc"
+              id="billingApartment"
+              name="billingApartment"
+              placeholder="Enter your apartment, suite, etc"
+              {...register("billingApartment")}
               error={
-                errors.billingLastName?.message
-                  ? [errors.billingLastName?.message]
+                errors.billingApartment?.message
+                  ? [errors.billingApartment?.message]
+                  : undefined
+              }
+            />
+            <div className="gap-4 grid grid-cols-1 md:grid-cols-2">
+              <CustomInput
+                label="Zip Code"
+                id="billingZipCode"
+                name="billingZipCode"
+                placeholder="Enter your zip code"
+                {...register("billingZipCode")}
+                error={
+                  errors.billingZipCode?.message
+                    ? [errors.billingZipCode?.message]
+                    : undefined
+                }
+              />
+              <CustomInput
+                label="Town / City"
+                id="billingCity"
+                name="billingCity"
+                placeholder="Enter your city"
+                {...register("billingCity")}
+                error={
+                  errors.billingCity?.message
+                    ? [errors.billingCity?.message]
+                    : undefined
+                }
+              />
+            </div>
+            <CustomInput
+              label="Email"
+              id="billingEmail"
+              name="billingEmail"
+              placeholder="Enter your email"
+              {...register("billingEmail")}
+              error={
+                errors.billingEmail?.message
+                  ? [errors.billingEmail?.message]
+                  : undefined
+              }
+            />
+            <PhoneNumberInput
+              value={watch("billingPhone")}
+              onChange={(value) => setValue("billingPhone", value)}
+              name="billingPhone"
+              error={
+                errors.billingPhone?.message
+                  ? [errors.billingPhone?.message]
                   : undefined
               }
             />
           </div>
-          <CustomInput
-            label="Address"
-            id="billingAddress"
-            name="billingAddress"
-            placeholder="Enter your address"
-            {...register("billingAddress")}
-            error={
-              errors.billingAddress?.message
-                ? [errors.billingAddress?.message]
-                : undefined
-            }
-          />
-          <CustomInput
-            label="Apartment, suite, etc"
-            id="billingApartment"
-            name="billingApartment"
-            placeholder="Enter your apartment, suite, etc"
-            {...register("billingApartment")}
-            error={
-              errors.billingApartment?.message
-                ? [errors.billingApartment?.message]
-                : undefined
-            }
-          />
-          <div className="gap-4 grid grid-cols-1 md:grid-cols-2">
-            <CustomInput
-              label="Zip Code"
-              id="billingZipCode"
-              name="billingZipCode"
-              placeholder="Enter your zip code"
-              {...register("billingZipCode")}
-              error={
-                errors.billingZipCode?.message
-                  ? [errors.billingZipCode?.message]
-                  : undefined
-              }
-            />
-            <CustomInput
-              label="Town / City"
-              id="billingCity"
-              name="billingCity"
-              placeholder="Enter your city"
-              {...register("billingCity")}
-              error={
-                errors.billingCity?.message
-                  ? [errors.billingCity?.message]
-                  : undefined
-              }
-            />
-          </div>
-          <CustomInput
-            label="Email"
-            id="billingEmail"
-            name="billingEmail"
-            placeholder="Enter your email"
-            {...register("billingEmail")}
-            error={
-              errors.billingEmail?.message
-                ? [errors.billingEmail?.message]
-                : undefined
-            }
-          />
-          <PhoneNumberInput
-            value={watch("billingPhone")}
-            onChange={(value) => setValue("billingPhone", value)}
-            name="billingPhone"
-            error={
-              errors.billingPhone?.message
-                ? [errors.billingPhone?.message]
-                : undefined
-            }
-          />
-        </div>
         )}
 
         <div className="flex flex-col-reverse sm:flex-row justify-between items-center gap-4 mt-12">

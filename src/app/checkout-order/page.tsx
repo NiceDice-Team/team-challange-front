@@ -23,28 +23,28 @@ function CheckoutPage() {
   const [subtotal, setSubtotal] = useState<number>(0);
 
   return (
-    <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16">
-      <div className="max-w-[1320px] mx-auto py-8 min-h-screen">
-        <CustomBreadcrumb items={breadcrumbItems} />
+    <div className="py-8 min-h-screen">
+      <CustomBreadcrumb items={breadcrumbItems} className="px-6 md:px-0" />
 
-        <h3 className="mt-6 mb-4 text-title uppercase">Checkout</h3>
-        <div className="flex flex-col lg:flex-row gap-6">
-          <div className="flex flex-col py-6 w-full lg:w-1/2">
-            <div className="flex flex-col mb-10">
-              <ShippingForm paymentMethod={paymentMethod} />
-            </div>
+      <h3 className="mt-6 mb-4 px-6 md:px-0 md:text-title text-2xl uppercase">
+        Checkout
+      </h3>
+      <div className="flex md:flex-row flex-col gap-6">
+        <div className="flex flex-col order-2 md:order-1 p-6 md:py-0 w-full md:w-1/2">
+          <div className="flex flex-col mb-10">
+            <ShippingForm paymentMethod={paymentMethod} />
           </div>
+        </div>
 
-          <div className="flex flex-col gap-10 p-4 sm:p-6 border-1 w-full lg:w-1/2 h-fit">
-            <ProductsTable setSubtotal={setSubtotal} />
-            <DeliveryOptions onPaymentMethodChange={setPaymentMethod} />
-            <div className="flex justify-between items-center -mt-4 h-10 text-purple">
-              <div className="font-bold text-foreground text-base uppercase">
-                Order Total
-              </div>
-              <div className="font-bold text-foreground text-base">
-                ${(paymentMethod?.price || 0) + subtotal}
+        <div className="flex flex-col gap-10 order-1 md:order-2 p-6 border-1 w-full md:w-1/2 h-fit">
+          <ProductsTable setSubtotal={setSubtotal} />
+          <DeliveryOptions onPaymentMethodChange={setPaymentMethod} />
+          <div className="flex justify-between items-center -mt-4 h-10 text-purple">
+            <div className="font-bold text-foreground text-base uppercase">
+              Order Total
             </div>
+            <div className="font-bold text-foreground text-base">
+              ${(paymentMethod?.price || 0) + subtotal}
             </div>
           </div>
         </div>
