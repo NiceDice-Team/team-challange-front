@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useRef } from "react";
 import useClickOutside from "../../utils/useClickOutside";
+import { SimpleChevronIcon } from "@/svgs/icons";
 
 interface Language {
   lan: string;
@@ -29,21 +30,7 @@ export default function LanguageSelector() {
         }}
       >
         <span>{selectedLanguage}</span>
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 16 16"
-          fill="none"
-          className={`transform transition-transform ${isOpen ? "rotate-180" : ""}`}
-        >
-          <path
-            d="M4.66732 5.99999L8.00065 9.33333L11.334 5.99999"
-            stroke="black"
-            strokeWidth="1.33333"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+        <SimpleChevronIcon isOpen={isOpen} />
       </button>
       {isOpen && (
         <div className="absolute min-w-20 mt-1 bg-sky-100 p-2 rounded-md shadow-lg z-10 flex flex-col gap-1">
