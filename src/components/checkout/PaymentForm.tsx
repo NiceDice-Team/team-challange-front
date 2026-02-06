@@ -74,7 +74,7 @@ export default function PaymentForm({
   const { processPayment, isProcessing, error } = usePaymentProcess();
   const { data: cartItems = [], isLoading: cartLoading } = useCartQuery();
   const amountInCents = cartItems.reduce(
-    (acc, item) => acc + item.product.price * item.quantity,
+    (acc, item) => acc + Number(item.product.price) * item.quantity,
     0
   );
   const formData = watch();

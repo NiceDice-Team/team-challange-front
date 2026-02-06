@@ -56,51 +56,6 @@ export interface User {
   date_joined?: string;
 }
 
-// Product types
-export interface Product {
-  id: string;
-  name: string;
-  description?: string;
-  price: number;
-  category?: string;
-  image_url?: string;
-  in_stock?: boolean;
-}
-
-export interface Category {
-  id: string;
-  name: string;
-  description?: string;
-  parent_category?: string;
-}
-
-// Cart types
-export interface CartItem {
-  id: string;
-  product: Product;
-  quantity: number;
-  price: number;
-}
-
-export interface Cart {
-  id: string;
-  items: CartItem[];
-  total_price: number;
-  created_at: string;
-  updated_at: string;
-}
-
-// Order types
-export interface Order {
-  id: string;
-  user: string;
-  items: CartItem[];
-  total_price: number;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  created_at: string;
-  updated_at: string;
-}
-
 // Form state types
 export interface FormState {
   message?: string;
