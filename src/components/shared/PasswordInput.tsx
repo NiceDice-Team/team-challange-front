@@ -11,7 +11,7 @@ interface PasswordProps extends React.InputHTMLAttributes<HTMLInputElement> {
   labelStyle?: string;
   placeholder?: string;
   id: string;
-  error?: string[];
+  error?: string[] | string;
   hideToggle?: boolean;
   name?: string;
 }
@@ -41,7 +41,7 @@ export const PasswordInput: FC<PasswordProps> = ({
       <div
         className={cn(
           "relative",
-          error && error.length > 0 && "border-4 border-error-border"
+          Array.isArray(error) && error.length > 0 && "border-4 border-error-border"
         )}
       >
         <Input
@@ -54,7 +54,7 @@ export const PasswordInput: FC<PasswordProps> = ({
             "md:flex-1 bg-white px-4 py-padding-12 border-black rounded-none outline-none w-full h-12 text-purple placeholder:text-placeholder",
             "focus:outline-none focus-visible:otline-none focus-visible:ring-0 focus-visible:shadow-none ",
             error &&
-              error.length > 0 &&
+              Array.isArray(error) && error.length > 0 &&
               "border-error focus:ring-red-500 focus-visible:ring-red-500",
             className
           )}
@@ -72,12 +72,12 @@ export const PasswordInput: FC<PasswordProps> = ({
             {visible ? (
               <EyeOff
                 size={24}
-                className={cn({ "text-error": error && error.length > 0 })}
+                className={cn({ "text-error": Array.isArray(error) && error.length > 0 })}
               />
             ) : (
               <Eye
                 size={24}
-                className={cn({ "text-error": error && error.length > 0 })}
+                className={cn({ "text-error": Array.isArray(error) && error.length > 0 })}
               />
             )}
           </button>
@@ -85,7 +85,7 @@ export const PasswordInput: FC<PasswordProps> = ({
       </div>
 
       {error &&
-        error.length > 0 &&
+        Array.isArray(error) && error.length > 0 &&
         error.map((err, index) => (
           <div className="flex items-center gap-1" key={index}>
             <Info size={16} color="#e30000" />
@@ -94,6 +94,12 @@ export const PasswordInput: FC<PasswordProps> = ({
             </p>
           </div>
         ))}
+        {error && typeof error === "string" && (
+          <div className="flex items-center gap-1">
+            <Info size={16} color="#e30000" />
+            <p className="text-error text-sm">{error}</p>
+          </div>
+        )}
     </div>
   );
 };

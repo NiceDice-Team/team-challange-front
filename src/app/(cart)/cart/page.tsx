@@ -7,17 +7,22 @@ import CartProductCard from "../../../components/cart/CartProductCard";
 import ProductCardSkeleton from "../../../components/catalog/ProductCardSkeleton";
 import { useCartQuery, useUpdateCartQuantity, useRemoveFromCart } from "../../../hooks/useCartQuery";
 import { productServices } from "../../../services/cartServices";
+import CheckoutModal from "@/components/cart/CheckoutModal";
+import { isAuthenticated } from "@/lib/tokenManager";
+import { useRouter } from "next/navigation";
 
 export default function CartPage() {
   const { data: cartItems = [], isLoading: cartLoading } = useCartQuery();
   const updateQuantityMutation = useUpdateCartQuantity();
   const removeItemMutation = useRemoveFromCart();
-
+  const router = useRouter();
   const [recommendedProducts, setRecommendedProducts] = useState([]);
   const [couponCode, setCouponCode] = useState("");
   const [specialNotes, setSpecialNotes] = useState("");
   const [recommendationsLoading, setRecommendationsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const isAuth = isAuthenticated();
 
   // Load recommendations on component mount
   useEffect(() => {
@@ -68,6 +73,14 @@ export default function CartPage() {
     // TODO: Implement coupon logic
   };
 
+  const handleCheckout = () => {
+    if (!!isAuth) {
+      router.push("/checkout-order");
+    } else {
+      setModalOpen(true);
+    }
+  };
+
   // Calculate totals
   const { subtotal, remainingForFreeShipping, shippingProgress } = useMemo(() => {
     const calculatedSubtotal = cartItems.reduce((sum, item) => {
@@ -94,16 +107,17 @@ export default function CartPage() {
 
   if (cartLoading) {
     return (
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full max-w-7xl">
         <div className="animate-pulse">Loading cart...</div>
       </div>
     );
   }
 
   return (
-    <div className="w-full max-w-[1320px] mx-auto ">
+    <>
+    <div className="mx-auto w-full max-w-[1320px]">
       {/* Error Message */}
-      {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>}
+      {error && <div className="bg-red-100 mb-4 px-4 py-3 border border-red-400 rounded text-red-700">{error}</div>}
 
       {/* Breadcrumb */}
       <div className="py-6">
@@ -113,11 +127,11 @@ export default function CartPage() {
       {/* Cart Header */}
       <div className="pb-6">
         <div className="flex flex-col gap-4">
-          <h1 className="text-2xl sm:text-3xl lg:text-[40px] leading-tight font-normal text-[#040404] uppercase">
+          <h1 className="font-normal text-[#040404] lg:text-[40px] text-2xl sm:text-3xl uppercase leading-tight">
             your cart ({cartItems.length})
           </h1>
 
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-base">
+          <div className="flex sm:flex-row flex-col sm:items-center gap-2 text-base">
             <span className="text-black">Not ready to checkout?</span>
             <Link href="/catalog" className="flex items-center gap-1 text-black hover:text-[#494791] transition-colors">
               <span>Continue Shopping</span>
@@ -145,25 +159,25 @@ export default function CartPage() {
           <div className="p-2 sm:p-4 lg:p-6">
             {/* Table Headers - Hidden on mobile, only show when cart has items */}
             {cartItems.length > 0 && (
-              <div className="hidden md:flex justify-between items-center pb-4 mb-6 border-b border-[#494791]/50">
-                <div className="flex-1 text-sm md:text-base font-normal text-[#040404] uppercase">Product</div>
+              <div className="hidden md:flex justify-between items-center mb-6 pb-4 border-[#494791]/50 border-b">
+                <div className="flex-1 font-normal text-[#040404] text-sm md:text-base uppercase">Product</div>
                 <div className="flex items-center gap-6 md:gap-8 lg:gap-16">
-                  <span className="w-12 md:w-16 text-sm md:text-base font-normal text-[#040404] uppercase">Price</span>
-                  <span className="w-16 md:w-20 text-sm md:text-base font-normal text-[#040404] uppercase">
+                  <span className="w-12 md:w-16 font-normal text-[#040404] text-sm md:text-base uppercase">Price</span>
+                  <span className="w-16 md:w-20 font-normal text-[#040404] text-sm md:text-base uppercase">
                     Quantity
                   </span>
-                  <span className="w-12 md:w-16 text-sm md:text-base font-normal text-[#040404] uppercase">Total</span>
+                  <span className="w-12 md:w-16 font-normal text-[#040404] text-sm md:text-base uppercase">Total</span>
                 </div>
               </div>
             )}
 
             {/* Cart Items */}
             {cartItems.length === 0 ? (
-              <div className="text-center py-12">
+              <div className="py-12 text-center">
                 <p className="text-gray-500 text-lg">Your cart is empty</p>
                 <Link
                   href="/catalog"
-                  className="inline-block mt-4 px-6 py-3 bg-[#494791] text-white  hover:bg-[#494791]/90 transition-colors"
+                  className="inline-block bg-[#494791] hover:bg-[#494791]/90 mt-4 px-6 py-3 text-white transition-colors"
                 >
                   Start Shopping
                 </Link>
@@ -184,16 +198,16 @@ export default function CartPage() {
 
             {/* Shipping Info */}
             {cartItems.length > 0 && (
-              <div className="pt-4 sm:pt-6 border-t border-[#494791]/50">
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-4">
-                  <div className="text-xs sm:text-sm md:text-base font-normal text-[#040404] uppercase">
+              <div className="pt-4 sm:pt-6 border-[#494791]/50 border-t">
+                <div className="flex sm:flex-row flex-col sm:justify-between sm:items-center gap-2 sm:gap-4">
+                  <div className="font-normal text-[#040404] text-xs sm:text-sm md:text-base uppercase">
                     shipping calculated at checkout
                   </div>
                   <div className="flex items-center gap-2 sm:gap-4 lg:gap-16">
-                    <span className="text-xs sm:text-sm md:text-base font-bold text-[#040404] uppercase">
+                    <span className="font-bold text-[#040404] text-xs sm:text-sm md:text-base uppercase">
                       Subtotal:
                     </span>
-                    <span className="text-xs sm:text-sm md:text-base font-bold text-[#040404] uppercase">
+                    <span className="font-bold text-[#040404] text-xs sm:text-sm md:text-base uppercase">
                       ${subtotal.toFixed(2)}
                     </span>
                   </div>
@@ -206,19 +220,19 @@ export default function CartPage() {
         {/* Cart Sidebar */}
         {cartItems.length > 0 && (
           <div className="w-full xl:w-96">
-            <div className="border border-[#A4A3C8] p-4 sm:p-6 flex flex-col gap-4 sticky top-4">
+            <div className="top-4 sticky flex flex-col gap-4 p-4 sm:p-6 border border-[#A4A3C8]">
               {/* Free Shipping Progress */}
               <div className="text-center">
                 {remainingForFreeShipping > 0 ? (
-                  <p className="text-lg text-black mb-4">
+                  <p className="mb-4 text-black text-lg">
                     You&apos;re just ${remainingForFreeShipping.toFixed(2)} away from FREE shipping
                   </p>
                 ) : (
-                  <p className="text-lg text-[var(--color-green)] font-medium mb-4">🎉 FREE SHIPPING</p>
+                  <p className="mb-4 font-medium text-[var(--color-green)] text-lg">🎉 FREE SHIPPING</p>
                 )}
-                <div className="relative w-full h-[3px] bg-[#D9D9D9] rounded">
+                <div className="relative bg-[#D9D9D9] rounded w-full h-[3px]">
                   <div
-                    className="absolute top-0 left-0 h-full bg-[#494791] rounded transition-all duration-300"
+                    className="top-0 left-0 absolute bg-[#494791] rounded h-full transition-all duration-300"
                     style={{ width: `${shippingProgress}%` }}
                   ></div>
                 </div>
@@ -226,29 +240,29 @@ export default function CartPage() {
 
               {/* Special Notes */}
               <div className="flex flex-col gap-4">
-                <h3 className="text-lg text-black">Special notes for your order</h3>
+                <h3 className="text-black text-lg">Special notes for your order</h3>
                 <div className="relative">
                   <textarea
                     value={specialNotes}
                     onChange={(e) => setSpecialNotes(e.target.value)}
-                    className="w-full h-24 sm:h-32 p-3 border border-[#A4A3C8] resize-none text-sm focus:outline-none focus:ring-2 focus:ring-[#494791]/20"
+                    className="p-3 border border-[#A4A3C8] focus:outline-none focus:ring-[#494791]/20 focus:ring-2 w-full h-24 sm:h-32 text-sm resize-none"
                     placeholder="Add any special instructions..."
                   />
                 </div>
               </div>
 
               {/* Coupon Code */}
-              <div className="flex flex-col sm:flex-row gap-2">
+              <div className="flex sm:flex-row flex-col gap-2">
                 <input
                   type="text"
                   value={couponCode}
                   onChange={(e) => setCouponCode(e.target.value)}
                   placeholder="Coupon code"
-                  className="flex-1 px-4 py-3 border border-[#A4A3C8] text-base focus:outline-none focus:ring-2 focus:ring-[#494791]/20"
+                  className="flex-1 px-4 py-3 border border-[#A4A3C8] focus:outline-none focus:ring-[#494791]/20 focus:ring-2 text-base"
                 />
                 <button
                   onClick={applyCoupon}
-                  className="px-6 sm:px-10 py-3 border border-[#494791] text-base text-[#494791] hover:bg-[#494791] hover:text-white transition-colors"
+                  className="hover:bg-[#494791] px-6 sm:px-10 py-3 border border-[#494791] text-[#494791] hover:text-white text-base transition-colors"
                 >
                   Apply
                 </button>
@@ -256,17 +270,15 @@ export default function CartPage() {
 
               {/* Subtotal */}
               <div className="flex justify-between items-center py-4">
-                <span className="text-base font-bold text-[#040404] uppercase">Subtotal:</span>
-                <span className="text-base font-bold text-[#040404] uppercase">${subtotal.toFixed(2)}</span>
+                <span className="font-bold text-[#040404] text-base uppercase">Subtotal:</span>
+                <span className="font-bold text-[#040404] text-base uppercase">${subtotal.toFixed(2)}</span>
               </div>
 
               {/* Checkout Button */}
-              <Link
-                href="/checkout-order"
-                className="w-full py-4 bg-[#494791] border border-[#494791] text-base font-normal text-white uppercase hover:bg-[#494791]/90 transition-colors text-center block"
-              >
+              <button className="bg-[#494791] hover:bg-[#494791]/90 py-4 border border-[#494791] w-full font-normal text-white text-base uppercase transition-colors"  
+                onClick={handleCheckout}>
                 Checkout
-              </Link>
+              </button>
             </div>
           </div>
         )}
@@ -276,10 +288,10 @@ export default function CartPage() {
       {(recommendationsLoading || recommendedProducts.length > 0) && (
         <div className="py-16">
           <div className="flex flex-col gap-10">
-            <h2 className="text-[40px] leading-[48px] font-normal text-[#040404] uppercase">you may also like</h2>
+            <h2 className="font-normal text-[#040404] text-[40px] uppercase leading-[48px]">you may also like</h2>
 
             {/* Responsive grid - 5 cards per row, wrapping */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 justify-items-center">
+            <div className="justify-items-center gap-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
               {recommendationsLoading
                 ? Array.from({ length: 5 }).map((_, index) => <ProductCardSkeleton key={`skeleton-${index}`} />)
                 : recommendedProducts.map((product) => <CartProductCard key={product.id} product={product} />)}
@@ -288,5 +300,10 @@ export default function CartPage() {
         </div>
       )}
     </div>
+
+    {modalOpen && (
+        <CheckoutModal open={modalOpen} onClose={() => setModalOpen(false)} />
+      )}
+      </>
   );
 }
