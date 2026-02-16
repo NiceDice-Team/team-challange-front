@@ -75,8 +75,8 @@ function OrdersTable() {
           <TableHead className="w-[155px]">ORDER ID</TableHead>
           <TableHead>DATE</TableHead>
           <TableHead>STATUS</TableHead>
-          <TableHead>ITEMS</TableHead>
-          <TableHead>TOTAL</TableHead>
+          <TableHead className="hidden md:block">ITEMS</TableHead>
+          <TableHead className="hidden md:block">TOTAL</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody className="border-none text-black">
@@ -90,8 +90,8 @@ function OrdersTable() {
                   order?.status?.slice(1)}
               </CustomBadge>
             </TableCell>
-            <TableCell>{formatItemsCount(order?.products?.length)}</TableCell>
-            <TableCell>${Number(order?.total_amount)?.toFixed(2)}</TableCell>
+            <TableCell className="hidden md:block">{formatItemsCount(order?.products?.length)}</TableCell>
+            <TableCell className="hidden md:block">${Number(order?.total_amount)?.toFixed(2)}</TableCell>
           </TableRow>
         ))}
       </TableBody>

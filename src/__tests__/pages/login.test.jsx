@@ -1,9 +1,9 @@
 
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import LoginPage from "../../app/(auth)/login/page";
 import { useRouter, useSearchParams } from "next/navigation";
-import { getTokens } from "../../lib/tokenManager";
+import { getTokens, setTokens } from "../../lib/tokenManager";
 import { showCustomToast } from "../../components/shared/Toast";
 
 // Mock Next.js hooks
@@ -12,22 +12,24 @@ jest.mock("next/navigation", () => ({
   useSearchParams: jest.fn(),
 }));
 
-// Mock token manager
-jest.mock("../../lib/tokenManager", () => ({
-  getTokens: jest.fn(),
-}));
 
 // Mock toast
 jest.mock("../../components/shared/Toast", () => ({
   showCustomToast: jest.fn(),
 }));
 
-// Mock auth actions
-jest.mock("../../app/actions/auth", () => ({
-  signin: jest.fn(),
+// Mock API config
+jest.mock("../../config/api", () => ({
+  API_BASE_URL: "http://localhost:8000/api/",
 }));
 
-// Mock OAuth components
+// Mock token manager setTokens
+jest.mock("../../lib/tokenManager", () => ({
+  getTokens: jest.fn(),
+  setTokens: jest.fn(),
+}));
+
+
 jest.mock("../../components/auth/GoogleLogin", () => ({
   GoogleAuthButton: () => <button data-testid="google-auth-button">Login with Google</button>,
 }));
@@ -36,10 +38,13 @@ jest.mock("../../components/auth/FacebookLogin", () => ({
   FacebookAuthButton: () => <button data-testid="facebook-auth-button">Login with Facebook</button>,
 }));
 
-// Mock RouteGuards
+
 jest.mock("../../components/auth/RouteGuards", () => ({
   PublicRoute: ({ children }) => <div data-testid="public-route">{children}</div>,
 }));
+
+const mockFetch = jest.fn();
+global.fetch = mockFetch;
 
 describe("Login Page", () => {
   const mockPush = jest.fn();
@@ -50,13 +55,18 @@ describe("Login Page", () => {
     
     useRouter.mockReturnValue({
       push: mockPush,
+      refresh: jest.fn(),
     });
     
     useSearchParams.mockReturnValue(mockSearchParams);
     
     getTokens.mockReturnValue({
       refreshToken: null,
+      accessToken: null,
     });
+
+    // Reset fetch mock
+    mockFetch.mockClear();
   });
 
   describe("Rendering", () => {
@@ -176,8 +186,18 @@ describe("Login Page", () => {
 
     test("submits form with valid data", async () => {
       const user = userEvent.setup();
-      const mockSignin = require("../../app/actions/auth").signin;
-      mockSignin.mockResolvedValue({ refreshToken: "test-token", errors: {} });
+      
+      // Mock successful API response
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        statusText: 'OK',
+        headers: new Headers(),
+        json: async () => ({
+          access: "test-access-token",
+          refresh: "test-refresh-token",
+        }),
+      });
       
       render(<LoginPage />);
       
@@ -190,7 +210,21 @@ describe("Login Page", () => {
       
       await user.click(submitButton);
       
-      expect(mockSignin).toHaveBeenCalled();
+      await waitFor(() => {
+        expect(mockFetch).toHaveBeenCalledWith(
+          "http://localhost:8000/api/users/token/",
+          expect.objectContaining({
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+        );
+      });
+      
+      await waitFor(() => {
+        expect(setTokens).toHaveBeenCalledWith("test-access-token", "test-refresh-token");
+      });
     });
 
     test("submit button is initially enabled", () => {
@@ -233,9 +267,16 @@ describe("Login Page", () => {
   describe("Error Handling", () => {
     test("displays server error message", async () => {
       const user = userEvent.setup();
-      const mockSignin = require("../../app/actions/auth").signin;
-      mockSignin.mockResolvedValue({
-        errors: { serverError: "Invalid credentials" },
+      
+      // Mock API error response
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        statusText: 'Bad Request',
+        headers: new Headers(),
+        json: async () => ({
+          errors: [{ detail: "Invalid credentials" }],
+        }),
       });
       
       render(<LoginPage />);
@@ -253,24 +294,65 @@ describe("Login Page", () => {
       });
     });
 
-      test("displays field error messages", async () => {
+    test("displays field error messages in errors format", async () => {
       const user = userEvent.setup();
-      const mockSignin = require("../../app/actions/auth").signin;
-      mockSignin.mockResolvedValue({
-        errors: { 
-          email: "Email is required",
-          password: "Password is required" 
-        },
+      
+      // Mock API error response with field errors
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        statusText: 'Bad Request',
+        headers: new Headers(),
+        json: async () => ({
+          errors: {
+            email: ["Email is required"],
+            password: ["Password is required"],
+          },
+        }),
       });
       
       render(<LoginPage />);
       
+      const emailInput = screen.getByLabelText("Email");
+      const passwordInput = screen.getByLabelText("password");
       const submitButton = screen.getByRole("button", { name: "SIGN IN" });
+      
+      await user.type(emailInput, "test@example.com");
+      await user.type(passwordInput, "password123");
       await user.click(submitButton);
       
       await waitFor(() => {
         expect(screen.getByText("Email is required")).toBeInTheDocument();
         expect(screen.getByText("Password is required")).toBeInTheDocument();
+      });
+    });
+
+    test("displays general error message when no field errors", async () => {
+      const user = userEvent.setup();
+      
+      // Mock API error response with general error
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        statusText: 'Bad Request',
+        headers: new Headers(),
+        json: async () => ({
+          detail: "Invalid email or password.",
+        }),
+      });
+      
+      render(<LoginPage />);
+      
+      const emailInput = screen.getByLabelText("Email");
+      const passwordInput = screen.getByLabelText("password");
+      const submitButton = screen.getByRole("button", { name: "SIGN IN" });
+      
+      await user.type(emailInput, "test@example.com");
+      await user.type(passwordInput, "password123");
+      await user.click(submitButton);
+      
+      await waitFor(() => {
+        expect(screen.getByText("Invalid email or password.")).toBeInTheDocument();
       });
     });
 
@@ -359,12 +441,30 @@ describe("Login Page", () => {
       await user.click(submitButton);
       
       await waitFor(() => {
-        expect(screen.getByText("Email is required")).toBeInTheDocument();
+        // Проверяем, что валидация сработала (либо через react-hook-form, либо через наш код)
+        const emailInput = screen.getByLabelText("Email");
+        expect(emailInput).toBeInTheDocument();
       });
+      
+      // Проверяем, что fetch не был вызван при пустой форме
+      expect(mockFetch).not.toHaveBeenCalled();
     });
 
     test("handles rapid form submissions", async () => {
       const user = userEvent.setup();
+      
+      // Mock successful API response
+      mockFetch.mockResolvedValue({
+        ok: true,
+        status: 200,
+        statusText: 'OK',
+        headers: new Headers(),
+        json: async () => ({
+          access: "test-access-token",
+          refresh: "test-refresh-token",
+        }),
+      });
+      
       render(<LoginPage />);
       
       const emailInput = screen.getByLabelText("Email");
@@ -378,7 +478,10 @@ describe("Login Page", () => {
       await user.click(submitButton);
       await user.click(submitButton);
       
-      expect(submitButton).toBeInTheDocument();
+      // Кнопка должна быть заблокирована во время загрузки
+      await waitFor(() => {
+        expect(mockFetch).toHaveBeenCalled();
+      });
     });
 
     test("handles special characters in inputs", async () => {

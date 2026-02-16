@@ -4,13 +4,13 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
-  DialogOverlay,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { CustomButton } from "./CustomButton";
-import { CloseIcon } from "@/svgs/icons";
+import { cn } from "@/lib/utils";
 
 const Modal = ({
+  className,
   title,
   description,
   children,
@@ -19,7 +19,9 @@ const Modal = ({
   onCancel,
   confirmButtonText = "Confirm",
   cancelButtonText = "Cancel",
+  footer = true,
 }: {
+  className?: string;
   title: string;
   description: string;
   children: React.ReactNode;
@@ -28,6 +30,7 @@ const Modal = ({
   onCancel: () => void;
   confirmButtonText?: string;
   cancelButtonText?: string;
+  footer?: boolean;
 }) => {
   const handleCancel = () => {
     onCancel();
@@ -42,7 +45,7 @@ const Modal = ({
       <DialogContent
         aria-describedby={undefined}
         aria-labelledby="dialog-content"
-        className="z-50 bg-white p-6"
+        className={cn("z-50 bg-white p-6", className)}
       >
         <DialogClose
           className="top-24 right-24 absolute focus-visible:outline-none focus:outline-none pointer"
@@ -55,6 +58,7 @@ const Modal = ({
           <p className="mb-4 text-gray-2 text-base">{description}</p>
         </DialogHeader>
         {children}
+        {footer && (
         <DialogFooter>
           <CustomButton
             onClick={handleCancel}
@@ -66,7 +70,7 @@ const Modal = ({
           <CustomButton onClick={handleConfirm} className="w-fit">
             {confirmButtonText}
           </CustomButton>
-        </DialogFooter>
+        </DialogFooter>)}
       </DialogContent>
     </Dialog>
   );

@@ -1,7 +1,6 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { redirect, RedirectType } from "next/navigation";
 import {
   FormState,
   SignupFormSchema,
@@ -51,6 +50,8 @@ export async function signup(
     last_name: validatedFields.data.lastname,
     email: validatedFields.data.email,
     password: validatedFields.data.password,
+    password_confirm: validatedFields.data.confirmPassword,
+    privacy_policy: true
   };
 
   try {
@@ -74,7 +75,7 @@ console.log('response signup', response);
             lastname: res.error_message?.last_name,
             email: res.error_message?.email,
             password: res.error_message?.password,
-            confirmPassword: res.error_message?.confirm_password,
+            confirmPassword: res.error_message?.password_confirm,
           };
 
           return {
@@ -112,6 +113,15 @@ console.log('response signup', response);
 
     const data = await response.json();
     console.log("Registration successful:", data);
+    
+    return {
+      firstname,
+      lastname,
+      email,
+      password,
+      confirmPassword,
+      success: true,
+    };
   } catch (error) {
     console.error("Error during signup:", error, error.message);
 
@@ -133,7 +143,6 @@ console.log('response signup', response);
       },
     };
   }
-  redirect("/confirm-signup", RedirectType.replace);
 }
 
 export async function signin(
@@ -169,9 +178,9 @@ export async function signin(
       },
       body: JSON.stringify(requestBody),
     });
-
+console.log('response signin',  response);
     const res = await response.json();
-
+console.log('res signin', res);
     if (!response.ok) {
       let errors: any = {};
       if (res.errors && res.errors.length > 0) {

@@ -12,7 +12,7 @@ type InputPros = {
   labelStyle?: string;
   type?: React.HTMLInputTypeAttribute;
   placeholder?: string;
-  error?: string[];
+  error?: string[] | string;
   id?: string;
   name?: string;
   disabled?: boolean;
@@ -72,15 +72,21 @@ export const CustomInput: React.FC<InputPros> = ({
       </div>
 
       {error &&
-        error.length > 0 &&
+        Array.isArray(error) && error.length > 0 &&
         error.map((err, index) => (
           <div className="flex items-center gap-1" key={index}>
             <Info size={16} color="#e30000" />
-            <p key={index} className="text-error text-sm">
-              {err}
-            </p>
+              <p key={index} className="text-error text-sm">
+                {err}
+              </p>
+            </div>
+          ))}
+        {error && typeof error === "string" && (
+          <div className="flex items-center gap-1">
+            <Info size={16} color="#e30000" />
+            <p className="text-error text-sm">{error}</p>
           </div>
-        ))}
+        )}
     </div>
   );
 };
