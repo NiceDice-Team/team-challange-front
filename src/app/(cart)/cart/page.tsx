@@ -275,7 +275,7 @@ export default function CartPage() {
               </div>
 
               {/* Checkout Button */}
-              <button className="bg-[#494791] hover:bg-[#494791]/90 py-4 border border-[#494791] w-full font-normal text-white text-base uppercase transition-colors"  
+              <button className="bg-purple hover:bg-purple/90 py-4 border border-purple w-full font-normal text-white text-base uppercase transition-colors cursor-pointer"  
                 onClick={handleCheckout}>
                 Checkout
               </button>

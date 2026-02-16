@@ -5,7 +5,11 @@ import { CustomInput } from "@/components/shared/CustomInput";
 import { PasswordInput } from "@/components/shared/PasswordInput";
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
-import { LoginFormState, loginFrontSchema, loginSchema } from "@/lib/definitions";
+import {
+  LoginFormState,
+  loginFrontSchema,
+  loginSchema,
+} from "@/lib/definitions";
 import { GoogleAuthButton } from "@/components/auth/GoogleLogin";
 import { FacebookAuthButton } from "@/components/auth/FacebookLogin";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -21,9 +25,11 @@ function LoginPageContent() {
   const message = params.get("message");
   const activationStatus = params.get("activation_status");
   const { refreshToken } = getTokens();
-  
+
   const [isLoading, setIsLoading] = useState(false);
-  const [serverErrors, setServerErrors] = useState<LoginFormState["errors"]>({});
+  const [serverErrors, setServerErrors] = useState<LoginFormState["errors"]>(
+    {},
+  );
   const [values, setValues] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState<{
     email?: string;
@@ -95,18 +101,18 @@ function LoginPageContent() {
     if (!validatedFields.success) {
       const fieldErrors = validatedFields.error.flatten().fieldErrors;
       const formattedErrors: LoginFormState["errors"] = {};
-      
+
       if (fieldErrors.email) {
-        formattedErrors.email = Array.isArray(fieldErrors.email) 
-          ? fieldErrors.email 
+        formattedErrors.email = Array.isArray(fieldErrors.email)
+          ? fieldErrors.email
           : [fieldErrors.email];
       }
       if (fieldErrors.password) {
-        formattedErrors.password = Array.isArray(fieldErrors.password) 
-          ? fieldErrors.password 
+        formattedErrors.password = Array.isArray(fieldErrors.password)
+          ? fieldErrors.password
           : [fieldErrors.password];
       }
-      
+
       setServerErrors(formattedErrors);
       setIsLoading(false);
       return;
@@ -130,8 +136,12 @@ function LoginPageContent() {
 
       if (!response.ok) {
         let errors: LoginFormState["errors"] = {};
-        
-        if (res.errors && typeof res.errors === "object" && !Array.isArray(res.errors)) {
+
+        if (
+          res.errors &&
+          typeof res.errors === "object" &&
+          !Array.isArray(res.errors)
+        ) {
           if (res.errors.email) {
             errors.email = Array.isArray(res.errors.email)
               ? res.errors.email
@@ -142,41 +152,58 @@ function LoginPageContent() {
               ? res.errors.password
               : [res.errors.password];
           }
-        } else if (res.errors && Array.isArray(res.errors) && res.errors.length > 0) {
-
-          errors = res.errors.reduce((acc: LoginFormState["errors"], error: any) => {
-            if (error.attr) {
-              const fieldName = error.attr === "email" ? "email" : error.attr === "password" ? "password" : null;
-              if (fieldName) {
-                acc[fieldName] = Array.isArray(acc[fieldName]) 
-                  ? [...(acc[fieldName] || []), error.detail]
-                  : [error.detail];
+        } else if (
+          res.errors &&
+          Array.isArray(res.errors) &&
+          res.errors.length > 0
+        ) {
+          errors = res.errors.reduce(
+            (acc: LoginFormState["errors"], error: any) => {
+              if (error.attr) {
+                const fieldName =
+                  error.attr === "email"
+                    ? "email"
+                    : error.attr === "password"
+                      ? "password"
+                      : null;
+                if (fieldName) {
+                  acc[fieldName] = Array.isArray(acc[fieldName])
+                    ? [...(acc[fieldName] || []), error.detail]
+                    : [error.detail];
+                } else {
+                  acc.serverError =
+                    error.detail ||
+                    "An error occurred during signin. Please try again.";
+                }
               } else {
-                acc.serverError = error.detail || "An error occurred during signin. Please try again.";
+                acc.serverError =
+                  error.detail ||
+                  "An error occurred during signin. Please try again.";
               }
-            } else {
-              acc.serverError = error.detail || "An error occurred during signin. Please try again.";
-            }
-            return acc;
-          }, {});
+              return acc;
+            },
+            {},
+          );
         } else if (res.error_message) {
           if (res.error_message.email) {
-            errors.email = Array.isArray(res.error_message.email) 
-              ? res.error_message.email 
+            errors.email = Array.isArray(res.error_message.email)
+              ? res.error_message.email
               : [res.error_message.email];
           }
           if (res.error_message.password) {
-            errors.password = Array.isArray(res.error_message.password) 
-              ? res.error_message.password 
+            errors.password = Array.isArray(res.error_message.password)
+              ? res.error_message.password
               : [res.error_message.password];
           }
           if (!errors.email && !errors.password) {
-            errors.serverError = typeof res.error_message === "string" 
-              ? res.error_message 
-              : "Invalid email or password.";
+            errors.serverError =
+              typeof res.error_message === "string"
+                ? res.error_message
+                : "Invalid email or password.";
           }
         } else {
-          errors.serverError = res.detail || res.message || "Invalid email or password.";
+          errors.serverError =
+            res.detail || res.message || "Invalid email or password.";
         }
 
         setServerErrors(errors);
@@ -202,7 +229,7 @@ function LoginPageContent() {
         title: "Success! You are logged in.",
         description: "You can now continue your adventure",
       });
-      
+
       setTimeout(() => router.push("/"), 1000);
     } catch (error: any) {
       console.error("Error during signin:", error);
@@ -249,8 +276,10 @@ function LoginPageContent() {
             value={values.email}
             error={
               [
-                ...(serverErrors?.email 
-                  ? (Array.isArray(serverErrors.email) ? serverErrors.email : [serverErrors.email])
+                ...(serverErrors?.email
+                  ? Array.isArray(serverErrors.email)
+                    ? serverErrors.email
+                    : [serverErrors.email]
                   : []),
                 ...(errors.email ? [errors.email] : []),
               ].filter(Boolean) as string[]
@@ -265,8 +294,10 @@ function LoginPageContent() {
             value={values.password}
             error={
               [
-                ...(serverErrors?.password 
-                  ? (Array.isArray(serverErrors.password) ? serverErrors.password : [serverErrors.password])
+                ...(serverErrors?.password
+                  ? Array.isArray(serverErrors.password)
+                    ? serverErrors.password
+                    : [serverErrors.password]
                   : []),
                 ...(errors.password ? [errors.password] : []),
               ].filter(Boolean) as string[]
@@ -279,8 +310,8 @@ function LoginPageContent() {
           {serverErrors?.serverError && (
             <div className="bg-red-50 mb-2 p-3 border border-red-200 rounded">
               <p className="text-error text-sm">
-                {Array.isArray(serverErrors.serverError) 
-                  ? serverErrors.serverError.join(", ") 
+                {Array.isArray(serverErrors.serverError)
+                  ? serverErrors.serverError.join(", ")
                   : serverErrors.serverError}
               </p>
             </div>
@@ -290,9 +321,9 @@ function LoginPageContent() {
           </CustomButton>
         </form>
         <div className="flex items-center gap-2 mt-6 mb-4 w-full">
-          <div className="flex-grow bg-gray-text h-px"></div>
+          <div className="bg-gray-text h-px grow"></div>
           <span className="text-gray-text">or</span>
-          <div className="flex-grow bg-gray-text h-px"></div>
+          <div className="bg-gray-text h-px grow"></div>
         </div>
         <div className="flex flex-col gap-3 w-full">
           <GoogleAuthButton />
