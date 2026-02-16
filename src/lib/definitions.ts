@@ -44,6 +44,7 @@ export type FormState =
       email?: string;
       password?: string;
       confirmPassword?: string;
+      success?: boolean;
       errors?: {
         firstname?: string[];
         lastname?: string[];

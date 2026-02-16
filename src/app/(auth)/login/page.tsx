@@ -3,21 +3,16 @@
 import { CustomButton } from "@/components/shared/CustomButton";
 import { CustomInput } from "@/components/shared/CustomInput";
 import { PasswordInput } from "@/components/shared/PasswordInput";
-import { useActionState, Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
-import { LoginFormState, loginFrontSchema } from "@/lib/definitions";
-import { signin } from "@/app/actions/auth";
+import { LoginFormState, loginFrontSchema, loginSchema } from "@/lib/definitions";
 import { GoogleAuthButton } from "@/components/auth/GoogleLogin";
 import { FacebookAuthButton } from "@/components/auth/FacebookLogin";
 import { useRouter, useSearchParams } from "next/navigation";
 import { PublicRoute } from "@/components/auth/RouteGuards";
 import { showCustomToast } from "@/components/shared/Toast";
-import { getTokens } from "@/lib/tokenManager";
-
-const INITIAL_STATE: LoginFormState = {
-  refreshToken: "",
-  errors: {},
-};
+import { getTokens, setTokens } from "@/lib/tokenManager";
+import { API_BASE_URL } from "@/config/api";
 
 function LoginPageContent() {
   const params = useSearchParams();
@@ -26,11 +21,9 @@ function LoginPageContent() {
   const message = params.get("message");
   const activationStatus = params.get("activation_status");
   const { refreshToken } = getTokens();
-  const [formState, formAction, pending] = useActionState<
-    LoginFormState,
-    FormData
-  >(signin, INITIAL_STATE);
-
+  
+  const [isLoading, setIsLoading] = useState(false);
+  const [serverErrors, setServerErrors] = useState<LoginFormState["errors"]>({});
   const [values, setValues] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState<{
     email?: string;
@@ -38,7 +31,7 @@ function LoginPageContent() {
   }>({});
 
   useEffect(() => {
-    if (formState.refreshToken || refreshToken) {
+    if (refreshToken) {
       showCustomToast({
         type: "success",
         title: "Success! You are logged in.",
@@ -46,7 +39,7 @@ function LoginPageContent() {
       });
       setTimeout(() => router.push("/"), 1000);
     }
-  }, [formState, refreshToken, router]);
+  }, [refreshToken, router]);
 
   useEffect(() => {
     if (message) {
@@ -71,12 +64,152 @@ function LoginPageContent() {
     const { name, value } = e.target;
     setValues((prev) => ({ ...prev, [name]: value }));
 
+    if (serverErrors[name as keyof typeof serverErrors]) {
+      setServerErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[name as keyof typeof newErrors];
+        return newErrors;
+      });
+    }
+
     const result = loginFrontSchema.safeParse({ ...values, [name]: value });
     if (!result.success) {
       const fieldError = result.error.flatten().fieldErrors[name]?.[0];
       setErrors((prev) => ({ ...prev, [name]: fieldError }));
     } else {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setServerErrors({});
+    setErrors({});
+
+    const validatedFields = loginSchema.safeParse({
+      email: values.email,
+      password: values.password,
+    });
+
+    if (!validatedFields.success) {
+      const fieldErrors = validatedFields.error.flatten().fieldErrors;
+      const formattedErrors: LoginFormState["errors"] = {};
+      
+      if (fieldErrors.email) {
+        formattedErrors.email = Array.isArray(fieldErrors.email) 
+          ? fieldErrors.email 
+          : [fieldErrors.email];
+      }
+      if (fieldErrors.password) {
+        formattedErrors.password = Array.isArray(fieldErrors.password) 
+          ? fieldErrors.password 
+          : [fieldErrors.password];
+      }
+      
+      setServerErrors(formattedErrors);
+      setIsLoading(false);
+      return;
+    }
+
+    const requestBody = {
+      email: validatedFields.data.email,
+      password: validatedFields.data.password,
+    };
+
+    try {
+      const response = await fetch(`${API_BASE_URL}users/token/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      const res = await response.json();
+
+      if (!response.ok) {
+        let errors: LoginFormState["errors"] = {};
+        
+        if (res.errors && typeof res.errors === "object" && !Array.isArray(res.errors)) {
+          if (res.errors.email) {
+            errors.email = Array.isArray(res.errors.email)
+              ? res.errors.email
+              : [res.errors.email];
+          }
+          if (res.errors.password) {
+            errors.password = Array.isArray(res.errors.password)
+              ? res.errors.password
+              : [res.errors.password];
+          }
+        } else if (res.errors && Array.isArray(res.errors) && res.errors.length > 0) {
+
+          errors = res.errors.reduce((acc: LoginFormState["errors"], error: any) => {
+            if (error.attr) {
+              const fieldName = error.attr === "email" ? "email" : error.attr === "password" ? "password" : null;
+              if (fieldName) {
+                acc[fieldName] = Array.isArray(acc[fieldName]) 
+                  ? [...(acc[fieldName] || []), error.detail]
+                  : [error.detail];
+              } else {
+                acc.serverError = error.detail || "An error occurred during signin. Please try again.";
+              }
+            } else {
+              acc.serverError = error.detail || "An error occurred during signin. Please try again.";
+            }
+            return acc;
+          }, {});
+        } else if (res.error_message) {
+          if (res.error_message.email) {
+            errors.email = Array.isArray(res.error_message.email) 
+              ? res.error_message.email 
+              : [res.error_message.email];
+          }
+          if (res.error_message.password) {
+            errors.password = Array.isArray(res.error_message.password) 
+              ? res.error_message.password 
+              : [res.error_message.password];
+          }
+          if (!errors.email && !errors.password) {
+            errors.serverError = typeof res.error_message === "string" 
+              ? res.error_message 
+              : "Invalid email or password.";
+          }
+        } else {
+          errors.serverError = res.detail || res.message || "Invalid email or password.";
+        }
+
+        setServerErrors(errors);
+        setIsLoading(false);
+        return;
+      }
+
+      const token = res.access;
+      const refresh = res.refresh;
+
+      if (!token || !refresh) {
+        setServerErrors({
+          serverError: "No token received",
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      setTokens(token, refresh);
+
+      showCustomToast({
+        type: "success",
+        title: "Success! You are logged in.",
+        description: "You can now continue your adventure",
+      });
+      
+      setTimeout(() => router.push("/"), 1000);
+    } catch (error: any) {
+      console.error("Error during signin:", error);
+      setServerErrors({
+        serverError: "An error occurred during signin. Please try again.",
+      });
+      setIsLoading(false);
     }
   };
 
@@ -107,15 +240,18 @@ function LoginPageContent() {
       )}
 
       <div className="flex flex-col justify-center items-center mb-28 md:w-[500px] w-xs">
-        <form className="flex flex-col gap-2 w-full" action={formAction}>
+        <form className="flex flex-col gap-2 w-full" onSubmit={handleSubmit}>
           <CustomInput
             placeholder="Enter email address"
             id="email"
             label="Email"
             name="email"
+            value={values.email}
             error={
               [
-                ...(formState?.errors?.email ? [formState.errors.email] : []),
+                ...(serverErrors?.email 
+                  ? (Array.isArray(serverErrors.email) ? serverErrors.email : [serverErrors.email])
+                  : []),
                 ...(errors.email ? [errors.email] : []),
               ].filter(Boolean) as string[]
             }
@@ -126,10 +262,11 @@ function LoginPageContent() {
             id="password"
             label="password"
             name="password"
+            value={values.password}
             error={
               [
-                ...(formState?.errors?.password
-                  ? [formState.errors.password]
+                ...(serverErrors?.password 
+                  ? (Array.isArray(serverErrors.password) ? serverErrors.password : [serverErrors.password])
                   : []),
                 ...(errors.password ? [errors.password] : []),
               ].filter(Boolean) as string[]
@@ -139,10 +276,16 @@ function LoginPageContent() {
           <Link href="/forgot-password" className="mb-4 text-right underline">
             Forgot your password?
           </Link>
-          {formState?.errors?.serverError && (
-            <p className="text-error">{formState.errors.serverError}</p>
+          {serverErrors?.serverError && (
+            <div className="bg-red-50 mb-2 p-3 border border-red-200 rounded">
+              <p className="text-error text-sm">
+                {Array.isArray(serverErrors.serverError) 
+                  ? serverErrors.serverError.join(", ") 
+                  : serverErrors.serverError}
+              </p>
+            </div>
           )}
-          <CustomButton type="submit" disabled={pending}>
+          <CustomButton type="submit" disabled={isLoading} loading={isLoading}>
             SIGN IN
           </CustomButton>
         </form>

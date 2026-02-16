@@ -1,7 +1,6 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { redirect, RedirectType } from "next/navigation";
 import {
   FormState,
   SignupFormSchema,
@@ -114,6 +113,15 @@ console.log('response signup', response);
 
     const data = await response.json();
     console.log("Registration successful:", data);
+    
+    return {
+      firstname,
+      lastname,
+      email,
+      password,
+      confirmPassword,
+      success: true,
+    };
   } catch (error) {
     console.error("Error during signup:", error, error.message);
 
@@ -135,7 +143,6 @@ console.log('response signup', response);
       },
     };
   }
-  redirect("/confirm-signup", RedirectType.replace);
 }
 
 export async function signin(
