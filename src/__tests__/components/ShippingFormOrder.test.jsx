@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import ShippingForm from "../../components/checkout/ShippingForm";
 
@@ -98,15 +98,15 @@ jest.mock("../../components/shared/CustomCheckbox", () => ({
 }));
 
 jest.mock("../../components/shared/CustomButton", () => ({
-  CustomButton: ({ children, type, disabled, onClick, ...props }) => (
+  CustomButton: ({ children, type, disabled, loading, onClick, ...props }) => (
     <button
       type={type}
-      disabled={disabled}
+      disabled={disabled || loading}
       onClick={onClick}
       data-testid="submit-button"
       {...props}
     >
-      {children}
+      {loading ? "Loading..." : children}
     </button>
   ),
 }));
@@ -128,7 +128,7 @@ describe("ShippingForm", () => {
       expect(screen.getByText("Shipping")).toBeInTheDocument();
     });
 
-    test("отображает все поля формы доставки", () => {
+    test("renders all shipping form fields", () => {
       render(<ShippingForm paymentMethod={mockPaymentMethod} />);
 
       expect(screen.getByLabelText("First Name")).toBeInTheDocument();
@@ -184,17 +184,17 @@ describe("ShippingForm", () => {
   })
 
   describe("Default values", () => {
-    test("fills form fields with default values", () => {
+    test("form fields are empty by default", () => {
       render(<ShippingForm paymentMethod={mockPaymentMethod} />);
 
-      expect(screen.getByTestId("shippingFirstName")).toHaveValue("John");
-      expect(screen.getByTestId("shippingLastName")).toHaveValue("Doe");
-      expect(screen.getByTestId("shippingAddress")).toHaveValue("123 Main Street");
-      expect(screen.getByTestId("shippingApartment")).toHaveValue("Apt 4B");
-      expect(screen.getByTestId("shippingZipCode")).toHaveValue("12345");
-      expect(screen.getByTestId("shippingCity")).toHaveValue("New York");
-      expect(screen.getByTestId("shippingEmail")).toHaveValue("john.doe@example.com");
-      expect(screen.getByTestId("shippingPhone")).toHaveValue("+1234567890");
+      expect(screen.getByTestId("shippingFirstName")).toHaveValue("");
+      expect(screen.getByTestId("shippingLastName")).toHaveValue("");
+      expect(screen.getByTestId("shippingAddress")).toHaveValue("");
+      expect(screen.getByTestId("shippingApartment")).toHaveValue("");
+      expect(screen.getByTestId("shippingZipCode")).toHaveValue("");
+      expect(screen.getByTestId("shippingCity")).toHaveValue("");
+      expect(screen.getByTestId("shippingEmail")).toHaveValue("");
+      expect(screen.getByTestId("shippingPhone")).toHaveValue("");
     });
     test("checkbox copyBilling is checked by default", () => {
       render(<ShippingForm paymentMethod={mockPaymentMethod} />);
@@ -211,11 +211,29 @@ describe("ShippingForm", () => {
       const checkbox = screen.getByTestId("copyBilling");
       expect(checkbox).toBeChecked();
 
+      const shippingFirstName = screen.getByTestId("shippingFirstName");
+      const shippingLastName = screen.getByTestId("shippingLastName");
+      const shippingAddress = screen.getByTestId("shippingAddress");
+      const shippingCountry = screen.getByTestId("shippingCountry");
+      const shippingCity = screen.getByTestId("shippingCity");
+      const shippingZipCode = screen.getByTestId("shippingZipCode");
+      const shippingEmail = screen.getByTestId("shippingEmail");
+      const shippingPhone = screen.getByTestId("shippingPhone");
+
+      await user.type(shippingFirstName, "John");
+      await user.type(shippingLastName, "Doe");
+      await user.type(shippingAddress, "123 Main Street");
+      await user.selectOptions(shippingCountry, "United States");
+      await user.type(shippingCity, "New York");
+      await user.type(shippingZipCode, "12345");
+      await user.type(shippingEmail, "john.doe@example.com");
+      await user.type(shippingPhone, "+1234567890");
+
       const submitButton = screen.getByTestId("submit-button");
       await user.click(submitButton);
 
       await waitFor(() => {
-        expect(mockSetFormData).toHaveBeenCalled();
+        expect(mockSetFormData).toHaveBeenCalledTimes(1);
         const callArgs = mockSetFormData.mock.calls[0][0];
         expect(callArgs.billingFirstName).toBe("John");
         expect(callArgs.billingLastName).toBe("Doe");
@@ -246,8 +264,13 @@ describe("ShippingForm", () => {
       const user = userEvent.setup();
       render(<ShippingForm paymentMethod={mockPaymentMethod} />);
 
-      const firstNameInput = screen.getByTestId("shippingFirstName");
-      await user.clear(firstNameInput);
+      await user.type(screen.getByTestId("shippingLastName"), "Doe");
+      await user.type(screen.getByTestId("shippingAddress"), "123 Main Street");
+      await user.selectOptions(screen.getByTestId("shippingCountry"), "United States");
+      await user.type(screen.getByTestId("shippingCity"), "New York");
+      await user.type(screen.getByTestId("shippingZipCode"), "12345");
+      await user.type(screen.getByTestId("shippingEmail"), "test@example.com");
+      await user.type(screen.getByTestId("shippingPhone"), "+1234567890");
 
       const submitButton = screen.getByTestId("submit-button");
       await user.click(submitButton);
@@ -262,8 +285,15 @@ describe("ShippingForm", () => {
       const user = userEvent.setup();
       render(<ShippingForm paymentMethod={mockPaymentMethod} />);
 
+      await user.type(screen.getByTestId("shippingFirstName"), "John");
+      await user.type(screen.getByTestId("shippingLastName"), "Doe");
+      await user.type(screen.getByTestId("shippingAddress"), "123 Main Street");
+      await user.selectOptions(screen.getByTestId("shippingCountry"), "United States");
+      await user.type(screen.getByTestId("shippingCity"), "New York");
+      await user.type(screen.getByTestId("shippingZipCode"), "12345");
+      await user.type(screen.getByTestId("shippingPhone"), "+1234567890");
+
       const emailInput = screen.getByTestId("shippingEmail");
-      await user.clear(emailInput);
       await user.type(emailInput, "invalid-email");
 
       const submitButton = screen.getByTestId("submit-button");
@@ -277,8 +307,15 @@ describe("ShippingForm", () => {
       const user = userEvent.setup();
       render(<ShippingForm paymentMethod={mockPaymentMethod} />);
 
+      await user.type(screen.getByTestId("shippingFirstName"), "John");
+      await user.type(screen.getByTestId("shippingLastName"), "Doe");
+      await user.type(screen.getByTestId("shippingAddress"), "123 Main Street");
+      await user.selectOptions(screen.getByTestId("shippingCountry"), "United States");
+      await user.type(screen.getByTestId("shippingCity"), "New York");
+      await user.type(screen.getByTestId("shippingEmail"), "test@example.com");
+      await user.type(screen.getByTestId("shippingPhone"), "+1234567890");
+
       const zipCodeInput = screen.getByTestId("shippingZipCode");
-      await user.clear(zipCodeInput);
       await user.type(zipCodeInput, "12");
 
       const submitButton = screen.getByTestId("submit-button");
@@ -294,8 +331,15 @@ describe("ShippingForm", () => {
         const user = userEvent.setup();
         render(<ShippingForm paymentMethod={mockPaymentMethod} />);
 
+        await user.type(screen.getByTestId("shippingFirstName"), "John");
+        await user.type(screen.getByTestId("shippingLastName"), "Doe");
+        await user.selectOptions(screen.getByTestId("shippingCountry"), "United States");
+        await user.type(screen.getByTestId("shippingCity"), "New York");
+        await user.type(screen.getByTestId("shippingZipCode"), "12345");
+        await user.type(screen.getByTestId("shippingEmail"), "test@example.com");
+        await user.type(screen.getByTestId("shippingPhone"), "+1234567890");
+
         const addressInput = screen.getByTestId("shippingAddress");
-        await user.clear(addressInput);
         await user.type(addressInput, "123");
 
         const submitButton = screen.getByTestId("submit-button");
@@ -314,11 +358,20 @@ describe("ShippingForm", () => {
       const user = userEvent.setup();
       render(<ShippingForm paymentMethod={mockPaymentMethod} />);
 
+      await user.type(screen.getByTestId("shippingFirstName"), "John");
+      await user.type(screen.getByTestId("shippingLastName"), "Doe");
+      await user.type(screen.getByTestId("shippingAddress"), "123 Main Street");
+      await user.selectOptions(screen.getByTestId("shippingCountry"), "United States");
+      await user.type(screen.getByTestId("shippingCity"), "New York");
+      await user.type(screen.getByTestId("shippingZipCode"), "12345");
+      await user.type(screen.getByTestId("shippingEmail"), "test@example.com");
+      await user.type(screen.getByTestId("shippingPhone"), "+1234567890");
+
       const submitButton = screen.getByTestId("submit-button");
       await user.click(submitButton);
 
       await waitFor(() => {
-        expect(mockSetFormData).toHaveBeenCalled();
+        expect(mockSetFormData).toHaveBeenCalledTimes(1);
         expect(mockSetPaymentMethod).toHaveBeenCalledWith(mockPaymentMethod);
         expect(mockPush).toHaveBeenCalledWith("/checkout-order/order-review");
       });
@@ -327,8 +380,13 @@ describe("ShippingForm", () => {
       const user = userEvent.setup();
       render(<ShippingForm paymentMethod={mockPaymentMethod} />);
 
-      const firstNameInput = screen.getByTestId("shippingFirstName");
-      await user.clear(firstNameInput);
+      await user.type(screen.getByTestId("shippingLastName"), "Doe");
+      await user.type(screen.getByTestId("shippingAddress"), "123 Main Street");
+      await user.selectOptions(screen.getByTestId("shippingCountry"), "United States");
+      await user.type(screen.getByTestId("shippingCity"), "New York");
+      await user.type(screen.getByTestId("shippingZipCode"), "12345");
+      await user.type(screen.getByTestId("shippingEmail"), "test@example.com");
+      await user.type(screen.getByTestId("shippingPhone"), "+1234567890");
 
       const submitButton = screen.getByTestId("submit-button");
       await user.click(submitButton);
@@ -345,6 +403,15 @@ describe("ShippingForm", () => {
     test("submits form with billing address when copyBilling is false", async () => {
       const user = userEvent.setup();
       render(<ShippingForm paymentMethod={mockPaymentMethod} />);
+
+      await user.type(screen.getByTestId("shippingFirstName"), "John");
+      await user.type(screen.getByTestId("shippingLastName"), "Doe");
+      await user.type(screen.getByTestId("shippingAddress"), "123 Main Street");
+      await user.selectOptions(screen.getByTestId("shippingCountry"), "United States");
+      await user.type(screen.getByTestId("shippingCity"), "New York");
+      await user.type(screen.getByTestId("shippingZipCode"), "12345");
+      await user.type(screen.getByTestId("shippingEmail"), "john.doe@example.com");
+      await user.type(screen.getByTestId("shippingPhone"), "+1234567890");
 
       const checkbox = screen.getByTestId("copyBilling");
       await user.click(checkbox);
@@ -363,26 +430,19 @@ describe("ShippingForm", () => {
       const billingPhone = screen.getByTestId("billingPhone");
 
       await user.selectOptions(billingCountry, "Canada");
-      await user.clear(billingFirstName);
       await user.type(billingFirstName, "Jane");
-      await user.clear(billingLastName);
       await user.type(billingLastName, "Smith");
-      await user.clear(billingAddress);
       await user.type(billingAddress, "456 Oak Avenue");
-      await user.clear(billingCity);
       await user.type(billingCity, "Los Angeles");
-      await user.clear(billingZipCode);
       await user.type(billingZipCode, "90210");
-      await user.clear(billingEmail);
       await user.type(billingEmail, "jane.smith@example.com");
-      await user.clear(billingPhone);
       await user.type(billingPhone, "+1987654321");
 
       const submitButton = screen.getByTestId("submit-button");
       await user.click(submitButton);
 
       await waitFor(() => {
-        expect(mockSetFormData).toHaveBeenCalled();
+        expect(mockSetFormData).toHaveBeenCalledTimes(1);
         expect(mockPush).toHaveBeenCalledWith("/checkout-order/order-review");
       });
     });
