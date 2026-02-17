@@ -30,7 +30,6 @@ export default function ShippingForm({
     watch,
     setValue,
     handleSubmit,
-
     trigger,
     formState: { errors, isSubmitting },
   } = useForm<CombinedFormData>({
@@ -78,7 +77,6 @@ export default function ShippingForm({
   }, [copyBilling, setValue, watch]);
 
   const onSubmit = (data: CombinedFormData) => {
-    console.log("Form submitted successfully:", data);
     setFormData(data as any);
     setPaymentMethod(paymentMethod);
 
@@ -328,7 +326,7 @@ export default function ShippingForm({
 
         {children}
 
-        <div className="flex flex-col-reverse sm:flex-row justify-between items-center gap-6 mt-12">
+        <div className="flex sm:flex-row flex-col-reverse justify-between items-center gap-6 mt-12">
           <Link
             href="/cart"
             className="flex items-center gap-2 hover:opacity-80 text-foreground text-base"
@@ -339,7 +337,7 @@ export default function ShippingForm({
           <CustomButton
             type="submit"
             disabled={isSubmitting}
-            className="bg-purple hover:bg-purple/90 border border-purple w-full sm:w-72 h-12 text-white uppercase font-normal text-base"
+            className="bg-purple hover:bg-purple/90 border border-purple w-full sm:w-72 h-12 font-normal text-white text-base uppercase"
           >
             Order review
           </CustomButton>
