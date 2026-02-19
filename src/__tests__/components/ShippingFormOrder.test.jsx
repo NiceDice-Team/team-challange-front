@@ -20,6 +20,27 @@ jest.mock("next/navigation", () => ({
 }));
 
 jest.mock("../../store/checkout", () => ({
+  useCheckoutFormData: jest.fn(() => ({
+    shippingCountry: "",
+    shippingFirstName: "",
+    shippingLastName: "",
+    shippingAddress: "",
+    shippingApartment: "",
+    shippingZipCode: "",
+    shippingCity: "",
+    shippingEmail: "",
+    shippingPhone: "",
+    billingCountry: "",
+    billingFirstName: "",
+    billingLastName: "",
+    billingAddress: "",
+    billingApartment: "",
+    billingZipCode: "",
+    billingCity: "",
+    billingEmail: "",
+    billingPhone: "",
+    copyBilling: false,
+  })),
   useCheckoutStore: jest.fn(() => ({
     setFormData: mockSetFormData,
     setPaymentMethod: mockSetPaymentMethod,

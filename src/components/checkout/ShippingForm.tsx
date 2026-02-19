@@ -31,8 +31,6 @@ export default function ShippingForm({
   const router = useRouter();
   const checkoutUserData = useCheckoutFormData();
 
-  // Подтягиваем значения из глобального стейта только если shipping-данные уже заполнены.
-  // Иначе оставляем дефолты формы (в т.ч. `copyBilling: true`), чтобы поведение не менялось для "первого" шага.
   const shouldUseStoredDefaults = useMemo(
     () =>
       Boolean(
