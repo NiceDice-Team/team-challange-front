@@ -2,76 +2,84 @@
 import Image from "next/image";
 import icon from "../../assets/icons/attention.svg";
 import { RadioButton } from "../shared/CustomRadio";
-import { useState } from "react";
-import { useCheckoutStore } from "@/store/checkout";
+import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { orderServices } from "@/services/orderServices";
+import { useCheckoutActions, usePaymentMethod } from "@/store/checkout";
 
-export interface DeliveryOption {
-  id: number;
-  name: string;
-  price: number;
-  description: string;
-}
+export type DeliveryOption = import("@/store/checkout").DeliveryOption;
 
-export const deliveryOptions: DeliveryOption[] = [
-  {
-    id: 1,
-    name: "DHL",
-    price: 35,
-    description: "1-3 business days",
-  },
-  {
-    id: 2,
-    name: "Nova poshta",
-    price: 20,
-    description: "3-5 business days",
-  },
-  {
-    id: 3,
-    name: "Fedex",
-    price: 15,
-    description: "5-7 business days",
-  },
-  {
-    id: 4,
-    name: "Ukrposhta",
-    price: 12,
-    description: "7-10 business days",
-  },
-];
+const DeliveryOptions = ({
+  onPaymentMethodChange,
+}: {
+  onPaymentMethodChange: (method: DeliveryOption) => void;
+}) => {
+  const payment = usePaymentMethod();
+  const { setPaymentMethod } = useCheckoutActions();
 
-const DeliveryOptions = ({ onPaymentMethodChange }: { onPaymentMethodChange: (method: DeliveryOption) => void }) => {
-  const [payment, setPayment] = useState<DeliveryOption>(deliveryOptions[0]);
-  const { setPaymentMethod } = useCheckoutStore();
+  const {
+    data: deliveryOptions = [],
+    isLoading: deliveryOptionsLoading,
+    error,
+  } = useQuery({
+    queryKey: ["delivery-options"],
+    queryFn: () => orderServices.getDeliveryOptions(),
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+  });
 
-  const handlePaymentMethodChange = (e) => {
-    const val = e.target.value;
-    const method = deliveryOptions.find((option) => option.name === val);
-    setPayment(method);
+  const selectedDeliveryOption = payment ?? deliveryOptions?.[0] ?? null;
+
+  useEffect(() => {
+    if (deliveryOptionsLoading) return;
+    if (!deliveryOptions?.length) return;
+
+    const first = deliveryOptions[0];
+    const isPaymentValid = payment && deliveryOptions.some((option) => option.id === payment.id);
+
+    if (!payment || !isPaymentValid) {
+      setPaymentMethod(first);
+      onPaymentMethodChange(first);
+    }
+  }, [deliveryOptions, deliveryOptionsLoading, onPaymentMethodChange, payment, setPaymentMethod]);
+
+  const handlePaymentMethodChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedId = Number(e.target.value);
+    const method = deliveryOptions.find((option) => option.id === selectedId);
+
+    if (!method) return;
+
     setPaymentMethod(method);
     onPaymentMethodChange(method);
   };
   return (
     <div className="flex flex-col gap-4 w-full">
       <div className="mb-6 text-xl uppercase">Choose delivery option</div>
-      <div className="flex flex-col gap-3">
-        {deliveryOptions.map((option) => (
-          <RadioButton
-            className="flex items-center gap-3 h-10"
-            key={option.id}
-            name="payment"
-            value={option.name}
-            id={option.id.toString()}
-            checked={payment?.name === option.name}
-            onChange={handlePaymentMethodChange}
-          >
-            <div className="flex gap-2">
-              <p className="font-bold text-purple">${option.price}</p>
-              <h3 className="font-medium uppercase">{option.name}</h3>
-              <p className="text-gray-2">{option.description}</p>
-            </div>
-          </RadioButton>
-        ))}
-      </div>
+      {deliveryOptionsLoading ? (
+        <div className="text-gray-2">Loading...</div>
+      ) : error ? (
+        <div className="text-red-600">Failed to load delivery options</div>
+      ) : (
+        <div className="flex flex-col gap-3">
+          {deliveryOptions.map((option) => (
+            <RadioButton
+              className="flex items-center gap-3 h-10"
+              key={option.id}
+              name="payment"
+              value={option.id.toString()}
+              id={option.id.toString()}
+              checked={selectedDeliveryOption?.id === option.id}
+              onChange={handlePaymentMethodChange}
+            >
+              <div className="flex gap-2">
+                <p className="font-bold text-purple">${option.price}</p>
+                <h3 className="font-medium uppercase">{option.name}</h3>
+                <p className="text-gray-2">{option.description}</p>
+              </div>
+            </RadioButton>
+          ))}
+        </div>
+      )}
       <div className="flex items-center gap-2 mb-10">
         <Image src={icon} alt="info" className="w-6 h-6" />
         <p className="max-w-[566px] text-gray-2">
@@ -82,7 +90,7 @@ const DeliveryOptions = ({ onPaymentMethodChange }: { onPaymentMethodChange: (me
       </div>
       <div className="flex justify-between items-center mb-2 font-bold uppercase px-6">
         <span>Shipping</span>
-        <span>${payment?.price}</span>
+        <span>${selectedDeliveryOption?.price}</span>
       </div>
       <div className="border-purple/50 border-t w-full h-px"></div>
     </div>
