@@ -35,16 +35,16 @@ export default function ShippingForm({
     () =>
       Boolean(
         checkoutUserData.shippingCountry ||
-          checkoutUserData.shippingFirstName ||
-          checkoutUserData.shippingLastName ||
-          checkoutUserData.shippingAddress ||
-          checkoutUserData.shippingApartment ||
-          checkoutUserData.shippingZipCode ||
-          checkoutUserData.shippingCity ||
-          checkoutUserData.shippingEmail ||
-          checkoutUserData.shippingPhone
+        checkoutUserData.shippingFirstName ||
+        checkoutUserData.shippingLastName ||
+        checkoutUserData.shippingAddress ||
+        checkoutUserData.shippingApartment ||
+        checkoutUserData.shippingZipCode ||
+        checkoutUserData.shippingCity ||
+        checkoutUserData.shippingEmail ||
+        checkoutUserData.shippingPhone,
       ),
-    [checkoutUserData]
+    [checkoutUserData],
   );
 
   const defaultValues: CombinedFormData = useMemo(
@@ -62,12 +62,14 @@ export default function ShippingForm({
         ? checkoutUserData.shippingAddress
         : "",
       shippingApartment: shouldUseStoredDefaults
-        ? checkoutUserData.shippingApartment ?? ""
+        ? (checkoutUserData.shippingApartment ?? "")
         : "",
       shippingZipCode: shouldUseStoredDefaults
         ? checkoutUserData.shippingZipCode
         : "",
-      shippingCity: shouldUseStoredDefaults ? checkoutUserData.shippingCity : "",
+      shippingCity: shouldUseStoredDefaults
+        ? checkoutUserData.shippingCity
+        : "",
       shippingEmail: shouldUseStoredDefaults
         ? checkoutUserData.shippingEmail
         : "",
@@ -76,34 +78,38 @@ export default function ShippingForm({
         : "",
 
       billingCountry: shouldUseStoredDefaults
-        ? checkoutUserData.billingCountry ?? ""
+        ? (checkoutUserData.billingCountry ?? "")
         : "",
       billingFirstName: shouldUseStoredDefaults
-        ? checkoutUserData.billingFirstName ?? ""
+        ? (checkoutUserData.billingFirstName ?? "")
         : "",
       billingLastName: shouldUseStoredDefaults
-        ? checkoutUserData.billingLastName ?? ""
+        ? (checkoutUserData.billingLastName ?? "")
         : "",
       billingAddress: shouldUseStoredDefaults
-        ? checkoutUserData.billingAddress ?? ""
+        ? (checkoutUserData.billingAddress ?? "")
         : "",
       billingApartment: shouldUseStoredDefaults
-        ? checkoutUserData.billingApartment ?? ""
+        ? (checkoutUserData.billingApartment ?? "")
         : "",
       billingZipCode: shouldUseStoredDefaults
-        ? checkoutUserData.billingZipCode ?? ""
+        ? (checkoutUserData.billingZipCode ?? "")
         : "",
-      billingCity: shouldUseStoredDefaults ? checkoutUserData.billingCity ?? "" : "",
+      billingCity: shouldUseStoredDefaults
+        ? (checkoutUserData.billingCity ?? "")
+        : "",
       billingEmail: shouldUseStoredDefaults
-        ? checkoutUserData.billingEmail ?? ""
+        ? (checkoutUserData.billingEmail ?? "")
         : "",
       billingPhone: shouldUseStoredDefaults
-        ? checkoutUserData.billingPhone ?? ""
+        ? (checkoutUserData.billingPhone ?? "")
         : "",
 
-      copyBilling: shouldUseStoredDefaults ? checkoutUserData.copyBilling : true,
+      copyBilling: shouldUseStoredDefaults
+        ? checkoutUserData.copyBilling
+        : true,
     }),
-    [checkoutUserData, shouldUseStoredDefaults]
+    [checkoutUserData, shouldUseStoredDefaults],
   );
   const {
     register,
@@ -121,20 +127,43 @@ export default function ShippingForm({
   const { setFormData, setPaymentMethod } = useCheckoutStore();
 
   const copyBilling = watch("copyBilling");
+  const shippingCountry = watch("shippingCountry");
+  const shippingFirstName = watch("shippingFirstName");
+  const shippingLastName = watch("shippingLastName");
+  const shippingAddress = watch("shippingAddress");
+  const shippingApartment = watch("shippingApartment");
+  const shippingZipCode = watch("shippingZipCode");
+  const shippingCity = watch("shippingCity");
+  const shippingEmail = watch("shippingEmail");
+  const shippingPhone = watch("shippingPhone");
 
   useEffect(() => {
-    if (copyBilling === true) {
-      setValue("billingCountry", watch("shippingCountry"));
-      setValue("billingFirstName", watch("shippingFirstName"));
-      setValue("billingLastName", watch("shippingLastName"));
-      setValue("billingAddress", watch("shippingAddress"));
-      setValue("billingApartment", watch("shippingApartment"));
-      setValue("billingZipCode", watch("shippingZipCode"));
-      setValue("billingCity", watch("shippingCity"));
-      setValue("billingEmail", watch("shippingEmail"));
-      setValue("billingPhone", watch("shippingPhone"));
-    }
-  }, [copyBilling, setValue, watch]);
+    if (!copyBilling) return;
+
+    // Keep billing in sync with shipping while checkbox is enabled.
+    // This prevents submit-time validation errors caused by empty billing values.
+    setValue("billingCountry", shippingCountry, { shouldValidate: false });
+    setValue("billingFirstName", shippingFirstName, { shouldValidate: false });
+    setValue("billingLastName", shippingLastName, { shouldValidate: false });
+    setValue("billingAddress", shippingAddress, { shouldValidate: false });
+    setValue("billingApartment", shippingApartment, { shouldValidate: false });
+    setValue("billingZipCode", shippingZipCode, { shouldValidate: false });
+    setValue("billingCity", shippingCity, { shouldValidate: false });
+    setValue("billingEmail", shippingEmail, { shouldValidate: false });
+    setValue("billingPhone", shippingPhone, { shouldValidate: false });
+  }, [
+    copyBilling,
+    setValue,
+    shippingCountry,
+    shippingFirstName,
+    shippingLastName,
+    shippingAddress,
+    shippingApartment,
+    shippingZipCode,
+    shippingCity,
+    shippingEmail,
+    shippingPhone,
+  ]);
 
   const onSubmit = (data: CombinedFormData) => {
     setFormData(data as any);
