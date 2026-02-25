@@ -296,7 +296,22 @@ export default function ShippingForm({
           label="Use shipping address as billing address"
           id="copyBilling"
           checked={copyBilling}
-          onCheckedChange={(checked) => setValue("copyBilling", checked)}
+          onCheckedChange={(checked) => {
+            setValue("copyBilling", checked);
+            // When switching to "enter billing separately", reset billing fields
+            // so user input doesn't append to previously-copied values.
+            if (!checked) {
+              setValue("billingCountry", "", { shouldValidate: false });
+              setValue("billingFirstName", "", { shouldValidate: false });
+              setValue("billingLastName", "", { shouldValidate: false });
+              setValue("billingAddress", "", { shouldValidate: false });
+              setValue("billingApartment", "", { shouldValidate: false });
+              setValue("billingZipCode", "", { shouldValidate: false });
+              setValue("billingCity", "", { shouldValidate: false });
+              setValue("billingEmail", "", { shouldValidate: false });
+              setValue("billingPhone", "", { shouldValidate: false });
+            }
+          }}
         />
         {!copyBilling && (
           <div className="flex flex-col gap-4 mt-6">
