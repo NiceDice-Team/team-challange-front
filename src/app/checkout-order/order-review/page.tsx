@@ -6,11 +6,14 @@ import { CustomInput } from "@/components/shared/CustomInput";
 import { RadioButton } from "@/components/shared/CustomRadio";
 import { CustomBreadcrumb } from "@/components/shared/CustomBreadcrumb";
 import { ChevronLeft } from "lucide-react";
-import { GooglePayIcon, ApplePayIcon, CreditCardIcon, ChevronDownIcon } from "@/svgs/icons";
-import { useState, useMemo } from "react";
+import { CreditCardIcon, ChevronDownIcon } from "@/svgs/icons";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCartQuery } from "@/hooks/useCartQuery";
 import { useCheckoutFormData, usePaymentMethod, usePaymentCard, useCheckoutActions } from "@/store/checkout";
+import PaymentWrapper from "@/components/checkout/PaymentWrapper";
+import { useQuery } from "@tanstack/react-query";
+import { orderServices, type PaymentMethod } from "@/services/orderServices";
 
 interface SectionProps {
   title: string;
@@ -54,7 +57,7 @@ interface PaymentCardData {
 
 export default function OrderReviewPage() {
   const router = useRouter();
-  const [paymentMethodType, setPaymentMethodType] = useState<string>("credit-card");
+  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<number | null>(null);
   const [isPaymentExpanded, setIsPaymentExpanded] = useState<boolean>(true);
 
   // Get data from Zustand store
@@ -65,6 +68,25 @@ export default function OrderReviewPage() {
 console.log('checkoutUserData', checkoutUserData);
   // Use existing cart functionality
   const { data: cartItems = [], isLoading: cartLoading } = useCartQuery();
+
+  const {
+    data: paymentMethods = [],
+    isLoading: paymentMethodsLoading,
+    error: paymentMethodsError,
+  } = useQuery({
+    queryKey: ["payment-methods"],
+    queryFn: () => orderServices.getPaymentMethods(),
+    refetchOnWindowFocus: false,
+  });
+
+  useEffect(() => {
+    if (paymentMethodsLoading) return;
+    if (!paymentMethods?.length) return;
+    if (selectedPaymentMethodId !== null) return;
+
+    const preferred = paymentMethods.find((m: PaymentMethod) => m.id === 1);
+    setSelectedPaymentMethodId(preferred?.id ?? paymentMethods[0].id);
+  }, [paymentMethods, paymentMethodsLoading, selectedPaymentMethodId]);
 
   // Local state for payment form
   const [paymentCardData, setPaymentCardData] = useState<PaymentCardData>({
@@ -142,21 +164,34 @@ console.log('checkoutUserData', checkoutUserData);
             <Section title="Shipping" onEdit={handleEditShipping}>
               <div className="flex flex-col gap-2 text-gray-2 text-base leading-[19px]">
                 <div>
-                  {checkoutUserData.shippingFirstName} {checkoutUserData.shippingLastName}
+                  {checkoutUserData.shippingFirstName}{" "}
+                  {checkoutUserData.shippingLastName}
                 </div>
                 <div>
                   {checkoutUserData.shippingAddress}
-                  {checkoutUserData.shippingApartment && `, ${checkoutUserData.shippingApartment}`}
+                  {checkoutUserData.shippingApartment &&
+                    `, ${checkoutUserData.shippingApartment}`}
                 </div>
                 <div>
-                  {checkoutUserData.shippingCity}{checkoutUserData.shippingCity && checkoutUserData.shippingZipCode && ", "}
-                  {checkoutUserData.shippingZipCode}{(checkoutUserData.shippingCity || checkoutUserData.shippingZipCode) && checkoutUserData.shippingCountry && ", "}
+                  {checkoutUserData.shippingCity}
+                  {checkoutUserData.shippingCity &&
+                    checkoutUserData.shippingZipCode &&
+                    ", "}
+                  {checkoutUserData.shippingZipCode}
+                  {(checkoutUserData.shippingCity ||
+                    checkoutUserData.shippingZipCode) &&
+                    checkoutUserData.shippingCountry &&
+                    ", "}
                   {checkoutUserData.shippingCountry}
                 </div>
                 {checkoutUserData.shippingEmail && (
-                  <div className="underline underline-offset-2">{checkoutUserData.shippingEmail}</div>
+                  <div className="underline underline-offset-2">
+                    {checkoutUserData.shippingEmail}
+                  </div>
                 )}
-                {checkoutUserData.shippingPhone && <div>{checkoutUserData.shippingPhone}</div>}
+                {checkoutUserData.shippingPhone && (
+                  <div>{checkoutUserData.shippingPhone}</div>
+                )}
               </div>
             </Section>
 
@@ -164,21 +199,34 @@ console.log('checkoutUserData', checkoutUserData);
             <Section title="Billing address" onEdit={handleEditBilling}>
               <div className="flex flex-col gap-2 text-gray-2 text-base leading-[19px]">
                 <div>
-                  {checkoutUserData.billingFirstName} {checkoutUserData.billingLastName}
+                  {checkoutUserData.billingFirstName}{" "}
+                  {checkoutUserData.billingLastName}
                 </div>
                 <div>
                   {checkoutUserData.billingAddress}
-                  {checkoutUserData.billingApartment && `, ${checkoutUserData.billingApartment}`}
+                  {checkoutUserData.billingApartment &&
+                    `, ${checkoutUserData.billingApartment}`}
                 </div>
                 <div>
-                  {checkoutUserData.billingCity}{checkoutUserData.billingCity && checkoutUserData.billingZipCode && ", "}
-                  {checkoutUserData.billingZipCode}{(checkoutUserData.billingCity || checkoutUserData.billingZipCode) && checkoutUserData.billingCountry && ", "}
+                  {checkoutUserData.billingCity}
+                  {checkoutUserData.billingCity &&
+                    checkoutUserData.billingZipCode &&
+                    ", "}
+                  {checkoutUserData.billingZipCode}
+                  {(checkoutUserData.billingCity ||
+                    checkoutUserData.billingZipCode) &&
+                    checkoutUserData.billingCountry &&
+                    ", "}
                   {checkoutUserData.billingCountry}
                 </div>
                 {checkoutUserData.billingEmail && (
-                  <div className="underline underline-offset-2">{checkoutUserData.billingEmail}</div>
+                  <div className="underline underline-offset-2">
+                    {checkoutUserData.billingEmail}
+                  </div>
                 )}
-                {checkoutUserData.billingPhone && <div>{checkoutUserData.billingPhone}</div>}
+                {checkoutUserData.billingPhone && (
+                  <div>{checkoutUserData.billingPhone}</div>
+                )}
               </div>
             </Section>
 
@@ -186,13 +234,18 @@ console.log('checkoutUserData', checkoutUserData);
             <div className="flex flex-col gap-6">
               {/* Payment Header */}
               <div className="flex justify-between items-center h-6">
-                <h3 className="font-normal text-foreground text-xl uppercase leading-6">Payment</h3>
+                <h3 className="font-normal text-foreground text-xl uppercase leading-6">
+                  Payment
+                </h3>
                 <button
                   onClick={() => setIsPaymentExpanded(!isPaymentExpanded)}
                   className="flex justify-center items-center"
                   aria-label="Toggle payment section"
                 >
-                  <ChevronDownIcon className="w-6 h-6" isExpanded={isPaymentExpanded} />
+                  <ChevronDownIcon
+                    className="w-6 h-6"
+                    isExpanded={isPaymentExpanded}
+                  />
                 </button>
               </div>
 
@@ -200,107 +253,95 @@ console.log('checkoutUserData', checkoutUserData);
               {isPaymentExpanded && (
                 <>
                   <div className="flex flex-col gap-1">
-                    {/* Google Pay Option */}
-                    <RadioButton
-                      id="google-pay"
-                      name="payment-method"
-                      value="google-pay"
-                      checked={paymentMethodType === "google-pay"}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPaymentMethodType(e.target.value)}
-                      className="gap-6 px-4 py-2"
-                    >
-                      <div className="flex items-center gap-1">
-                        <GooglePayIcon />
-                        <span className="text-black text-base leading-[18px]">Pay</span>
+                    {paymentMethodsLoading ? (
+                      <div className="px-4 py-2 text-gray-2 text-base">Loading...</div>
+                    ) : paymentMethodsError ? (
+                      <div className="px-4 py-2 text-red-600 text-base">
+                        Failed to load payment methods
                       </div>
-                    </RadioButton>
-
-                    {/* Apple Pay Option */}
-                    <RadioButton
-                      id="apple-pay"
-                      name="payment-method"
-                      value="apple-pay"
-                      checked={paymentMethodType === "apple-pay"}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPaymentMethodType(e.target.value)}
-                      className="gap-6 px-4 py-2"
-                    >
-                      <div className="flex items-center gap-1">
-                        <ApplePayIcon />
-                        <span className="text-black text-base leading-[18px]">Pay</span>
-                      </div>
-                    </RadioButton>
-
-                    {/* Credit Card Option */}
-                    <RadioButton
-                      id="credit-card"
-                      name="payment-method"
-                      value="credit-card"
-                      checked={paymentMethodType === "credit-card"}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPaymentMethodType(e.target.value)}
-                      className="gap-6 bg-white px-4 py-2"
-                    >
-                      <div className="flex items-center gap-1">
-                        <CreditCardIcon />
-                        <span className="text-black text-base leading-[18px]">Credit card</span>
-                      </div>
-                    </RadioButton>
+                    ) : (
+                      paymentMethods.map((method: PaymentMethod) => (
+                        <RadioButton
+                          key={method.id}
+                          id={`payment-method-${method.id}`}
+                          name="payment-method"
+                          value={method.id.toString()}
+                          checked={selectedPaymentMethodId === method.id}
+                          onChange={() => setSelectedPaymentMethodId(method.id)}
+                          className="gap-6 bg-white px-4 py-2"
+                        >
+                          <div className="flex flex-col gap-1">
+                            <div className="flex items-center gap-2">
+                              {method.id === 1 ? <CreditCardIcon /> : null}
+                              <span className="text-black text-base leading-[18px]">
+                                {method.name}
+                              </span>
+                            </div>
+                            <div className="text-gray-2 text-base leading-[19px]">
+                              {method.description}
+                            </div>
+                          </div>
+                        </RadioButton>
+                      ))
+                    )}
                   </div>
 
                   {/* Credit Card Form */}
-                  {paymentMethodType === "credit-card" && (
-                    <div className="flex flex-col gap-4 max-w-[424px]">
-                      <CustomInput
-                        label="First name"
-                        id="cardFirstName"
-                        name="cardFirstName"
-                        value={paymentCardData.firstName}
-                        onChange={(e) => setPaymentCardData({ ...paymentCardData, firstName: e.target.value })}
-                        placeholder="Olena"
-                      />
+                  {selectedPaymentMethodId === 1 && (
+                    <PaymentWrapper />
+                    // <div className="flex flex-col gap-4 max-w-[424px]">
+                    //   <CustomInput
+                    //     label="First name"
+                    //     id="cardFirstName"
+                    //     name="cardFirstName"
+                    //     value={paymentCardData.firstName}
+                    //     onChange={(e) => setPaymentCardData({ ...paymentCardData, firstName: e.target.value })}
+                    //     placeholder="Olena"
+                    //   />
 
-                      <CustomInput
-                        label="Last Name"
-                        id="cardLastName"
-                        name="cardLastName"
-                        value={paymentCardData.lastName}
-                        onChange={(e) => setPaymentCardData({ ...paymentCardData, lastName: e.target.value })}
-                        placeholder="Petrenko"
-                      />
+                    //   <CustomInput
+                    //     label="Last Name"
+                    //     id="cardLastName"
+                    //     name="cardLastName"
+                    //     value={paymentCardData.lastName}
+                    //     onChange={(e) => setPaymentCardData({ ...paymentCardData, lastName: e.target.value })}
+                    //     placeholder="Petrenko"
+                    //   />
 
-                      <CustomInput
-                        label="Card number"
-                        id="cardNumber"
-                        name="cardNumber"
-                        value={paymentCardData.cardNumber}
-                        onChange={(e) => setPaymentCardData({ ...paymentCardData, cardNumber: e.target.value })}
-                        placeholder="···· ···· ···· ····"
-                      />
+                    //   <CustomInput
+                    //     label="Card number"
+                    //     id="cardNumber"
+                    //     name="cardNumber"
+                    //     value={paymentCardData.cardNumber}
+                    //     onChange={(e) => setPaymentCardData({ ...paymentCardData, cardNumber: e.target.value })}
+                    //     placeholder="···· ···· ···· ····"
+                    //   />
 
-                      <div className="gap-6 grid grid-cols-1 md:grid-cols-2">
-                        <CustomInput
-                          label="Expiration Date"
-                          id="expiryDate"
-                          name="expiryDate"
-                          value={paymentCardData.expiryDate}
-                          onChange={(e) => setPaymentCardData({ ...paymentCardData, expiryDate: e.target.value })}
-                          placeholder="MM/YY"
-                        />
+                    //   <div className="gap-6 grid grid-cols-1 md:grid-cols-2">
+                    //     <CustomInput
+                    //       label="Expiration Date"
+                    //       id="expiryDate"
+                    //       name="expiryDate"
+                    //       value={paymentCardData.expiryDate}
+                    //       onChange={(e) => setPaymentCardData({ ...paymentCardData, expiryDate: e.target.value })}
+                    //       placeholder="MM/YY"
+                    //     />
 
-                        <div className="flex flex-col gap-1">
-                          <CustomInput
-                            label="cvv"
-                            id="cvv"
-                            name="cvv"
-                            value={paymentCardData.cvv}
-                            onChange={(e) => setPaymentCardData({ ...paymentCardData, cvv: e.target.value })}
-                            placeholder="···"
-                          />
-                          <button className="self-start text-purple text-base underline underline-offset-3 leading-[19px]">
-                            Where is my CVV?
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+                    //     <div className="flex flex-col gap-1">
+                    //       <CustomInput
+                    //         label="cvv"
+                    //         id="cvv"
+                    //         name="cvv"
+                    //         value={paymentCardData.cvv}
+                    //         onChange={(e) => setPaymentCardData({ ...paymentCardData, cvv: e.target.value })}
+                    //         placeholder="···"
+                    //       />
+                    //       <button className="self-start text-purple text-base underline underline-offset-3 leading-[19px]">
+                    //         Where is my CVV?
+                    //       </button>
+                    //     </div>
+                    //   </div>
+                    // </div>
                   )}
                 </>
               )}
@@ -340,8 +381,12 @@ console.log('checkoutUserData', checkoutUserData);
                   {/* Table Header */}
                   <div className="flex justify-between items-center h-12 font-normal text-foreground text-sm sm:text-base uppercase leading-[19px]">
                     <div className="flex-1 min-w-0">Product</div>
-                    <div className="w-16 sm:w-24 text-center shrink-0">Quantity</div>
-                    <div className="w-16 sm:w-24 text-right shrink-0">Total</div>
+                    <div className="w-16 sm:w-24 text-center shrink-0">
+                      Quantity
+                    </div>
+                    <div className="w-16 sm:w-24 text-right shrink-0">
+                      Total
+                    </div>
                   </div>
 
                   {/* Divider */}
@@ -351,10 +396,17 @@ console.log('checkoutUserData', checkoutUserData);
                   {cartItems.map((item, index) => (
                     <div key={item.id || index}>
                       <div className="flex justify-between items-center py-2 min-h-12 text-foreground text-sm sm:text-base leading-[19px]">
-                        <div className="flex-1 pr-2 min-w-0 break-words">{item.product?.name || "Product"}</div>
-                        <div className="w-16 sm:w-24 text-center shrink-0">{item.quantity}</div>
+                        <div className="flex-1 pr-2 min-w-0 break-words">
+                          {item.product?.name || "Product"}
+                        </div>
+                        <div className="w-16 sm:w-24 text-center shrink-0">
+                          {item.quantity}
+                        </div>
                         <div className="w-16 sm:w-24 text-right shrink-0">
-                          ${((Number(item.product?.price) || 0) * item.quantity).toFixed(2)}
+                          $
+                          {(
+                            (Number(item.product?.price) || 0) * item.quantity
+                          ).toFixed(2)}
                         </div>
                       </div>
                       <div className="border-purple/50 border-t w-full h-px"></div>
@@ -364,14 +416,20 @@ console.log('checkoutUserData', checkoutUserData);
                   {/* Empty cart fallback */}
                   {cartItems.length === 0 && (
                     <div className="flex justify-center items-center py-8">
-                      <p className="text-gray-2 text-base leading-[19px]">No items in cart</p>
+                      <p className="text-gray-2 text-base leading-[19px]">
+                        No items in cart
+                      </p>
                     </div>
                   )}
 
                   {/* Subtotal */}
                   <div className="flex justify-between items-center h-12">
-                    <div className="font-bold text-foreground text-base uppercase leading-[19px]">Subtotal</div>
-                    <div className="font-bold text-foreground text-base leading-[19px]">${subtotal.toFixed(2)}</div>
+                    <div className="font-bold text-foreground text-base uppercase leading-[19px]">
+                      Subtotal
+                    </div>
+                    <div className="font-bold text-foreground text-base leading-[19px]">
+                      ${subtotal.toFixed(2)}
+                    </div>
                   </div>
 
                   {/* Divider */}
@@ -383,7 +441,9 @@ console.log('checkoutUserData', checkoutUserData);
             {/* Delivery Section */}
             <div className="flex flex-col gap-6">
               <div className="flex justify-between items-center">
-                <h3 className="font-normal text-foreground text-xl uppercase leading-6">Delivery</h3>
+                <h3 className="font-normal text-foreground text-xl uppercase leading-6">
+                  Delivery
+                </h3>
                 <button
                   onClick={handleEditShipping}
                   className="hover:opacity-80 text-purple text-base underline leading-[19px]"
@@ -402,17 +462,25 @@ console.log('checkoutUserData', checkoutUserData);
                   className="gap-4 px-4 py-2"
                 >
                   <div className="flex items-center gap-2">
-                    <div className="font-bold text-purple text-base leading-[19px]">${shipping.toFixed(2)}</div>
+                    <div className="font-bold text-purple text-base leading-[19px]">
+                      ${shipping.toFixed(2)}
+                    </div>
                     <div className="flex flex-col gap-1">
                       <div className="flex items-start gap-1 text-foreground text-base leading-[19px]">
-                        <span className="font-medium uppercase">{deliveryMethod.name}</span>
+                        <span className="font-medium uppercase">
+                          {deliveryMethod.name}
+                        </span>
                       </div>
-                      <div className="text-gray-2 text-base leading-[19px]">{deliveryMethod.description}</div>
+                      <div className="text-gray-2 text-base leading-[19px]">
+                        {deliveryMethod.description}
+                      </div>
                     </div>
                   </div>
                 </RadioButton>
               ) : (
-                <div className="px-4 py-2 text-gray-2 text-base leading-[19px]">No delivery method selected</div>
+                <div className="px-4 py-2 text-gray-2 text-base leading-[19px]">
+                  No delivery method selected
+                </div>
               )}
             </div>
 
