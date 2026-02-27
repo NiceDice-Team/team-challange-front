@@ -286,62 +286,8 @@ console.log('checkoutUserData', checkoutUserData);
                     )}
                   </div>
 
-                  {/* Credit Card Form */}
                   {selectedPaymentMethodId === 1 && (
                     <PaymentWrapper />
-                    // <div className="flex flex-col gap-4 max-w-[424px]">
-                    //   <CustomInput
-                    //     label="First name"
-                    //     id="cardFirstName"
-                    //     name="cardFirstName"
-                    //     value={paymentCardData.firstName}
-                    //     onChange={(e) => setPaymentCardData({ ...paymentCardData, firstName: e.target.value })}
-                    //     placeholder="Olena"
-                    //   />
-
-                    //   <CustomInput
-                    //     label="Last Name"
-                    //     id="cardLastName"
-                    //     name="cardLastName"
-                    //     value={paymentCardData.lastName}
-                    //     onChange={(e) => setPaymentCardData({ ...paymentCardData, lastName: e.target.value })}
-                    //     placeholder="Petrenko"
-                    //   />
-
-                    //   <CustomInput
-                    //     label="Card number"
-                    //     id="cardNumber"
-                    //     name="cardNumber"
-                    //     value={paymentCardData.cardNumber}
-                    //     onChange={(e) => setPaymentCardData({ ...paymentCardData, cardNumber: e.target.value })}
-                    //     placeholder="···· ···· ···· ····"
-                    //   />
-
-                    //   <div className="gap-6 grid grid-cols-1 md:grid-cols-2">
-                    //     <CustomInput
-                    //       label="Expiration Date"
-                    //       id="expiryDate"
-                    //       name="expiryDate"
-                    //       value={paymentCardData.expiryDate}
-                    //       onChange={(e) => setPaymentCardData({ ...paymentCardData, expiryDate: e.target.value })}
-                    //       placeholder="MM/YY"
-                    //     />
-
-                    //     <div className="flex flex-col gap-1">
-                    //       <CustomInput
-                    //         label="cvv"
-                    //         id="cvv"
-                    //         name="cvv"
-                    //         value={paymentCardData.cvv}
-                    //         onChange={(e) => setPaymentCardData({ ...paymentCardData, cvv: e.target.value })}
-                    //         placeholder="···"
-                    //       />
-                    //       <button className="self-start text-purple text-base underline underline-offset-3 leading-[19px]">
-                    //         Where is my CVV?
-                    //       </button>
-                    //     </div>
-                    //   </div>
-                    // </div>
                   )}
                 </>
               )}
