@@ -10,7 +10,7 @@ import { getTokens } from "@/lib/tokenManager";
 import decodeToken from "@/lib/decodeToken";
 import SearchBar from "@/components/shared/SearchBar";
 
-export default function Navbar({isPagination = true}) {
+export default function Navbar({ isPagination = true }) {
   const { userData } = useUserStore((state) => state);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const { itemCount } = useCartSummary();
@@ -52,7 +52,7 @@ export default function Navbar({isPagination = true}) {
               href={userData ? "/profile" : "/login"}
               className="flex flex-col items-center gap-1 hover:bg-gray-100 p-1 rounded transition-colors cursor-pointer"
             >
-              <img src={ProfileIcon} alt="Profile" className="w-5 h-5 sm:w-6 sm:h-6" />
+              <img src={ProfileIcon} alt="Profile" className="w-6 h-6" />
             </Link>
             {/* Cart Button */}
             <div className="relative">
@@ -60,7 +60,7 @@ export default function Navbar({isPagination = true}) {
                 onClick={handleCartToggle}
                 className="flex justify-center items-center hover:bg-gray-100 p-1 rounded transition-colors cursor-pointer"
               >
-                <img src={CartIcon} alt="Cart" className="w-5 h-5 sm:w-6 sm:h-6" />
+                <img src={CartIcon} alt="Cart" className="w-6 h-6" />
                 {itemCount > 0 && (
                   <span
                     key={itemCount} // This triggers re-render with animation on count change
@@ -77,7 +77,7 @@ export default function Navbar({isPagination = true}) {
             </button>
           </div>
         </div>
-        
+
         {/* Navigation list */}
         {isPagination && (
           <div className="mt-4 sm:mt-5 md:mt-6">
