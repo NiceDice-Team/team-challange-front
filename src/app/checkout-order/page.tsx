@@ -25,30 +25,28 @@ function CheckoutPage() {
         <CustomBreadcrumb items={breadcrumbItems} className="hidden md:flex px-6 md:px-0" />
 
         {/* Mobile Header & Summary Toggle */}
-        <div className="md:hidden flex flex-col pt-6 px-4 mb-4 w-full">
-          <div className="flex flex-col bg-[#FCFBF9]/30 backdrop-blur-[5px] w-full">
+        <div className="md:hidden flex flex-col px-4 w-full">
+          <div className="flex flex-col items-center py-4 bg-[#FCFBF9]/30 backdrop-blur-[5px] rounded-lg w-full">
             <button
               onClick={() => setIsSummaryOpen(!isSummaryOpen)}
-              className="flex justify-between items-center py-4 w-full text-[#494791]"
+              className="flex justify-between items-center w-full text-[#494791]"
             >
-              <span className="flex-1 text-left font-normal text-base uppercase">Your order summary</span>
+              <span className="flex-1 text-left font-normal text-base">Your order summary</span>
               {isSummaryOpen ? <ChevronUp className="w-6 h-6" /> : <ChevronDown className="w-6 h-6" />}
             </button>
-            <div className="border-[#A4A3C8] border-t w-full h-px"></div>
+            <div className="border-[#A4A3C8] border-b w-full h-px mt-4"></div>
 
             {isSummaryOpen && (
-              <>
-                <div className="pb-4 w-full">
-                  <ProductsTable
+              <div className="w-full mt-4">
+                <ProductsTable
                     setSubtotal={setSubtotal}
                     shippingPrice={paymentMethod?.price || 0}
                     paymentMethod={paymentMethod}
                     hideTitle={true}
                   />
-                </div>
-              </>
-            )}
-          </div>{" "}
+                  </div>
+                  )}
+                  </div>{" "}
         </div>
 
         <div className="flex md:flex-row flex-col justify-between gap-6 md:gap-6 mt-4">

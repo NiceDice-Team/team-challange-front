@@ -2,7 +2,7 @@
 import LanguageSelector from "./LanguageSelector";
 import Link from "next/link";
 import { useUserStore } from "@/store/user";
-import { LogoIcon, ProfileIcon, CartIcon } from "@/svgs/icons";
+import { LogoIcon, ProfileIcon, CartIcon, PoshukovaLupaIcon, BurgerMenuIcon } from "@/svgs/icons";
 import { useState, useEffect } from "react";
 import CartDropdown from "@/components/cart/CartDropdown";
 import { useCartSummary } from "@/hooks/useCartQuery";
@@ -38,9 +38,15 @@ export default function Navbar({isPagination = true}) {
             <img src={LogoIcon} alt="DICE DECKS Logo" className="w-auto h-8 sm:h-10 md:h-12" />
           </Link>
           <SearchBar className="hidden sm:flex flex-1 max-w-xs md:max-w-md lg:max-w-lg mx-2 md:mx-4" />
-          <div className="flex flex-row items-center gap-1 sm:gap-2 md:gap-3 lg:gap-4">
+          <div className="flex flex-row items-center gap-2 sm:gap-2 md:gap-3 lg:gap-4">
+            {/* Mobile Search Icon */}
+            <button className="sm:hidden flex justify-center items-center hover:bg-gray-100 p-1 rounded transition-colors cursor-pointer">
+              <img src={PoshukovaLupaIcon} alt="Search" className="w-6 h-6" />
+            </button>
             {/* Language Selector */}
-            <LanguageSelector />
+            <div className="hidden sm:block">
+              <LanguageSelector />
+            </div>
             {/* Profile Logo */}
             <Link
               href={userData ? "/profile" : "/login"}
@@ -65,13 +71,17 @@ export default function Navbar({isPagination = true}) {
                 )}
               </button>
             </div>
+            {/* Mobile Menu Icon */}
+            <button className="sm:hidden flex justify-center items-center hover:bg-gray-100 p-1 rounded transition-colors cursor-pointer">
+              <img src={BurgerMenuIcon} alt="Menu" className="w-6 h-6" />
+            </button>
           </div>
         </div>
         
         {/* Navigation list */}
         {isPagination && (
           <div className="mt-4 sm:mt-5 md:mt-6">
-            <ul className="flex flex-row flex-wrap justify-center gap-3 sm:gap-4 md:gap-6 lg:gap-10 xl:gap-14 text-xs sm:text-sm md:text-base lg:text-lg uppercase">
+            <ul className="hidden sm:flex flex-row flex-wrap justify-center gap-3 sm:gap-4 md:gap-6 lg:gap-10 xl:gap-14 text-xs sm:text-sm md:text-base lg:text-lg uppercase">
               <li>
                 <Link href="/catalog?categories=1" className="hover:text-[#494791] transition-colors cursor-pointer">
                   new arrivals
@@ -111,7 +121,7 @@ export default function Navbar({isPagination = true}) {
                 </Link>
               </li>
             </ul>
-            <div className="bg-[#A4A3C8] mt-3 w-full h-px"></div>
+            <div className="bg-[#A4A3C8] mt-4 sm:mt-3 w-full h-px"></div>
           </div>
         )}
       </div>
