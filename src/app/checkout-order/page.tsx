@@ -26,34 +26,34 @@ function CheckoutPage() {
 
         {/* Mobile Header & Summary Toggle */}
         <div className="md:hidden flex flex-col pt-6 px-4 mb-4 w-full">
-          <div 
-            className="flex flex-col bg-[#FCFBF9]/30 backdrop-blur-[5px] rounded-lg w-full overflow-hidden"
-          >
-            <button 
+          <div className="flex flex-col bg-[#FCFBF9]/30 backdrop-blur-[5px] w-full">
+            <button
               onClick={() => setIsSummaryOpen(!isSummaryOpen)}
               className="flex justify-between items-center py-4 w-full text-[#494791]"
             >
               <span className="flex-1 text-left font-normal text-base uppercase">Your order summary</span>
               {isSummaryOpen ? <ChevronUp className="w-6 h-6" /> : <ChevronDown className="w-6 h-6" />}
             </button>
-            <div className="border-[#494791]/50 border-t w-full h-px"></div>
+            <div className="border-[#A4A3C8] border-t w-full h-px"></div>
 
             {isSummaryOpen && (
-              <div className="pb-4 w-full">
-                <ProductsTable 
-                  setSubtotal={setSubtotal} 
-                  shippingPrice={paymentMethod?.price || 0}
-                  paymentMethod={paymentMethod}
-                  hideTitle={true}
-                />
-              </div>
+              <>
+                <div className="pb-4 w-full">
+                  <ProductsTable
+                    setSubtotal={setSubtotal}
+                    shippingPrice={paymentMethod?.price || 0}
+                    paymentMethod={paymentMethod}
+                    hideTitle={true}
+                  />
+                </div>
+              </>
             )}
-          </div>
+          </div>{" "}
         </div>
 
-        <div className="flex md:flex-row flex-col gap-6 md:gap-16 lg:gap-24 mt-4">
+        <div className="flex md:flex-row flex-col justify-between gap-6 md:gap-6 mt-4">
           {/* Main Column (Shipping Form) */}
-          <div className="flex flex-col px-4 md:px-0 w-full md:w-[60%] lg:w-[65%]">
+          <div className="flex flex-col px-4 md:px-0 w-full md:w-[648px]">
             <h3 className="mb-6 font-medium text-2xl md:text-title uppercase text-[#040404]">Checkout</h3>
 
             <ShippingForm paymentMethod={paymentMethod}>
@@ -62,7 +62,7 @@ function CheckoutPage() {
                 <DeliveryOptions onPaymentMethodChange={setPaymentMethod} />
                 <div className="flex justify-between items-center -mt-4 text-purple">
                   <div className="font-bold text-foreground text-base uppercase">Order Total</div>
-                  <div className="font-bold text-foreground text-base">
+                  <div className="font-bold text-foreground text-base ">
                     ${((paymentMethod?.price || 0) + subtotal).toFixed(2)}
                   </div>
                 </div>
@@ -71,20 +71,17 @@ function CheckoutPage() {
           </div>
 
           {/* Desktop-only Side Column (Summary & Delivery) */}
-          <div className="hidden md:flex flex-col gap-10 px-6 py-6 border border-[#494791]/50 rounded-lg w-full md:w-[40%] lg:w-[35%] h-fit">
-            <ProductsTable 
-               setSubtotal={setSubtotal} 
-            />
+          <div className="hidden md:flex flex-col gap-10 p-6 border border-[#A4A3C8] w-[648px] h-fit ">
+            <ProductsTable setSubtotal={setSubtotal} />
             <DeliveryOptions onPaymentMethodChange={setPaymentMethod} />
-            <div className="flex justify-between items-center -mt-4 h-10 text-purple">
-              <div className="font-bold text-[#494791] text-base uppercase">
-                Order Total
-              </div>
+            <div className="flex justify-between items-center -mt-4 h-10 text-purple px-6">
+              <div className="font-bold text-[#494791] text-base uppercase">Order Total</div>
               <div className="font-bold text-[#494791] text-lg">
                 ${((paymentMethod?.price || 0) + subtotal).toFixed(2)}
               </div>
             </div>
-          </div>        </div>
+          </div>
+        </div>
       </div>
     </div>
   );

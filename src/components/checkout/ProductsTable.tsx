@@ -47,7 +47,7 @@ const ProductsTable = ({
               <div className="w-20 text-right shrink-0">Total</div>
             </div>
 
-            <div className="border-[#494791]/50 border-t w-full h-px mb-2"></div>
+            <div className="border-[#A4A3C8] border-t w-full h-px mb-2"></div>
             
             {/* Product Rows */}
             <div className="flex flex-col">
@@ -65,7 +65,7 @@ const ProductsTable = ({
                       ).toFixed(2)}
                     </div>
                   </div>
-                  <div className="border-[#494791]/50 border-t w-full h-px"></div>
+                  <div className="border-[#A4A3C8] border-t w-full h-px"></div>
                 </div>
               ))}
             </div>
@@ -104,7 +104,7 @@ const ProductsTable = ({
             {/* Order Total */}
             {shippingPrice !== undefined && (
               <>
-                <div className="border-[#494791]/50 border-t w-full h-px"></div>
+                <div className="border-[#A4A3C8] border-t w-full h-px"></div>
                 <div className="flex justify-between items-center h-12 text-base">
                   <div className="font-bold text-[#494791] uppercase">
                     Order Total
@@ -113,7 +113,7 @@ const ProductsTable = ({
                     ${total.toFixed(2)}
                   </div>
                 </div>
-                <div className="border-[#494791]/50 border-t w-full h-px"></div>
+                <div className="border-[#A4A3C8] border-t w-full h-px"></div>
               </>
             )}
           </div>

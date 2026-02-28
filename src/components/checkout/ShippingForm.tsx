@@ -19,8 +19,10 @@ export type CombinedFormData = z.infer<typeof combinedFormSchema>;
 
 export default function ShippingForm({
   paymentMethod,
+  children,
 }: {
-  paymentMethod: DeliveryOption;
+  paymentMethod: DeliveryOption | null;
+  children?: React.ReactNode;
 }) {
   const router = useRouter();
   const {
@@ -103,7 +105,7 @@ export default function ShippingForm({
               ]
             }
           />
-          <div className="gap-4 grid grid-cols-1 md:grid-cols-2">
+          <div className="gap-4 grid grid-cols-2">
             <CustomInput
               label="First Name"
               id="shippingFirstName"
@@ -223,7 +225,7 @@ export default function ShippingForm({
                   : undefined
               }
             />
-            <div className="gap-4 grid grid-cols-1 md:grid-cols-2">
+            <div className="gap-4 grid grid-cols-2">
               <CustomInput
                 label="First Name"
                 id="billingFirstName"
@@ -324,7 +326,9 @@ export default function ShippingForm({
           </div>
         )}
 
-        <div className="flex flex-col-reverse sm:flex-row justify-between items-center gap-4 mt-12">
+        {children}
+
+        <div className="flex flex-col-reverse sm:flex-row justify-between items-center gap-6 mt-12">
           <Link
             href="/cart"
             className="flex items-center gap-2 hover:opacity-80 text-foreground text-base"
@@ -335,7 +339,7 @@ export default function ShippingForm({
           <CustomButton
             type="submit"
             disabled={isSubmitting}
-            className="bg-purple hover:bg-purple/90 border border-purple w-full sm:w-72 h-12 text-white"
+            className="bg-purple hover:bg-purple/90 border border-purple w-full sm:w-72 h-12 text-white uppercase font-normal text-base"
           >
             Order review
           </CustomButton>

@@ -111,7 +111,7 @@ export default function Navbar({isPagination = true}) {
                 </Link>
               </li>
             </ul>
-            <div className="bg-[#494791] mt-3 w-full h-px"></div>
+            <div className="bg-[#A4A3C8] mt-3 w-full h-px"></div>
           </div>
         )}
       </div>

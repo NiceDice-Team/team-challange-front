@@ -39,11 +39,7 @@ export const deliveryOptions: DeliveryOption[] = [
   },
 ];
 
-const DeliveryOptions = ({
-  onPaymentMethodChange,
-}: {
-  onPaymentMethodChange: (method: DeliveryOption) => void;
-}) => {
+const DeliveryOptions = ({ onPaymentMethodChange }: { onPaymentMethodChange: (method: DeliveryOption) => void }) => {
   const [payment, setPayment] = useState<DeliveryOption>(deliveryOptions[0]);
   const { setPaymentMethod } = useCheckoutStore();
 
@@ -79,13 +75,12 @@ const DeliveryOptions = ({
       <div className="flex items-center gap-2 mb-10">
         <Image src={icon} alt="info" className="w-6 h-6" />
         <p className="max-w-[566px] text-gray-2">
-          Please note that all international shipments may be subject to customs
-          duties and taxes depending on your local regulations. These charges
-          are the full responsibility of the buyer and are not included in the
-          item price.
+          Please note that all international shipments may be subject to customs duties and taxes depending on your
+          local regulations. These charges are the full responsibility of the buyer and are not included in the item
+          price.
         </p>
       </div>
-      <div className="flex justify-between items-center mb-2 font-bold uppercase">
+      <div className="flex justify-between items-center mb-2 font-bold uppercase px-6">
         <span>Shipping</span>
         <span>${payment?.price}</span>
       </div>
