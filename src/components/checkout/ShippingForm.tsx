@@ -72,18 +72,8 @@ export default function ShippingForm({
       setValue("billingCity", watch("shippingCity"));
       setValue("billingEmail", watch("shippingEmail"));
       setValue("billingPhone", watch("shippingPhone"));
-
-      trigger("billingAddress");
-      trigger("billingCountry");
-      trigger("billingFirstName");
-      trigger("billingLastName");
-      trigger("billingApartment");
-      trigger("billingZipCode");
-      trigger("billingCity");
-      trigger("billingEmail");
-      trigger("billingPhone");
     }
-  }, [copyBilling, trigger, setValue, watch]);
+  }, [copyBilling, setValue, watch]);
 
   const onSubmit = (data: CombinedFormData) => {
     console.log("Form submitted successfully:", data);
