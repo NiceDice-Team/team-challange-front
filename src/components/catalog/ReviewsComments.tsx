@@ -85,31 +85,28 @@ export default function ReviewsComments({ children }: ReviewsCommentsProps) {
     setCurrentPage(1); // Reset to first page when sorting changes
   };
   return (
-    <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 w-full max-w-[1320px] mx-auto items-start px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16">
-      {/* Sort option and Comments section */}
-      <div className="flex flex-col gap-4 sm:gap-6">
-        <div className="flex items-center gap-2 sm:gap-4">
-          <span className="uppercase text-sm sm:text-base lg:text-lg font-medium">
-            sort by
-          </span>
+    <>
+      <section className="sm:hidden mx-auto w-full max-w-[428px] px-4">
+        <div className="flex items-center gap-4">
+          <span className="text-[18px] font-medium leading-[22px] uppercase text-black">Sort by</span>
           <CustomSelect
-            className="border-0 h-auto"
-            placeholder="Most Recent"
+            className="!h-6 !min-w-0 !w-auto border-0 px-0 py-0 text-base font-normal text-[var(--color-purple)] shadow-none [&_svg]:!ml-2 [&_svg]:h-6 [&_svg]:w-6"
+            placeholder="Most recent"
             value={sortBy}
             onValueChange={handleSortChange}
             options={[
-              { value: "most-recent", label: "Most Recent" },
+              { value: "most-recent", label: "Most recent" },
               { value: "oldest", label: "Oldest" },
-              { value: "highest-rated", label: "Highest Rated" },
-              { value: "lowest-rated", label: "Lowest Rated" },
+              { value: "highest-rated", label: "Highest rated" },
+              { value: "lowest-rated", label: "Lowest rated" },
             ]}
           />
         </div>
 
-        <div className="flex flex-col gap-4 sm:gap-6">
+        <div className="mt-6 flex flex-col">
           {currentReviews.map((review, idx) => (
             <ReviewCard
-              className="border-t-2 border-[color:var(--color-light-purple)]"
+              className="border-t border-[var(--color-light-purple-2)] px-6 py-6 first:border-t-0"
               key={startIndex + idx}
               {...review}
               collapsible={true}
@@ -117,18 +114,53 @@ export default function ReviewsComments({ children }: ReviewsCommentsProps) {
           ))}
         </div>
 
-        {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex justify-center mt-4 sm:mt-6">
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+          <div className="mt-6 flex justify-center">
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} className="gap-4" />
           </div>
         )}
-      </div>
+      </section>
 
-      {/* Stay updated section */}
-      <div className="mt-6 lg:mt-0">
-        <SubscribeSection className="px-6 sm:px-10 lg:px-14 py-20 sm:py-28 lg:py-40" />
-      </div>
-    </section>
+      <section className="hidden w-full max-w-[1320px] grid-cols-1 items-start gap-6 px-4 sm:grid sm:px-6 md:px-8 lg:grid-cols-2 lg:gap-10 lg:px-12 xl:px-16">
+        <div className="flex flex-col gap-4 sm:gap-6">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <span className="text-sm font-medium uppercase sm:text-base lg:text-lg">sort by</span>
+            <CustomSelect
+              className="h-auto border-0"
+              placeholder="Most Recent"
+              value={sortBy}
+              onValueChange={handleSortChange}
+              options={[
+                { value: "most-recent", label: "Most Recent" },
+                { value: "oldest", label: "Oldest" },
+                { value: "highest-rated", label: "Highest Rated" },
+                { value: "lowest-rated", label: "Lowest Rated" },
+              ]}
+            />
+          </div>
+
+          <div className="flex flex-col gap-4 sm:gap-6">
+            {currentReviews.map((review, idx) => (
+              <ReviewCard
+                className="border-t-2 border-[color:var(--color-light-purple)]"
+                key={startIndex + idx}
+                {...review}
+                collapsible={true}
+              />
+            ))}
+          </div>
+
+          {totalPages > 1 && (
+            <div className="mt-4 flex justify-center sm:mt-6">
+              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+            </div>
+          )}
+        </div>
+
+        <div className="mt-6 lg:mt-0">
+          <SubscribeSection className="px-6 py-20 sm:px-10 sm:py-28 lg:px-14 lg:py-40" />
+        </div>
+      </section>
+    </>
   );
 }
