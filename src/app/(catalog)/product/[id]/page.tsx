@@ -30,8 +30,8 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
       </div>
 
       <ProductPage params={resolvedParams} />
-      <ReviewsProduct />
-      <ReviewsComments />
+      <ReviewsProduct productId={resolvedParams.id} />
+      <ReviewsComments productId={resolvedParams.id} />
       <ProductDetailMobileFooter />
       <div className="hidden sm:block">
         <Footer />

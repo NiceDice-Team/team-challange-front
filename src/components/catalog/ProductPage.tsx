@@ -1,6 +1,7 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
 import { productServices } from "../../services/productServices";
+import { reviewServices } from "@/services/reviewServices";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { ProductAccordion } from "./ProductPageAccordion";
@@ -15,6 +16,7 @@ import {
   PlusIcon,
 } from "@/svgs/icons";
 import StarsLine from "../layout/StarsLine";
+import { calculateAverageRating, normalizeReviewRating } from "@/lib/reviewMetrics";
 
 // Component props
 interface ProductPageProps {
@@ -46,6 +48,17 @@ export default function ProductPage({ params }: ProductPageProps) {
   } = useQuery({
     queryKey: ["product", productId],
     queryFn: ({ signal }) => productServices.getProductById(productId, { signal }),
+    enabled: !!productId && !isInvalidId,
+    staleTime: 15 * 60 * 1000,
+    gcTime: 60 * 60 * 1000,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    retry: 1,
+  });
+
+  const { data: reviewsData } = useQuery({
+    queryKey: ["product-reviews-summary", productId],
+    queryFn: ({ signal }) => reviewServices.getAllProductReviews(productId, {}, { signal }),
     enabled: !!productId && !isInvalidId,
     staleTime: 15 * 60 * 1000,
     gcTime: 60 * 60 * 1000,
@@ -178,8 +191,13 @@ export default function ProductPage({ params }: ProductPageProps) {
       ? (parseFloat(product.price) * (1 - parseFloat(product.discount) / 100)).toFixed(2)
       : null;
 
-  const rating = Math.max(0, Math.min(5, Math.round(Number(product.stars || 5))));
-  const reviewCount = product.reviews?.length || 8;
+  const fetchedReviewCount = reviewsData?.count ?? 0;
+  const reviewCount = fetchedReviewCount || (Array.isArray(product.reviews) ? product.reviews.length : 0);
+  const averageRating =
+    fetchedReviewCount > 0
+      ? calculateAverageRating(reviewsData?.results ?? [])
+      : normalizeReviewRating(product.stars ?? 0);
+  const rating = Math.round(averageRating);
   const currentImage = product?.images?.[selectedImageIndex];
   const currentImageSrc = currentImage?.url_lg || currentImage?.url_md || currentImage?.url_sm;
   const imageCount = product?.images?.length || 0;
