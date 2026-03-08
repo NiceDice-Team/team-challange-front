@@ -77,46 +77,61 @@ export const combinedFormSchema = z
   })
   .superRefine((data, ctx) => {
     if (!data.copyBilling) {
+      if (!data.billingCountry) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Billing country is required",
+          path: ["billingCountry"],
+        });
+      }
+      if (!data.billingFirstName) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "First name is required",
+          path: ["billingFirstName"],
+        });
+      }
+      if (!data.billingLastName) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Last name is required",
+          path: ["billingLastName"],
+        });
+      }
       if (!data.billingAddress) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Billing address is required",
           path: ["billingAddress"],
         });
-        return;
-      }
-      if (!data.billingFirstName) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "First name is required",
-          path: ["billingAddress", "firstName"],
-        });
-        return;
-      }
-      if (!data.billingLastName) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Last name is required",
-          path: ["billingAddress", "lastName"],
-        });
-        return;
       }
       if (!data.billingCity) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "City is required",
-          path: ["billingAddress", "city"],
+          path: ["billingCity"],
         });
-        return;
       }
       if (!data.billingZipCode) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Zip code is required",
-          path: ["billingAddress", "zipCode"],
+          path: ["billingZipCode"],
         });
-        return;
+      }
+      if (!data.billingEmail) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Email is required",
+          path: ["billingEmail"],
+        });
+      }
+      if (!data.billingPhone) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Phone number is required",
+          path: ["billingPhone"],
+        });
       }
     }
-    return true;
   });

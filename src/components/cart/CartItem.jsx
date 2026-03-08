@@ -8,7 +8,7 @@ import { MinusIcon, PlusIcon, CloseIcon } from "@/svgs/icons";
 function CartItem({ item, index, updateQuantity, removeItem }) {
   const product = item.product || {};
   const price = parseFloat(product.price || 0);
-  const imageUrl = product.images?.[0]?.url || "/FirstPlaceholder.svg";
+  const imageUrl = product.images?.[0]?.url_sm || "/FirstPlaceholder.svg";
   const brandName = product.brand?.name || "Unknown Brand";
 
   const handleDecreaseQuantity = useCallback(() => {

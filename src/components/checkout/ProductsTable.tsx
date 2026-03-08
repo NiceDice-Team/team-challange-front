@@ -1,7 +1,20 @@
 import { useCartQuery } from "@/hooks/useCartQuery";
 import { useMemo, useEffect } from "react";
+import { DeliveryOption } from "./DeliveryOptions";
 
-const ProductsTable = ({ setSubtotal }: { setSubtotal: (subtotal: number) => void }) => {
+interface ProductsTableProps {
+  setSubtotal: (subtotal: number) => void;
+  shippingPrice?: number;
+  paymentMethod?: DeliveryOption | null;
+  hideTitle?: boolean;
+}
+
+const ProductsTable = ({ 
+  setSubtotal, 
+  shippingPrice, 
+  paymentMethod,
+  hideTitle = false 
+}: ProductsTableProps) => {
   const { data: cartItems = [], isLoading: cartLoading } = useCartQuery();
 
   const subtotal = useMemo(() => {
@@ -17,38 +30,45 @@ const ProductsTable = ({ setSubtotal }: { setSubtotal: (subtotal: number) => voi
     setSubtotal(subtotal);
   }, [subtotal, setSubtotal]);
 
+  const total = subtotal + (shippingPrice || 0);
+
   return (
-    <div className="flex flex-col gap-10 w-full">
-      <div className="text-xl uppercase">Your order</div>
+    <div className="flex flex-col gap-2 w-full">
+      {!hideTitle && <div className="text-xl uppercase mb-4">Your order</div>}
       {cartLoading ? (
         <div className="animate-pulse">Loading order...</div>
       ) : (
         <>
-          <div className="flex flex-col gap-2">
-            <div className="flex justify-between items-center h-12 font-normal text-foreground text-sm sm:text-base uppercase">
+          <div className="flex flex-col">
+            {/* Table Header */}
+            <div className="flex justify-between items-center h-10 font-normal text-[#040404] text-sm uppercase">
               <div className="flex-1 min-w-0">Product</div>
-              <div className="w-16 sm:w-24 text-center shrink-0">Quantity</div>
-              <div className="w-16 sm:w-24 text-right shrink-0">Total</div>
+              <div className="w-20 text-center shrink-0">Quantity</div>
+              <div className="w-20 text-right shrink-0">Total</div>
             </div>
 
-            <div className="border-purple/50 border-t w-full h-px"></div>
-            {cartItems.map((item, index) => (
-              <div key={item.id || index}>
-                <div className="flex justify-between items-center py-2 min-h-12 text-foreground text-sm sm:text-base">
-                  <div className="flex-1 min-w-0 pr-2 break-words">
-                    {item.product?.name || "Product"}
+            <div className="border-[#A4A3C8] border-t w-full h-px mb-2"></div>
+            
+            {/* Product Rows */}
+            <div className="flex flex-col">
+              {cartItems.map((item, index) => (
+                <div key={item.id || index} className="flex flex-col">
+                  <div className="flex justify-between items-center py-3 min-h-[48px] text-[#000000] text-base">
+                    <div className="flex-1 min-w-0 pr-2 leading-tight">
+                      {item.product?.name || "Product"}
+                    </div>
+                    <div className="w-20 text-center shrink-0">{item.quantity}</div>
+                    <div className="w-20 text-right shrink-0">
+                      $
+                      {(
+                        (Number(item.product?.price) || 0) * item.quantity
+                      ).toFixed(2)}
+                    </div>
                   </div>
-                  <div className="w-16 sm:w-24 text-center shrink-0">{item.quantity}</div>
-                  <div className="w-16 sm:w-24 text-right shrink-0">
-                    $
-                    {(
-                      (Number(item.product?.price) || 0) * item.quantity
-                    ).toFixed(2)}
-                  </div>
+                  <div className="border-[#A4A3C8] border-t w-full h-px"></div>
                 </div>
-                <div className="border-purple/50 border-t w-full h-px"></div>
-              </div>
-            ))}
+              ))}
+            </div>
 
             {cartItems.length === 0 && (
               <div className="flex justify-center items-center py-8">
@@ -56,15 +76,46 @@ const ProductsTable = ({ setSubtotal }: { setSubtotal: (subtotal: number) => voi
               </div>
             )}
 
-            <div className="flex justify-between items-center h-12">
-              <div className="font-bold text-foreground text-base uppercase">
-                Subtotal
+            {/* Subtotal & Shipping Container */}
+            <div className="flex flex-col py-4 gap-4">
+              {/* Subtotal */}
+              <div className="flex justify-between items-center text-base">
+                <div className="font-normal text-[#000000] uppercase">
+                  Subtotal
+                </div>
+                <div className="font-bold text-[#000000]">
+                  ${subtotal.toFixed(2)}
+                </div>
               </div>
-              <div className="font-bold text-foreground text-base">
-                ${subtotal.toFixed(2)}
-              </div>
+
+              {/* Shipping - Only show if props are provided (for mobile summary or full desktop summary) */}
+              {shippingPrice !== undefined && (
+                <div className="flex justify-between items-center text-base">
+                  <div className="font-normal text-[#000000] uppercase">
+                    Shipping
+                  </div>
+                  <div className="font-normal text-[#000000]">
+                    {!paymentMethod ? "Enter shipping address" : `$${shippingPrice.toFixed(2)}`}
+                  </div>
+                </div>
+              )}
             </div>
-            <div className="border-purple/50 border-t w-full h-px"></div>
+
+            {/* Order Total */}
+            {shippingPrice !== undefined && (
+              <>
+                <div className="border-[#A4A3C8] border-t w-full h-px"></div>
+                <div className="flex justify-between items-center h-12 text-base">
+                  <div className="font-bold text-[#494791] uppercase">
+                    Order Total
+                  </div>
+                  <div className="font-bold text-[#494791]">
+                    ${total.toFixed(2)}
+                  </div>
+                </div>
+                <div className="border-[#A4A3C8] border-t w-full h-px"></div>
+              </>
+            )}
           </div>
         </>
       )}

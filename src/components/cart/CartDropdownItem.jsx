@@ -8,7 +8,7 @@ import { TrashIcon } from "@/svgs/icons";
 function CartDropdownItem({ item, updateQuantity, removeItem }) {
   const product = item.product || {};
   const price = parseFloat(product.price || 0);
-  const imageUrl = product.images?.[0]?.url || "/FirstPlaceholder.svg";
+  const imageUrl = product.images?.[0]?.url_sm || "/FirstPlaceholder.svg";
 
   const handleDecreaseQuantity = useCallback(() => {
     updateQuantity(item.id, item.quantity - 1);

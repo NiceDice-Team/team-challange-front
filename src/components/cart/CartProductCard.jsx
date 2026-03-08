@@ -64,7 +64,7 @@ export default function CartProductCard({ product = {} }) {
     stockStyle = "text-[#3A9B25]";
   }
 
-  const imageUrl = product.images?.[0]?.url || '/FirstPlaceholder.svg';
+  const imageUrl = product.images?.[0]?.url_sm || '/FirstPlaceholder.svg';
   const brandName = product.brand?.name || 'Unknown Brand';
 
   const handleAddToCart = async () => {

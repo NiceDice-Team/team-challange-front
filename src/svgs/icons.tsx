@@ -28,8 +28,10 @@ export interface CircleChevronProps {
 // SVG icon paths (from public folder)
 export const LogoIcon = "/icons/logo.svg";
 export const SearchIcon = "/icons/search.svg";
+export const PoshukovaLupaIcon = "/icons/poshukova_lupa.svg";
 export const ProfileIcon = "/icons/profile.svg";
 export const CartIcon = "/icons/cart.svg";
+export const BurgerMenuIcon = "/icons/burder-menu.svg";
 export const StarEmptyIcon = "/icons/star-empty.svg";
 export const StarFilledIcon = "/icons/star-filled.svg";
 export const StarEmptyIcon16 = "/icons/star-empty-16.svg";
