@@ -299,9 +299,9 @@ describe("ResetPassword Page", () => {
           expect(fetchAPI).toHaveBeenCalledWith("users/reset-password/", {
             method: "POST",
             body: {
-              userId: "test-user-id",
-              token: "test-token",
-              password: "password123",
+              uid: btoa("test-user-id"),
+              access_token: "test-token",
+              new_password: "password123",
             },
           });
         });
@@ -335,14 +335,14 @@ describe("ResetPassword Page", () => {
           expect(fetchAPI).toHaveBeenCalledWith("users/reset-password/", {
             method: "POST",
             body: {
-              userId: "test-user-id",
-              token: "test-token-123",
-              password: "password123",
+              uid: btoa("test-user-id"),
+              access_token: "test-token-123",
+              new_password: "password123",
             },
           });
         });
       });
-      test("decodes base64 uid from URL parameters", async () => {
+      test("passes uid from URL parameters as is", async () => {
         const user = userEvent.setup();
         const mockSearchParams = new URLSearchParams();
         mockSearchParams.set("token", "test-token");
@@ -368,9 +368,9 @@ describe("ResetPassword Page", () => {
           expect(fetchAPI).toHaveBeenCalledWith("users/reset-password/", {
             method: "POST",
             body: {
-              userId: "user-123-abc",
-              token: "test-token",
-              password: "password123",
+              uid: btoa("user-123-abc"),
+              access_token: "test-token",
+              new_password: "password123",
             },
           });
         });
@@ -399,9 +399,9 @@ describe("ResetPassword Page", () => {
           expect(fetchAPI).toHaveBeenCalledWith("users/reset-password/", {
             method: "POST",
             body: {
-              userId: "test-user-id",
-              token: null,
-              password: "password123",
+              uid: btoa("test-user-id"),
+              access_token: null,
+              new_password: "password123",
             },
           });
         });
@@ -430,14 +430,14 @@ describe("ResetPassword Page", () => {
           expect(fetchAPI).toHaveBeenCalledWith("users/reset-password/", {
             method: "POST",
             body: {
-              userId: null,
-              token: "test-token",
-              password: "password123",
+              uid: null,
+              access_token: "test-token",
+              new_password: "password123",
             },
           });
         });
       });
-      test("handles invalid base64 uid gracefully", async () => {
+      test("handles non-base64 uid value", async () => {
         const mockSearchParams = new URLSearchParams();
         mockSearchParams.set("token", "test-token");
         mockSearchParams.set("uid", "invalid-base64!!!");
@@ -462,9 +462,9 @@ describe("ResetPassword Page", () => {
           expect(fetchAPI).toHaveBeenCalledWith("users/reset-password/", {
             method: "POST",
             body: {
-              userId: null,
-              token: "test-token",
-              password: "password123",
+              uid: "invalid-base64!!!",
+              access_token: "test-token",
+              new_password: "password123",
             },
           });
         });
