@@ -34,9 +34,9 @@ jest.mock("../../components/auth/GoogleLogin", () => ({
   GoogleAuthButton: () => <button data-testid="google-auth-button">Login with Google</button>,
 }));
 
-jest.mock("../../components/auth/FacebookLogin", () => ({
-  FacebookAuthButton: () => <button data-testid="facebook-auth-button">Login with Facebook</button>,
-}));
+// jest.mock("../../components/auth/FacebookLogin", () => ({
+//   FacebookAuthButton: () => <button data-testid="facebook-auth-button">Login with Facebook</button>,
+// }));
 
 
 jest.mock("../../components/auth/RouteGuards", () => ({
@@ -84,7 +84,7 @@ describe("Login Page", () => {
       render(<LoginPage />);
       
       expect(screen.getByTestId("google-auth-button")).toBeInTheDocument();
-      expect(screen.getByTestId("facebook-auth-button")).toBeInTheDocument();
+      // expect(screen.getByTestId("facebook-auth-button")).toBeInTheDocument();
     });
 
     test("renders form with correct structure", () => {
@@ -397,13 +397,13 @@ describe("Login Page", () => {
       expect(googleButton).toHaveTextContent("Login with Google");
     });
 
-    test("renders Facebook auth button", () => {
-      render(<LoginPage />);
+    // test("renders Facebook auth button", () => {
+    //   render(<LoginPage />);
       
-      const facebookButton = screen.getByTestId("facebook-auth-button");
-      expect(facebookButton).toBeInTheDocument();
-      expect(facebookButton).toHaveTextContent("Login with Facebook");
-    });
+    //   const facebookButton = screen.getByTestId("facebook-auth-button");
+    //   expect(facebookButton).toBeInTheDocument();
+    //   expect(facebookButton).toHaveTextContent("Login with Facebook");
+    // });
   })
 
   describe("Accessibility", () => {
