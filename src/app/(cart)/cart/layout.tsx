@@ -1,5 +1,6 @@
 import Navbar from "../../../components/layout/Navbar";
 import Footer from "../../../components/layout/Footer";
+import { ProductDetailMobileHeader } from "@/components/catalog/ProductDetailMobileChrome";
 
 interface CartLayoutProps {
   children: React.ReactNode;
@@ -12,11 +13,13 @@ interface CartLayoutProps {
 export default function CartLayout({ children }: CartLayoutProps): React.ReactElement {
   return (
     <div className="min-h-screen flex flex-col">
-      <div className="px-8 lg:px-16 py-6">
+      <ProductDetailMobileHeader />
+
+      <div className="hidden sm:block px-8 lg:px-16 py-6">
         <Navbar />
       </div>
 
-      <main className="flex-1 px-8 lg:px-16 py-10">{children}</main>
+      <main className="flex-1 px-4 pb-10 sm:px-8 lg:px-16 sm:py-10">{children}</main>
 
       <Footer />
     </div>

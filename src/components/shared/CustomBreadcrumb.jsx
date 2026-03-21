@@ -13,9 +13,17 @@ import {
 } from "@/components/ui/breadcrumb";
 
 export const CustomBreadcrumb = ({ className='', items = [], ...props }) => {
+  const {
+    listClassName = "",
+    linkClassName = "",
+    pageClassName = "",
+    separatorClassName = "",
+    ...restProps
+  } = props;
+
   return (
-    <Breadcrumb className={cn("", className)} {...props}>
-      <BreadcrumbList className="flex items-center gap-1">
+    <Breadcrumb className={cn("", className)} {...restProps}>
+      <BreadcrumbList className={cn("flex items-center gap-1", listClassName)}>
         {items.map((item, index) => (
           <React.Fragment key={item.href || item.label}>
             <BreadcrumbItem>
@@ -23,19 +31,24 @@ export const CustomBreadcrumb = ({ className='', items = [], ...props }) => {
                 <BreadcrumbLink asChild>
                   <Link
                     href={item.href}
-                    className="text-[var(--color-gray-2)] hover:text-[var(--color-purple)] text-sm transition-colors"
+                    className={cn(
+                      "text-[var(--color-gray-2)] hover:text-[var(--color-purple)] text-sm transition-colors",
+                      linkClassName
+                    )}
                   >
                     {item.label}
                   </Link>
                 </BreadcrumbLink>
               ) : (
-                <BreadcrumbPage className="text-[var(--color-purple)] text-sm">{item.label}</BreadcrumbPage>
+                <BreadcrumbPage className={cn("text-[var(--color-purple)] text-sm", pageClassName)}>
+                  {item.label}
+                </BreadcrumbPage>
               )}
             </BreadcrumbItem>
 
             {index < items.length - 1 && (
-              <BreadcrumbSeparator className="mx-0.5">
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <BreadcrumbSeparator className={cn("mx-0.5", separatorClassName)}>
+                <svg width="16" height="16" viewBox="0 0 12 12" fill="none">
                   <path
                     d="M4.5 3L7.5 6L4.5 9"
                     stroke="var(--color-gray-2)"

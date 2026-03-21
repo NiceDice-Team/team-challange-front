@@ -46,6 +46,12 @@ export const productServices = {
     if (filters.search) {
       params.append("search", filters.search);
     }
+    if (filters.priceRange?.min > 0) {
+      params.append("min_price", filters.priceRange.min.toString());
+    }
+    if (Number.isFinite(filters.priceRange?.max)) {
+      params.append("max_price", filters.priceRange.max.toString());
+    }
 
     const endpoint = `products/?${params.toString()}`;
     return await fetchAPI<any>(endpoint, opts);
@@ -62,4 +68,3 @@ export const productServices = {
     }
   },
 };
-

@@ -14,8 +14,12 @@ export const useUrlFilters = () => {
     const gameTypes = searchParams.get('types')?.split(',').filter(Boolean) || [];
     const audiences = searchParams.get('audiences')?.split(',').filter(Boolean) || [];
     const brands = searchParams.get('brand')?.split(',').filter(Boolean) || [];
-    const minPrice = parseFloat(searchParams.get('min_price')) || 0;
-    const maxPrice = parseFloat(searchParams.get('max_price')) || 200;
+    const minPriceParam = searchParams.get('min_price');
+    const maxPriceParam = searchParams.get('max_price');
+    const minPrice = minPriceParam !== null && !Number.isNaN(parseFloat(minPriceParam)) ? parseFloat(minPriceParam) : 0;
+    const maxPrice = maxPriceParam !== null && !Number.isNaN(parseFloat(maxPriceParam))
+      ? parseFloat(maxPriceParam)
+      : Number.POSITIVE_INFINITY;
     const sortBy = searchParams.get('sort') || 'relevance';
     const search = searchParams.get('search') || '';
 
@@ -52,7 +56,7 @@ export const useUrlFilters = () => {
     if (filters.priceRange?.min > 0) {
       params.set('min_price', filters.priceRange.min.toString());
     }
-    if (filters.priceRange?.max < 200) {
+    if (Number.isFinite(filters.priceRange?.max)) {
       params.set('max_price', filters.priceRange.max.toString());
     }
     if (filters.sortBy && filters.sortBy !== 'relevance') {
@@ -67,16 +71,22 @@ export const useUrlFilters = () => {
 
   // Update URL when filters change
   const updateFilters = useCallback((newFilters) => {
-    setSelectedFilters(newFilters);
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
-    }
-    debounceRef.current = setTimeout(() => {
-      const queryString = createQueryString(newFilters);
-      const url = queryString ? `${pathname}?${queryString}` : pathname;
-      // Use replace to avoid adding to browser history on every filter change
-      router.replace(url, { scroll: false });
-    }, 300);
+    setSelectedFilters((prevFilters) => {
+      const resolvedFilters = typeof newFilters === 'function' ? newFilters(prevFilters) : newFilters;
+
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+
+      debounceRef.current = setTimeout(() => {
+        const queryString = createQueryString(resolvedFilters);
+        const url = queryString ? `${pathname}?${queryString}` : pathname;
+        // Use replace to avoid adding to browser history on every filter change
+        router.replace(url, { scroll: false });
+      }, 300);
+
+      return resolvedFilters;
+    });
   }, [createQueryString, pathname, router]);
 
   // Update URL search params when they change (e.g., browser navigation)

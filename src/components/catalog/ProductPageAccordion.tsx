@@ -14,11 +14,13 @@ interface ProductAccordionProps {
     brand?: string;
     [key: string]: any;
   };
+  className?: string;
+  defaultValue?: string[];
 }
 
-export const ProductAccordion = ({ accordionParams }: ProductAccordionProps) => {
+export const ProductAccordion = ({ accordionParams, className = "", defaultValue }: ProductAccordionProps) => {
   return (
-    <CustomAccordion collapsible="true" className="w-full">
+    <CustomAccordion type="multiple" defaultValue={defaultValue} className={`w-full ${className}`}>
       {/* Description */}
       <CustomAccordionItem value="description" className="">
         <CustomAccordionTrigger className="">Description</CustomAccordionTrigger>

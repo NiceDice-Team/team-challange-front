@@ -9,8 +9,9 @@ import { useCartSummary } from "@/hooks/useCartQuery";
 import { getTokens } from "@/lib/tokenManager";
 import decodeToken from "@/lib/decodeToken";
 import SearchBar from "@/components/shared/SearchBar";
+import { cn } from "@/lib/utils";
 
-export default function Navbar({ isPagination = true }) {
+export default function Navbar({ isPagination = true, hideMobilePaginationChrome = false }) {
   const { userData } = useUserStore((state) => state);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const { itemCount } = useCartSummary();
@@ -80,7 +81,7 @@ export default function Navbar({ isPagination = true }) {
 
         {/* Navigation list */}
         {isPagination && (
-          <div className="mt-4 sm:mt-5 md:mt-6">
+          <div className={cn("mt-4 sm:mt-5 md:mt-6", hideMobilePaginationChrome && "hidden sm:block")}>
             <ul className="hidden sm:flex flex-row flex-wrap justify-center gap-3 sm:gap-4 md:gap-6 lg:gap-10 xl:gap-14 text-xs sm:text-sm md:text-base lg:text-lg uppercase">
               <li>
                 <Link href="/catalog?categories=1" className="hover:text-[#494791] transition-colors cursor-pointer">

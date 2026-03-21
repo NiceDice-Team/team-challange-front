@@ -46,12 +46,7 @@ export default function ProductCard({ product = {} as Product }: ProductCardProp
   // Format price
   const displayPrice = product?.price ? `$${parseFloat(String(product.price)).toFixed(2)}` : "$35.99";
 
-  // Truncate product name if too long (approximately 30 characters for 2 lines)
-  const truncateName = (name: string | undefined): string => {
-    const maxLength = 20;
-    if (!name) return "PRODUCT NAME";
-    return name.length > maxLength ? name.substring(0, maxLength) + "..." : name;
-  };
+  const productName = product?.name || "PRODUCT NAME";
 
   const stock = parseInt(String(product.stock), 10);
   let stockCircle;
@@ -62,7 +57,7 @@ export default function ProductCard({ product = {} as Product }: ProductCardProp
     stockCircle = <img src={CircleGrayIcon} alt="sold out" className="h-2 w-2" />;
     stockStyle = "text-[#717171]";
   } else if (stock <= 5) {
-    stockMessage = `Very low stock(1-5 units)`;
+    stockMessage = "Very low stock (1-5 units)";
     stockCircle = <img src={CircleRedIcon} alt="very low stock" className="h-2 w-2" />;
     stockStyle = "text-[#EC3535]";
   } else if (stock <= 10) {
@@ -143,12 +138,12 @@ export default function ProductCard({ product = {} as Product }: ProductCardProp
 
   return (
     <Link href={`/product/${product.id}`}>
-      <article className="flex flex-col w-full max-w-[240px] min-w-[200px] h-[427px] bg-white shadow-md mx-auto">
-        <div className="relative w-full h-[190px] pt-4 flex flex-col items-center gap-4 isolate">
+      <article className="mx-auto flex min-h-[539px] w-full max-w-[396px] min-w-0 flex-col bg-white shadow-[0px_4px_4px_rgba(0,0,0,0.1)] sm:h-[427px] sm:max-w-[240px] sm:min-h-0 sm:min-w-[200px]">
+        <div className="relative isolate flex h-[307px] w-full flex-col items-center gap-4 pt-4 sm:h-[190px]">
           {/* Image gallery container - hiding scrollbar */}
           <div
             ref={galleryRef}
-            className="flex overflow-x-scroll snap-x snap-mandatory w-full h-[158px] flex-grow z-0"
+            className="z-0 flex h-[275px] w-full flex-grow snap-x snap-mandatory overflow-x-scroll sm:h-[158px]"
             style={{
               scrollbarWidth: "none",
               msOverflowStyle: "none",
@@ -243,35 +238,40 @@ export default function ProductCard({ product = {} as Product }: ProductCardProp
         </div>
 
         {/* Product Card Details */}
-        <div className="flex flex-col p-4 gap-4 w-full h-[237px]">
-          {/* Product name and rating section */}
-          <div className="flex items-start gap-2 w-full h-[71px]">
-            <div className="flex flex-col gap-2 w-[145px] h-[71px]">
-              <h3 className="text-lg font-normal text-black uppercase w-[145px] h-[44px] leading-[22px] overflow-hidden">
-                {truncateName(product?.name)}
+        <div className="flex flex-1 flex-col gap-4 p-4">
+          <div className="flex items-start justify-between gap-3 sm:flex-col sm:items-start">
+            <div className="flex min-w-0 flex-col gap-2 sm:w-[145px]">
+              <h3
+                className="min-h-[38px] text-base font-medium uppercase leading-[19px] text-black sm:min-h-[44px] sm:w-[145px] sm:text-lg sm:font-normal sm:leading-[22px]"
+                style={{
+                  display: "-webkit-box",
+                  WebkitBoxOrient: "vertical",
+                  WebkitLineClamp: 2,
+                  overflow: "hidden",
+                }}
+              >
+                {productName}
               </h3>
 
               {/* Stars and Reviews */}
-              <div className="flex items-center gap-1 w-[104px] h-[19px]">
-                <div className="flex items-start w-[80px] h-4">{renderStars()}</div>
-                <span className="text-base uppercase text-black w-5 h-[19px] leading-[19px]">
+              <div className="flex h-[19px] w-fit items-center gap-1">
+                <div className="flex h-4 w-[80px] items-start">{renderStars()}</div>
+                <span className="h-[19px] w-5 text-base uppercase leading-[19px] text-black">
                   ({product?.reviews?.length || 0})
                 </span>
               </div>
             </div>
-          </div>
 
-          {/* Price and stock section */}
-          <div className="flex flex-col gap-2 w-full h-[54px]">
-            {/* Price */}
-            <div className="flex justify-end items-end gap-2 w-[79px] h-[29px]">
-              <p className="text-2xl font-bold uppercase text-black w-[79px] h-[29px] leading-[29px]">{displayPrice}</p>
-            </div>
+            <div className="flex min-w-[150px] flex-col items-end gap-2 text-right sm:min-w-0 sm:w-full sm:items-start sm:text-left">
+              <div className="flex h-6 items-end justify-end gap-2 sm:h-[29px]">
+                <p className="text-[20px] font-bold uppercase leading-6 text-black sm:text-2xl sm:leading-[29px]">{displayPrice}</p>
+              </div>
 
-            {/* Stock status */}
-            <div className={`flex items-center gap-2 text-sm ${stockStyle} w-full h-[17px]`}>
-              {stockCircle}
-              <span className="text-sm leading-[17px]">{stockMessage}</span>
+              {/* Stock status */}
+              <div className={`flex min-h-[17px] max-w-[166px] items-center justify-end gap-2 text-sm ${stockStyle} sm:justify-start`}>
+                {stockCircle}
+                <span className="text-sm leading-[17px]">{stockMessage}</span>
+              </div>
             </div>
           </div>
 
@@ -280,7 +280,7 @@ export default function ProductCard({ product = {} as Product }: ProductCardProp
             onClick={handleAddToCart}
             disabled={addToCartMutation.isPending}
             styleType="productCart"
-            className="w-full h-12 px-8 py-4 gap-2 bg-[#494791] text-center"
+            className="mt-auto h-12 w-full gap-2 bg-[#494791] px-8 py-4 text-center"
           >
             <span className="text-base font-medium leading-[19px] text-white uppercase">
               {addToCartMutation.isPending ? "ADDING..." : "ADD TO CART"}

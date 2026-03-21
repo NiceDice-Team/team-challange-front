@@ -5,11 +5,14 @@ import { SearchIcon, CloseIcon, LoadingSpinner } from "@/svgs/icons";
 import { productServices } from "@/services/productServices";
 import { getSearchHistory, addToSearchHistory, removeFromSearchHistory } from "@/utils/searchHistory";
 import { useDebounce } from "@/utils/useDebounce";
+import { cn } from "@/lib/utils";
 import type { SearchHistoryItem } from "@/types/search";
 
 // Component types
 interface SearchBarProps {
   className?: string;
+  placeholder?: string;
+  variant?: "default" | "catalog-mobile";
 }
 
 interface SearchSuggestion {
@@ -17,7 +20,11 @@ interface SearchSuggestion {
   name: string;
 }
 
-export default function SearchBar({ className = "" }: SearchBarProps) {
+export default function SearchBar({
+  className = "",
+  placeholder = "Search games...",
+  variant = "default",
+}: SearchBarProps) {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);
@@ -54,7 +61,7 @@ export default function SearchBar({ className = "" }: SearchBarProps) {
         gameTypes: [],
         audiences: [],
         brands: [],
-        priceRange: { min: 0, max: 200 },
+        priceRange: { min: 0, max: Number.POSITIVE_INFINITY },
         sortBy: "relevance",
         search: query.trim(),
       });
@@ -166,11 +173,15 @@ export default function SearchBar({ className = "" }: SearchBarProps) {
   const showDropdown = isOpen && (query.trim().length >= 2 || history.length > 0);
   const showHistory = history.length > 0 && query.trim().length < 2;
   const showSuggestions = suggestions.length > 0 && query.trim().length >= 2;
+  const isCatalogMobile = variant === "catalog-mobile";
 
   return (
-    <div ref={searchRef} className={`relative ${className}`}>
+    <div ref={searchRef} className={cn("relative", className)}>
       <form
-        className="flex flex-row flex-1 justify-between items-center p-1 border border-[#494791]"
+        className={cn(
+          "flex flex-row flex-1 justify-between items-center border border-[#494791]",
+          isCatalogMobile ? "h-12 w-full px-0 pl-4 pr-1" : "p-1"
+        )}
         onSubmit={handleSubmit}
       >
         <input
@@ -181,8 +192,11 @@ export default function SearchBar({ className = "" }: SearchBarProps) {
           onChange={handleInputChange}
           onFocus={handleFocus}
           onKeyDown={handleKeyDown}
-          className="ml-1 outline-[#494791] outline-0 w-full text-sm md:text-base"
-          placeholder="Search games..."
+          className={cn(
+            "w-full outline-[#494791] outline-0",
+            isCatalogMobile ? "text-base leading-[19px] text-black placeholder:text-[#77808B]" : "ml-1 text-sm md:text-base"
+          )}
+          placeholder={placeholder}
           autoComplete="off"
         />
         {query && (
@@ -193,13 +207,22 @@ export default function SearchBar({ className = "" }: SearchBarProps) {
               setSuggestions([]);
               inputRef.current?.focus();
             }}
-            className="p-1 text-[#494791] hover:text-[#3a3a7a] transition-colors"
+            className={cn(
+              "text-[#494791] hover:text-[#3a3a7a] transition-colors",
+              isCatalogMobile ? "px-2 py-1" : "p-1"
+            )}
             aria-label="Clear search"
           >
             <CloseIcon className="w-5 h-5" strokeWidth={2.5} />
           </button>
         )}
-        <button className="bg-[#494791] hover:bg-[#4a479170] p-1 rounded-[2px]" type="submit">
+        <button
+          className={cn(
+            "bg-[#494791] hover:bg-[#4a479170]",
+            isCatalogMobile ? "flex h-10 w-[42px] items-center justify-center" : "rounded-[2px] p-1"
+          )}
+          type="submit"
+        >
           <img src={SearchIcon} alt="Search" className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
       </form>

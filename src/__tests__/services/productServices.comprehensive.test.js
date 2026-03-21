@@ -176,6 +176,36 @@ describe('productServices', () => {
       );
     });
 
+    test('applies price range filters', async () => {
+      const mockProducts = { results: [], count: 0 };
+      fetchAPI.mockResolvedValue(mockProducts);
+
+      const filters = {
+        priceRange: { min: 10, max: 75 },
+      };
+
+      await productServices.getProductsWithFilters(1, 8, 'relevance', filters);
+
+      const expectedCall = fetchAPI.mock.calls[0][0];
+      expect(expectedCall).toContain('min_price=10');
+      expect(expectedCall).toContain('max_price=75');
+    });
+
+    test('omits max price when it is unbounded', async () => {
+      const mockProducts = { results: [], count: 0 };
+      fetchAPI.mockResolvedValue(mockProducts);
+
+      const filters = {
+        priceRange: { min: 10, max: Number.POSITIVE_INFINITY },
+      };
+
+      await productServices.getProductsWithFilters(1, 8, 'relevance', filters);
+
+      const expectedCall = fetchAPI.mock.calls[0][0];
+      expect(expectedCall).toContain('min_price=10');
+      expect(expectedCall).not.toContain('max_price=');
+    });
+
     test('combines multiple filters correctly', async () => {
       const mockProducts = { results: [], count: 0 };
       fetchAPI.mockResolvedValue(mockProducts);

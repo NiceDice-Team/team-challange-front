@@ -6,9 +6,17 @@ interface PaginationProps {
   hasNext?: boolean;
   onPageChange: (page: number) => void;
   className?: string;
+  mobileSimpleMode?: boolean;
 }
 
-export function Pagination({ currentPage, totalPages, hasNext, onPageChange, className = "" }: PaginationProps) {
+export function Pagination({
+  currentPage,
+  totalPages,
+  hasNext,
+  onPageChange,
+  className = "",
+  mobileSimpleMode = false,
+}: PaginationProps) {
   // Simple mode: only Previous/Current/Next without total pages
   const isSimpleMode = totalPages === undefined;
 
@@ -46,6 +54,28 @@ export function Pagination({ currentPage, totalPages, hasNext, onPageChange, cla
 
   const visiblePages = getVisiblePages();
   const isNextDisabled = isSimpleMode ? !hasNext : currentPage === totalPages;
+  const pageButtons = isSimpleMode ? (
+    <div className="w-10 h-10 flex items-center justify-center border bg-[color:var(--color-purple)] text-white border-[color:var(--color-purple)]">
+      {currentPage}
+    </div>
+  ) : (
+    <>
+      {visiblePages.map((page) => (
+        <button
+          key={page}
+          onClick={() => onPageChange(page)}
+          className={`w-10 h-10 flex items-center justify-center border transition-colors ${
+            currentPage === page
+              ? "bg-[color:var(--color-purple)] text-white border-[color:var(--color-purple)]"
+              : "border-[color:var(--color-purple)] text-[color:var(--color-purple)] hover:bg-[color:var(--color-purple)] hover:text-white"
+          }`}
+          style={{ fontSize: "16px" }}
+        >
+          {page}
+        </button>
+      ))}
+    </>
+  );
 
   return (
     <div className={`flex items-center gap-1 ${className}`}>
@@ -60,25 +90,15 @@ export function Pagination({ currentPage, totalPages, hasNext, onPageChange, cla
       </button>
 
       {/* Page numbers or current page indicator */}
-      {isSimpleMode ? (
-        <div className="w-10 h-10 flex items-center justify-center border bg-[color:var(--color-purple)] text-white border-[color:var(--color-purple)]">
-          {currentPage}
-        </div>
+      {mobileSimpleMode ? (
+        <>
+          <div className="flex h-10 w-10 items-center justify-center border bg-[color:var(--color-purple)] text-white border-[color:var(--color-purple)] sm:hidden">
+            {currentPage}
+          </div>
+          <div className="hidden items-center gap-1 sm:flex">{pageButtons}</div>
+        </>
       ) : (
-        visiblePages.map((page) => (
-          <button
-            key={page}
-            onClick={() => onPageChange(page)}
-            className={`w-10 h-10 flex items-center justify-center border transition-colors ${
-              currentPage === page
-                ? "bg-[color:var(--color-purple)] text-white border-[color:var(--color-purple)]"
-                : "border-[color:var(--color-purple)] text-[color:var(--color-purple)] hover:bg-[color:var(--color-purple)] hover:text-white"
-            }`}
-            style={{ fontSize: "16px" }}
-          >
-            {page}
-          </button>
-        ))
+        pageButtons
       )}
 
       {/* Next button */}
