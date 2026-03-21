@@ -13,7 +13,8 @@ import { ChevronLeft } from "lucide-react";
 import { CustomButton } from "../shared/CustomButton";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { DeliveryOption, useCheckoutStore } from "@/store/checkout";
+import { useCheckoutStore } from "@/store/checkout";
+import type { DeliveryOption } from "@/types/order";
 
 export type CombinedFormData = z.infer<typeof combinedFormSchema>;
 

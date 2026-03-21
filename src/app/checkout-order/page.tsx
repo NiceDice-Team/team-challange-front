@@ -3,8 +3,9 @@ import { CustomBreadcrumb } from "@/components/shared/CustomBreadcrumb";
 import ShippingForm from "@/components/checkout/ShippingForm";
 import { useState } from "react";
 import ProductsTable from "@/components/checkout/ProductsTable";
-import DeliveryOptions, { DeliveryOption } from "@/components/checkout/DeliveryOptions";
+import DeliveryOptions from "@/components/checkout/DeliveryOptions";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import type { DeliveryOption } from "@/types/order";
 
 const breadcrumbItems = [
   { label: "Home", href: "/" },

@@ -111,7 +111,7 @@ describe("CheckoutPage", () => {
       render(<CheckoutPage />);
 
       await waitFor(() => {
-        expect(screen.getByText("$100")).toBeInTheDocument();
+        expect(screen.getByText("Order Total").parentElement).toHaveTextContent("$100.00");
       });
     });
     test("updates order total when paymentMethod is selected", async () => {
@@ -119,14 +119,14 @@ describe("CheckoutPage", () => {
       render(<CheckoutPage />);
 
       await waitFor(() => {
-        expect(screen.getByText("$100")).toBeInTheDocument();
+        expect(screen.getByText("Order Total").parentElement).toHaveTextContent("$100.00");
       });
 
       const selectButton = screen.getByTestId("select-delivery-option");
       await user.click(selectButton);
 
       await waitFor(() => {
-        expect(screen.getByText("$135")).toBeInTheDocument();
+        expect(screen.getByText("Order Total").parentElement).toHaveTextContent("$135.00");
       });
     });
     test("displays correct order total with paymentMethod price and subtotal", async () => {
@@ -137,8 +137,7 @@ describe("CheckoutPage", () => {
       await user.click(selectButton);
 
       await waitFor(() => {
-        const orderTotal = screen.getByText("$135");
-        expect(orderTotal).toBeInTheDocument();
+        expect(screen.getByText("Order Total").parentElement).toHaveTextContent("$135.00");
       });
     });
   })

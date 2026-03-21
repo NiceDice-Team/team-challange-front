@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { useShallow } from "zustand/react/shallow";
+import type { DeliveryOption } from "@/types/order";
 
 export interface AddressData {
   country: string;
@@ -11,13 +12,6 @@ export interface AddressData {
   city: string;
   email: string;
   phone: string;
-}
-
-export interface DeliveryOption {
-  id: number;
-  name: string;
-  price: number;
-  description: string;
 }
 
 export interface PaymentCardData {
@@ -62,7 +56,7 @@ interface CheckoutState {
   setFormData: (data: CheckoutFormData) => void;
   resetFormData: () => void;
 
-  setPaymentMethod: (method: DeliveryOption) => void;
+  setPaymentMethod: (method: DeliveryOption | null) => void;
   setPaymentCard: (card: PaymentCardData) => void;
 
   copyShippingToBilling: () => void;

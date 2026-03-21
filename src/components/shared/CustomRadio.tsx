@@ -8,10 +8,7 @@ export const RadioButton = ({
   className = "",
 }) => {
   return (
-    <label
-      className={`flex items-center cursor-pointer ${className}`}
-      onClick={onChange}
-    >
+    <label className={`flex items-center cursor-pointer ${className}`}>
       <div className="relative">
         <input
           type="radio"

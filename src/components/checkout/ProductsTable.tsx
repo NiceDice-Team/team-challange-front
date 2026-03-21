@@ -1,6 +1,6 @@
 import { useCartQuery } from "@/hooks/useCartQuery";
 import { useMemo, useEffect } from "react";
-import { DeliveryOption } from "./DeliveryOptions";
+import type { DeliveryOption } from "@/types/order";
 
 interface ProductsTableProps {
   setSubtotal: (subtotal: number) => void;

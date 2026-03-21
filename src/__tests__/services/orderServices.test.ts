@@ -130,4 +130,74 @@ describe('Order Services', () => {
       expect(mockFetchAPI).toHaveBeenCalledWith('orders/?user_id=user456', expect.any(Object));
     });
   });
+
+  describe('getDeliveryOptions', () => {
+    test('fetches and normalizes delivery options successfully', async () => {
+      const mockDeliveryOptions = [
+        {
+          id: 1,
+          name: 'Самовивіз',
+          description: 'Самостійний вивіз з магазину',
+          price: '0.00',
+          estimated_days: 0,
+        },
+        {
+          id: 2,
+          name: 'Нова Пошта',
+          description: 'Доставка Новою Поштою',
+          price: '150.00',
+          estimated_days: 2,
+        },
+      ];
+
+      mockFetchAPI.mockResolvedValue(mockDeliveryOptions);
+
+      const result = await orderServices.getDeliveryOptions();
+
+      expect(mockFetchAPI).toHaveBeenCalledWith('orders/delivery-options/', {
+        method: 'GET',
+      });
+      expect(result).toEqual([
+        {
+          id: 1,
+          name: 'Самовивіз',
+          description: 'Самостійний вивіз з магазину',
+          price: 0,
+          estimatedDays: 0,
+        },
+        {
+          id: 2,
+          name: 'Нова Пошта',
+          description: 'Доставка Новою Поштою',
+          price: 150,
+          estimatedDays: 2,
+        },
+      ]);
+    });
+
+    test('passes abort signal when provided', async () => {
+      const signal = new AbortController().signal;
+      mockFetchAPI.mockResolvedValue([]);
+
+      await orderServices.getDeliveryOptions(signal);
+
+      expect(mockFetchAPI).toHaveBeenCalledWith('orders/delivery-options/', {
+        method: 'GET',
+        signal,
+      });
+    });
+
+    test('handles API errors gracefully', async () => {
+      const mockError = new Error('API Error');
+      mockFetchAPI.mockRejectedValue(mockError);
+
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+
+      await expect(orderServices.getDeliveryOptions()).rejects.toThrow('API Error');
+
+      expect(consoleSpy).toHaveBeenCalledWith('Error fetching delivery options:', mockError);
+
+      consoleSpy.mockRestore();
+    });
+  });
 });

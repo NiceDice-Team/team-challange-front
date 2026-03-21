@@ -1,16 +1,42 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import DeliveryOptions, {
-  deliveryOptions,
-} from "../../components/checkout/DeliveryOptions";
+import DeliveryOptions from "../../components/checkout/DeliveryOptions";
 
 const mockSetPaymentMethod = jest.fn();
 const mockOnPaymentMethodChange = jest.fn();
+const mockUseCheckoutStore = jest.fn();
+const mockUseDeliveryOptionsQuery = jest.fn();
 
-jest.mock("../../store/checkout", () => ({
-  useCheckoutStore: jest.fn(() => ({
-    setPaymentMethod: mockSetPaymentMethod,
-  })),
+const mockDeliveryOptions = [
+  {
+    id: 1,
+    name: "Самовивіз",
+    description: "Самостійний вивіз з магазину",
+    price: 0,
+    estimatedDays: 0,
+  },
+  {
+    id: 2,
+    name: "Нова Пошта",
+    description: "Доставка Новою Поштою",
+    price: 150,
+    estimatedDays: 2,
+  },
+  {
+    id: 3,
+    name: "Укрпошта",
+    description: "Доставка Укрпоштою",
+    price: 50,
+    estimatedDays: 5,
+  },
+];
+
+jest.mock("@/store/checkout", () => ({
+  useCheckoutStore: (...args) => mockUseCheckoutStore(...args),
+}));
+
+jest.mock("@/hooks/useDeliveryOptionsQuery", () => ({
+  useDeliveryOptionsQuery: () => mockUseDeliveryOptionsQuery(),
 }));
 
 jest.mock("../../components/shared/CustomRadio", () => ({
@@ -51,278 +77,123 @@ jest.mock("../../assets/icons/attention.svg", () => "attention-icon.svg");
 describe("DeliveryOptions", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  });
 
-  describe("Rendering", () => {
-    test("renders component with title", () => {
-      render(
-        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
-      );
+    mockUseCheckoutStore.mockImplementation((selector) => {
+      const state = {
+        paymentMethod: null,
+        setPaymentMethod: mockSetPaymentMethod,
+      };
 
-      expect(screen.getByText("Choose delivery option")).toBeInTheDocument();
+      return selector ? selector(state) : state;
     });
-    test("renders all delivery options", () => {
-      render(
-        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
-      );
 
-      deliveryOptions.forEach((option) => {
-        expect(screen.getByText(option.name)).toBeInTheDocument();
-        const prices = screen.getAllByText(`$${option.price}`);
-        expect(prices.length).toBeGreaterThan(0);
-        expect(screen.getByText(option.description)).toBeInTheDocument();
-      });
-    });
-    test("renders info message about customs duties", () => {
-      render(
-        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
-      );
-
-      expect(
-        screen.getByText(
-          /Please note that all international shipments may be subject to customs/i
-        )
-      ).toBeInTheDocument();
-    });
-    test("renders info icon", () => {
-      render(
-        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
-      );
-
-      expect(screen.getByTestId("info-icon")).toBeInTheDocument();
-      expect(screen.getByTestId("info-icon")).toHaveAttribute("alt", "info");
-    });
-    test("renders shipping section with price", () => {
-      render(
-        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
-      );
-
-      expect(screen.getByText("Shipping")).toBeInTheDocument();
-      const prices = screen.getAllByText(`$${deliveryOptions[0].price}`);
-      expect(prices.length).toBeGreaterThan(0);
+    mockUseDeliveryOptionsQuery.mockReturnValue({
+      data: mockDeliveryOptions,
+      isLoading: false,
+      isError: false,
     });
   });
 
-  describe("Default selection", () => {
-    test("selects first delivery option by default", () => {
-      render(
-        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
-      );
+  test("renders delivery options from the API response", () => {
+    render(<DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />);
 
-      const firstRadio = screen.getByTestId(
-        `radio-input-${deliveryOptions[0].id}`
-      );
-      expect(firstRadio).toBeChecked();
-    });
-    test("displays first option price in shipping section by default", () => {
-      render(
-        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
-      );
+    expect(screen.getByText("Choose delivery option")).toBeInTheDocument();
 
-      const shippingPrices = screen.getAllByText(
-        `$${deliveryOptions[0].price}`
-      );
-      expect(shippingPrices.length).toBeGreaterThan(0);
+    mockDeliveryOptions.forEach((option) => {
+      expect(screen.getByText(option.name)).toBeInTheDocument();
+      expect(screen.getByText(option.description)).toBeInTheDocument();
+      expect(screen.getAllByText(`$${option.price}`).length).toBeGreaterThan(0);
     });
   });
 
-  describe("Option selection", () => {
-    test("allows selecting different delivery option", async () => {
-      const user = userEvent.setup();
-      render(
-        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
-      );
+  test("selects the first API option by default and syncs it to state", async () => {
+    render(<DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />);
 
-      const secondRadio = screen.getByTestId(
-        `radio-input-${deliveryOptions[1].id}`
-      );
-      await user.click(secondRadio);
-
-      expect(secondRadio).toBeChecked();
-    });
-    test("updates shipping price when option is selected", async () => {
-      const user = userEvent.setup();
-      render(
-        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
-      );
-
-      const secondOption = deliveryOptions[1];
-      const secondRadio = screen.getByTestId(`radio-input-${secondOption.id}`);
-      await user.click(secondRadio);
-
-      const shippingPrices = screen.getAllByText(`$${secondOption.price}`);
-      expect(shippingPrices.length).toBeGreaterThan(0);
-    });
-    test("calls onPaymentMethodChange when option is selected", async () => {
-      const user = userEvent.setup();
-      render(
-        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
-      );
-
-      const secondOption = deliveryOptions[1];
-      const secondRadio = screen.getByTestId(`radio-input-${secondOption.id}`);
-      await user.click(secondRadio);
-
-      expect(mockOnPaymentMethodChange).toHaveBeenCalledWith(secondOption);
-    });
-    test("unchecks previous option when new option is selected", async () => {
-      const user = userEvent.setup();
-      render(
-        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
-      );
-
-      const firstRadio = screen.getByTestId(
-        `radio-input-${deliveryOptions[0].id}`
-      );
-      const secondRadio = screen.getByTestId(
-        `radio-input-${deliveryOptions[1].id}`
-      );
-
-      expect(firstRadio).toBeChecked();
-      expect(secondRadio).not.toBeChecked();
-
-      await user.click(secondRadio);
-
-      expect(firstRadio).not.toBeChecked();
-      expect(secondRadio).toBeChecked();
+    await waitFor(() => {
+      expect(screen.getByTestId("radio-input-1")).toBeChecked();
+      expect(mockSetPaymentMethod).toHaveBeenCalledWith(mockDeliveryOptions[0]);
+      expect(mockOnPaymentMethodChange).toHaveBeenCalledWith(mockDeliveryOptions[0]);
     });
   });
 
-  describe("All delivery options", () => {
-    test("renders DHL option correctly", () => {
-      render(
-        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
-      );
+  test("allows selecting a different delivery option", async () => {
+    const user = userEvent.setup();
+    render(<DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />);
 
-      const dhlOption = deliveryOptions.find((opt) => opt.name === "DHL");
-      expect(screen.getByText("DHL")).toBeInTheDocument();
-      const prices = screen.getAllByText(`$${dhlOption.price}`);
-      expect(prices.length).toBeGreaterThan(0);
-      expect(screen.getByText(dhlOption.description)).toBeInTheDocument();
+    const secondRadio = screen.getByTestId("radio-input-2");
+    await user.click(secondRadio);
+
+    expect(secondRadio).toBeChecked();
+    expect(mockSetPaymentMethod).toHaveBeenLastCalledWith(mockDeliveryOptions[1]);
+    expect(mockOnPaymentMethodChange).toHaveBeenLastCalledWith(mockDeliveryOptions[1]);
+    expect(screen.getAllByText("$150").length).toBeGreaterThan(0);
+  });
+
+  test("uses the saved checkout delivery option when it exists in the fetched list", async () => {
+    mockUseCheckoutStore.mockImplementation((selector) => {
+      const state = {
+        paymentMethod: mockDeliveryOptions[2],
+        setPaymentMethod: mockSetPaymentMethod,
+      };
+
+      return selector ? selector(state) : state;
     });
-    test("renders Nova poshta option correctly", () => {
-      render(
-        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
-      );
 
-      const novaOption = deliveryOptions.find(
-        (opt) => opt.name === "Nova poshta"
-      );
-      expect(screen.getByText("Nova poshta")).toBeInTheDocument();
-      const prices = screen.getAllByText(`$${novaOption.price}`);
-      expect(prices.length).toBeGreaterThan(0);
-      expect(screen.getByText(novaOption.description)).toBeInTheDocument();
-    });
-    test("renders Fedex option correctly", () => {
-      render(
-        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
-      );
+    render(<DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />);
 
-      const fedexOption = deliveryOptions.find((opt) => opt.name === "Fedex");
-      expect(screen.getByText("Fedex")).toBeInTheDocument();
-      const prices = screen.getAllByText(`$${fedexOption.price}`);
-      expect(prices.length).toBeGreaterThan(0);
-      expect(screen.getByText(fedexOption.description)).toBeInTheDocument();
-    });
-    test("renders Ukrposhta option correctly", () => {
-      render(
-        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
-      );
-
-      const ukrOption = deliveryOptions.find((opt) => opt.name === "Ukrposhta");
-      expect(screen.getByText("Ukrposhta")).toBeInTheDocument();
-      const prices = screen.getAllByText(`$${ukrOption.price}`);
-      expect(prices.length).toBeGreaterThan(0);
-      expect(screen.getByText(ukrOption.description)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId("radio-input-3")).toBeChecked();
+      expect(mockSetPaymentMethod).toHaveBeenCalledWith(mockDeliveryOptions[2]);
+      expect(mockOnPaymentMethodChange).toHaveBeenCalledWith(mockDeliveryOptions[2]);
     });
   });
 
-  describe("Price display", () => {
-    test("displays correct price for each option", () => {
-      render(
-        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
-      );
-
-      deliveryOptions.forEach((option) => {
-        const prices = screen.getAllByText(`$${option.price}`);
-        expect(prices.length).toBeGreaterThan(0);
-      });
+  test("renders loading state while delivery options are being fetched", () => {
+    mockUseDeliveryOptionsQuery.mockReturnValue({
+      data: [],
+      isLoading: true,
+      isError: false,
     });
-    test("updates shipping price correctly when switching options", async () => {
-      const user = userEvent.setup();
-      render(
-        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
-      );
 
-      const thirdOption = deliveryOptions[2];
-      const thirdRadio = screen.getByTestId(`radio-input-${thirdOption.id}`);
-      await user.click(thirdRadio);
+    render(<DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />);
 
-      const shippingPrices = screen.getAllByText(`$${thirdOption.price}`);
-      expect(shippingPrices.length).toBeGreaterThan(0);
-    });
+    expect(screen.getByText("Loading delivery options...")).toBeInTheDocument();
+    expect(screen.getByText("Shipping")).toBeInTheDocument();
+    expect(screen.getByText("-")).toBeInTheDocument();
   });
 
-  describe("Multiple selections", () => {
-    test("handles multiple option changes correctly", async () => {
-      const user = userEvent.setup();
-      render(
-        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
-      );
-
-      const secondOption = deliveryOptions[1];
-      const thirdOption = deliveryOptions[2];
-      const fourthOption = deliveryOptions[3];
-
-      const secondRadio = screen.getByTestId(`radio-input-${secondOption.id}`);
-      const thirdRadio = screen.getByTestId(`radio-input-${thirdOption.id}`);
-      const fourthRadio = screen.getByTestId(`radio-input-${fourthOption.id}`);
-
-      await user.click(secondRadio);
-      expect(secondRadio).toBeChecked();
-      expect(mockOnPaymentMethodChange).toHaveBeenCalledWith(secondOption);
-
-      await user.click(thirdRadio);
-      expect(thirdRadio).toBeChecked();
-      expect(mockOnPaymentMethodChange).toHaveBeenCalledWith(thirdOption);
-
-      await user.click(fourthRadio);
-      expect(fourthRadio).toBeChecked();
-      expect(mockOnPaymentMethodChange).toHaveBeenCalledWith(fourthOption);
+  test("renders error state when delivery options request fails", () => {
+    mockUseDeliveryOptionsQuery.mockReturnValue({
+      data: [],
+      isLoading: false,
+      isError: true,
     });
+
+    render(<DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />);
+
+    expect(screen.getByText("Unable to load delivery options.")).toBeInTheDocument();
   });
 
-  describe("Edge cases", () => {
-    test("handles clicking on already selected option", async () => {
-      const user = userEvent.setup();
-      render(
-        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
-      );
-
-      const firstRadio = screen.getByTestId(
-        `radio-input-${deliveryOptions[0].id}`
-      );
-      expect(firstRadio).toBeChecked();
-
-      await user.click(firstRadio);
-
-      expect(firstRadio).toBeChecked();
-      expect(mockOnPaymentMethodChange).toHaveBeenCalled();
+  test("renders empty state when API returns no delivery options", () => {
+    mockUseDeliveryOptionsQuery.mockReturnValue({
+      data: [],
+      isLoading: false,
+      isError: false,
     });
-    test("maintains selection state correctly", async () => {
-      const user = userEvent.setup();
-      render(
-        <DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />
-      );
 
-      const secondOption = deliveryOptions[1];
-      const secondRadio = screen.getByTestId(`radio-input-${secondOption.id}`);
+    render(<DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />);
 
-      await user.click(secondRadio);
-      expect(secondRadio).toBeChecked();
+    expect(screen.getByText("No delivery options available.")).toBeInTheDocument();
+  });
 
-      await user.click(secondRadio);
-      expect(secondRadio).toBeChecked();
-    });
+  test("renders customs info block when options are available", () => {
+    render(<DeliveryOptions onPaymentMethodChange={mockOnPaymentMethodChange} />);
+
+    expect(screen.getByTestId("info-icon")).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Please note that all international shipments may be subject to customs/i
+      )
+    ).toBeInTheDocument();
   });
 });
