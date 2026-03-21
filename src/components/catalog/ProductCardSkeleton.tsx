@@ -1,9 +1,9 @@
 export default function ProductCardSkeleton() {
   return (
-    <article className="flex flex-col w-full max-w-[240px] min-w-[200px] h-[427px] mx-auto bg-white shadow-md">
+    <article className="mx-auto flex min-h-[539px] w-full max-w-[396px] min-w-0 flex-col bg-white shadow-[0px_4px_4px_rgba(0,0,0,0.1)] sm:h-[427px] sm:max-w-[240px] sm:min-h-0 sm:min-w-[200px]">
       {/* Image skeleton */}
-      <div className="relative h-[190px] w-full pt-4 flex flex-col items-center gap-4 isolate">
-        <div className="w-full h-[158px] bg-gray-200 animate-pulse flex-grow z-0"></div>
+      <div className="relative isolate flex h-[307px] w-full flex-col items-center gap-4 pt-4 sm:h-[190px]">
+        <div className="z-0 h-[275px] w-full flex-grow bg-gray-200 animate-pulse sm:h-[158px]"></div>
         {/* Navigation lines skeleton */}
         <div className="absolute bottom-0 left-0 right-0 w-full h-0 flex justify-center items-start z-10">
           <div className="flex justify-center items-start gap-0">
@@ -15,13 +15,12 @@ export default function ProductCardSkeleton() {
       </div>
 
       {/* Product details skeleton */}
-      <div className="flex flex-col p-4 gap-4 w-full h-[237px]">
-        {/* Product name and rating section */}
-        <div className="flex items-start gap-2 w-full h-[71px]">
-          <div className="flex flex-col gap-2 w-[145px] h-[71px]">
-            <div className="w-[145px] h-[44px] bg-gray-200 rounded animate-pulse overflow-hidden"></div>
-            <div className="flex items-center gap-1 w-[104px] h-[19px]">
-              <div className="flex gap-1 w-[80px] h-4">
+      <div className="flex flex-1 flex-col gap-4 p-4">
+        <div className="flex items-start justify-between gap-3 sm:flex-col sm:items-start">
+          <div className="flex min-w-0 flex-col gap-2 sm:w-[145px]">
+            <div className="h-[44px] w-[145px] overflow-hidden rounded bg-gray-200 animate-pulse"></div>
+            <div className="flex h-[19px] w-[104px] items-center gap-1">
+              <div className="flex h-4 w-[80px] gap-1">
                 {[...Array(5)].map((_, i) => (
                   <div key={i} className="w-4 h-4 bg-gray-200 rounded animate-pulse"></div>
                 ))}
@@ -29,19 +28,18 @@ export default function ProductCardSkeleton() {
               <div className="w-5 h-[19px] bg-gray-200 rounded animate-pulse"></div>
             </div>
           </div>
-        </div>
 
-        {/* Price and stock section */}
-        <div className="flex flex-col gap-2 w-full h-[54px]">
-          <div className="w-[79px] h-[29px] bg-gray-200 rounded animate-pulse"></div>
-          <div className="flex items-center gap-2 w-full h-[17px]">
-            <div className="w-2 h-2 bg-gray-200 rounded-full animate-pulse"></div>
-            <div className="h-[17px] w-24 bg-gray-200 rounded animate-pulse"></div>
+          <div className="flex min-w-[150px] flex-col items-end gap-2 sm:min-w-0 sm:w-full sm:items-start">
+            <div className="h-6 w-[79px] rounded bg-gray-200 animate-pulse"></div>
+            <div className="flex h-[17px] w-full items-center justify-end gap-2 sm:justify-start">
+              <div className="h-2 w-2 rounded-full bg-gray-200 animate-pulse"></div>
+              <div className="h-[17px] w-24 rounded bg-gray-200 animate-pulse"></div>
+            </div>
           </div>
         </div>
 
         {/* Add to cart button skeleton */}
-        <div className="w-full h-12 bg-gray-200 rounded animate-pulse"></div>
+        <div className="mt-auto h-12 w-full bg-gray-200 animate-pulse"></div>
       </div>
     </article>
   );

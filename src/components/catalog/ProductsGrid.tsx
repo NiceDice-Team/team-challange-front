@@ -17,56 +17,78 @@ interface ProductsGridProps {
 
 export default function ProductsGrid({ selectedFilters, setSelectedFilters }: ProductsGridProps) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [maxVisitedPage, setMaxVisitedPage] = useState(1);
   const productsPerPage = 12;
 
   const sortBy = selectedFilters.sortBy || "relevance";
+  const hasUpperPriceLimit = Number.isFinite(selectedFilters.priceRange.max);
+  const minPrice = selectedFilters.priceRange.min || 0;
+  const maxPrice = hasUpperPriceLimit ? selectedFilters.priceRange.max : Number.POSITIVE_INFINITY;
+  const nonPriceFilters = {
+    categories: selectedFilters.categories,
+    gameTypes: selectedFilters.gameTypes,
+    audiences: selectedFilters.audiences,
+    brands: selectedFilters.brands,
+    search: selectedFilters.search,
+  };
 
   const setSortBy = (newSortBy: string): void => {
     setSelectedFilters({
       ...selectedFilters,
-      sortBy: newSortBy
+      sortBy: newSortBy,
     });
   };
 
   // Reset to page 1 when filters or sort change
   useEffect(() => {
     setCurrentPage(1);
-    setMaxVisitedPage(1);
   }, [selectedFilters, sortBy]);
 
-  // Track max visited page as user navigates
-  useEffect(() => {
-    setMaxVisitedPage(prev => Math.max(prev, currentPage));
-  }, [currentPage]);
-
-  // Fetch only current page products (12 items per page)
-  // Using isFetching to show skeleton during page navigation
+  // Fetch the full dataset for all non-price filters and sort,
+  // then apply price filtering locally because the current backend ignores price params.
   const {
-    data: paginatedData,
+    data: productsData,
     isFetching,
     error,
   } = useQuery({
-    queryKey: ["products", currentPage, sortBy, selectedFilters],
-    queryFn: ({ signal }) => productServices.getProductsWithFilters(
-      currentPage,
-      productsPerPage,
+    queryKey: [
+      "products",
       sortBy,
-      selectedFilters,
-      { signal }
-    ),
+      selectedFilters.categories,
+      selectedFilters.gameTypes,
+      selectedFilters.audiences,
+      selectedFilters.brands,
+      selectedFilters.search,
+    ],
+    queryFn: async ({ signal }) => {
+      const initialResponse = await productServices.getProductsWithFilters(
+        1,
+        1,
+        sortBy,
+        nonPriceFilters,
+        { signal },
+      );
+
+      const totalCount = Math.max(initialResponse?.count || 0, initialResponse?.results?.length || 0);
+
+      if (totalCount <= 1) {
+        return initialResponse;
+      }
+
+      return productServices.getProductsWithFilters(1, totalCount, sortBy, nonPriceFilters, { signal });
+    },
     staleTime: 5 * 60 * 1000,
   });
 
-  const currentProducts = paginatedData?.results || [];
+  const allProducts = productsData?.results || [];
+  const filteredProducts = allProducts.filter((product: Product) => {
+    const price = parseFloat(String(product.price ?? 0));
+    if (!Number.isFinite(price)) return false;
+
+    return price >= minPrice && price <= maxPrice;
+  });
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / productsPerPage));
+  const currentProducts = filteredProducts.slice((currentPage - 1) * productsPerPage, currentPage * productsPerPage);
   const isError = !!error;
-
-  // Simple pagination logic: if we got full page, assume there's next page
-  const hasNext = currentProducts.length === productsPerPage;
-
-  // Calculate totalPages based on visited pages and hasNext
-  // If there's a next page, show one more page button than we've visited
-  const totalPages = hasNext ? maxVisitedPage + 1 : maxVisitedPage;
 
   // Show loading skeleton when fetching (not just initial load)
   const showLoading = isFetching;
@@ -78,16 +100,18 @@ export default function ProductsGrid({ selectedFilters, setSelectedFilters }: Pr
     selectedFilters.audiences.length > 0 ||
     selectedFilters.brands.length > 0 ||
     selectedFilters.priceRange.min > 0 ||
-    selectedFilters.priceRange.max < 200;
+    hasUpperPriceLimit;
 
   return (
     <section className="w-full">
-      <div className="w-full flex flex-row justify-end items-center gap-2 sm:gap-4 mb-6 sm:mb-8 lg:mb-12">
-        <span className="uppercase text-sm sm:text-base lg:text-lg font-medium">Sort by</span>
+      <div className="mb-6 flex w-full items-center justify-between gap-4 sm:mb-8 lg:mb-12 lg:justify-end">
+        <span className="text-lg font-medium uppercase leading-[22px] text-black lg:hidden">Filters</span>
+        <span className="hidden uppercase text-sm sm:text-base lg:text-lg font-medium lg:inline-flex">Sort by</span>
         <CustomSelect
           placeholder="Relevance"
           value={sortBy}
           onValueChange={setSortBy}
+          className="h-10 w-[176px] border-[#A4A3C8] px-4 text-base text-[#494791] lg:w-[200px]"
           options={[
             { value: "relevance", label: "Relevance" },
             { value: "bestsellers", label: "Bestsellers" },
@@ -97,7 +121,7 @@ export default function ProductsGrid({ selectedFilters, setSelectedFilters }: Pr
           ]}
         />
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 min-h-[400px]">
+      <div className="mx-auto grid max-w-[396px] min-h-[400px] grid-cols-1 gap-6 sm:max-w-none sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {showLoading &&
           // Show skeleton cards while loading
           Array.from({ length: productsPerPage }).map((_, index) => <ProductCardSkeleton key={`skeleton-${index}`} />)}
@@ -128,11 +152,13 @@ export default function ProductsGrid({ selectedFilters, setSelectedFilters }: Pr
       </div>
 
       {/* Pagination - Shows page numbers for visited pages */}
-      {!showLoading && (currentPage > 1 || hasNext) && (
+      {!showLoading && totalPages > 1 && (
         <div className="flex justify-center mt-6 sm:mt-8 lg:mt-12 mb-4">
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
+            mobileSimpleMode
+            className="gap-4"
             onPageChange={(page) => {
               setCurrentPage(page);
               window.scrollTo(0, 0);

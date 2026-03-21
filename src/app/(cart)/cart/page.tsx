@@ -101,7 +101,6 @@ export default function CartPage() {
 
   const breadcrumbItems = [
     { label: "Home", href: "/" },
-    { label: "Board games", href: "/catalog" },
     { label: "Cart", href: "/cart", current: true },
   ];
 
@@ -120,12 +119,27 @@ export default function CartPage() {
       {error && <div className="bg-red-100 mb-4 px-4 py-3 border border-red-400 rounded text-red-700">{error}</div>}
 
       {/* Breadcrumb */}
-      <div className="py-6">
+      <div className="sm:hidden">
+        <div className="mx-auto max-w-[396px] border-b border-[var(--color-light-purple-2)] py-6">
+          <div className="w-full overflow-x-auto no-scrollbar">
+            <CustomBreadcrumb
+              items={breadcrumbItems}
+              className="w-max"
+              listClassName="gap-2"
+              linkClassName="text-base leading-[19px]"
+              pageClassName="text-base leading-[19px]"
+              separatorClassName="mx-0"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="hidden py-6 sm:block">
         <CustomBreadcrumb items={breadcrumbItems} />
       </div>
 
       {/* Cart Header */}
-      <div className="pb-6">
+      <div className="pt-6 pb-6 sm:pt-0">
         <div className="flex flex-col gap-4">
           <h1 className="font-normal text-[#040404] lg:text-[40px] text-2xl sm:text-3xl uppercase leading-tight">
             your cart ({cartItems.length})
