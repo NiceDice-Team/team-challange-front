@@ -58,7 +58,7 @@ describe('ForgotPasswordPage', () => {
     // Wait for useEffect to run
     expect(showCustomToast).toHaveBeenCalledWith({
       type: "success",
-      title: "Success! You are logged.",
+      title: "Success!",
       description: "A password reset link has been sent to your inbox.",
     });
   });
