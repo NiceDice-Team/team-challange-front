@@ -6,11 +6,21 @@ import { CustomInput } from "@/components/shared/CustomInput";
 import { RadioButton } from "@/components/shared/CustomRadio";
 import { CustomBreadcrumb } from "@/components/shared/CustomBreadcrumb";
 import { ChevronLeft } from "lucide-react";
-import { GooglePayIcon, ApplePayIcon, CreditCardIcon, ChevronDownIcon } from "@/svgs/icons";
-import { useState, useMemo } from "react";
+import { CreditCardIcon, ChevronDownIcon } from "@/svgs/icons";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCartQuery } from "@/hooks/useCartQuery";
-import { useCheckoutFormData, usePaymentMethod, usePaymentCard, useCheckoutActions } from "@/store/checkout";
+import {
+  useCheckoutFormData,
+  usePaymentMethod,
+  usePaymentCard,
+  useCheckoutActions,
+} from "@/store/checkout";
+import PaymentWrapper from "@/components/checkout/PaymentWrapper";
+import { useQuery } from "@tanstack/react-query";
+import { orderServices, type PaymentMethod } from "@/services/orderServices";
+import { showCustomToast } from "@/components/shared/Toast";
+import { cartServices } from "@/services/cartServices";
 
 interface SectionProps {
   title: string;
@@ -24,9 +34,14 @@ const Section = ({ title, onEdit, children, className = "" }: SectionProps) => {
   return (
     <div className={`flex flex-col gap-6 ${className}`}>
       <div className="flex justify-between items-center">
-        <h3 className="text-xl leading-6 font-normal uppercase text-foreground">{title}</h3>
+        <h3 className="font-normal text-foreground text-xl uppercase leading-6">
+          {title}
+        </h3>
         {onEdit && (
-          <button onClick={onEdit} className="text-base leading-[19px] underline text-purple hover:opacity-80">
+          <button
+            onClick={onEdit}
+            className="hover:opacity-80 text-purple text-base underline leading-[19px]"
+          >
             Edit
           </button>
         )}
@@ -54,17 +69,38 @@ interface PaymentCardData {
 
 export default function OrderReviewPage() {
   const router = useRouter();
-  const [paymentMethodType, setPaymentMethodType] = useState<string>("credit-card");
+
+  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<
+    number | null
+  >(null);
   const [isPaymentExpanded, setIsPaymentExpanded] = useState<boolean>(true);
 
   // Get data from Zustand store
-  const formData = useCheckoutFormData();
+  const checkoutUserData = useCheckoutFormData();
   const deliveryMethod = usePaymentMethod();
   const savedPaymentCard = usePaymentCard();
   const { setPaymentCard } = useCheckoutActions();
-
   // Use existing cart functionality
   const { data: cartItems = [], isLoading: cartLoading } = useCartQuery();
+
+  const {
+    data: paymentMethods = [],
+    isLoading: paymentMethodsLoading,
+    error: paymentMethodsError,
+  } = useQuery({
+    queryKey: ["payment-methods"],
+    queryFn: () => orderServices.getPaymentMethods(),
+    refetchOnWindowFocus: false,
+  });
+
+  useEffect(() => {
+    if (paymentMethodsLoading) return;
+    if (!paymentMethods?.length) return;
+    if (selectedPaymentMethodId !== null) return;
+
+    const preferred = paymentMethods.find((m: PaymentMethod) => m.id === 1);
+    setSelectedPaymentMethodId(preferred?.id ?? paymentMethods[0].id);
+  }, [paymentMethods, paymentMethodsLoading, selectedPaymentMethodId]);
 
   // Local state for payment form
   const [paymentCardData, setPaymentCardData] = useState<PaymentCardData>({
@@ -101,27 +137,48 @@ export default function OrderReviewPage() {
     router.push("/checkout-order");
   };
 
-  const handlePlaceOrder = () => {
-    console.log("🚀 Place Order button clicked!");
-
-    // Save payment card data before placing order
+  const handlePlaceOrder = async () => {
     setPaymentCard(paymentCardData);
 
-    // TODO: Integrate with actual payment/order API
-    console.log("Placing order with:", {
-      formData,
-      deliveryMethod,
-      paymentCard: paymentCardData,
-      cartItems,
-      total,
-    });
+    let cartId = 0
+    try {
+      cartId = await cartServices.getCartId();
+    } catch (err) {
+      showCustomToast({
+        type: "error",
+        title: "Failed to load cart",
+      });
+      return;
+    }
 
-    alert("Order placed! Check the console for details.");
+    orderServices
+      .createOrder({
+        checkoutUserData,
+        deliveryOptionId: deliveryMethod?.id ?? 0,
+        paymentMethodId: selectedPaymentMethodId ?? 0,
+        cartId,
+        delivery_option: deliveryMethod?.id ?? 0,
+        payment_method: selectedPaymentMethodId,
+      })
+      .then((res) => {
+        showCustomToast({
+          type: "success",
+          title: "Order placed",
+          description: "Your order has been placed successfully.",
+        });
+      })
+      .catch((err) => {
+        showCustomToast({
+          type: "error",
+          title: "Failed to place order",
+          description: "Failed to place order. Please try again.",
+        });
+      });
   };
 
   return (
     <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16">
-      <div className="max-w-[1320px] mx-auto">
+      <div className="mx-auto max-w-[1320px]">
         {/* Breadcrumbs */}
         <div className="mt-6 mb-6">
           <CustomBreadcrumb items={breadcrumbItems} />
@@ -129,56 +186,82 @@ export default function OrderReviewPage() {
 
         {/* Page Title */}
         <div className="flex flex-col gap-4 mb-18">
-          <h1 className="text-[var(--text-title)] leading-[48px] font-normal uppercase flex items-center">
+          <h1 className="flex items-center font-normal text-[var(--text-title)] uppercase leading-[48px]">
             Order review
           </h1>
         </div>
 
         {/* Main Layout - Two Columns */}
-        <div className="flex flex-col lg:flex-row gap-6 items-start">
+        <div className="flex lg:flex-row flex-col items-start gap-6">
           {/* Left Column - Order Information */}
-          <div className="flex flex-col py-6 gap-12 w-full lg:w-[648px]">
+          <div className="flex flex-col gap-12 py-6 w-full lg:w-[648px]">
             {/* Shipping Information */}
             <Section title="Shipping" onEdit={handleEditShipping}>
-              <div className="flex flex-col gap-2 text-base leading-[19px] text-gray-2">
+              <div className="flex flex-col gap-2 text-gray-2 text-base leading-[19px]">
                 <div>
-                  {formData.shippingFirstName} {formData.shippingLastName}
+                  {checkoutUserData.shippingFirstName}{" "}
+                  {checkoutUserData.shippingLastName}
                 </div>
                 <div>
-                  {formData.shippingAddress}
-                  {formData.shippingApartment && `, ${formData.shippingApartment}`}
+                  {checkoutUserData.shippingAddress}
+                  {checkoutUserData.shippingApartment &&
+                    `, ${checkoutUserData.shippingApartment}`}
                 </div>
                 <div>
-                  {formData.shippingCity}{formData.shippingCity && formData.shippingZipCode && ", "}
-                  {formData.shippingZipCode}{(formData.shippingCity || formData.shippingZipCode) && formData.shippingCountry && ", "}
-                  {formData.shippingCountry}
+                  {checkoutUserData.shippingCity}
+                  {checkoutUserData.shippingCity &&
+                    checkoutUserData.shippingZipCode &&
+                    ", "}
+                  {checkoutUserData.shippingZipCode}
+                  {(checkoutUserData.shippingCity ||
+                    checkoutUserData.shippingZipCode) &&
+                    checkoutUserData.shippingCountry &&
+                    ", "}
+                  {checkoutUserData.shippingCountry}
                 </div>
-                {formData.shippingEmail && (
-                  <div className="underline underline-offset-2">{formData.shippingEmail}</div>
+                {checkoutUserData.shippingEmail && (
+                  <div className="underline underline-offset-2">
+                    {checkoutUserData.shippingEmail}
+                  </div>
                 )}
-                {formData.shippingPhone && <div>{formData.shippingPhone}</div>}
+                {checkoutUserData.shippingPhone && (
+                  <div>{checkoutUserData.shippingPhone}</div>
+                )}
               </div>
             </Section>
 
             {/* Billing Address */}
             <Section title="Billing address" onEdit={handleEditBilling}>
-              <div className="flex flex-col gap-2 text-base leading-[19px] text-gray-2">
+              <div className="flex flex-col gap-2 text-gray-2 text-base leading-[19px]">
                 <div>
-                  {formData.billingFirstName} {formData.billingLastName}
+                  {checkoutUserData.billingFirstName}{" "}
+                  {checkoutUserData.billingLastName}
                 </div>
                 <div>
-                  {formData.billingAddress}
-                  {formData.billingApartment && `, ${formData.billingApartment}`}
+                  {checkoutUserData.billingAddress}
+                  {checkoutUserData.billingApartment &&
+                    `, ${checkoutUserData.billingApartment}`}
                 </div>
                 <div>
-                  {formData.billingCity}{formData.billingCity && formData.billingZipCode && ", "}
-                  {formData.billingZipCode}{(formData.billingCity || formData.billingZipCode) && formData.billingCountry && ", "}
-                  {formData.billingCountry}
+                  {checkoutUserData.billingCity}
+                  {checkoutUserData.billingCity &&
+                    checkoutUserData.billingZipCode &&
+                    ", "}
+                  {checkoutUserData.billingZipCode}
+                  {(checkoutUserData.billingCity ||
+                    checkoutUserData.billingZipCode) &&
+                    checkoutUserData.billingCountry &&
+                    ", "}
+                  {checkoutUserData.billingCountry}
                 </div>
-                {formData.billingEmail && (
-                  <div className="underline underline-offset-2">{formData.billingEmail}</div>
+                {checkoutUserData.billingEmail && (
+                  <div className="underline underline-offset-2">
+                    {checkoutUserData.billingEmail}
+                  </div>
                 )}
-                {formData.billingPhone && <div>{formData.billingPhone}</div>}
+                {checkoutUserData.billingPhone && (
+                  <div>{checkoutUserData.billingPhone}</div>
+                )}
               </div>
             </Section>
 
@@ -186,13 +269,18 @@ export default function OrderReviewPage() {
             <div className="flex flex-col gap-6">
               {/* Payment Header */}
               <div className="flex justify-between items-center h-6">
-                <h3 className="text-xl leading-6 font-normal uppercase text-foreground">Payment</h3>
+                <h3 className="font-normal text-foreground text-xl uppercase leading-6">
+                  Payment
+                </h3>
                 <button
                   onClick={() => setIsPaymentExpanded(!isPaymentExpanded)}
-                  className="flex items-center justify-center"
+                  className="flex justify-center items-center"
                   aria-label="Toggle payment section"
                 >
-                  <ChevronDownIcon className="w-6 h-6" isExpanded={isPaymentExpanded} />
+                  <ChevronDownIcon
+                    className="w-6 h-6"
+                    isExpanded={isPaymentExpanded}
+                  />
                 </button>
               </div>
 
@@ -200,117 +288,51 @@ export default function OrderReviewPage() {
               {isPaymentExpanded && (
                 <>
                   <div className="flex flex-col gap-1">
-                    {/* Google Pay Option */}
-                    <RadioButton
-                      id="google-pay"
-                      name="payment-method"
-                      value="google-pay"
-                      checked={paymentMethodType === "google-pay"}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPaymentMethodType(e.target.value)}
-                      className="py-2 px-4 gap-6"
-                    >
-                      <div className="flex items-center gap-1">
-                        <GooglePayIcon />
-                        <span className="text-base leading-[18px] text-black">Pay</span>
+                    {paymentMethodsLoading ? (
+                      <div className="px-4 py-2 text-gray-2 text-base">
+                        Loading...
                       </div>
-                    </RadioButton>
-
-                    {/* Apple Pay Option */}
-                    <RadioButton
-                      id="apple-pay"
-                      name="payment-method"
-                      value="apple-pay"
-                      checked={paymentMethodType === "apple-pay"}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPaymentMethodType(e.target.value)}
-                      className="py-2 px-4 gap-6"
-                    >
-                      <div className="flex items-center gap-1">
-                        <ApplePayIcon />
-                        <span className="text-base leading-[18px] text-black">Pay</span>
+                    ) : paymentMethodsError ? (
+                      <div className="px-4 py-2 text-red-600 text-base">
+                        Failed to load payment methods
                       </div>
-                    </RadioButton>
-
-                    {/* Credit Card Option */}
-                    <RadioButton
-                      id="credit-card"
-                      name="payment-method"
-                      value="credit-card"
-                      checked={paymentMethodType === "credit-card"}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPaymentMethodType(e.target.value)}
-                      className="bg-white py-2 px-4 gap-6"
-                    >
-                      <div className="flex items-center gap-1">
-                        <CreditCardIcon />
-                        <span className="text-base leading-[18px] text-black">Credit card</span>
-                      </div>
-                    </RadioButton>
+                    ) : (
+                      paymentMethods.map((method: PaymentMethod) => (
+                        <RadioButton
+                          key={method.id}
+                          id={`payment-method-${method.id}`}
+                          name="payment-method"
+                          value={method.id.toString()}
+                          checked={selectedPaymentMethodId === method.id}
+                          onChange={() => setSelectedPaymentMethodId(method.id)}
+                          className="gap-6 bg-white px-4 py-2"
+                        >
+                          <div className="flex flex-col gap-1">
+                            <div className="flex items-center gap-2">
+                              {method.id === 1 ? <CreditCardIcon /> : null}
+                              <span className="text-black text-base leading-[18px]">
+                                {method.name}
+                              </span>
+                            </div>
+                            <div className="text-gray-2 text-base leading-[19px]">
+                              {method.description}
+                            </div>
+                          </div>
+                        </RadioButton>
+                      ))
+                    )}
                   </div>
 
-                  {/* Credit Card Form */}
-                  {paymentMethodType === "credit-card" && (
-                    <div className="flex flex-col gap-4 max-w-[424px]">
-                      <CustomInput
-                        label="First name"
-                        id="cardFirstName"
-                        name="cardFirstName"
-                        value={paymentCardData.firstName}
-                        onChange={(e) => setPaymentCardData({ ...paymentCardData, firstName: e.target.value })}
-                        placeholder="Olena"
-                      />
-
-                      <CustomInput
-                        label="Last Name"
-                        id="cardLastName"
-                        name="cardLastName"
-                        value={paymentCardData.lastName}
-                        onChange={(e) => setPaymentCardData({ ...paymentCardData, lastName: e.target.value })}
-                        placeholder="Petrenko"
-                      />
-
-                      <CustomInput
-                        label="Card number"
-                        id="cardNumber"
-                        name="cardNumber"
-                        value={paymentCardData.cardNumber}
-                        onChange={(e) => setPaymentCardData({ ...paymentCardData, cardNumber: e.target.value })}
-                        placeholder="···· ···· ···· ····"
-                      />
-
-                      <div className="gap-6 grid grid-cols-1 md:grid-cols-2">
-                        <CustomInput
-                          label="Expiration Date"
-                          id="expiryDate"
-                          name="expiryDate"
-                          value={paymentCardData.expiryDate}
-                          onChange={(e) => setPaymentCardData({ ...paymentCardData, expiryDate: e.target.value })}
-                          placeholder="MM/YY"
-                        />
-
-                        <div className="flex flex-col gap-1">
-                          <CustomInput
-                            label="cvv"
-                            id="cvv"
-                            name="cvv"
-                            value={paymentCardData.cvv}
-                            onChange={(e) => setPaymentCardData({ ...paymentCardData, cvv: e.target.value })}
-                            placeholder="···"
-                          />
-                          <button className="text-base leading-[19px] text-purple underline underline-offset-3 self-start">
-                            Where is my CVV?
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                  {selectedPaymentMethodId === 1 && <PaymentWrapper />}
                 </>
               )}
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col-reverse sm:flex-row justify-between items-center gap-4 w-full max-w-[648px]">
+            <div className="flex sm:flex-row flex-col-reverse justify-between items-center gap-4 w-full max-w-[648px]">
               <Link
                 href="/checkout-order"
-                className="flex items-center gap-2 text-base leading-[19px] text-foreground hover:opacity-80"
+                className="flex items-center gap-2 hover:opacity-80 text-foreground text-base leading-[19px]"
               >
                 <ChevronLeft className="w-6 h-6 text-purple" />
                 Return to checkout
@@ -318,7 +340,7 @@ export default function OrderReviewPage() {
               <CustomButton
                 type="button"
                 onClick={handlePlaceOrder}
-                className="w-full sm:w-72 h-12 bg-purple text-white border border-purple hover:bg-purple/90 text-base leading-[19px] uppercase"
+                className="bg-purple hover:bg-purple/90 border border-purple w-full sm:w-72 h-12 text-white text-base uppercase leading-[19px]"
               >
                 Place order
               </CustomButton>
@@ -326,8 +348,8 @@ export default function OrderReviewPage() {
           </div>
 
           {/* Right Column - Order Summary */}
-          <div className="flex flex-col p-6 gap-10 w-full lg:w-[648px] border border-[#A4A3C8]">
-            <h2 className="text-xl leading-6 font-normal uppercase text-foreground w-full flex items-center">
+          <div className="flex flex-col gap-10 p-6 border border-[#A4A3C8] w-full lg:w-[648px]">
+            <h2 className="flex items-center w-full font-normal text-foreground text-xl uppercase leading-6">
               Your order
             </h2>
 
@@ -338,44 +360,61 @@ export default function OrderReviewPage() {
                 {/* Product Table */}
                 <div className="flex flex-col gap-2">
                   {/* Table Header */}
-                  <div className="flex justify-between items-center h-12 text-sm sm:text-base leading-[19px] font-normal uppercase text-foreground">
+                  <div className="flex justify-between items-center h-12 font-normal text-foreground text-sm sm:text-base uppercase leading-[19px]">
                     <div className="flex-1 min-w-0">Product</div>
-                    <div className="w-16 sm:w-24 text-center shrink-0">Quantity</div>
-                    <div className="w-16 sm:w-24 text-right shrink-0">Total</div>
+                    <div className="w-16 sm:w-24 text-center shrink-0">
+                      Quantity
+                    </div>
+                    <div className="w-16 sm:w-24 text-right shrink-0">
+                      Total
+                    </div>
                   </div>
 
                   {/* Divider */}
-                  <div className="w-full h-px border-t border-purple/50"></div>
+                  <div className="border-purple/50 border-t w-full h-px"></div>
 
                   {/* Product Rows - Dynamic from cart */}
                   {cartItems.map((item, index) => (
                     <div key={item.id || index}>
-                      <div className="flex justify-between items-center min-h-12 py-2 text-sm sm:text-base leading-[19px] text-foreground">
-                        <div className="flex-1 min-w-0 pr-2 break-words">{item.product?.name || "Product"}</div>
-                        <div className="w-16 sm:w-24 text-center shrink-0">{item.quantity}</div>
+                      <div className="flex justify-between items-center py-2 min-h-12 text-foreground text-sm sm:text-base leading-[19px]">
+                        <div className="flex-1 pr-2 min-w-0 break-words">
+                          {item.product?.name || "Product"}
+                        </div>
+                        <div className="w-16 sm:w-24 text-center shrink-0">
+                          {item.quantity}
+                        </div>
                         <div className="w-16 sm:w-24 text-right shrink-0">
-                          ${((Number(item.product?.price) || 0) * item.quantity).toFixed(2)}
+                          $
+                          {(
+                            (Number(item.product?.price) || 0) * item.quantity
+                          ).toFixed(2)}
                         </div>
                       </div>
-                      <div className="w-full h-px border-t border-purple/50"></div>
+                      <div className="border-purple/50 border-t w-full h-px"></div>
                     </div>
                   ))}
 
                   {/* Empty cart fallback */}
                   {cartItems.length === 0 && (
                     <div className="flex justify-center items-center py-8">
-                      <p className="text-base leading-[19px] text-gray-2">No items in cart</p>
+                      <p className="text-gray-2 text-base leading-[19px]">
+                        No items in cart
+                      </p>
                     </div>
                   )}
 
                   {/* Subtotal */}
                   <div className="flex justify-between items-center h-12">
-                    <div className="text-base leading-[19px] font-bold uppercase text-foreground">Subtotal</div>
-                    <div className="text-base leading-[19px] font-bold text-foreground">${subtotal.toFixed(2)}</div>
+                    <div className="font-bold text-foreground text-base uppercase leading-[19px]">
+                      Subtotal
+                    </div>
+                    <div className="font-bold text-foreground text-base leading-[19px]">
+                      ${subtotal.toFixed(2)}
+                    </div>
                   </div>
 
                   {/* Divider */}
-                  <div className="w-full h-px border-t border-purple/50"></div>
+                  <div className="border-purple/50 border-t w-full h-px"></div>
                 </div>
               </>
             )}
@@ -383,10 +422,12 @@ export default function OrderReviewPage() {
             {/* Delivery Section */}
             <div className="flex flex-col gap-6">
               <div className="flex justify-between items-center">
-                <h3 className="text-xl leading-6 font-normal uppercase text-foreground">Delivery</h3>
+                <h3 className="font-normal text-foreground text-xl uppercase leading-6">
+                  Delivery
+                </h3>
                 <button
                   onClick={handleEditShipping}
-                  className="text-base leading-[19px] underline text-purple hover:opacity-80"
+                  className="hover:opacity-80 text-purple text-base underline leading-[19px]"
                 >
                   Edit
                 </button>
@@ -399,31 +440,39 @@ export default function OrderReviewPage() {
                   value={deliveryMethod.id.toString()}
                   checked={true}
                   onChange={() => {}}
-                  className="py-2 px-4 gap-4"
+                  className="gap-4 px-4 py-2"
                 >
                   <div className="flex items-center gap-2">
-                    <div className="text-base leading-[19px] font-bold text-purple">${shipping.toFixed(2)}</div>
+                    <div className="font-bold text-purple text-base leading-[19px]">
+                      ${shipping.toFixed(2)}
+                    </div>
                     <div className="flex flex-col gap-1">
-                      <div className="flex items-start gap-1 text-base leading-[19px] text-foreground">
-                        <span className="font-medium uppercase">{deliveryMethod.name}</span>
+                      <div className="flex items-start gap-1 text-foreground text-base leading-[19px]">
+                        <span className="font-medium uppercase">
+                          {deliveryMethod.name}
+                        </span>
                       </div>
-                      <div className="text-base leading-[19px] text-gray-2">{deliveryMethod.description}</div>
+                      <div className="text-gray-2 text-base leading-[19px]">
+                        {deliveryMethod.description}
+                      </div>
                     </div>
                   </div>
                 </RadioButton>
               ) : (
-                <div className="py-2 px-4 text-base leading-[19px] text-gray-2">No delivery method selected</div>
+                <div className="px-4 py-2 text-gray-2 text-base leading-[19px]">
+                  No delivery method selected
+                </div>
               )}
             </div>
 
             {/* Order Total */}
-            <div className="flex flex-col gap-2 text-base leading-[19px] font-bold">
+            <div className="flex flex-col gap-2 font-bold text-base leading-[19px]">
               <div className="flex justify-between items-center h-12 text-foreground">
                 <div className="uppercase">Shipping</div>
                 <div>${shipping.toFixed(2)}</div>
               </div>
 
-              <div className="w-full h-px border-t border-purple/50"></div>
+              <div className="border-purple/50 border-t w-full h-px"></div>
 
               <div className="flex justify-between items-center h-12 text-purple">
                 <div className="uppercase">Order Total</div>

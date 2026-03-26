@@ -1,4 +1,6 @@
+import { getCookie } from "@/utils/auth";
 import { fetchAPI } from "./api";
+import { getValidAccessToken } from "@/lib/tokenManager";
 
 // Guest cart management using localStorage
 const GUEST_CART_KEY = "guest_cart";
@@ -9,7 +11,7 @@ type GuestCartItem = {
   quantity: number;
 };
 
-const guestCartManager = {
+export const guestCartManager = {
   // Get guest cart from localStorage
   getGuestCart(): GuestCartItem[] {
     if (typeof window === "undefined") return [];
@@ -35,7 +37,9 @@ const guestCartManager = {
   // Add item to guest cart
   addToGuestCart(productId: number | string, quantity = 1) {
     const cart = this.getGuestCart();
-    const existingItemIndex = cart.findIndex((item) => item.product.id === productId);
+    const existingItemIndex = cart.findIndex(
+      (item) => item.product.id === productId,
+    );
 
     if (existingItemIndex >= 0) {
       // Update existing item quantity
@@ -99,21 +103,28 @@ export const cartServices = {
       const enrichedCart = await Promise.all(
         guestCart.map(async (item) => {
           try {
-            const product = await productServices.getProductById(item.product.id);
+            const product = await productServices.getProductById(
+              item.product.id,
+            );
             return {
               ...item,
               product: product,
             };
           } catch (error) {
-            console.error(`Error fetching product ${item.product.id}, removing from cart:`, error);
+            console.error(
+              `Error fetching product ${item.product.id}, removing from cart:`,
+              error,
+            );
             // Return null for items that no longer exist
             return null;
           }
-        })
+        }),
       );
 
       // Filter out null items (products that no longer exist)
-      const validCart = enrichedCart.filter((item): item is NonNullable<typeof item> => item !== null);
+      const validCart = enrichedCart.filter(
+        (item): item is NonNullable<typeof item> => item !== null,
+      );
 
       // Update localStorage if some items were removed
       if (validCart.length !== guestCart.length) {
@@ -135,6 +146,19 @@ export const cartServices = {
       console.error("Error fetching cart items:", error);
       return [];
     }
+  },
+
+  // Get cart id for checkout/order placement
+  async getCartId(): Promise<number> {
+    const accessToken = await getValidAccessToken();
+    const response: any = await fetchAPI("cart/", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return Number(response?.id ?? 0);
   },
 
   // Add item to cart
@@ -243,7 +267,9 @@ export const productServices = {
   // Get random products for recommendations
   async getRandomProducts(limit = 5) {
     try {
-      const response: any = await fetchAPI(`products/?limit=20&ordering=-created_at`);
+      const response: any = await fetchAPI(
+        `products/?limit=20&ordering=-created_at`,
+      );
       const products = response.results || response;
 
       // Randomly select 5 from the fetched products
@@ -262,14 +288,18 @@ export const productServices = {
 
       if (params.search) queryParams.append("search", params.search);
       if (params.brand) queryParams.append("brand", params.brand);
-      if (params.categories) queryParams.append("categories", params.categories);
+      if (params.categories)
+        queryParams.append("categories", params.categories);
       if (params.audiences) queryParams.append("audiences", params.audiencesWH);
       if (params.types) queryParams.append("types", params.types);
       if (params.ordering) queryParams.append("ordering", params.ordering);
       if (params.limit) queryParams.append("limit", params.limit);
-      if (params.offset !== undefined) queryParams.append("offset", params.offset);
+      if (params.offset !== undefined)
+        queryParams.append("offset", params.offset);
 
-      const response: any = await fetchAPI(`products/?${queryParams.toString()}`);
+      const response: any = await fetchAPI(
+        `products/?${queryParams.toString()}`,
+      );
       return response.results || response;
     } catch (error) {
       console.error("Error fetching products:", error);

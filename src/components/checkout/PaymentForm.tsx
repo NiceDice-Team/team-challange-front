@@ -125,7 +125,6 @@ export default function PaymentForm({
 
   return (
     <>
-      <div className="pb-10 text-xl uppercase">Payment</div>
       <form
         className="flex flex-col gap-4"
         onSubmit={handleSubmit(handleSubmitForm)}

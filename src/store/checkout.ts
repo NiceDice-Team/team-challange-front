@@ -53,7 +53,7 @@ export interface CheckoutFormData {
 }
 
 interface CheckoutState {
-  formData: CheckoutFormData;
+  checkoutUserData: CheckoutFormData;
 
   paymentMethod: DeliveryOption | null;
   paymentCard: PaymentCardData | null;
@@ -93,19 +93,19 @@ const initialFormData: CheckoutFormData = {
 };
 
 export const useCheckoutStore = create<CheckoutState>()((set, get) => ({
-  formData: initialFormData,
+  checkoutUserData: initialFormData,
   paymentMethod: null,
   paymentCard: null,
 
   updateFormData: (data) =>
     set((state) => ({
-      formData: { ...state.formData, ...data },
+      checkoutUserData: { ...state.checkoutUserData, ...data },
     })),
 
   setFormData: (data) => {
     if (data.copyBilling) {
       set({
-        formData: {
+        checkoutUserData: {
           ...data,
           billingCountry: data.shippingCountry,
           billingFirstName: data.shippingFirstName,
@@ -121,14 +121,14 @@ export const useCheckoutStore = create<CheckoutState>()((set, get) => ({
       });
     } else {
       set({
-        formData: data,
+        checkoutUserData: data,
       });
     }
   },
 
   resetFormData: () =>
     set({
-      formData: initialFormData,
+      checkoutUserData: initialFormData,
     }),
 
   setPaymentMethod: (method) =>
@@ -143,19 +143,19 @@ export const useCheckoutStore = create<CheckoutState>()((set, get) => ({
 
   copyShippingToBilling: () =>
     set((state) => {
-      const { formData } = state;
+      const { checkoutUserData } = state;
       return {
-        formData: {
-          ...formData,
-          billingCountry: formData.shippingCountry,
-          billingFirstName: formData.shippingFirstName,
-          billingLastName: formData.shippingLastName,
-          billingAddress: formData.shippingAddress,
-          billingApartment: formData.shippingApartment,
-          billingZipCode: formData.shippingZipCode,
-          billingCity: formData.shippingCity,
-          billingEmail: formData.shippingEmail,
-          billingPhone: formData.shippingPhone,
+        checkoutUserData: {
+          ...checkoutUserData,
+          billingCountry: checkoutUserData.shippingCountry,
+          billingFirstName: checkoutUserData.shippingFirstName,
+          billingLastName: checkoutUserData.shippingLastName,
+          billingAddress: checkoutUserData.shippingAddress,
+          billingApartment: checkoutUserData.shippingApartment,
+          billingZipCode: checkoutUserData.shippingZipCode,
+          billingCity: checkoutUserData.shippingCity,
+          billingEmail: checkoutUserData.shippingEmail,
+          billingPhone: checkoutUserData.shippingPhone,
           copyBilling: true,
         },
       };
@@ -163,14 +163,14 @@ export const useCheckoutStore = create<CheckoutState>()((set, get) => ({
 
   resetCheckout: () =>
     set({
-      formData: initialFormData,
+      checkoutUserData: initialFormData,
       paymentMethod: null,
       paymentCard: null,
     }),
 }));
 
 export const useCheckoutFormData = () =>
-  useCheckoutStore((state) => state.formData);
+  useCheckoutStore((state) => state.checkoutUserData);
 export const usePaymentMethod = () =>
   useCheckoutStore((state) => state.paymentMethod);
 export const usePaymentCard = () =>
@@ -188,5 +188,6 @@ export const useCheckoutActions = () =>
       setPaymentCard: state.setPaymentCard,
       copyShippingToBilling: state.copyShippingToBilling,
       resetCheckout: state.resetCheckout,
-    }))
+      // getFormData: state.getFormData,
+    })),
   );

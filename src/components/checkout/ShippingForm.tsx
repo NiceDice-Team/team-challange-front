@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -13,7 +13,11 @@ import { ChevronLeft } from "lucide-react";
 import { CustomButton } from "../shared/CustomButton";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { DeliveryOption, useCheckoutStore } from "@/store/checkout";
+import {
+  DeliveryOption,
+  useCheckoutFormData,
+  useCheckoutStore,
+} from "@/store/checkout";
 
 export type CombinedFormData = z.infer<typeof combinedFormSchema>;
 
@@ -25,60 +29,143 @@ export default function ShippingForm({
   children?: React.ReactNode;
 }) {
   const router = useRouter();
+  const checkoutUserData = useCheckoutFormData();
+
+  const shouldUseStoredDefaults = useMemo(
+    () =>
+      Boolean(
+        checkoutUserData.shippingCountry ||
+        checkoutUserData.shippingFirstName ||
+        checkoutUserData.shippingLastName ||
+        checkoutUserData.shippingAddress ||
+        checkoutUserData.shippingApartment ||
+        checkoutUserData.shippingZipCode ||
+        checkoutUserData.shippingCity ||
+        checkoutUserData.shippingEmail ||
+        checkoutUserData.shippingPhone,
+      ),
+    [checkoutUserData],
+  );
+
+  const defaultValues: CombinedFormData = useMemo(
+    () => ({
+      shippingCountry: shouldUseStoredDefaults
+        ? checkoutUserData.shippingCountry
+        : "",
+      shippingFirstName: shouldUseStoredDefaults
+        ? checkoutUserData.shippingFirstName
+        : "",
+      shippingLastName: shouldUseStoredDefaults
+        ? checkoutUserData.shippingLastName
+        : "",
+      shippingAddress: shouldUseStoredDefaults
+        ? checkoutUserData.shippingAddress
+        : "",
+      shippingApartment: shouldUseStoredDefaults
+        ? (checkoutUserData.shippingApartment ?? "")
+        : "",
+      shippingZipCode: shouldUseStoredDefaults
+        ? checkoutUserData.shippingZipCode
+        : "",
+      shippingCity: shouldUseStoredDefaults
+        ? checkoutUserData.shippingCity
+        : "",
+      shippingEmail: shouldUseStoredDefaults
+        ? checkoutUserData.shippingEmail
+        : "",
+      shippingPhone: shouldUseStoredDefaults
+        ? checkoutUserData.shippingPhone
+        : "",
+
+      billingCountry: shouldUseStoredDefaults
+        ? (checkoutUserData.billingCountry ?? "")
+        : "",
+      billingFirstName: shouldUseStoredDefaults
+        ? (checkoutUserData.billingFirstName ?? "")
+        : "",
+      billingLastName: shouldUseStoredDefaults
+        ? (checkoutUserData.billingLastName ?? "")
+        : "",
+      billingAddress: shouldUseStoredDefaults
+        ? (checkoutUserData.billingAddress ?? "")
+        : "",
+      billingApartment: shouldUseStoredDefaults
+        ? (checkoutUserData.billingApartment ?? "")
+        : "",
+      billingZipCode: shouldUseStoredDefaults
+        ? (checkoutUserData.billingZipCode ?? "")
+        : "",
+      billingCity: shouldUseStoredDefaults
+        ? (checkoutUserData.billingCity ?? "")
+        : "",
+      billingEmail: shouldUseStoredDefaults
+        ? (checkoutUserData.billingEmail ?? "")
+        : "",
+      billingPhone: shouldUseStoredDefaults
+        ? (checkoutUserData.billingPhone ?? "")
+        : "",
+
+      copyBilling: shouldUseStoredDefaults
+        ? checkoutUserData.copyBilling
+        : true,
+    }),
+    [checkoutUserData, shouldUseStoredDefaults],
+  );
   const {
     register,
     watch,
     setValue,
     handleSubmit,
-
     trigger,
     formState: { errors, isSubmitting },
   } = useForm<CombinedFormData>({
     resolver: zodResolver(combinedFormSchema),
     mode: "onSubmit",
     reValidateMode: "onChange",
-    defaultValues: {
-      shippingCountry: "",
-      shippingFirstName: "",
-      shippingLastName: "",
-      shippingAddress: "",
-      shippingApartment: "",
-      shippingZipCode: "",
-      shippingCity: "",
-      shippingEmail: "",
-      shippingPhone: "",
-      billingCountry: "",
-      billingFirstName: "",
-      billingLastName: "",
-      billingAddress: "",
-      billingApartment: "",
-      billingZipCode: "",
-      billingCity: "",
-      billingEmail: "",
-      billingPhone: "",
-      copyBilling: true,
-    },
+    defaultValues,
   });
   const { setFormData, setPaymentMethod } = useCheckoutStore();
 
   const copyBilling = watch("copyBilling");
+  const shippingCountry = watch("shippingCountry");
+  const shippingFirstName = watch("shippingFirstName");
+  const shippingLastName = watch("shippingLastName");
+  const shippingAddress = watch("shippingAddress");
+  const shippingApartment = watch("shippingApartment");
+  const shippingZipCode = watch("shippingZipCode");
+  const shippingCity = watch("shippingCity");
+  const shippingEmail = watch("shippingEmail");
+  const shippingPhone = watch("shippingPhone");
 
   useEffect(() => {
-    if (copyBilling === true) {
-      setValue("billingCountry", watch("shippingCountry"));
-      setValue("billingFirstName", watch("shippingFirstName"));
-      setValue("billingLastName", watch("shippingLastName"));
-      setValue("billingAddress", watch("shippingAddress"));
-      setValue("billingApartment", watch("shippingApartment"));
-      setValue("billingZipCode", watch("shippingZipCode"));
-      setValue("billingCity", watch("shippingCity"));
-      setValue("billingEmail", watch("shippingEmail"));
-      setValue("billingPhone", watch("shippingPhone"));
-    }
-  }, [copyBilling, setValue, watch]);
+    if (!copyBilling) return;
+
+    // Keep billing in sync with shipping while checkbox is enabled.
+    // This prevents submit-time validation errors caused by empty billing values.
+    setValue("billingCountry", shippingCountry, { shouldValidate: false });
+    setValue("billingFirstName", shippingFirstName, { shouldValidate: false });
+    setValue("billingLastName", shippingLastName, { shouldValidate: false });
+    setValue("billingAddress", shippingAddress, { shouldValidate: false });
+    setValue("billingApartment", shippingApartment, { shouldValidate: false });
+    setValue("billingZipCode", shippingZipCode, { shouldValidate: false });
+    setValue("billingCity", shippingCity, { shouldValidate: false });
+    setValue("billingEmail", shippingEmail, { shouldValidate: false });
+    setValue("billingPhone", shippingPhone, { shouldValidate: false });
+  }, [
+    copyBilling,
+    setValue,
+    shippingCountry,
+    shippingFirstName,
+    shippingLastName,
+    shippingAddress,
+    shippingApartment,
+    shippingZipCode,
+    shippingCity,
+    shippingEmail,
+    shippingPhone,
+  ]);
 
   const onSubmit = (data: CombinedFormData) => {
-    console.log("Form submitted successfully:", data);
     setFormData(data as any);
     setPaymentMethod(paymentMethod);
 
@@ -209,7 +296,22 @@ export default function ShippingForm({
           label="Use shipping address as billing address"
           id="copyBilling"
           checked={copyBilling}
-          onCheckedChange={(checked) => setValue("copyBilling", checked)}
+          onCheckedChange={(checked) => {
+            setValue("copyBilling", checked);
+            // When switching to "enter billing separately", reset billing fields
+            // so user input doesn't append to previously-copied values.
+            if (!checked) {
+              setValue("billingCountry", "", { shouldValidate: false });
+              setValue("billingFirstName", "", { shouldValidate: false });
+              setValue("billingLastName", "", { shouldValidate: false });
+              setValue("billingAddress", "", { shouldValidate: false });
+              setValue("billingApartment", "", { shouldValidate: false });
+              setValue("billingZipCode", "", { shouldValidate: false });
+              setValue("billingCity", "", { shouldValidate: false });
+              setValue("billingEmail", "", { shouldValidate: false });
+              setValue("billingPhone", "", { shouldValidate: false });
+            }
+          }}
         />
         {!copyBilling && (
           <div className="flex flex-col gap-4 mt-6">
@@ -328,7 +430,7 @@ export default function ShippingForm({
 
         {children}
 
-        <div className="flex flex-col-reverse sm:flex-row justify-between items-center gap-6 mt-12">
+        <div className="flex sm:flex-row flex-col-reverse justify-between items-center gap-6 mt-12">
           <Link
             href="/cart"
             className="flex items-center gap-2 hover:opacity-80 text-foreground text-base"
@@ -339,7 +441,7 @@ export default function ShippingForm({
           <CustomButton
             type="submit"
             disabled={isSubmitting}
-            className="bg-purple hover:bg-purple/90 border border-purple w-full sm:w-72 h-12 text-white uppercase font-normal text-base"
+            className="bg-purple hover:bg-purple/90 border border-purple w-full sm:w-72 h-12 font-normal text-white text-base uppercase"
           >
             Order review
           </CustomButton>
