@@ -76,8 +76,6 @@ export default function CartProductCard({ product = {} }) {
         quantity: 1,
         productData: product
       });
-      
-      console.log(`✅ "${product.name || 'Product'}" added to cart!`);
     } catch (error) {
       console.error('Failed to add to cart:', error);
       alert('❌ Failed to add product to cart. Please try again.');

@@ -127,9 +127,6 @@ export default function ProductCard({ product = {} as Product }: ProductCardProp
         quantity: 1,
         productData: product,
       });
-
-      // TODO: console.log убрать и добавить Toast (в будущем)
-      console.log(`"${product.name || "Product"}" added to cart!`);
     } catch (error) {
       console.error("Failed to add to cart:", error);
       alert("Failed to add product to cart. Please try again.");
