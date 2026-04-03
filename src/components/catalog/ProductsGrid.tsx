@@ -2,6 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { productServices } from "../../services/productServices";
+import { catalogServices } from "../../services/catalogServices";
 import ProductCard from "../catalog/ProductCard";
 import ProductCardSkeleton from "../catalog/ProductCardSkeleton";
 import { Pagination } from "../ui/pagination";
@@ -60,18 +61,11 @@ export default function ProductsGrid({ selectedFilters, setSelectedFilters }: Pr
       selectedFilters.search,
     ],
     queryFn: async ({ signal }) => {
-      const initialResponse = await productServices.getProductsWithFilters(
-        1,
-        1,
-        sortBy,
-        nonPriceFilters,
-        { signal },
-      );
+      const countResponse = await catalogServices.getProductCount(nonPriceFilters, { signal });
+      const totalCount = countResponse.count;
 
-      const totalCount = Math.max(initialResponse?.count || 0, initialResponse?.results?.length || 0);
-
-      if (totalCount <= 1) {
-        return initialResponse;
+      if (totalCount <= 0) {
+        return { results: [] };
       }
 
       return productServices.getProductsWithFilters(1, totalCount, sortBy, nonPriceFilters, { signal });
@@ -79,7 +73,7 @@ export default function ProductsGrid({ selectedFilters, setSelectedFilters }: Pr
     staleTime: 5 * 60 * 1000,
   });
 
-  const allProducts = productsData?.results || [];
+  const allProducts = Array.isArray(productsData?.results) ? productsData.results : [];
   const filteredProducts = allProducts.filter((product: Product) => {
     const price = parseFloat(String(product.price ?? 0));
     if (!Number.isFinite(price)) return false;

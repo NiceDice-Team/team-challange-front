@@ -141,11 +141,6 @@ export default function ProductPage({ params }: ProductPageProps) {
         quantity: quantity,
         productData: product,
       });
-
-      // TODO: console.log убрать и добавить Toast (в будущем)
-      console.log(`✅ Added ${quantity} of "${product.name}" to cart!`);
-      // Optional: Show success feedback or reset quantity to 1
-      // setQuantity(1);
     } catch (error) {
       console.error("Failed to add to cart:", error);
       alert("❌ Failed to add product to cart. Please try again.");

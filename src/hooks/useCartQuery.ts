@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { cartServices } from '@/services/cartServices';
+import { showCustomToast } from '@/components/shared/Toast';
 import type {
   CartItem,
   AddToCartVariables,
@@ -67,6 +68,14 @@ export function useAddToCart() {
         queryClient.setQueryData(CART_QUERY_KEY, context.previousCart);
       }
       console.error('Failed to add to cart:', error);
+    },
+
+    onSuccess: (_data, variables) => {
+      showCustomToast({
+        title: variables.productData?.name || 'Product',
+        description: 'Added to cart',
+        duration: 3000,
+      });
     },
 
     onSettled: () => {

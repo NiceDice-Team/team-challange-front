@@ -43,6 +43,7 @@ export const catalogServices = {
     const queryParams = new URLSearchParams();
     // Note: Don't use limit parameter - it incorrectly affects total_count in this API
 
+    if (params.categories?.length > 0) queryParams.append('categories', params.categories.join(','));
     if (params.category_id) queryParams.append('categories', params.category_id);
     if (params.search) queryParams.append('search', params.search);
     if (params.audiences?.length > 0) queryParams.append('audiences', params.audiences.join(','));
@@ -51,7 +52,8 @@ export const catalogServices = {
 
     const endpoint = queryParams.toString() ? `products/?${queryParams.toString()}` : 'products/';
     const response: any = await fetchAPI(endpoint, fetchOpts);
-    return { count: response.total_count ?? 0 };
+    return {
+      count: response.total_count ?? response.count ?? response.results?.length ?? 0,
+    };
   },
 };
-
