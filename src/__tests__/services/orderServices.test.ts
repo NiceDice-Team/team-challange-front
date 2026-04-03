@@ -130,4 +130,60 @@ describe('Order Services', () => {
       expect(mockFetchAPI).toHaveBeenCalledWith('orders/?user_id=user456', expect.any(Object));
     });
   });
+
+  describe('getDeliveryOptions', () => {
+    test('fetches and normalizes delivery options successfully', async () => {
+      mockFetchAPI.mockResolvedValue({
+        results: [
+          {
+            id: 1,
+            name: 'DHL',
+            price: '35.00',
+            description: '1-3 business days',
+            estimated_days: 3,
+          },
+        ],
+      });
+
+      const result = await orderServices.getDeliveryOptions();
+
+      expect(mockFetchAPI).toHaveBeenCalledWith('orders/delivery-options/', {
+        method: 'GET',
+        headers: {
+          Authorization: 'Bearer mock-access-token',
+        },
+      });
+      expect(result).toEqual([
+        {
+          id: 1,
+          name: 'DHL',
+          price: 35,
+          description: '1-3 business days (3 days)',
+        },
+      ]);
+    });
+
+    test('handles array responses without results wrapper', async () => {
+      mockFetchAPI.mockResolvedValue([
+        {
+          id: 2,
+          name: 'Nova poshta',
+          price: '20.00',
+          description: '3-5 business days',
+          estimated_days: 4,
+        },
+      ]);
+
+      const result = await orderServices.getDeliveryOptions();
+
+      expect(result).toEqual([
+        {
+          id: 2,
+          name: 'Nova poshta',
+          price: 20,
+          description: '3-5 business days (4 days)',
+        },
+      ]);
+    });
+  });
 });

@@ -9,7 +9,7 @@ export interface PaymentMethod {
 }
 
 export const orderServices = {
-  async getOrders(userId) {
+  async getOrders(userId?: string | null) {
     const { accessToken } = getTokens() || {};
     
     if (!userId) {
