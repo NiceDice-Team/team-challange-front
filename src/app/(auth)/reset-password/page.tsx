@@ -20,7 +20,7 @@ function ResetPasswordForm() {
   const searchParams = useSearchParams();
   const [token, setToken] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
-
+  console.log(userId, token);
   const {
     register,
     handleSubmit,
@@ -38,18 +38,8 @@ function ResetPasswordForm() {
     const tokenParam = searchParams.get("token");
     const uidParam = searchParams.get("uid");
 
-    let decodedUid: string | null = null;
-
-    if (uidParam) {
-      try {
-        decodedUid = atob(uidParam);
-      } catch (err) {
-        console.warn("Invalid Base64 uid:", uidParam);
-      }
-    }
-
     setToken(tokenParam);
-    setUserId(decodedUid);
+    setUserId(uidParam);
   }, [searchParams]);
 
   const onSubmit = async (data: ResetPasswordFormData) => {
@@ -58,9 +48,8 @@ function ResetPasswordForm() {
     try {
       const response = await fetchAPI("users/reset-password/", {
         method: "POST",
-        body: { userId, token, password: data.password },
+        body: { uid: userId, access_token: token, new_password: data.password },
       });
-
       if (response) {
         showCustomToast({
           type: "success",
