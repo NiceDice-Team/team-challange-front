@@ -134,6 +134,20 @@ export const CloseIcon: React.FC<CloseIconProps> = ({ className = "w-4 h-4", str
   </svg>
 );
 
+export const SearchOutlineIcon: React.FC<IconProps> = ({ className = "w-6 h-6" }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <g transform="translate(3, 3)">
+      <path
+        d="M13.6648 13.67L16.75 16.75M15.7754 8.25C15.7754 10.2391 14.9838 12.1468 13.5749 13.5533C12.166 14.9598 10.2552 15.75 8.26268 15.75C6.27019 15.75 4.35931 14.9598 2.95041 13.5533C1.54151 12.1468 0.75 10.2391 0.75 8.25C0.75 6.26088 1.54151 4.35322 2.95041 2.9467C4.35931 1.54018 6.27019 0.75 8.26268 0.75C10.2552 0.75 12.166 1.54018 13.5749 2.9467C14.9838 4.35322 15.7754 6.26088 15.7754 8.25Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </g>
+  </svg>
+);
+
 export const TrashIcon: React.FC<IconProps> = ({ className = "w-4 h-4" }) => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className={className}>
     <path

@@ -13,6 +13,7 @@ interface SearchBarProps {
   className?: string;
   placeholder?: string;
   variant?: "default" | "catalog-mobile";
+  autoFocus?: boolean;
 }
 
 interface SearchSuggestion {
@@ -24,6 +25,7 @@ export default function SearchBar({
   className = "",
   placeholder = "Search games...",
   variant = "default",
+  autoFocus = false,
 }: SearchBarProps) {
   const router = useRouter();
   const [query, setQuery] = useState("");
@@ -40,6 +42,14 @@ export default function SearchBar({
   useEffect(() => {
     setHistory(getSearchHistory());
   }, []);
+
+  useEffect(() => {
+    if (!autoFocus) return;
+
+    inputRef.current?.focus();
+    setIsOpen(true);
+    setHistory(getSearchHistory());
+  }, [autoFocus]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
