@@ -8,6 +8,14 @@ import { FilterCheckmarkIcon, ChevronDownIcon, CloseIcon } from "../../svgs/icon
 import FilterSideBarSkeleton from "./FilterSideBarSkeleton";
 import type { SelectedFilters, FilterItem, Category } from "@/types/catalog";
 
+const FEATURED_CATEGORY_CONFIG = [
+  { label: "New arrivals", names: ["new arrivals", "new arrival"] },
+  { label: "Sale", names: ["sale"] },
+  { label: "Coming soon", names: ["coming soon"] },
+];
+
+const normalizeCategoryName = (name: string) => name.trim().toLowerCase().replace(/\s+/g, " ");
+
 // Component props
 interface FilterSideBarProps {
   selectedFilters: SelectedFilters;
@@ -35,13 +43,20 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
     retry: 1,
   });
 
+  const featuredCategories = FEATURED_CATEGORY_CONFIG.flatMap(({ label, names }) => {
+    const category = categories.find((item: Category) => names.includes(normalizeCategoryName(item.name)));
+    return category ? [{ ...category, name: label }] : [];
+  });
+
+  const featuredCategoryIds = featuredCategories.map((category: Category) => category.id);
+
   // Fetch product counts for all categories (includes search filter)
   const { data: categoryCounts = {} as Record<number, number>, isLoading: countsLoading } = useQuery({
-    queryKey: ["category-counts", categories.map((cat: Category) => cat.id), selectedFilters.search],
+    queryKey: ["category-counts", featuredCategoryIds, selectedFilters.search],
     queryFn: async ({ signal }) => {
-      if (categories.length === 0) return {};
+      if (featuredCategories.length === 0) return {};
 
-      const countPromises = categories.map((category: Category) =>
+      const countPromises = featuredCategories.map((category: Category) =>
         catalogServices
           .getProductCount(
             {
@@ -63,7 +78,7 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
         {} as Record<number, number>,
       );
     },
-    enabled: categories.length > 0,
+    enabled: featuredCategories.length > 0,
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000,
     retry: 1,
@@ -171,6 +186,19 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
     selectedFilters,
     setSelectedFilters,
   ]);
+
+  useEffect(() => {
+    if (categoriesLoading) return;
+
+    const nextCategoryIds = selectedFilters.categories.filter((id) => featuredCategoryIds.includes(id));
+
+    if (nextCategoryIds.length !== selectedFilters.categories.length) {
+      setSelectedFilters((previousFilters) => ({
+        ...previousFilters,
+        categories: previousFilters.categories.filter((id) => featuredCategoryIds.includes(id)),
+      }));
+    }
+  }, [categoriesLoading, featuredCategoryIds, selectedFilters.categories, setSelectedFilters]);
 
   // Toggle filter value with scroll position preservation
   const toggleFilter = (filterType: string, value: number | string, event?: React.SyntheticEvent): void => {
@@ -361,7 +389,7 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
             {/* Active Filters */}
             <div className="flex flex-wrap gap-2" style={{ overflowAnchor: "none" }}>
               {selectedFilters.categories.map((id: number) => {
-                const category = categories.find((cat: Category) => cat.id === id);
+                const category = featuredCategories.find((cat: Category) => cat.id === id);
                 return category && <FilterTag key={id} name={category.name} filterType="categories" value={id} />;
               })}
               {selectedFilters.gameTypes.map((name) => (
@@ -432,7 +460,7 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
         )}
 
         {/* Filter Sections as Cards */}
-        <FilterSection title="Categories" items={categories} filterType="categories" />
+        <FilterSection title="FEATURED" items={featuredCategories} filterType="categories" />
 
         <FilterSection title="Game Types" items={gameTypes} filterType="gameTypes" />
 
