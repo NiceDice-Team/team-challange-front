@@ -9,6 +9,8 @@ function CartDropdownItem({ item, updateQuantity, removeItem }) {
   const product = item.product || {};
   const price = parseFloat(product.price || 0);
   const imageUrl = product.images?.[0]?.url_sm || "/FirstPlaceholder.svg";
+  const stock = Number(product.stock);
+  const isAtStockLimit = Number.isFinite(stock) && item.quantity >= stock;
 
   const handleDecreaseQuantity = useCallback(() => {
     updateQuantity(item.id, item.quantity - 1);
@@ -50,25 +52,29 @@ function CartDropdownItem({ item, updateQuantity, removeItem }) {
         <div className="flex flex-col items-end gap-1">
           <div className="flex items-center border border-[#494791] bg-white">
             <button
+              type="button"
               onClick={handleDecreaseQuantity}
-              className="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center text-[#717171] hover:text-black"
+              className="flex h-6 w-6 items-center justify-center text-[#717171] transition-colors duration-150 hover:bg-[var(--color-light-purple-3)] hover:text-black active:bg-[var(--color-light-purple)] sm:h-8 sm:w-8"
               aria-label={`Decrease quantity of ${product.name || 'product'}`}
             >
               <span className="text-sm sm:text-base">–</span>
             </button>
             <span className="px-2 sm:px-4 text-sm sm:text-base text-black">{item.quantity}</span>
             <button
+              type="button"
               onClick={handleIncreaseQuantity}
-              className="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center text-black hover:text-[#494791]"
+              className="flex h-6 w-6 items-center justify-center text-black transition-colors duration-150 hover:bg-[var(--color-light-purple-3)] hover:text-[#494791] active:bg-[var(--color-light-purple)] disabled:cursor-not-allowed disabled:bg-transparent disabled:text-[#B3B3B3] sm:h-8 sm:w-8"
               aria-label={`Increase quantity of ${product.name || 'product'}`}
+              disabled={isAtStockLimit}
             >
               <span className="text-sm sm:text-base">+</span>
             </button>
           </div>
 
           <button
+            type="button"
             onClick={handleRemoveItem}
-            className="w-4 h-4 flex items-center justify-center text-[#C41313] hover:text-red-700"
+            className="flex h-5 w-5 items-center justify-center rounded-none text-[#C41313] transition-colors duration-150 hover:bg-[var(--color-error-border)] hover:text-[var(--color-red-price)] active:bg-[#ffd6db] active:text-[#9f1010]"
             title="Remove item"
             aria-label={`Remove ${product.name || 'product'} from cart`}
           >

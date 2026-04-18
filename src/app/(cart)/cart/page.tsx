@@ -45,9 +45,10 @@ export default function CartPage() {
   const removeItem = useCallback(
     async (cartItemId) => {
       try {
+        setError(null);
         await removeItemMutation.mutateAsync(cartItemId);
       } catch (err) {
-        setError("Failed to remove item");
+        setError(err instanceof Error ? err.message : "Failed to remove item");
       }
     },
     [removeItemMutation]
@@ -56,13 +57,14 @@ export default function CartPage() {
   const updateQuantity = useCallback(
     async (cartItemId, newQuantity) => {
       try {
+        setError(null);
         if (newQuantity <= 0) {
           await removeItemMutation.mutateAsync(cartItemId);
         } else {
           await updateQuantityMutation.mutateAsync({ cartItemId, quantity: newQuantity });
         }
       } catch (err) {
-        setError("Failed to update quantity");
+        setError(err instanceof Error ? err.message : "Failed to update quantity");
       }
     },
     [updateQuantityMutation, removeItemMutation]

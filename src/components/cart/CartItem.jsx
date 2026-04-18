@@ -10,6 +10,8 @@ function CartItem({ item, index, updateQuantity, removeItem }) {
   const price = parseFloat(product.price || 0);
   const imageUrl = product.images?.[0]?.url_sm || "/FirstPlaceholder.svg";
   const brandName = product.brand?.name || "Unknown Brand";
+  const stock = Number(product.stock);
+  const isAtStockLimit = Number.isFinite(stock) && item.quantity >= stock;
 
   const handleDecreaseQuantity = useCallback(() => {
     updateQuantity(item.id, item.quantity - 1);
@@ -66,7 +68,7 @@ function CartItem({ item, index, updateQuantity, removeItem }) {
                 type="button"
                 onClick={handleDecreaseQuantity}
                 aria-label={`Decrease quantity of ${product.name || 'product'}`}
-                className="w-5 h-5 md:w-6 md:h-6 flex items-center justify-center text-[#B3B3B3] hover:text-black"
+                className="flex h-5 w-5 items-center justify-center text-[#B3B3B3] transition-colors duration-150 hover:bg-[var(--color-light-purple-3)] hover:text-black active:bg-[var(--color-light-purple)] md:h-6 md:w-6"
               >
                 <MinusIcon className="md:w-4 md:h-4" />
               </button>
@@ -77,7 +79,8 @@ function CartItem({ item, index, updateQuantity, removeItem }) {
                 type="button"
                 onClick={handleIncreaseQuantity}
                 aria-label={`Increase quantity of ${product.name || 'product'}`}
-                className="w-5 h-5 md:w-6 md:h-6 flex items-center justify-center text-black hover:text-[#494791]"
+                className="flex h-5 w-5 items-center justify-center text-black transition-colors duration-150 hover:bg-[var(--color-light-purple-3)] hover:text-[#494791] active:bg-[var(--color-light-purple)] disabled:cursor-not-allowed disabled:bg-transparent disabled:text-[#B3B3B3] md:h-6 md:w-6"
+                disabled={isAtStockLimit}
               >
                 <PlusIcon className="md:w-4 md:h-4" />
               </button>
@@ -87,7 +90,7 @@ function CartItem({ item, index, updateQuantity, removeItem }) {
               type="button"
               onClick={handleRemoveItem}
               aria-label={`Remove ${product.name || 'product'} from cart`}
-              className="flex items-center gap-1 text-xs md:text-sm text-[#717171] hover:text-black"
+              className="flex items-center gap-1 text-xs text-[#717171] transition-colors duration-150 hover:text-black active:text-[#494791] md:text-sm"
             >
               <CloseIcon className="md:w-3.5 md:h-3.5" />
               Remove
@@ -108,7 +111,7 @@ function CartItem({ item, index, updateQuantity, removeItem }) {
                 type="button"
                 onClick={handleDecreaseQuantity}
                 aria-label={`Decrease quantity of ${product.name || 'product'}`}
-                className="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center text-[#B3B3B3] hover:text-black"
+                className="flex h-6 w-6 items-center justify-center text-[#B3B3B3] transition-colors duration-150 hover:bg-[var(--color-light-purple-3)] hover:text-black active:bg-[var(--color-light-purple)] sm:h-8 sm:w-8"
               >
                 <MinusIcon className="sm:w-4 sm:h-4" />
               </button>
@@ -119,7 +122,8 @@ function CartItem({ item, index, updateQuantity, removeItem }) {
                 type="button"
                 onClick={handleIncreaseQuantity}
                 aria-label={`Increase quantity of ${product.name || 'product'}`}
-                className="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center text-black hover:text-[#494791]"
+                className="flex h-6 w-6 items-center justify-center text-black transition-colors duration-150 hover:bg-[var(--color-light-purple-3)] hover:text-[#494791] active:bg-[var(--color-light-purple)] disabled:cursor-not-allowed disabled:bg-transparent disabled:text-[#B3B3B3] sm:h-8 sm:w-8"
+                disabled={isAtStockLimit}
               >
                 <PlusIcon className="sm:w-4 sm:h-4" />
               </button>
@@ -129,7 +133,7 @@ function CartItem({ item, index, updateQuantity, removeItem }) {
               type="button"
               onClick={handleRemoveItem}
               aria-label={`Remove ${product.name || 'product'} from cart`}
-              className="flex items-center gap-1 text-xs sm:text-sm text-[#717171] hover:text-black"
+              className="flex items-center gap-1 text-xs text-[#717171] transition-colors duration-150 hover:text-black active:text-[#494791] sm:text-sm"
             >
               <CloseIcon className="sm:w-3.5 sm:h-3.5" />
               Remove

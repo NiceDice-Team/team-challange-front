@@ -42,6 +42,7 @@ export default function CartProductCard({ product = {} }) {
 
   // Stock status
   const stock = parseInt(product.stock, 10) || 0;
+  const isOutOfStock = stock <= 0;
   let stockCircle;
   let stockMessage;
   let stockStyle;
@@ -76,9 +77,8 @@ export default function CartProductCard({ product = {} }) {
         quantity: 1,
         productData: product
       });
-    } catch (error) {
-      console.error('Failed to add to cart:', error);
-      alert('❌ Failed to add product to cart. Please try again.');
+    } catch {
+      // Error feedback is handled in the cart mutation hook.
     }
   };
 
@@ -164,14 +164,14 @@ export default function CartProductCard({ product = {} }) {
         {/* Add to Cart Button - Always at bottom with fixed height */}
         <button 
           className={`w-full py-3 px-8 border border-[#494791] text-base font-medium uppercase transition-colors duration-200 h-[49px] flex items-center justify-center ${
-            addToCartMutation.isPending
+            addToCartMutation.isPending || isOutOfStock
               ? 'bg-[#494791]/70 text-white cursor-not-allowed' 
               : 'text-[#494791] hover:bg-[#494791] hover:text-white'
           }`}
           onClick={handleAddToCart}
-          disabled={addToCartMutation.isPending}
+          disabled={addToCartMutation.isPending || isOutOfStock}
         >
-          {addToCartMutation.isPending ? 'ADDING...' : 'ADD TO CART'}
+          {isOutOfStock ? 'SOLD OUT' : addToCartMutation.isPending ? 'ADDING...' : 'ADD TO CART'}
         </button>
       </div>
     </div>
