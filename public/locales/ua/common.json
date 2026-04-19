@@ -1,9 +1,600 @@
 {
   "appName": "NiceDice",
-  "login": {
-    "title": "Вход",
-    "email": "Эл. почта",
+  "common": {
+    "email": "Е-пошта",
+    "enterEmailAddress": "Введіть електронну адресу",
     "password": "Пароль",
-    "submit": "Войти"
+    "enterPassword": "Введіть пароль",
+    "submit": "Надіслати",
+    "or": "або"
+  },
+  "login": {
+    "title": "Вхід",
+    "submit": "Увійти",
+    "welcomeBack": "З поверненням!",
+    "logInHere": "Увійти тут",
+    "createAccount": "Створити обліковий запис",
+    "successPasswordChanged": "Готово! Ваш пароль змінено.",
+    "youCanNowLogInAndContinueYourAdventure": "Тепер ви можете увійти й продовжити пригоду",
+    "dontForgetToLogIn": "Не забудьте увійти!",
+    "unlockExclusiveRewardsAndTrackYourOrdersWithEase": "Отримуйте ексклюзивні нагороди й легко відстежуйте замовлення.",
+    "forgotPassword": "Забули пароль?",
+    "continueAsGuest": "Продовжити як гість",
+    "successLoggedIn": "Готово! Ви увійшли.",
+    "errorLoggedIn": "Помилка! Ви не увійшли.",
+    "youCanNowContinueYourAdventure": "Тепер ви можете продовжити пригоду"
+  },
+  "register": {
+    "title": "Створити обліковий запис",
+    "subtitleLine1": "Приєднуйтесь до нашої спільноти любителів настільних ігор! 🎲",
+    "subtitleLine2": "Заповніть поля нижче, щоб почати",
+    "labels": {
+      "firstName": "Ім’я",
+      "lastName": "Прізвище",
+      "email": "Е-пошта",
+      "password": "Пароль",
+      "confirmPassword": "Підтвердіть пароль"
+    },
+    "placeholders": {
+      "firstName": "Введіть ім’я",
+      "lastName": "Введіть прізвище",
+      "email": "Введіть електронну адресу",
+      "password": "Введіть пароль",
+      "confirmPassword": "Введіть пароль"
+    },
+    "privacy": {
+      "agreeToThe": "Я погоджуюсь із",
+      "privacyPolicy": "Політикою конфіденційності",
+      "and": "та",
+      "termsOfService": "Умовами використання"
+    },
+    "subscribe": "Підписатися на новини, оновлення та спецпропозиції",
+    "submit": "ЗАРЕЄСТРУВАТИСЯ",
+    "alreadyHaveAccount": "Вже є обліковий запис?",
+    "logInHere": "Увійти тут",
+    "success": {
+      "title": "Дякуємо за реєстрацію!",
+      "toastTitle": "Готово! Ви зареєстровані.",
+      "toastDescription": "На вашу пошту надіслано лист із підтвердженням.",
+      "descriptionLine1": "На вашу пошту надіслано лист із підтвердженням.",
+      "descriptionLine2": "Натисніть посилання в листі, щоб активувати обліковий запис.",
+      "descriptionLine3": "Перевірте пошту протягом 5–10 хвилин. Якщо листа немає, перевірте спам і надішліть ще раз.",
+      "browseGames": "Переглянути ігри"
+    }
+  },
+  "forgot-pass": {
+    "title": "🔒Забули пароль?",
+    "descriptionLine1": "🧩 Без проблем! Просто введіть свою електронну адресу нижче, і",
+    "descriptionLine2": "ми надішлемо посилання для скидання пароля",
+    "placeholderEmail": "Введіть електронну адресу",
+    "labelEmail": "Е-пошта",
+    "submit": "НАДІСЛАТИ",
+    "submitting": "НАДСИЛАЄМО...",
+    "errorSendingResetEmail": "Не вдалося надіслати лист. Спробуйте ще раз.",
+    "dontNeedHelpAnymore": "Більше не потрібна допомога?",
+    "signIn": "Увійти",
+    "success": {
+      "title": "✉️ Перевірте пошту",
+      "toastTitle": "Готово!",
+      "toastDescription": "Посилання для скидання пароля надіслано на вашу пошту.",
+      "descriptionLine1": "Якщо введена адреса прив’язана до облікового запису, ви незабаром отримаєте посилання для скидання пароля",
+      "descriptionLine2": "Перевірте пошту протягом 5–10 хвилин. Якщо листа немає, перевірте спам і надішліть ще раз.",
+      "didntReceiveEmail": "Не отримали листа?",
+      "resend": "Надіслати ще раз",
+      "continueShopping": "Продовжити покупки"
+    }
+  },
+  "resetPass": {
+    "title": "🔐 Скидання пароля",
+    "descriptionLine1": "Усе майже готово!",
+    "descriptionLine2": "Введіть новий пароль, щоб продовжити",
+    "labelPassword": "Пароль",
+    "labelConfirmPassword": "Підтвердження пароля",
+    "placeholderPassword": "Введіть пароль",
+    "placeholderConfirmPassword": "Введіть пароль",
+    "reset": "СКИНУТИ",
+    "resetting": "СКИДАЄМО...",
+    "dontNeedHelpAnymore": "Більше не потрібна допомога?",
+    "signIn": "Увійти",
+    "toastTitle": "Готово! Ваш пароль змінено.",
+    "toastDescription": "Можете продовжувати пригоду",
+    "errorResettingPassword": "Не вдалося скинути пароль. Спробуйте ще раз."
+  },
+  "layout": {
+    "feature": {
+      "shipping": {
+        "title": "Швидка доставка за 24 години",
+        "description": "Отримуйте ігри швидко й безпечно",
+        "iconAlt": "Іконка доставки"
+      },
+      "securePayment": {
+        "title": "Безпечна оплата",
+        "description": "Купуйте впевнено з перевіреними способами оплати",
+        "iconAlt": "Іконка замка"
+      },
+      "returns": {
+        "title": "Легкий повернення та обмін",
+        "description": "Зручний процес покупок",
+        "iconAlt": "Іконка повернення"
+      }
+    },
+    "featureBottom": {
+      "wideSelection": {
+        "title": "Широкий вибір",
+        "description": "Від вечірніх ігор до глибокої стратегії — знайдеться для кожного",
+        "iconAlt": "Іконка пазла"
+      },
+      "highQuality": {
+        "title": "Якісні ігри",
+        "description": "Закуповуємо напряму в перевірених виробників",
+        "iconAlt": "Іконка нагороди"
+      },
+      "support": {
+        "title": "Підтримка",
+        "description": "Наша команда допоможе підібрати ідеальну гру",
+        "iconAlt": "Іконка чату"
+      }
+    },
+    "partners": {
+      "title": "Наші надійні бренди та партнери",
+      "brands": {
+        "cmon": "CMON",
+        "ravensburger": "Ravensburger",
+        "mattel": "Mattel",
+        "hasbro": "Hasbro",
+        "kosmos": "Kosmos",
+        "luckyDuck": "LuckyDuck",
+        "ff": "FF",
+        "asmodee": "Asmodee"
+      }
+    },
+    "subscribe": {
+      "title": "Будьте в курсі та отримуйте ексклюзив!",
+      "description": "Підпишіться на розсилку й дізнавайтеся першими про новинки, акції та новини світу ігор",
+      "placeholderEmail": "Е-пошта",
+      "button": "Підписатися",
+      "consentLabel": "Я погоджуюсь отримувати маркетингові листи та спецпропозиції"
+    },
+    "blog": {
+      "title": "Читайте наші блоги",
+      "viewAll": "усі статті",
+      "metaLine": "{{date}} · {{count}} хв читання",
+      "readFullArticle": "Читати повністю",
+      "posts": {
+        "post1": {
+          "date": "15 травня 2023",
+          "name": "Catan — найкращий досвід настільної гри?",
+          "category": "Огляд гри"
+        },
+        "post2": {
+          "date": "2 червня 2023",
+          "name": "D&D: як почати грати",
+          "category": "Гайд"
+        },
+        "post3": {
+          "date": "20 червня 2023",
+          "name": "Warhammer 40k — повний гід",
+          "category": "Огляд гри"
+        }
+      }
+    },
+    "footer": {
+      "followUs": "ми в соцмережах",
+      "sections": {
+        "products": {
+          "title": "товари",
+          "links": {
+            "newArrivals": "Новинки",
+            "bestsellers": "Хіти продажу",
+            "boardGames": "Настільні ігри",
+            "comingSoon": "Незабаром",
+            "sale": "Знижки"
+          }
+        },
+        "clients": {
+          "title": "клієнтам",
+          "links": {
+            "blog": "Блог",
+            "reviews": "Відгуки",
+            "shipping": "Доставка",
+            "returns": "Повернення"
+          }
+        },
+        "company": {
+          "title": "компанія",
+          "links": {
+            "about": "Про нас",
+            "contactUs": "Зв’язатися",
+            "termsOfService": "Умови використання",
+            "privacyPolicy": "Політика конфіденційності"
+          }
+        }
+      }
+    }
+  },
+  "cart": {
+    "breadcrumb": {
+      "home": "Головна",
+      "cart": "Кошик"
+    },
+    "loading": "Завантаження кошика...",
+    "title": "ваш кошик ({{count}})",
+    "notReadyToCheckout": "Ще не готові оформити?",
+    "continueShopping": "Продовжити покупки",
+    "table": {
+      "product": "Товар",
+      "price": "Ціна",
+      "quantity": "Кількість",
+      "total": "Разом"
+    },
+    "empty": {
+      "message": "Ваш кошик порожній",
+      "startShopping": "Почати покупки"
+    },
+    "shippingCalculatedAtCheckout": "доставку розрахують при оформленні",
+    "subtotal": "Підсумок:",
+    "freeShipping": {
+      "away": "Залишилось {{amount}} до БЕЗКОШТОВНОЇ доставки",
+      "unlocked": "🎉 БЕЗКОШТОВНА ДОСТАВКА"
+    },
+    "specialNotes": {
+      "title": "Особливі побажання до замовлення",
+      "placeholder": "Додайте коментар або інструкції..."
+    },
+    "coupon": {
+      "placeholder": "Промокод",
+      "apply": "Застосувати"
+    },
+    "checkout": "Оформити замовлення",
+    "youMayAlsoLike": "вам також може сподобатися",
+    "errors": {
+      "failedToRemoveItem": "Не вдалося видалити товар",
+      "failedToUpdateQuantity": "Не вдалося оновити кількість"
+    },
+    "modal": {
+      "titlePrefix": "🔓Увійдіть тут або",
+      "createAccount": "створіть обліковий запис",
+      "subtitleLine1": "🎯 Не забудьте увійти!",
+      "subtitleLine2": "Отримуйте нагороди й відстежуйте замовлення без зайвих зусиль.",
+      "emailLabel": "Е-пошта",
+      "emailPlaceholder": "Введіть е-пошту",
+      "passwordLabel": "Пароль",
+      "passwordPlaceholder": "Введіть пароль",
+      "signIn": "УВІЙТИ",
+      "continueAsGuest": "Продовжити як гість",
+      "validation": {
+        "emailRequired": "Вкажіть е-пошту",
+        "invalidEmail": "Некоректна адреса",
+        "passwordRequired": "Вкажіть пароль",
+        "passwordMin": "Пароль має бути щонайменше 8 символів",
+        "passwordMax": "Пароль має бути не більше 128 символів"
+      },
+      "errors": {
+        "signinGeneric": "Під час входу сталася помилка. Спробуйте ще раз.",
+        "invalidCredentials": "Невірна адреса або пароль.",
+        "noTokenReceived": "Токен не отримано"
+      }
+    },
+    "productCard": {
+      "starFilledAlt": "заповнена зірка",
+      "starEmptyAlt": "порожня зірка",
+      "soldOutAlt": "немає в наявності",
+      "veryLowStockAlt": "дуже мало на складі",
+      "mediumStockAlt": "мало на складі",
+      "highStockAlt": "є в наявності",
+      "soldOutMessage": "Немає в наявності",
+      "veryLowStock_one": "Дуже мало на складі ({{count}} од.)",
+      "veryLowStock_other": "Дуже мало на складі ({{count}} од.)",
+      "inStock": "В наявності",
+      "unknownBrand": "Невідомий бренд",
+      "productAlt": "Товар",
+      "productNameFallback": "Назва товару",
+      "addToCart": "ДО КОШИКА",
+      "adding": "ДОДАЄМО...",
+      "soldOutButton": "НЕМАЄ В НАЯВНОСТІ"
+    }
+  },
+  "checkoutOrder": {
+    "breadcrumb": {
+      "home": "Головна",
+      "boardGames": "Настільні ігри",
+      "cart": "Кошик",
+      "checkout": "Оформлення"
+    },
+    "pageTitle": "Оформлення замовлення",
+    "yourOrderSummary": "Підсумок замовлення",
+    "orderTotal": "Разом до сплати",
+    "deliveryOptions": {
+      "title": "Оберіть спосіб доставки",
+      "loading": "Завантаження...",
+      "loadError": "Не вдалося завантажити варіанти доставки",
+      "noOptions": "Немає доступних варіантів доставки",
+      "customsNotice": "Зверніть увагу: міжнародні відправлення можуть обкладатися митом і податками згідно з місцевим законодавством. Ці витрати повністю на покупці й не включені в ціну товару.",
+      "shippingLabel": "Доставка",
+      "infoIconAlt": "інформація"
+    },
+    "shippingForm": {
+      "sectionShipping": "Доставка",
+      "sectionBilling": "Платіжна адреса",
+      "copyBilling": "Використати адресу доставки як платіжну",
+      "returnToCart": "Повернутися до кошика",
+      "orderReview": "Перегляд замовлення",
+      "labels": {
+        "countryRegion": "Країна / регіон",
+        "firstName": "Ім’я",
+        "lastName": "Прізвище",
+        "address": "Адреса",
+        "apartment": "Квартира, офіс тощо",
+        "zipCode": "Поштовий індекс",
+        "city": "Місто",
+        "email": "Е-пошта",
+        "phoneNumber": "Телефон"
+      },
+      "placeholders": {
+        "firstName": "Введіть ім’я",
+        "lastName": "Введіть прізвище",
+        "address": "Введіть адресу",
+        "apartment": "Квартира, офіс тощо",
+        "zipCode": "Введіть індекс",
+        "city": "Введіть місто",
+        "email": "Введіть е-пошту"
+      },
+      "validation": {
+        "chooseCountry": "Оберіть країну",
+        "firstNameMin": "Ім’я має бути щонайменше 2 символи",
+        "firstNameMax": "Ім’я має бути не більше 50 символів",
+        "firstNameRegex": "Дозволені лише літери, пробіли та апостроф",
+        "lastNameMin": "Прізвище має бути щонайменше 2 символи",
+        "lastNameMax": "Прізвище має бути не більше 50 символів",
+        "lastNameRegex": "Дозволені лише літери, пробіли та апостроф",
+        "addressMin": "Адреса має бути щонайменше 5 символів",
+        "addressMax": "Адреса має бути не більше 100 символів",
+        "addressRegex": "Дозволені лише літери, цифри та пробіли",
+        "apartmentMax": "Поле має бути не більше 50 символів",
+        "zipMin": "Індекс має бути щонайменше 3 символи",
+        "zipMax": "Індекс має бути не більше 12 символів",
+        "zipRegex": "Дозволені лише цифри та літери",
+        "cityMin": "Місто має бути щонайменше 2 символи",
+        "cityMax": "Місто має бути не більше 50 символів",
+        "cityRegex": "Дозволені лише літери та пробіли",
+        "invalidEmail": "Некоректна адреса е-пошти",
+        "phoneMin": "Телефон має бути щонайменше 8 символів",
+        "billingCountryRequired": "Оберіть країну для платіжної адреси",
+        "billingFirstNameRequired": "Вкажіть ім’я",
+        "billingLastNameRequired": "Вкажіть прізвище",
+        "billingAddressRequired": "Вкажіть адресу",
+        "billingCityRequired": "Вкажіть місто",
+        "billingZipRequired": "Вкажіть індекс",
+        "billingEmailRequired": "Вкажіть е-пошту",
+        "billingPhoneRequired": "Вкажіть номер телефону"
+      }
+    },
+    "productsTable": {
+      "yourOrder": "Ваше замовлення",
+      "loading": "Завантаження замовлення...",
+      "headers": {
+        "product": "Товар",
+        "quantity": "Кількість",
+        "total": "Разом"
+      },
+      "productFallback": "Товар",
+      "emptyCart": "У кошику немає товарів",
+      "subtotal": "Підсумок",
+      "shipping": "Доставка",
+      "shippingPending": "Вкажіть адресу доставки",
+      "orderTotal": "Разом до сплати"
+    }
+  },
+  "orderReview": {
+    "breadcrumb": {
+      "home": "Головна",
+      "boardGames": "Настільні ігри",
+      "cart": "Кошик",
+      "checkout": "Оформлення"
+    },
+    "title": "Перегляд замовлення",
+    "edit": "Змінити",
+    "shipping": "Доставка",
+    "billingAddress": "Платіжна адреса",
+    "payment": "Оплата",
+    "togglePaymentAriaLabel": "Згорнути або розгорнути блок оплати",
+    "loadingPaymentMethods": "Завантаження...",
+    "failedToLoadPaymentMethods": "Не вдалося завантажити способи оплати",
+    "returnToCheckout": "Повернутися до оформлення",
+    "placeOrder": "Підтвердити замовлення",
+    "yourOrder": "Ваше замовлення",
+    "loadingOrder": "Завантаження замовлення...",
+    "headers": {
+      "product": "Товар",
+      "quantity": "Кількість",
+      "total": "Разом"
+    },
+    "productFallback": "Товар",
+    "emptyCart": "У кошику немає товарів",
+    "subtotal": "Підсумок",
+    "delivery": "Доставка",
+    "noDeliveryMethod": "Спосіб доставки не обрано",
+    "shippingRow": "Доставка",
+    "orderTotal": "Разом до сплати",
+    "toast": {
+      "failedLoadCart": "Не вдалося завантажити кошик",
+      "orderPlacedTitle": "Замовлення оформлено",
+      "orderPlacedDescription": "Ваше замовлення успішно прийнято.",
+      "failedPlaceOrderTitle": "Не вдалося оформити замовлення",
+      "failedPlaceOrderDescription": "Спробуйте ще раз."
+    }
+  },
+  "catalog": {
+    "title": "Настільні ігри",
+    "loading": "Завантаження..."
+  },
+  "product": {
+    "breadcrumb": {
+      "home": "Головна",
+      "boardGames": "Настільні ігри",
+      "fallbackName": "Товар"
+    },
+    "errors": {
+      "invalidId": "Некоректний ідентифікатор товару",
+      "invalidUrlHint": "Перевірте адресу сторінки й спробуйте ще раз",
+      "loadFailed": "Не вдалося завантажити товар",
+      "loadFailedHint": "Спробуйте пізніше",
+      "notFound": "Товар не знайдено"
+    },
+    "descriptionUnavailable": "Опис товару недоступний",
+    "noImage": "Немає зображення",
+    "imageAltProduct": "Зображення товару",
+    "imageAltNumbered": "Зображення товару {{number}}",
+    "wishlistAria": "Додати до списку бажань",
+    "viewImageAria": "Переглянути зображення {{number}}",
+    "brandFallback": "Бренд",
+    "skuLabel": "Артикул:",
+    "stock": {
+      "soldOut": "Немає в наявності",
+      "veryLow": "Дуже мало на складі ({{count}} {{units}})",
+      "unit": "од.",
+      "units": "од.",
+      "low": "Мало на складі ({{count}} од.)",
+      "inStock": "В наявності"
+    },
+    "addToCart": "До кошика",
+    "addToCartDesktop": "ДО КОШИКА",
+    "addingToCart": "Додаємо...",
+    "addingToCartDesktop": "ДОДАЄМО...",
+    "quantity": {
+      "decreaseAria": "Зменшити кількість",
+      "increaseAria": "Збільшити кількість"
+    },
+    "reviews": {
+      "sectionTitle": "Відгуки покупців",
+      "ratingOutOf": "{{rating}} з 5",
+      "basedOn_one": "На основі {{count}} відгуку",
+      "basedOn_other": "На основі {{count}} відгуків",
+      "sortBy": "Сортування",
+      "sortByDesktop": "сортування",
+      "placeholderSort": "Спочатку нові",
+      "placeholderSortDesktop": "Спочатку нові",
+      "sortMostRecent": "Спочатку нові",
+      "sortMostRecentDesktop": "Спочатку нові",
+      "sortOldest": "Спочатку старі",
+      "sortHighestRated": "За найвищим рейтингом",
+      "sortHighestRatedDesktop": "За найвищим рейтингом",
+      "sortLowestRated": "За найнижчим рейтингом",
+      "sortLowestRatedDesktop": "За найнижчим рейтингом",
+      "loadingReviews": "Завантаження відгуків...",
+      "loadReviewsError": "Зараз не вдалося завантажити відгуки.",
+      "noReviewsYet": "Для цього товару ще немає відгуків.",
+      "customerNumber": "Клієнт №{{id}}",
+      "anonymousCustomer": "Анонімний покупець",
+      "cardTitleWithComment": "Оцінка {{rating}} з 5",
+      "cardTitleWithoutComment": "Рейтинг: {{rating}} з 5",
+      "cardBodyNoComment": "Покупець залишив лише зірки без текстового коментаря."
+    },
+    "reviewDialog": {
+      "button": "Залишити відгук",
+      "title": "Залишити відгук",
+      "loginRequired": "Увійдіть до облікового запису, щоб залишити відгук",
+      "loginRequiredProductSuffix": " про {{productName}}",
+      "goToLogin": "Перейти до входу",
+      "close": "Закрити",
+      "ratingLabel": "Оцінка",
+      "commentLabel": "Коментар",
+      "commentPlaceholder": "Поділіться враженнями про товар",
+      "cancel": "Скасувати",
+      "submitReview": "Надіслати відгук",
+      "submitting": "Надсилаємо...",
+      "rating5": "5 — Відмінно",
+      "rating4": "4 — Добре",
+      "rating3": "3 — Задовільно",
+      "rating2": "2 — Погано",
+      "rating1": "1 — Жахливо",
+      "toastSuccessTitle": "Відгук надіслано",
+      "toastSuccessDescription": "Ваш відгук успішно додано.",
+      "toastErrorTitle": "Не вдалося надіслати відгук",
+      "toastErrorDescription": "Спробуйте пізніше."
+    },
+    "accordion": {
+      "description": "Опис",
+      "gameInformation": "Інформація про гру",
+      "publisher": "Видавець:",
+      "players": "Гравці:",
+      "playersValue": "2–5",
+      "ages": "Вік:",
+      "agesValue": "8+",
+      "playTime": "Тривалість партії:",
+      "playTimeValue": "30–60 хвилин",
+      "includes": "У комплекті:",
+      "includesValue": "Ігрове поле Європи, 225 кольорових вагончиків, 110 карт поїздів, 46 карт маршрутів і 3 залізничні станції",
+      "gameFeatures": "Особливості гри:",
+      "gameFeaturesValue": "Стратегічне будування маршрутів, тунелі й пороми, жива взаємодія гравців",
+      "deliveryPayment": "Доставка й оплата",
+      "shippingUaTitle": "📦 Доставка по Україні",
+      "deliveryMethods": "Способи доставки:",
+      "ukLineNovaPoshta": "•   Nova Poshta: 1–3 робочі дні",
+      "ukLineUkrposhta": "•   Укрпошта: 2–5 робочих днів",
+      "intlShippingTitle": "🌍 Міжнародна доставка",
+      "intlLineCarriers": "•   Перевізники: Укрпошта, Nova Poshta, DHL, FedEx",
+      "intlLineDeliveryTime": "•   Термін: зазвичай 7–14 робочих днів залежно від напрямку та митного оформлення",
+      "deliveryCostTitle": "💰 Вартість доставки",
+      "costLineFreeOver60": "•   Безкоштовна доставка для замовлень від $60",
+      "costLineUnder60": "•   Замовлення до $60: за тарифами перевізника",
+      "costLineInternational": "•   Міжнародна доставка: розраховується індивідуально за напрямком і вагою. Фінальну суму побачите при оформленні.",
+      "paymentMethodsTitle": "💳 Способи оплати",
+      "paymentLineOnline": "•   Онлайн-оплата: миттєво через LiqPay, WayForPay або банківську картку (Visa/MasterCard)",
+      "paymentLineWallet": "•   Google Pay / Apple Pay: швидка безконтактна оплата"
+    },
+    "mobileFooter": {
+      "emailPlaceholder": "Е-пошта",
+      "subscribe": "Підписатися"
+    }
+  },
+  "profile": {
+    "breadcrumb": {
+      "home": "Головна",
+      "myAccount": "Мій обліковий запис"
+    },
+    "welcome": "Вітаємо, {{name}}!",
+    "dashboardSubtitle": "🧩 Особистий кабінет — керуйте профілем, відстежуйте замовлення й налаштування",
+    "mailIconAlt": "Е-пошта",
+    "sidebar": {
+      "yourProfile": "Ваш профіль",
+      "quickView": "Коротко про обліковий запис",
+      "nameLabel": "ІМ’Я",
+      "emailLabel": "Е-ПОШТА",
+      "loading": "Завантаження...",
+      "changePassword": "ЗМІНИТИ ПАРОЛЬ"
+    },
+    "tabs": {
+      "orderHistory": "ІСТОРІЯ ЗАМОВЛЕНЬ",
+      "editProfile": "Редагувати профіль"
+    },
+    "orderHistory": {
+      "title": "ІСТОРІЯ ЗАМОВЛЕНЬ",
+      "subtitle": "Переглядайте й відстежуйте попередні замовлення"
+    },
+    "editForm": {
+      "bannerTitle": "Редагування профілю",
+      "bannerSubtitle": "Оновіть особисті дані та параметри облікового запису",
+      "labels": {
+        "firstName": "Ім’я",
+        "lastName": "Прізвище",
+        "email": "Е-пошта"
+      },
+      "placeholders": {
+        "firstName": "Введіть ім’я",
+        "lastName": "Введіть прізвище",
+        "email": "Введіть е-пошту"
+      },
+      "submit": "ЗБЕРЕГТИ ЗМІНИ",
+      "submitting": "ОНОВЛЮЄМО..."
+    },
+    "toast": {
+      "updateFailedTitle": "Не вдалося оновити профіль",
+      "updateFailedDescription": "Не вдалося оновити профіль",
+      "updateSuccessTitle": "Готово! Профіль оновлено."
+    },
+    "errors": {
+      "updateFailed": "Не вдалося оновити профіль"
+    }
   }
 }

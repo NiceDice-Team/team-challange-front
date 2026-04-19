@@ -250,7 +250,7 @@ function LoginPageContent() {
             t("login.welcomeBack")
           ) : (
             <div className="flex md:flex-row flex-col items-center gap-2">
-              {t("login.logInHere")} or{" "}
+              {t("login.logInHere")} {t("common.or")}{" "}
               <Link href="/register" className="underline">
                 {t("login.createAccount")}
               </Link>
