@@ -470,7 +470,6 @@
       "ratingOutOf": "{{rating}} out of 5",
       "basedOn_one": "Based on {{count}} review",
       "basedOn_other": "Based on {{count}} reviews",
-      "writeReview": "Write a Review",
       "sortBy": "Sort by",
       "sortByDesktop": "sort by",
       "placeholderSort": "Most recent",
@@ -492,7 +491,7 @@
       "cardBodyNoComment": "This customer left a star rating without a written comment."
     },
     "reviewDialog": {
-      "button": "Write a review",
+      "button": "Write a Review",
       "title": "Write a review",
       "loginRequired": "You need to log in before you can submit a review",
       "loginRequiredProductSuffix": " for {{productName}}",
