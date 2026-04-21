@@ -423,5 +423,54 @@
       "failedPlaceOrderTitle": "Failed to place order",
       "failedPlaceOrderDescription": "Failed to place order. Please try again."
     }
+  },
+  "profile": {
+    "breadcrumb": {
+      "home": "Home",
+      "myAccount": "My account"
+    },
+    "welcome": "Welcome, {{name}}!",
+    "dashboardSubtitle": "🧩 Your account dashboard - manage your profile, track orders, and update your preferences",
+    "mailIconAlt": "Email",
+    "sidebar": {
+      "yourProfile": "Your Profile",
+      "quickView": "Quick view of your account details",
+      "nameLabel": "NAME",
+      "emailLabel": "EMAIL",
+      "loading": "Loading...",
+      "changePassword": "CHANGE PASSWORD"
+    },
+    "tabs": {
+      "orderHistory": "ORDER HISTORY",
+      "editProfile": "Edit Profile"
+    },
+    "orderHistory": {
+      "title": "ORDER HISTORY",
+      "subtitle": "View and track all your previous orders"
+    },
+    "editForm": {
+      "bannerTitle": "Edit Your Profile",
+      "bannerSubtitle": "Update your personal information and account details",
+      "labels": {
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email"
+      },
+      "placeholders": {
+        "firstName": "Enter your first name",
+        "lastName": "Enter your last name",
+        "email": "Enter your email"
+      },
+      "submit": "MAKE CHANGES",
+      "submitting": "UPDATING..."
+    },
+    "toast": {
+      "updateFailedTitle": "Failed to update profile",
+      "updateFailedDescription": "Failed to update profile",
+      "updateSuccessTitle": "Success! Your profile has been updated."
+    },
+    "errors": {
+      "updateFailed": "Failed to update profile"
+    }
   }
 }
