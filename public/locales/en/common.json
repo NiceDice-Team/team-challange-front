@@ -384,5 +384,44 @@
       "shippingPending": "Enter shipping address",
       "orderTotal": "Order Total"
     }
+  },
+  "orderReview": {
+    "breadcrumb": {
+      "home": "Home",
+      "boardGames": "Board games",
+      "cart": "Cart",
+      "checkout": "Checkout"
+    },
+    "title": "Order review",
+    "edit": "Edit",
+    "shipping": "Shipping",
+    "billingAddress": "Billing address",
+    "payment": "Payment",
+    "togglePaymentAriaLabel": "Toggle payment section",
+    "loadingPaymentMethods": "Loading...",
+    "failedToLoadPaymentMethods": "Failed to load payment methods",
+    "returnToCheckout": "Return to checkout",
+    "placeOrder": "Place order",
+    "yourOrder": "Your order",
+    "loadingOrder": "Loading order...",
+    "headers": {
+      "product": "Product",
+      "quantity": "Quantity",
+      "total": "Total"
+    },
+    "productFallback": "Product",
+    "emptyCart": "No items in cart",
+    "subtotal": "Subtotal",
+    "delivery": "Delivery",
+    "noDeliveryMethod": "No delivery method selected",
+    "shippingRow": "Shipping",
+    "orderTotal": "Order Total",
+    "toast": {
+      "failedLoadCart": "Failed to load cart",
+      "orderPlacedTitle": "Order placed",
+      "orderPlacedDescription": "Your order has been placed successfully.",
+      "failedPlaceOrderTitle": "Failed to place order",
+      "failedPlaceOrderDescription": "Failed to place order. Please try again."
+    }
   }
 }
