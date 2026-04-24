@@ -22,7 +22,6 @@ function ResetPasswordForm() {
   const searchParams = useSearchParams();
   const [token, setToken] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
-  console.log(userId, token);
   const {
     register,
     handleSubmit,

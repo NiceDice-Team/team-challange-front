@@ -1,149 +1,104 @@
-import { render, screen, waitFor } from "@testing-library/react";
-import ForgotPasswordSuccess from "../../app/(auth)/forgot-password/success/page";
+import React from "react";
+import { render, screen } from "@testing-library/react";
+import "@testing-library/jest-dom";
+import path from "path";
+import fs from "fs";
+import ForgotPasswordSuccessPage from "@/app/(auth)/forgot-password/success/page";
 
-jest.mock("../../components/shared/Toast", () => ({
+jest.mock("react-i18next", () => {
+  const pathMod = require("path");
+  const fsMod = require("fs");
+  const common = JSON.parse(
+    fsMod.readFileSync(pathMod.resolve(process.cwd(), "public/locales/en/common.json"), "utf8"),
+  );
+  function lookupTranslation(key) {
+    const parts = key.split(".");
+    let cur = common;
+    for (const p of parts) {
+      cur = cur?.[p];
+    }
+    return typeof cur === "string" ? cur : key;
+  }
+  return {
+    useTranslation: () => ({
+      t: (key) => lookupTranslation(key),
+    }),
+  };
+});
+
+const successCopy =
+  JSON.parse(
+    fs.readFileSync(path.resolve(process.cwd(), "public/locales/en/common.json"), "utf8"),
+  )["forgot-pass"].success;
+
+jest.mock("@/components/shared/Toast", () => ({
   showCustomToast: jest.fn(),
 }));
 
-jest.mock("next/image", () => ({
-  __esModule: true,
-  default: ({ src, alt }) => <img src={src} alt={alt} />,
-}));
+jest.mock("next/image", () => {
+  return function MockImage({ src, alt, ...props }) {
+    return <img src={src} alt={alt} {...props} />;
+  };
+});
 
-jest.mock("next/link", () => ({
-  __esModule: true,
-  default: ({ href, children, className }) => (
-    <a href={href} className={className}>
-      {children}
-    </a>
-  ),
-}));
+jest.mock("next/link", () => {
+  return function MockLink({ href, children, ...props }) {
+    return (
+      <a href={href} {...props}>
+        {children}
+      </a>
+    );
+  };
+});
 
-jest.mock("../../../../../public/icons/ArrowNext.svg", () => "ArrowNext.svg");
+const { showCustomToast } = require("@/components/shared/Toast");
 
-describe("ForgotPassword Success Page", () => {
-  const { showCustomToast } = require("../../components/shared/Toast");
-
+describe("ForgotPasswordSuccess Page (success-forgot-password)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  test("renders ForgotPasswordSuccess component", async () => {
-    render(<ForgotPasswordSuccess />);
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
 
-    await waitFor(() => {
-      expect(screen.getByText(/Check Your Inbox/i)).toBeInTheDocument();
+  test("renders the forgot password success page correctly", () => {
+    render(<ForgotPasswordSuccessPage />);
+
+    expect(screen.getByRole("heading", { name: successCopy.title })).toBeInTheDocument();
+
+    expect(screen.getByText(successCopy.descriptionLine1)).toBeInTheDocument();
+    expect(screen.getByText(successCopy.descriptionLine2)).toBeInTheDocument();
+
+    expect(screen.getByText(successCopy.resend)).toBeInTheDocument();
+    expect(screen.getByText(successCopy.resend).closest("a")).toHaveAttribute("href", "/forgot-password");
+
+    expect(screen.getByText(successCopy.continueShopping)).toBeInTheDocument();
+    expect(screen.getByText(successCopy.continueShopping).closest("a")).toHaveAttribute("href", "/catalog");
+  });
+
+  test("shows success toast on component mount", () => {
+    render(<ForgotPasswordSuccessPage />);
+
+    expect(showCustomToast).toHaveBeenCalledWith({
+      type: "success",
+      title: successCopy.toastTitle,
+      description: successCopy.toastDescription,
     });
   });
 
-  test('displays main heading', async () => {
-        render(<ForgotPasswordSuccess />);
+  test("has correct styling classes", () => {
+    render(<ForgotPasswordSuccessPage />);
 
-        await waitFor(() => {
-            expect(
-                screen.getByText(/✉️ Check Your Inbox/i)
-            ).toBeInTheDocument();
-        });
-    });
+    const heading = screen.getByRole("heading", { name: successCopy.title });
+    const container = heading.closest("div");
+    expect(container).toHaveClass("flex", "flex-col", "items-center", "mx-auto");
+  });
 
-    test('displays success messages', async () => {
-        render(<ForgotPasswordSuccess />);
+  test("includes accessibility attributes", () => {
+    render(<ForgotPasswordSuccessPage />);
 
-        await waitFor(() => {
-            expect(
-                screen.getByText(
-                    /If the email address you entered is associated with an account/i
-                )
-            ).toBeInTheDocument();
-        });
-
-        expect(
-            screen.getByText(/Check the message for 5-10 minutes/i)
-        ).toBeInTheDocument();
-        expect(
-            screen.getByText(/If you don't find the list/i)
-        ).toBeInTheDocument();
-    });
-
-    test('displays resend link', async () => {
-        render(<ForgotPasswordSuccess />);
-
-        await waitFor(() => {
-            expect(screen.getByText('Resend')).toBeInTheDocument();
-        });
-
-        const resendLink = screen.getByText('Resend').closest('a');
-        expect(resendLink).toHaveAttribute('href', '/forgot-password');
-    });
-
-    test('displays continue shopping link', async () => {
-        render(<ForgotPasswordSuccess />);
-
-        await waitFor(() => {
-            expect(screen.getByText('Continue shopping')).toBeInTheDocument();
-        });
-
-        const catalogLink = screen.getByText('Continue shopping').closest('a');
-        expect(catalogLink).toHaveAttribute('href', '/catalog');
-    });
-
-    test('calls showCustomToast on mount', async () => {
-        render(<ForgotPasswordSuccess />);
-
-        await waitFor(() => {
-            expect(showCustomToast).toHaveBeenCalledWith({
-                type: 'success',
-                title: 'Success!',
-                description:
-                    'A password reset link has been sent to your inbox.',
-            });
-        });
-    });
-
-    test('renders all text elements', async () => {
-        render(<ForgotPasswordSuccess />);
-
-        await waitFor(() => {
-            expect(screen.getByText(/Check Your Inbox/i)).toBeInTheDocument();
-        });
-
-        expect(
-            screen.getByText(
-                /If the email address you entered is associated with an account/i
-            )
-        ).toBeInTheDocument();
-        expect(
-            screen.getByText(/Check the message for 5-10 minutes/i)
-        ).toBeInTheDocument();
-        expect(
-            screen.getByText(/If you don't find the list/i)
-        ).toBeInTheDocument();
-        expect(screen.getByText('Resend')).toBeInTheDocument();
-        expect(screen.getByText('Continue shopping')).toBeInTheDocument();
-    });
-
-    test('has proper heading structure', async () => {
-        render(<ForgotPasswordSuccess />);
-
-        await waitFor(() => {
-            expect(
-                screen.getByRole('heading', { name: /Check Your Inbox/i })
-            ).toBeInTheDocument();
-        });
-    });
-
-    test('has proper link accessibility', async () => {
-        render(<ForgotPasswordSuccess />);
-
-        await waitFor(() => {
-            expect(screen.getByText('Resend')).toBeInTheDocument();
-        });
-
-        const resendLink = screen.getByText('Resend').closest('a');
-        expect(resendLink).toHaveAttribute('href');
-
-        const catalogLink = screen.getByText('Continue shopping').closest('a');
-        expect(catalogLink).toHaveAttribute('href');
-    });
+    const arrowImage = screen.getByAltText("arrow");
+    expect(arrowImage).toBeInTheDocument();
+  });
 });
-
