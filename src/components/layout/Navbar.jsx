@@ -14,7 +14,7 @@ import SearchBar from "@/components/shared/SearchBar";
 import { cn } from "@/lib/utils";
 import { navigationLinks } from "./navigationLinks";
 
-export default function Navbar({ isPagination = true, hideMobilePaginationChrome = false, enableMobileInlineSearch = false }) {
+export default function Navbar({ isPagination = true, hideMobilePaginationChrome = false, enableMobileInlineSearch = true }) {
   const { userData } = useUserStore((state) => state);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -118,18 +118,20 @@ export default function Navbar({ isPagination = true, hideMobilePaginationChrome
           <SearchBar className="hidden sm:flex flex-1 max-w-xs md:max-w-md lg:max-w-lg mx-2 md:mx-4" />
           <div className="flex flex-row items-center gap-2 sm:gap-2 md:gap-3 lg:gap-4">
             {/* Mobile Search Icon */}
-            <button
-              type="button"
-              className={cn(
-                "sm:hidden flex justify-center items-center p-1 rounded transition-colors cursor-pointer",
-                enableMobileInlineSearch && isMobileInlineSearchOpen ? "text-[var(--color-purple)]" : "text-black"
-              )}
-              aria-label={enableMobileInlineSearch ? (isMobileInlineSearchOpen ? "Hide mobile search" : "Show mobile search") : "Search"}
-              aria-pressed={enableMobileInlineSearch ? isMobileInlineSearchOpen : undefined}
-              onClick={handleToggleMobileSearch}
-            >
-              <SearchOutlineIcon className="w-6 h-6" />
-            </button>
+            {enableMobileInlineSearch && (
+              <button
+                type="button"
+                className={cn(
+                  "sm:hidden flex justify-center items-center p-1 rounded transition-colors cursor-pointer",
+                  isMobileInlineSearchOpen ? "text-[var(--color-purple)]" : "text-black"
+                )}
+                aria-label={isMobileInlineSearchOpen ? "Hide mobile search" : "Show mobile search"}
+                aria-pressed={isMobileInlineSearchOpen}
+                onClick={handleToggleMobileSearch}
+              >
+                <SearchOutlineIcon className="w-6 h-6" />
+              </button>
+            )}
             {/* Language Selector */}
             <div className="hidden sm:block">
               <LanguageSelector />
