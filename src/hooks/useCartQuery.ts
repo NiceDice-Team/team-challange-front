@@ -1,6 +1,11 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  getCartProductQuantity,
+  idsMatch,
+  parseStockQuantity,
+} from '@/lib/cartStock';
 import { cartServices } from '@/services/cartServices';
 import { showCustomToast } from '@/components/shared/Toast';
 import type {
@@ -31,6 +36,13 @@ export function useAddToCart() {
     onMutate: async ({ productId, quantity = 1, productData }: AddToCartVariables) => {
       await queryClient.cancelQueries({ queryKey: CART_QUERY_KEY });
       const previousCart = queryClient.getQueryData<CartItem[]>(CART_QUERY_KEY);
+      const availableStock = parseStockQuantity(productData?.stock);
+      const nextQuantity =
+        getCartProductQuantity(previousCart ?? [], productId) + quantity;
+
+      if (availableStock !== null && nextQuantity > availableStock) {
+        return { previousCart };
+      }
 
       queryClient.setQueryData<CartItem[]>(CART_QUERY_KEY, (oldCart = []) => {
         const existingItemIndex = oldCart.findIndex(
@@ -67,6 +79,12 @@ export function useAddToCart() {
       if (context?.previousCart) {
         queryClient.setQueryData(CART_QUERY_KEY, context.previousCart);
       }
+
+      showCustomToast({
+        type: 'error',
+        title: _variables.productData?.name || 'Unable to add to cart',
+        description: error.message,
+      });
       console.error('Failed to add to cart:', error);
     },
 
@@ -94,6 +112,12 @@ export function useUpdateCartQuantity() {
     onMutate: async ({ cartItemId, quantity }: UpdateCartQuantityVariables) => {
       await queryClient.cancelQueries({ queryKey: CART_QUERY_KEY });
       const previousCart = queryClient.getQueryData<CartItem[]>(CART_QUERY_KEY);
+      const currentItem = previousCart?.find((item) => idsMatch(item.id, cartItemId));
+      const availableStock = parseStockQuantity(currentItem?.product?.stock);
+
+      if (availableStock !== null && quantity > availableStock) {
+        return { previousCart };
+      }
 
       queryClient.setQueryData<CartItem[]>(CART_QUERY_KEY, (oldCart = []) => {
         return quantity <= 0
@@ -110,6 +134,16 @@ export function useUpdateCartQuantity() {
       if (context?.previousCart) {
         queryClient.setQueryData(CART_QUERY_KEY, context.previousCart);
       }
+
+      const affectedItem = context?.previousCart?.find((item) =>
+        idsMatch(item.id, _variables.cartItemId)
+      );
+
+      showCustomToast({
+        type: 'error',
+        title: affectedItem?.product?.name || 'Unable to update cart',
+        description: error.message,
+      });
       console.error('Failed to update cart quantity:', error);
     },
 

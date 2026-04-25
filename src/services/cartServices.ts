@@ -1,4 +1,9 @@
-import { getCookie } from "@/utils/auth";
+import {
+  CartStockError,
+  getStockLimitMessage,
+  idsMatch,
+  parseStockQuantity,
+} from "@/lib/cartStock";
 import { fetchAPI } from "./api";
 import { getValidAccessToken } from "@/lib/tokenManager";
 
@@ -91,6 +96,57 @@ const isAuthenticated = () => {
   return token && token !== "null" && token !== "undefined";
 };
 
+async function getLatestProductStock(
+  productId: number | string,
+): Promise<number | null> {
+  const product = await productServices.getProductById(productId);
+  return parseStockQuantity(product?.stock);
+}
+
+async function validateAddToCartStock(productId: number | string, quantity: number) {
+  if (quantity <= 0) {
+    return;
+  }
+
+  const [productStock, cartItems] = await Promise.all([
+    getLatestProductStock(productId),
+    cartServices.getCartItems(),
+  ]);
+
+  const currentQuantity = cartItems.reduce((totalQuantity, item) => {
+    if (!idsMatch(item.product?.id, productId)) {
+      return totalQuantity;
+    }
+
+    return totalQuantity + item.quantity;
+  }, 0);
+
+  if (productStock !== null && currentQuantity + quantity > productStock) {
+    throw new CartStockError(getStockLimitMessage(productStock));
+  }
+}
+
+async function validateCartItemStock(cartItemId: string, quantity: number) {
+  if (quantity <= 0) {
+    return;
+  }
+
+  const cartItems = await cartServices.getCartItems();
+  const currentCartItem = cartItems.find((item) => idsMatch(item.id, cartItemId));
+
+  if (!currentCartItem?.product?.id) {
+    return;
+  }
+
+  const cachedStock = parseStockQuantity(currentCartItem.product.stock);
+  const productStock =
+    cachedStock ?? (await getLatestProductStock(currentCartItem.product.id));
+
+  if (productStock !== null && quantity > productStock) {
+    throw new CartStockError(getStockLimitMessage(productStock));
+  }
+}
+
 // Cart API services
 export const cartServices = {
   // Get all cart items for the current user
@@ -141,7 +197,8 @@ export const cartServices = {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      return (response.results || response) as any[];
+      const cartItems = response?.results ?? response;
+      return Array.isArray(cartItems) ? (cartItems as any[]) : [];
     } catch (error) {
       console.error("Error fetching cart items:", error);
       return [];
@@ -166,6 +223,7 @@ export const cartServices = {
     if (!isAuthenticated()) {
       // Handle guest cart
       try {
+        await validateAddToCartStock(productId, quantity);
         const cart = guestCartManager.addToGuestCart(productId, quantity);
         console.log("Added to guest cart:", productId);
         return { success: true, cart };
@@ -176,6 +234,7 @@ export const cartServices = {
     }
 
     try {
+      await validateAddToCartStock(productId, quantity);
       const response = await fetchAPI("carts/", {
         method: "POST",
         headers: {
@@ -198,6 +257,7 @@ export const cartServices = {
     if (!isAuthenticated()) {
       // Handle guest cart
       try {
+        await validateCartItemStock(cartItemId, quantity);
         const cart = guestCartManager.updateGuestCartItem(cartItemId, quantity);
         return { success: true, cart };
       } catch (error) {
@@ -207,6 +267,7 @@ export const cartServices = {
     }
 
     try {
+      await validateCartItemStock(cartItemId, quantity);
       const response = await fetchAPI(`carts/${cartItemId}/`, {
         method: "PATCH",
         headers: {

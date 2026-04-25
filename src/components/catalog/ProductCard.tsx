@@ -48,7 +48,9 @@ export default function ProductCard({ product = {} as Product }: ProductCardProp
 
   const productName = product?.name || "PRODUCT NAME";
 
-  const stock = parseInt(String(product.stock), 10);
+  const parsedStock = parseInt(String(product.stock ?? 0), 10);
+  const stock = Number.isNaN(parsedStock) ? 0 : parsedStock;
+  const isOutOfStock = stock <= 0;
   let stockCircle;
   let stockMessage;
   let stockStyle;
@@ -127,9 +129,8 @@ export default function ProductCard({ product = {} as Product }: ProductCardProp
         quantity: 1,
         productData: product,
       });
-    } catch (error) {
-      console.error("Failed to add to cart:", error);
-      alert("Failed to add product to cart. Please try again.");
+    } catch {
+      // Error feedback is handled in the cart mutation hook.
     }
   };
 
@@ -275,12 +276,12 @@ export default function ProductCard({ product = {} as Product }: ProductCardProp
           {/* Add to cart button */}
           <CustomButton
             onClick={handleAddToCart}
-            disabled={addToCartMutation.isPending}
+            disabled={addToCartMutation.isPending || isOutOfStock}
             styleType="productCart"
             className="mt-auto h-12 w-full gap-2 bg-[#494791] px-8 py-4 text-center"
           >
             <span className="text-base font-medium leading-[19px] text-white uppercase">
-              {addToCartMutation.isPending ? "ADDING..." : "ADD TO CART"}
+              {isOutOfStock ? "SOLD OUT" : addToCartMutation.isPending ? "ADDING..." : "ADD TO CART"}
             </span>
           </CustomButton>
         </div>

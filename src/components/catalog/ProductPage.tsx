@@ -141,9 +141,8 @@ export default function ProductPage({ params }: ProductPageProps) {
         quantity: quantity,
         productData: product,
       });
-    } catch (error) {
-      console.error("Failed to add to cart:", error);
-      alert("❌ Failed to add product to cart. Please try again.");
+    } catch {
+      // Error feedback is handled in the cart mutation hook.
     }
   };
 

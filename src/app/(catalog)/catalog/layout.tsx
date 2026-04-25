@@ -1,7 +1,6 @@
 import Navbar from "../../../components/layout/Navbar";
 import Footer from "../../../components/layout/Footer";
 import { CustomBreadcrumb } from "../../../components/shared/CustomBreadcrumb";
-import SearchBar from "../../../components/shared/SearchBar";
 
 export default function CatalogLayout({ children }) {
   const breadcrumbItems = [
@@ -16,14 +15,6 @@ export default function CatalogLayout({ children }) {
       </div>
 
       <div className="px-4 sm:hidden">
-        <div className="mx-auto max-w-[396px] border-b border-[var(--color-light-purple-2)] py-6">
-          <SearchBar
-            variant="catalog-mobile"
-            placeholder="Search games"
-            className="w-full"
-          />
-        </div>
-
         <div className="mx-auto max-w-[396px] border-b border-[var(--color-light-purple-2)] py-6">
           <div className="w-full overflow-x-auto no-scrollbar">
             <CustomBreadcrumb

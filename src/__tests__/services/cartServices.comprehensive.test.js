@@ -161,6 +161,37 @@ describe('cartServices', () => {
       await expect(cartServices.addToCart(1, 2)).rejects.toThrow('API Error');
       expect(console.error).toHaveBeenCalledWith('Error adding to cart:', expect.any(Error));
     });
+
+    test('prevents adding more items than available stock', async () => {
+      localStorageMock.getItem.mockImplementation((key) => {
+        if (key === 'token') return 'mock-token';
+        return null;
+      });
+
+      fetchAPI.mockImplementation((endpoint) => {
+        if (endpoint === 'products/1/') {
+          return Promise.resolve({ id: 1, name: 'Product 1', stock: 3 });
+        }
+
+        if (endpoint === 'carts/') {
+          return Promise.resolve({
+            results: [{ id: 10, product: { id: 1, name: 'Product 1', stock: 3 }, quantity: 3 }],
+          });
+        }
+
+        return Promise.resolve({});
+      });
+
+      await expect(cartServices.addToCart(1, 1)).rejects.toThrow(
+        'Only 3 units available in stock.'
+      );
+
+      expect(
+        fetchAPI.mock.calls.some(
+          ([endpoint, options]) => endpoint === 'carts/' && options?.method === 'POST'
+        )
+      ).toBe(false);
+    });
   });
 
   describe('updateCartItem', () => {
@@ -208,6 +239,27 @@ describe('cartServices', () => {
       fetchAPI.mockRejectedValue(new Error('Update API Error'));
 
       await expect(cartServices.updateCartItem(1, 3)).rejects.toThrow('Update API Error');
+    });
+
+    test('prevents updating cart quantity beyond available stock', async () => {
+      localStorageMock.getItem.mockImplementation((key) => {
+        if (key === 'token') return 'mock-token';
+        return null;
+      });
+
+      fetchAPI.mockResolvedValue({
+        results: [{ id: 1, product: { id: 1, name: 'Product 1', stock: 2 }, quantity: 2 }],
+      });
+
+      await expect(cartServices.updateCartItem(1, 3)).rejects.toThrow(
+        'Only 2 units available in stock.'
+      );
+
+      expect(
+        fetchAPI.mock.calls.some(
+          ([endpoint, options]) => endpoint === 'carts/1/' && options?.method === 'PATCH'
+        )
+      ).toBe(false);
     });
   });
 

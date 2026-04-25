@@ -1,4 +1,5 @@
 import { InstagramIcon, TikTokIcon, FacebookIcon, XTwitterIcon, LogoFullIcon } from "@/svgs/icons";
+import { footerSections } from "./footerLinks";
 
 export default function Footer() {
   return (
@@ -7,34 +8,16 @@ export default function Footer() {
         <LogoFullIcon className="w-48 sm:w-56 md:w-64 lg:w-80 h-auto" />
       </div>
       <div className="flex flex-row justify-between gap-4 sm:gap-6 md:gap-8 lg:gap-12 xl:gap-20 flex-wrap lg:flex-nowrap w-full lg:w-auto">
-        <div>
-          <h3 className="uppercase mb-2 font-bold text-sm sm:text-base">products</h3>
-          <ul className="flex flex-col gap-1.5 sm:gap-2 text-xs sm:text-sm">
-            <li>New Arrivals</li>
-            <li>Bestsellers</li>
-            <li>Board Games</li>
-            <li>Coming soon</li>
-            <li>Sale</li>
-          </ul>
-        </div>
-        <div>
-          <h3 className="uppercase mb-2 font-bold text-sm sm:text-base">clients</h3>
-          <ul className="flex flex-col gap-1.5 sm:gap-2 text-xs sm:text-sm">
-            <li>Blog</li>
-            <li>Reviews</li>
-            <li>Shipping</li>
-            <li>Returns</li>
-          </ul>
-        </div>
-        <div>
-          <h3 className="uppercase mb-2 font-bold text-sm sm:text-base">company</h3>
-          <ul className="flex flex-col gap-1.5 sm:gap-2 text-xs sm:text-sm">
-            <li>About</li>
-            <li>Contact Us</li>
-            <li>Terms of Service</li>
-            <li>Privacy Policy</li>
-          </ul>
-        </div>
+        {footerSections.map((section) => (
+          <div key={section.title}>
+            <h3 className="uppercase mb-2 font-bold text-sm sm:text-base">{section.title}</h3>
+            <ul className="flex flex-col gap-1.5 sm:gap-2 text-xs sm:text-sm">
+              {section.links.map((item) => (
+                <li key={item.label}>{item.label}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
       <div className="flex-shrink-0">
         <h3 className="uppercase mb-2 font-bold text-sm sm:text-base">follow us</h3>

@@ -1,4 +1,4 @@
-import ProductPage from "../../../../../components/catalog/ProductPage";
+import { redirect } from "next/navigation";
 
 interface ProductDetailPageProps {
   params: Promise<{
@@ -7,13 +7,12 @@ interface ProductDetailPageProps {
 }
 
 /**
- * Product detail page component
- * Displays detailed information about a specific product
+ * Redirect legacy catalog product URLs to the canonical product detail route.
  */
 export default async function ProductDetailPage({
   params,
-}: ProductDetailPageProps): Promise<React.ReactElement> {
+}: ProductDetailPageProps): Promise<never> {
   const resolvedParams = await params;
 
-  return <ProductPage params={resolvedParams} />;
+  redirect(`/product/${encodeURIComponent(resolvedParams.id)}`);
 }
