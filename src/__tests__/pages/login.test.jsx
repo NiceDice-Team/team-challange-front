@@ -76,7 +76,7 @@ describe("Login Page", () => {
       expect(screen.getByTestId("public-route")).toBeInTheDocument();
       expect(screen.getByLabelText("Email")).toBeInTheDocument();
       expect(screen.getByLabelText("Password")).toBeInTheDocument();
-      expect(screen.getByRole("button", { name: /sign in/i })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /Log In/i })).toBeInTheDocument();
       expect(screen.getByText("Forgot your password?")).toBeInTheDocument();
     });
 
@@ -95,7 +95,7 @@ describe("Login Page", () => {
       
       const emailInput = screen.getByLabelText("Email");
       const passwordInput = screen.getByLabelText("Password");
-      const submitButton = screen.getByRole("button", { name: "SIGN IN" });
+      const submitButton = screen.getByRole("button", { name: /Log In/i });
       
       expect(emailInput).toBeInTheDocument();
       expect(passwordInput).toBeInTheDocument();
@@ -203,7 +203,7 @@ describe("Login Page", () => {
       
       const emailInput = screen.getByLabelText("Email");
       const passwordInput = screen.getByLabelText("Password");
-      const submitButton = screen.getByRole("button", { name: "SIGN IN" });
+      const submitButton = screen.getByRole("button", { name: /Log In/i });
       
       await user.type(emailInput, "test@example.com");
       await user.type(passwordInput, "password123");
@@ -230,7 +230,7 @@ describe("Login Page", () => {
     test("submit button is initially enabled", () => {
       render(<LoginPage />);
       
-      const submitButton = screen.getByRole("button", { name: "SIGN IN" });
+      const submitButton = screen.getByRole("button", { name: /Log In/i });
       expect(submitButton).not.toBeDisabled();
     });
   })
@@ -283,7 +283,7 @@ describe("Login Page", () => {
       
       const emailInput = screen.getByLabelText("Email");
       const passwordInput = screen.getByLabelText("Password");
-      const submitButton = screen.getByRole("button", { name: "SIGN IN" });
+      const submitButton = screen.getByRole("button", { name: /Log In/i });
       
       await user.type(emailInput, "test@example.com");
       await user.type(passwordInput, "password123");
@@ -315,7 +315,7 @@ describe("Login Page", () => {
       
       const emailInput = screen.getByLabelText("Email");
       const passwordInput = screen.getByLabelText("Password");
-      const submitButton = screen.getByRole("button", { name: "SIGN IN" });
+      const submitButton = screen.getByRole("button", { name: /Log In/i });
       
       await user.type(emailInput, "test@example.com");
       await user.type(passwordInput, "password123");
@@ -345,7 +345,7 @@ describe("Login Page", () => {
       
       const emailInput = screen.getByLabelText("Email");
       const passwordInput = screen.getByLabelText("Password");
-      const submitButton = screen.getByRole("button", { name: "SIGN IN" });
+      const submitButton = screen.getByRole("button", { name: /Log In/i });
       
       await user.type(emailInput, "test@example.com");
       await user.type(passwordInput, "password123");
@@ -420,7 +420,7 @@ describe("Login Page", () => {
     test("has proper button roles", () => {
       render(<LoginPage />);
       
-      const submitButton = screen.getByRole("button", { name: "SIGN IN" });
+      const submitButton = screen.getByRole("button", { name: /Log In/i });
       expect(submitButton).toBeInTheDocument();
     });
 
@@ -437,7 +437,7 @@ describe("Login Page", () => {
       const user = userEvent.setup();
       render(<LoginPage />);
       
-      const submitButton = screen.getByRole("button", { name: "SIGN IN" });
+      const submitButton = screen.getByRole("button", { name: /Log In/i });
       await user.click(submitButton);
       
       await waitFor(() => {
@@ -469,7 +469,7 @@ describe("Login Page", () => {
       
       const emailInput = screen.getByLabelText("Email");
       const passwordInput = screen.getByLabelText("Password");
-      const submitButton = screen.getByRole("button", { name: "SIGN IN" });
+      const submitButton = screen.getByRole("button", { name: /Log In/i });
       
       await user.type(emailInput, "test@example.com");
       await user.type(passwordInput, "password123");
