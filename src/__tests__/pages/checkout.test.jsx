@@ -1,8 +1,15 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import CheckoutPage from "../../app/checkout-order/page";
+import path from "path";
+import fs from "fs";
+import CheckoutPage from "@/app/checkout-order/page";
 
-jest.mock("../../components/shared/CustomBreadcrumb", () => ({
+const checkoutCopy =
+  JSON.parse(
+    fs.readFileSync(path.resolve(process.cwd(), "public/locales/en/common.json"), "utf8"),
+  ).checkoutOrder;
+
+jest.mock("@/components/shared/CustomBreadcrumb", () => ({
   CustomBreadcrumb: ({ items }) => (
     <nav data-testid="custom-breadcrumb">
       {items.map((item, index) => (
@@ -14,7 +21,7 @@ jest.mock("../../components/shared/CustomBreadcrumb", () => ({
   ),
 }));
 
-jest.mock("../../components/checkout/ShippingForm", () => ({
+jest.mock("@/components/checkout/ShippingForm", () => ({
   __esModule: true,
   default: ({ paymentMethod }) => (
     <div data-testid="shipping-form">
@@ -25,7 +32,7 @@ jest.mock("../../components/checkout/ShippingForm", () => ({
   ),
 }));
 
-jest.mock("../../components/checkout/ProductsTable", () => {
+jest.mock("@/components/checkout/ProductsTable", () => {
   const React = require("react");
   return {
     __esModule: true,
@@ -40,7 +47,7 @@ jest.mock("../../components/checkout/ProductsTable", () => {
   };
 });
 
-jest.mock("../../components/checkout/DeliveryOptions", () => ({
+jest.mock("@/components/checkout/DeliveryOptions", () => ({
   __esModule: true,
   default: ({ onPaymentMethodChange }) => {
     const mockOption = { id: 1, name: "DHL", price: 35, description: "1-3 days" };
@@ -66,9 +73,11 @@ describe("CheckoutPage", () => {
     test("renders page with checkout title", () => {
       render(<CheckoutPage />);
 
-      const checkoutTitles = screen.getAllByText("Checkout");
+      const checkoutTitles = screen.getAllByText(checkoutCopy.pageTitle);
       expect(checkoutTitles.length).toBeGreaterThan(0);
-      const title = screen.getByRole("heading", { name: /Checkout/i });
+      const title = screen.getByRole("heading", {
+        name: new RegExp(checkoutCopy.pageTitle, "i"),
+      });
       expect(title).toBeInTheDocument();
     });
     test("renders CustomBreadcrumb component", () => {
@@ -79,10 +88,18 @@ describe("CheckoutPage", () => {
     test("renders breadcrumb items correctly", () => {
       render(<CheckoutPage />);
 
-      expect(screen.getByTestId("breadcrumb-item-0")).toHaveTextContent("Home");
-      expect(screen.getByTestId("breadcrumb-item-1")).toHaveTextContent("Board games");
-      expect(screen.getByTestId("breadcrumb-item-2")).toHaveTextContent("Cart");
-      expect(screen.getByTestId("breadcrumb-item-3")).toHaveTextContent("Checkout");
+      expect(screen.getByTestId("breadcrumb-item-0")).toHaveTextContent(
+        checkoutCopy.breadcrumb.home,
+      );
+      expect(screen.getByTestId("breadcrumb-item-1")).toHaveTextContent(
+        checkoutCopy.breadcrumb.boardGames,
+      );
+      expect(screen.getByTestId("breadcrumb-item-2")).toHaveTextContent(
+        checkoutCopy.breadcrumb.cart,
+      );
+      expect(screen.getByTestId("breadcrumb-item-3")).toHaveTextContent(
+        checkoutCopy.breadcrumb.checkout,
+      );
     });
     test("renders ShippingForm component", () => {
       render(<CheckoutPage />);
@@ -102,7 +119,7 @@ describe("CheckoutPage", () => {
     test("renders Order Total section", () => {
       render(<CheckoutPage />);
 
-      expect(screen.getByText("Order Total")).toBeInTheDocument();
+      expect(screen.getByText(checkoutCopy.orderTotal)).toBeInTheDocument();
     });
   })
 
@@ -176,7 +193,9 @@ describe("CheckoutPage", () => {
     test("renders page with correct layout structure", () => {
       render(<CheckoutPage />);
 
-      const checkoutTitle = screen.getByRole("heading", { name: /Checkout/i });
+      const checkoutTitle = screen.getByRole("heading", {
+        name: new RegExp(checkoutCopy.pageTitle, "i"),
+      });
       expect(checkoutTitle).toBeInTheDocument();
 
       const shippingForm = screen.getByTestId("shipping-form");
@@ -192,11 +211,13 @@ describe("CheckoutPage", () => {
       render(<CheckoutPage />);
 
       const breadcrumb = screen.getByTestId("custom-breadcrumb");
-      const title = screen.getByRole("heading", { name: /Checkout/i });
+      const title = screen.getByRole("heading", {
+        name: new RegExp(checkoutCopy.pageTitle, "i"),
+      });
       const shippingForm = screen.getByTestId("shipping-form");
       const productsTable = screen.getByTestId("products-table");
       const deliveryOptions = screen.getByTestId("delivery-options");
-      const orderTotal = screen.getByText("Order Total");
+      const orderTotal = screen.getByText(checkoutCopy.orderTotal);
 
       expect(breadcrumb).toBeInTheDocument();
       expect(title).toBeInTheDocument();
