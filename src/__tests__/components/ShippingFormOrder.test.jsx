@@ -2,6 +2,21 @@ import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import ShippingForm from "../../components/checkout/ShippingForm";
 
+function lookupTranslation(key) {
+  const parts = key.split(".");
+  let cur = require("../../../public/locales/en/common.json");
+  for (const p of parts) {
+    cur = cur?.[p];
+  }
+  return typeof cur === "string" ? cur : key;
+}
+
+jest.mock("react-i18next", () => ({
+  useTranslation: () => ({
+    t: (key) => lookupTranslation(key),
+  }),
+}));
+
 const mockPush = jest.fn();
 const mockSetFormData = jest.fn();
 const mockSetPaymentMethod = jest.fn();
@@ -189,7 +204,7 @@ describe("ShippingForm", () => {
     test("does not render billing address fields by default (when copyBilling = true)", () => {
       render(<ShippingForm paymentMethod={mockPaymentMethod} />);
 
-      expect(screen.queryByText("Billing adress")).not.toBeInTheDocument();
+      expect(screen.queryByText("Billing address")).not.toBeInTheDocument();
     });
     test("renders billing address fields when copyBilling is false", async () => {
       const user = userEvent.setup();
@@ -199,7 +214,7 @@ describe("ShippingForm", () => {
       await user.click(checkbox);
 
       await waitFor(() => {
-        expect(screen.getByText("Billing adress")).toBeInTheDocument();
+        expect(screen.getByText("Billing address")).toBeInTheDocument();
       });
     });
   })
@@ -279,13 +294,13 @@ describe("ShippingForm", () => {
       await user.click(checkbox);
 
       await waitFor(() => {
-        expect(screen.getByText("Billing adress")).toBeInTheDocument();
+        expect(screen.getByText("Billing address")).toBeInTheDocument();
       });
 
       await user.click(checkbox);
 
       await waitFor(() => {
-        expect(screen.queryByText("Billing adress")).not.toBeInTheDocument();
+        expect(screen.queryByText("Billing address")).not.toBeInTheDocument();
       });
     });
   })
@@ -464,7 +479,7 @@ describe("ShippingForm", () => {
       await user.click(checkbox);
 
       await waitFor(() => {
-        expect(screen.getByText("Billing adress")).toBeInTheDocument();
+        expect(screen.getByText("Billing address")).toBeInTheDocument();
       });
 
       const billingCountry = screen.getByTestId("billingCountry");
@@ -516,7 +531,7 @@ describe("ShippingForm", () => {
       await user.click(checkbox);
 
       await waitFor(() => {
-        expect(screen.getByText("Billing adress")).toBeInTheDocument();
+        expect(screen.getByText("Billing address")).toBeInTheDocument();
       });
 
       const submitButton = screen.getByTestId("submit-button");

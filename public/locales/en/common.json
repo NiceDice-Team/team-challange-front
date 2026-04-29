@@ -293,5 +293,96 @@
       "adding": "ADDING...",
       "soldOutButton": "SOLD OUT"
     }
+  },
+  "checkoutOrder": {
+    "breadcrumb": {
+      "home": "Home",
+      "boardGames": "Board games",
+      "cart": "Cart",
+      "checkout": "Checkout"
+    },
+    "pageTitle": "Checkout",
+    "yourOrderSummary": "Your order summary",
+    "orderTotal": "Order Total",
+    "deliveryOptions": {
+      "title": "Choose delivery option",
+      "loading": "Loading...",
+      "loadError": "Failed to load delivery options",
+      "noOptions": "No delivery options available",
+      "customsNotice": "Please note that all international shipments may be subject to customs duties and taxes depending on your local regulations. These charges are the full responsibility of the buyer and are not included in the item price.",
+      "shippingLabel": "Shipping",
+      "infoIconAlt": "info"
+    },
+    "shippingForm": {
+      "sectionShipping": "Shipping",
+      "sectionBilling": "Billing address",
+      "copyBilling": "Use shipping address as billing address",
+      "returnToCart": "Return to cart",
+      "orderReview": "Order review",
+      "labels": {
+        "countryRegion": "Country/region",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "address": "Address",
+        "apartment": "Apartment, suite, etc",
+        "zipCode": "Zip Code",
+        "city": "Town / City",
+        "email": "Email",
+        "phoneNumber": "Phone number"
+      },
+      "placeholders": {
+        "firstName": "Enter your first name",
+        "lastName": "Enter your last name",
+        "address": "Enter your address",
+        "apartment": "Enter your apartment, suite, etc",
+        "zipCode": "Enter your zip code",
+        "city": "Enter your city",
+        "email": "Enter your email"
+      },
+      "validation": {
+        "chooseCountry": "Choose country",
+        "firstNameMin": "Name must be at least 2 characters",
+        "firstNameMax": "Name must be at most 50 characters",
+        "firstNameRegex": "Only letters, spaces and apostrophes are allowed",
+        "lastNameMin": "Name must be at least 2 characters",
+        "lastNameMax": "Name must be at most 50 characters",
+        "lastNameRegex": "Only letters, spaces and apostrophes are allowed",
+        "addressMin": "Address must be at least 5 characters",
+        "addressMax": "Address must be at most 100 characters",
+        "addressRegex": "Only letters, numbers and spaces are allowed",
+        "apartmentMax": "Apartment must be at most 50 characters",
+        "zipMin": "Zip code must be at least 3 characters",
+        "zipMax": "Zip code must be at most 12 characters",
+        "zipRegex": "Only numbers and letters are allowed",
+        "cityMin": "City must be at least 2 characters",
+        "cityMax": "City must be at most 50 characters",
+        "cityRegex": "Only letters and spaces are allowed",
+        "invalidEmail": "Invalid email",
+        "phoneMin": "Phone must be at least 8 characters",
+        "billingCountryRequired": "Billing country is required",
+        "billingFirstNameRequired": "First name is required",
+        "billingLastNameRequired": "Last name is required",
+        "billingAddressRequired": "Billing address is required",
+        "billingCityRequired": "City is required",
+        "billingZipRequired": "Zip code is required",
+        "billingEmailRequired": "Email is required",
+        "billingPhoneRequired": "Phone number is required"
+      }
+    },
+    "productsTable": {
+      "yourOrder": "Your order",
+      "loading": "Loading order...",
+      "headers": {
+        "product": "Product",
+        "quantity": "Quantity",
+        "total": "Total"
+      },
+      "productFallback": "Product",
+      "emptyCart": "No items in cart",
+      "subtotal": "Subtotal",
+      "shipping": "Shipping",
+      "shippingPending": "Enter shipping address",
+      "orderTotal": "Order Total"
+    }
   }
 }
