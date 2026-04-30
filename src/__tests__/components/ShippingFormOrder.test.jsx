@@ -2,26 +2,6 @@ import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import ShippingForm from "../../components/checkout/ShippingForm";
 
-jest.mock("react-i18next", () => {
-  const path = require("path");
-  const fs = require("fs");
-  function lookupTranslation(key) {
-    const commonPath = path.resolve(process.cwd(), "public/locales/en/common.json");
-    const common = JSON.parse(fs.readFileSync(commonPath, "utf8"));
-    const parts = key.split(".");
-    let cur = common;
-    for (const p of parts) {
-      cur = cur?.[p];
-    }
-    return typeof cur === "string" ? cur : key;
-  }
-  return {
-    useTranslation: () => ({
-      t: (key) => lookupTranslation(key),
-    }),
-  };
-});
-
 const mockPush = jest.fn();
 const mockSetFormData = jest.fn();
 const mockSetPaymentMethod = jest.fn();

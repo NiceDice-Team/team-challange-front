@@ -6,26 +6,6 @@ import { orderServices } from "@/services/orderServices";
 import { useCheckoutStore } from "@/store/checkout";
 import type { DeliveryOption } from "@/store/checkout";
 
-jest.mock("react-i18next", () => {
-  const path = require("path");
-  const fs = require("fs");
-  function lookupTranslation(key: string) {
-    const commonPath = path.resolve(process.cwd(), "public/locales/en/common.json");
-    const common = JSON.parse(fs.readFileSync(commonPath, "utf8"));
-    const parts = key.split(".");
-    let cur: unknown = common;
-    for (const p of parts) {
-      cur = cur && typeof cur === "object" ? (cur as Record<string, unknown>)[p] : undefined;
-    }
-    return typeof cur === "string" ? cur : key;
-  }
-  return {
-    useTranslation: () => ({
-      t: (key: string) => lookupTranslation(key),
-    }),
-  };
-});
-
 jest.mock("@/services/orderServices", () => ({
   orderServices: {
     getDeliveryOptions: jest.fn(),

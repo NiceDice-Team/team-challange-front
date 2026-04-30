@@ -75,7 +75,7 @@ describe("Login Page", () => {
       
       expect(screen.getByTestId("public-route")).toBeInTheDocument();
       expect(screen.getByLabelText("Email")).toBeInTheDocument();
-      expect(screen.getByLabelText("password")).toBeInTheDocument();
+      expect(screen.getByLabelText("Password")).toBeInTheDocument();
       expect(screen.getByRole("button", { name: /sign in/i })).toBeInTheDocument();
       expect(screen.getByText("Forgot your password?")).toBeInTheDocument();
     });
@@ -94,7 +94,7 @@ describe("Login Page", () => {
       expect(form).toBeInTheDocument();
       
       const emailInput = screen.getByLabelText("Email");
-      const passwordInput = screen.getByLabelText("password");
+      const passwordInput = screen.getByLabelText("Password");
       const submitButton = screen.getByRole("button", { name: "SIGN IN" });
       
       expect(emailInput).toBeInTheDocument();
@@ -123,7 +123,7 @@ describe("Login Page", () => {
       const user = userEvent.setup();
       render(<LoginPage />);
       
-      const passwordInput = screen.getByLabelText("password");
+      const passwordInput = screen.getByLabelText("Password");
       
       await user.type(passwordInput, "123");
       await user.tab();
@@ -137,7 +137,7 @@ describe("Login Page", () => {
       const user = userEvent.setup();
       render(<LoginPage />);
       
-      const passwordInput = screen.getByLabelText("password");
+      const passwordInput = screen.getByLabelText("Password");
       
       await user.type(passwordInput, "12345678");
       await user.tab();
@@ -175,7 +175,7 @@ describe("Login Page", () => {
       render(<LoginPage />);
       
       const emailInput = screen.getByLabelText("Email");
-      const passwordInput = screen.getByLabelText("password");
+      const passwordInput = screen.getByLabelText("Password");
       
       await user.type(emailInput, "test@example.com");
       await user.type(passwordInput, "password123");
@@ -202,7 +202,7 @@ describe("Login Page", () => {
       render(<LoginPage />);
       
       const emailInput = screen.getByLabelText("Email");
-      const passwordInput = screen.getByLabelText("password");
+      const passwordInput = screen.getByLabelText("Password");
       const submitButton = screen.getByRole("button", { name: "SIGN IN" });
       
       await user.type(emailInput, "test@example.com");
@@ -282,7 +282,7 @@ describe("Login Page", () => {
       render(<LoginPage />);
       
       const emailInput = screen.getByLabelText("Email");
-      const passwordInput = screen.getByLabelText("password");
+      const passwordInput = screen.getByLabelText("Password");
       const submitButton = screen.getByRole("button", { name: "SIGN IN" });
       
       await user.type(emailInput, "test@example.com");
@@ -314,7 +314,7 @@ describe("Login Page", () => {
       render(<LoginPage />);
       
       const emailInput = screen.getByLabelText("Email");
-      const passwordInput = screen.getByLabelText("password");
+      const passwordInput = screen.getByLabelText("Password");
       const submitButton = screen.getByRole("button", { name: "SIGN IN" });
       
       await user.type(emailInput, "test@example.com");
@@ -344,7 +344,7 @@ describe("Login Page", () => {
       render(<LoginPage />);
       
       const emailInput = screen.getByLabelText("Email");
-      const passwordInput = screen.getByLabelText("password");
+      const passwordInput = screen.getByLabelText("Password");
       const submitButton = screen.getByRole("button", { name: "SIGN IN" });
       
       await user.type(emailInput, "test@example.com");
@@ -411,7 +411,7 @@ describe("Login Page", () => {
       render(<LoginPage />);
       
       const emailInput = screen.getByLabelText("Email");
-      const passwordInput = screen.getByLabelText("password");
+      const passwordInput = screen.getByLabelText("Password");
       
       expect(emailInput).toBeInTheDocument();
       expect(passwordInput).toBeInTheDocument();
@@ -468,7 +468,7 @@ describe("Login Page", () => {
       render(<LoginPage />);
       
       const emailInput = screen.getByLabelText("Email");
-      const passwordInput = screen.getByLabelText("password");
+      const passwordInput = screen.getByLabelText("Password");
       const submitButton = screen.getByRole("button", { name: "SIGN IN" });
       
       await user.type(emailInput, "test@example.com");
@@ -489,7 +489,7 @@ describe("Login Page", () => {
       render(<LoginPage />);
       
       const emailInput = screen.getByLabelText("Email");
-      const passwordInput = screen.getByLabelText("password");
+      const passwordInput = screen.getByLabelText("Password");
       
       await user.type(emailInput, "test+tag@example.com");
       await user.type(passwordInput, "p@ssw0rd123");
