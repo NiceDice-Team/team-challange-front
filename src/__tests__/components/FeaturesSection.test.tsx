@@ -1,6 +1,26 @@
 import { render, screen } from "@testing-library/react";
 import FeatureSection from "../../components/home/FeaturesSection";
 
+jest.mock("react-i18next", () => {
+  const path = require("path");
+  const fs = require("fs");
+  function lookupTranslation(key: string) {
+    const commonPath = path.resolve(process.cwd(), "public/locales/en/common.json");
+    const common = JSON.parse(fs.readFileSync(commonPath, "utf8"));
+    const parts = key.split(".");
+    let cur: unknown = common;
+    for (const p of parts) {
+      cur = cur && typeof cur === "object" ? (cur as Record<string, unknown>)[p] : undefined;
+    }
+    return typeof cur === "string" ? cur : key;
+  }
+  return {
+    useTranslation: () => ({
+      t: (key: string) => lookupTranslation(key),
+    }),
+  };
+});
+
 // Mock Next.js Image component
 jest.mock("next/image", () => ({
   __esModule: true,
@@ -38,9 +58,9 @@ describe("FeatureSection", () => {
     test("renders feature icons", () => {
       render(<FeatureSection />);
 
-      expect(screen.getByTestId("image-Car icon")).toBeInTheDocument();
+      expect(screen.getByTestId("image-Shipping icon")).toBeInTheDocument();
       expect(screen.getByTestId("image-Lock icon")).toBeInTheDocument();
-      expect(screen.getByTestId("image-Arrows icon")).toBeInTheDocument();
+      expect(screen.getByTestId("image-Returns icon")).toBeInTheDocument();
     });
 
     test("renders feature descriptions", () => {
