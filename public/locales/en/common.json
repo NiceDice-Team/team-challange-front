@@ -99,5 +99,199 @@
     "toastTitle": "Success! Your password has been changed.",
     "toastDescription": "You can now continue your adventure",
     "errorResettingPassword": "Error resetting password. Try again."
+  },
+  "layout": {
+    "feature": {
+      "shipping": {
+        "title": "24-Hour Fast Shipping",
+        "description": "Get your games delivered quickly and safely",
+        "iconAlt": "Shipping icon"
+      },
+      "securePayment": {
+        "title": "Secure Payment",
+        "description": "Shop with confidence, using trusted payment methods",
+        "iconAlt": "Lock icon"
+      },
+      "returns": {
+        "title": "Easy Returns and Exchanges",
+        "description": "Hassle-free shopping experience",
+        "iconAlt": "Returns icon"
+      }
+    },
+    "featureBottom": {
+      "wideSelection": {
+        "title": "Wide Selection",
+        "description": "From party games to deep strategy, we have something for everyone",
+        "iconAlt": "Puzzle icon"
+      },
+      "highQuality": {
+        "title": "High-Quality Games",
+        "description": "We source directly from trusted manufacturers",
+        "iconAlt": "Prize icon"
+      },
+      "support": {
+        "title": "Support",
+        "description": "Our team is here to help you find the perfect game",
+        "iconAlt": "Chat icon"
+      }
+    },
+    "partners": {
+      "title": "Our Trusted Brands & Partners",
+      "brands": {
+        "cmon": "CMON",
+        "ravensburger": "Ravensburger",
+        "mattel": "Mattel",
+        "hasbro": "Hasbro",
+        "kosmos": "Kosmos",
+        "luckyDuck": "LuckyDuck",
+        "ff": "FF",
+        "asmodee": "Asmodee"
+      }
+    },
+    "subscribe": {
+      "title": "Stay Updated & Get Exclusive Deals!",
+      "description": "Subscribe to our newsletter and be the first to know about new arrivals, special offers, and gaming news",
+      "placeholderEmail": "Email",
+      "button": "Subscribe",
+      "consentLabel": "I agree to receiving marketing emails and special deals"
+    },
+    "blog": {
+      "title": "Check out our blogs",
+      "viewAll": "view all",
+      "metaLine": "{{date}} - {{count}} min read",
+      "readFullArticle": "Read full article",
+      "posts": {
+        "post1": {
+          "date": "May 15, 2023",
+          "name": "Catan -The Ultimate Board Game Experience?",
+          "category": "Game Review"
+        },
+        "post2": {
+          "date": "June 2, 2023",
+          "name": "D&D, How to Start Playing",
+          "category": "Game Tutorial"
+        },
+        "post3": {
+          "date": "June 20, 2023",
+          "name": "Warhammer 40k - The Ultimate Guide",
+          "category": "Game Review"
+        }
+      }
+    },
+    "footer": {
+      "followUs": "follow us",
+      "sections": {
+        "products": {
+          "title": "products",
+          "links": {
+            "newArrivals": "New Arrivals",
+            "bestsellers": "Bestsellers",
+            "boardGames": "Board Games",
+            "comingSoon": "Coming soon",
+            "sale": "Sale"
+          }
+        },
+        "clients": {
+          "title": "clients",
+          "links": {
+            "blog": "Blog",
+            "reviews": "Reviews",
+            "shipping": "Shipping",
+            "returns": "Returns"
+          }
+        },
+        "company": {
+          "title": "company",
+          "links": {
+            "about": "About",
+            "contactUs": "Contact Us",
+            "termsOfService": "Terms of Service",
+            "privacyPolicy": "Privacy Policy"
+          }
+        }
+      }
+    }
+  },
+  "cart": {
+    "breadcrumb": {
+      "home": "Home",
+      "cart": "Cart"
+    },
+    "loading": "Loading cart...",
+    "title": "your cart ({{count}})",
+    "notReadyToCheckout": "Not ready to checkout?",
+    "continueShopping": "Continue Shopping",
+    "table": {
+      "product": "Product",
+      "price": "Price",
+      "quantity": "Quantity",
+      "total": "Total"
+    },
+    "empty": {
+      "message": "Your cart is empty",
+      "startShopping": "Start Shopping"
+    },
+    "shippingCalculatedAtCheckout": "shipping calculated at checkout",
+    "subtotal": "Subtotal:",
+    "freeShipping": {
+      "away": "You're just {{amount}} away from FREE shipping",
+      "unlocked": "🎉 FREE SHIPPING"
+    },
+    "specialNotes": {
+      "title": "Special notes for your order",
+      "placeholder": "Add any special instructions..."
+    },
+    "coupon": {
+      "placeholder": "Coupon code",
+      "apply": "Apply"
+    },
+    "checkout": "Checkout",
+    "youMayAlsoLike": "you may also like",
+    "errors": {
+      "failedToRemoveItem": "Failed to remove item",
+      "failedToUpdateQuantity": "Failed to update quantity"
+    },
+    "modal": {
+      "titlePrefix": "🔓Log in here or",
+      "createAccount": "create account",
+      "subtitleLine1": "🎯 Don't forget to log in!",
+      "subtitleLine2": "Unlock exclusive rewards, and track your orders with ease.",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Enter your Email",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Enter your new password",
+      "signIn": "SIGN IN",
+      "continueAsGuest": "Continue as a guest",
+      "validation": {
+        "emailRequired": "Email is required",
+        "invalidEmail": "Invalid email",
+        "passwordRequired": "Password is required",
+        "passwordMin": "Password must be at least 8 characters",
+        "passwordMax": "Password must be less than 128 characters"
+      },
+      "errors": {
+        "signinGeneric": "An error occurred during signin. Please try again.",
+        "invalidCredentials": "Invalid email or password.",
+        "noTokenReceived": "No token received"
+      }
+    },
+    "productCard": {
+      "starFilledAlt": "filled star",
+      "starEmptyAlt": "empty star",
+      "soldOutAlt": "sold out",
+      "veryLowStockAlt": "very low stock",
+      "mediumStockAlt": "medium stock",
+      "highStockAlt": "high stock",
+      "soldOutMessage": "Sold out",
+      "veryLowStock_one": "Very low stock ({{count}} unit)",
+      "veryLowStock_other": "Very low stock ({{count}} units)",
+      "inStock": "In stock",
+      "unknownBrand": "Unknown Brand",
+      "productAlt": "Product",
+      "productNameFallback": "Product Name",
+      "addToCart": "ADD TO CART",
+      "adding": "ADDING...",
+      "soldOutButton": "SOLD OUT"
+    }
   }
 }

@@ -1,6 +1,9 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   StarEmptyIcon,
   StarFilledIcon,
@@ -14,6 +17,7 @@ import {
 import { useAddToCart } from "@/hooks/useCartQuery";
 
 export default function CartProductCard({ product = {} }) {
+  const { t } = useTranslation();
   const [isFavorite, setIsFavorite] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const addToCartMutation = useAddToCart();
@@ -26,9 +30,9 @@ export default function CartProductCard({ product = {} }) {
       stars.push(
         <div key={i} className="text-[#494791]">
           {i <= rating ? (
-            <img src={StarFilledIcon} alt="filled star" className="h-4 w-4" />
+            <img src={StarFilledIcon} alt={t("cart.productCard.starFilledAlt")} className="h-4 w-4" />
           ) : (
-            <img src={StarEmptyIcon} alt="empty star" className="h-4 w-4" />
+            <img src={StarEmptyIcon} alt={t("cart.productCard.starEmptyAlt")} className="h-4 w-4" />
           )}
         </div>
       );
@@ -48,25 +52,24 @@ export default function CartProductCard({ product = {} }) {
   let stockStyle;
   
   if (stock === 0) {
-    stockMessage = "Sold out";
-    stockCircle = <img src={CircleGrayIcon} alt="sold out" className="h-2 w-2" />;
+    stockMessage = t("cart.productCard.soldOutMessage");
+    stockCircle = <img src={CircleGrayIcon} alt={t("cart.productCard.soldOutAlt")} className="h-2 w-2" />;
     stockStyle = "text-[#717171]";
   } else if (stock <= 5) {
-    stockMessage = `Very low stock (${stock} unit${stock > 1 ? 's' : ''})`;
-    stockCircle = <img src={CircleRedIcon} alt="very low stock" className="h-2 w-2" />;
+    stockMessage = t("cart.productCard.veryLowStock", { count: stock });
+    stockCircle = <img src={CircleRedIcon} alt={t("cart.productCard.veryLowStockAlt")} className="h-2 w-2" />;
     stockStyle = "text-[#EC3535]";
   } else if (stock <= 10) {
-    stockMessage = `In stock`;
-    stockCircle = <img src={CircleOrangeIcon} alt="medium stock" className="h-2 w-2" />;
+    stockMessage = t("cart.productCard.inStock");
+    stockCircle = <img src={CircleOrangeIcon} alt={t("cart.productCard.mediumStockAlt")} className="h-2 w-2" />;
     stockStyle = "text-[#FF7C40]";
   } else {
-    stockMessage = `In stock`;
-    stockCircle = <img src={CircleGreenIcon} alt="high stock" className="h-2 w-2" />;
+    stockMessage = t("cart.productCard.inStock");
+    stockCircle = <img src={CircleGreenIcon} alt={t("cart.productCard.highStockAlt")} className="h-2 w-2" />;
     stockStyle = "text-[#3A9B25]";
   }
 
   const imageUrl = product.images?.[0]?.url_sm || '/FirstPlaceholder.svg';
-  const brandName = product.brand?.name || 'Unknown Brand';
 
   const handleAddToCart = async () => {
     if (addToCartMutation.isPending) return; // Prevent multiple rapid clicks
@@ -95,7 +98,7 @@ export default function CartProductCard({ product = {} }) {
         <Link href={`/product/${product.id}`} className="w-full h-[182px] relative overflow-hidden block hover:opacity-75 transition-opacity">
           <Image 
             src={imageUrl}
-            alt={product.name || 'Product'}
+            alt={product.name || t("cart.productCard.productAlt")}
             fill
             className="object-cover"
           />
@@ -124,7 +127,7 @@ export default function CartProductCard({ product = {} }) {
           {/* Product Name - Fixed height with line clamp */}
           <Link href={`/product/${product.id}`} className="hover:text-[#494791] transition-colors">
             <h3 className="text-lg font-medium text-black uppercase leading-[22px] mb-2 h-[44px] line-clamp-2 overflow-hidden">
-              {product.name || 'Product Name'}
+              {product.name || t("cart.productCard.productNameFallback")}
             </h3>
           </Link>
 
@@ -171,7 +174,11 @@ export default function CartProductCard({ product = {} }) {
           onClick={handleAddToCart}
           disabled={addToCartMutation.isPending || isOutOfStock}
         >
-          {isOutOfStock ? 'SOLD OUT' : addToCartMutation.isPending ? 'ADDING...' : 'ADD TO CART'}
+          {isOutOfStock
+            ? t("cart.productCard.soldOutButton")
+            : addToCartMutation.isPending
+              ? t("cart.productCard.adding")
+              : t("cart.productCard.addToCart")}
         </button>
       </div>
     </div>
