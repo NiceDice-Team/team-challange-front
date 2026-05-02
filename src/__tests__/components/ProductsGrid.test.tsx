@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ProductsGrid from '@/components/catalog/ProductsGrid';
 import { productServices } from '@/services/productServices';
@@ -29,7 +29,17 @@ jest.mock('@/components/catalog/ProductCardSkeleton', () => ({
 }));
 
 jest.mock('@/components/ui/pagination', () => ({
-  Pagination: () => <div data-testid="pagination" />,
+  Pagination: ({
+    currentPage,
+    onPageChange,
+  }: {
+    currentPage: number;
+    onPageChange: (page: number) => void;
+  }) => (
+    <button data-testid="pagination" onClick={() => onPageChange(currentPage === 1 ? 2 : 1)}>
+      Page {currentPage}
+    </button>
+  ),
 }));
 
 jest.mock('@/components/shared/CustomSelect', () => ({
@@ -66,6 +76,7 @@ const createWrapper = () => {
 describe('ProductsGrid', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    window.scrollTo = jest.fn();
   });
 
   test('loads all products using a count request without relying on limit=1 metadata', async () => {
@@ -80,7 +91,12 @@ describe('ProductsGrid', () => {
     } as any);
 
     render(
-      <ProductsGrid selectedFilters={defaultFilters} setSelectedFilters={jest.fn()} />,
+      <ProductsGrid
+        selectedFilters={defaultFilters}
+        setSelectedFilters={jest.fn()}
+        currentPage={1}
+        setCurrentPage={jest.fn()}
+      />,
       { wrapper: createWrapper() }
     );
 
@@ -114,5 +130,41 @@ describe('ProductsGrid', () => {
       },
       expect.objectContaining({ signal: expect.any(AbortSignal) })
     );
+  });
+
+  test('uses the controlled page value and forwards pagination changes', async () => {
+    const setCurrentPage = jest.fn();
+    mockedCatalogServices.getProductCount.mockResolvedValue({ count: 13 } as any);
+    mockedProductServices.getProductsWithFilters.mockResolvedValue({
+      total_count: 13,
+      results: Array.from({ length: 13 }, (_, index) => ({
+        id: index + 1,
+        name: `Product ${index + 1}`,
+        price: '10',
+        stock: '5',
+        images: [],
+        reviews: [],
+      })),
+    } as any);
+
+    render(
+      <ProductsGrid
+        selectedFilters={defaultFilters}
+        setSelectedFilters={jest.fn()}
+        currentPage={2}
+        setCurrentPage={setCurrentPage}
+      />,
+      { wrapper: createWrapper() }
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Product 13')).toBeInTheDocument();
+    });
+
+    expect(screen.queryByText('Product 1')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId('pagination'));
+
+    expect(setCurrentPage).toHaveBeenCalledWith(1);
   });
 });

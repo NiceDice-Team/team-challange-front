@@ -5,7 +5,7 @@ import { useUrlFilters } from "../../../hooks/useUrlFilters";
 import { Suspense } from "react";
 
 function CatalogContent() {
-  const { selectedFilters, setSelectedFilters } = useUrlFilters();
+  const { selectedFilters, setSelectedFilters, currentPage, setCurrentPage } = useUrlFilters();
 
   return (
     <div className="px-4 pt-6 pb-6 sm:px-6 sm:pt-0 md:px-8 lg:px-12 lg:pb-12 xl:px-16">
@@ -20,7 +20,12 @@ function CatalogContent() {
             <h2 className="flex w-full items-center justify-center text-2xl leading-[29px] uppercase text-[#040404] lg:hidden">
               Board games
             </h2>
-            <ProductsGrid selectedFilters={selectedFilters} setSelectedFilters={setSelectedFilters} />
+            <ProductsGrid
+              selectedFilters={selectedFilters}
+              setSelectedFilters={setSelectedFilters}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+            />
           </div>
         </div>
       </div>

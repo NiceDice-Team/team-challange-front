@@ -8,6 +8,7 @@ import {
 } from '@/lib/cartStock';
 import { cartServices } from '@/services/cartServices';
 import { showCustomToast } from '@/components/shared/Toast';
+import { queryKeys } from '@/lib/queryKeys';
 import type {
   CartItem,
   AddToCartVariables,
@@ -16,12 +17,12 @@ import type {
   CartSummary,
 } from '@/types/cart';
 
-const CART_QUERY_KEY = ['cart'] as const;
+const CART_QUERY_KEY = queryKeys.cart;
 
 export function useCartQuery() {
   return useQuery<CartItem[]>({
     queryKey: CART_QUERY_KEY,
-    queryFn: cartServices.getCartItems,
+    queryFn: ({ signal }) => cartServices.getCartItems({ signal }),
     staleTime: 5 * 60 * 1000,
   });
 }

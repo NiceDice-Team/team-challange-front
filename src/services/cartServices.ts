@@ -5,7 +5,11 @@ import {
   parseStockQuantity,
 } from "@/lib/cartStock";
 import { fetchAPI } from "./api";
-import { getValidAccessToken } from "@/lib/tokenManager";
+import {
+  getValidAccessToken,
+  isAuthenticated as hasValidAuthSession,
+} from "@/lib/tokenManager";
+import type { ApiRequestOptions } from "@/types/api";
 
 // Guest cart management using localStorage
 const GUEST_CART_KEY = "guest_cart";
@@ -89,13 +93,6 @@ export const guestCartManager = {
   },
 };
 
-// Helper function to check if user is authenticated
-const isAuthenticated = () => {
-  if (typeof window === "undefined") return false;
-  const token = localStorage.getItem("token");
-  return token && token !== "null" && token !== "undefined";
-};
-
 async function getLatestProductStock(
   productId: number | string,
 ): Promise<number | null> {
@@ -150,8 +147,8 @@ async function validateCartItemStock(cartItemId: string, quantity: number) {
 // Cart API services
 export const cartServices = {
   // Get all cart items for the current user
-  async getCartItems(): Promise<any[]> {
-    if (!isAuthenticated()) {
+  async getCartItems(options: ApiRequestOptions = {}): Promise<any[]> {
+    if (!hasValidAuthSession()) {
       // Return guest cart for non-authenticated users
       const guestCart = guestCartManager.getGuestCart();
 
@@ -191,12 +188,19 @@ export const cartServices = {
     }
 
     try {
-      const response: any = await fetchAPI("carts/", {
+      const accessToken = await getValidAccessToken();
+      const requestOptions: ApiRequestOptions = {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${accessToken}`,
         },
-      });
+      };
+
+      if (options.signal) {
+        requestOptions.signal = options.signal;
+      }
+
+      const response: any = await fetchAPI("carts/", requestOptions);
       const cartItems = response?.results ?? response;
       return Array.isArray(cartItems) ? (cartItems as any[]) : [];
     } catch (error) {
@@ -220,12 +224,11 @@ export const cartServices = {
 
   // Add item to cart
   async addToCart(productId: number | string, quantity = 1) {
-    if (!isAuthenticated()) {
+    if (!hasValidAuthSession()) {
       // Handle guest cart
       try {
         await validateAddToCartStock(productId, quantity);
         const cart = guestCartManager.addToGuestCart(productId, quantity);
-        console.log("Added to guest cart:", productId);
         return { success: true, cart };
       } catch (error) {
         console.error("Error adding to guest cart:", error);
@@ -235,10 +238,11 @@ export const cartServices = {
 
     try {
       await validateAddToCartStock(productId, quantity);
+      const accessToken = await getValidAccessToken();
       const response = await fetchAPI("carts/", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${accessToken}`,
         },
         body: {
           product: productId,
@@ -254,7 +258,7 @@ export const cartServices = {
 
   // Update cart item quantity
   async updateCartItem(cartItemId: string, quantity: number) {
-    if (!isAuthenticated()) {
+    if (!hasValidAuthSession()) {
       // Handle guest cart
       try {
         await validateCartItemStock(cartItemId, quantity);
@@ -268,10 +272,11 @@ export const cartServices = {
 
     try {
       await validateCartItemStock(cartItemId, quantity);
+      const accessToken = await getValidAccessToken();
       const response = await fetchAPI(`carts/${cartItemId}/`, {
         method: "PATCH",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${accessToken}`,
         },
         body: {
           quantity: quantity,
@@ -286,7 +291,7 @@ export const cartServices = {
 
   // Remove item from cart
   async removeFromCart(cartItemId: string) {
-    if (!isAuthenticated()) {
+    if (!hasValidAuthSession()) {
       // Handle guest cart
       try {
         guestCartManager.removeFromGuestCart(cartItemId);
@@ -298,10 +303,11 @@ export const cartServices = {
     }
 
     try {
+      const accessToken = await getValidAccessToken();
       await fetchAPI(`carts/${cartItemId}/`, {
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
       return true;
