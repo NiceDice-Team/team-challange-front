@@ -1,6 +1,6 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
-import { useState, useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { productServices } from "../../services/productServices";
 import { catalogServices } from "../../services/catalogServices";
 import ProductCard from "../catalog/ProductCard";
@@ -14,23 +14,54 @@ import type { Product } from "@/types/product";
 interface ProductsGridProps {
   selectedFilters: SelectedFilters;
   setSelectedFilters: React.Dispatch<React.SetStateAction<SelectedFilters>>;
+  currentPage: number;
+  setCurrentPage: (page: number) => void;
 }
 
-export default function ProductsGrid({ selectedFilters, setSelectedFilters }: ProductsGridProps) {
-  const [currentPage, setCurrentPage] = useState(1);
+export default function ProductsGrid({
+  selectedFilters,
+  setSelectedFilters,
+  currentPage,
+  setCurrentPage,
+}: ProductsGridProps) {
   const productsPerPage = 12;
 
   const sortBy = selectedFilters.sortBy || "relevance";
   const hasUpperPriceLimit = Number.isFinite(selectedFilters.priceRange.max);
   const minPrice = selectedFilters.priceRange.min || 0;
   const maxPrice = hasUpperPriceLimit ? selectedFilters.priceRange.max : Number.POSITIVE_INFINITY;
-  const nonPriceFilters = {
-    categories: selectedFilters.categories,
-    gameTypes: selectedFilters.gameTypes,
-    audiences: selectedFilters.audiences,
-    brands: selectedFilters.brands,
-    search: selectedFilters.search,
-  };
+  const normalizedCategories = useMemo(
+    () => [...selectedFilters.categories].sort((a, b) => a - b),
+    [selectedFilters.categories],
+  );
+  const normalizedGameTypes = useMemo(
+    () => [...selectedFilters.gameTypes].sort(),
+    [selectedFilters.gameTypes],
+  );
+  const normalizedAudiences = useMemo(
+    () => [...selectedFilters.audiences].sort(),
+    [selectedFilters.audiences],
+  );
+  const normalizedBrands = useMemo(
+    () => [...selectedFilters.brands].sort(),
+    [selectedFilters.brands],
+  );
+  const nonPriceFilters = useMemo(
+    () => ({
+      categories: normalizedCategories,
+      gameTypes: normalizedGameTypes,
+      audiences: normalizedAudiences,
+      brands: normalizedBrands,
+      search: selectedFilters.search,
+    }),
+    [
+      normalizedAudiences,
+      normalizedBrands,
+      normalizedCategories,
+      normalizedGameTypes,
+      selectedFilters.search,
+    ],
+  );
 
   const setSortBy = (newSortBy: string): void => {
     setSelectedFilters({
@@ -38,11 +69,6 @@ export default function ProductsGrid({ selectedFilters, setSelectedFilters }: Pr
       sortBy: newSortBy,
     });
   };
-
-  // Reset to page 1 when filters or sort change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [selectedFilters, sortBy]);
 
   // Fetch the full dataset for all non-price filters and sort,
   // then apply price filtering locally because the current backend ignores price params.
@@ -53,12 +79,10 @@ export default function ProductsGrid({ selectedFilters, setSelectedFilters }: Pr
   } = useQuery({
     queryKey: [
       "products",
-      sortBy,
-      selectedFilters.categories,
-      selectedFilters.gameTypes,
-      selectedFilters.audiences,
-      selectedFilters.brands,
-      selectedFilters.search,
+      {
+        sortBy,
+        ...nonPriceFilters,
+      },
     ],
     queryFn: async ({ signal }) => {
       const countResponse = await catalogServices.getProductCount(nonPriceFilters, { signal });
@@ -81,8 +105,20 @@ export default function ProductsGrid({ selectedFilters, setSelectedFilters }: Pr
     return price >= minPrice && price <= maxPrice;
   });
   const totalPages = Math.max(1, Math.ceil(filteredProducts.length / productsPerPage));
-  const currentProducts = filteredProducts.slice((currentPage - 1) * productsPerPage, currentPage * productsPerPage);
+  const safeCurrentPage = Math.min(Math.max(currentPage, 1), totalPages);
+  const currentProducts = filteredProducts.slice(
+    (safeCurrentPage - 1) * productsPerPage,
+    safeCurrentPage * productsPerPage,
+  );
   const isError = !!error;
+
+  useEffect(() => {
+    if (!productsData || isFetching || isError || currentPage === safeCurrentPage) {
+      return;
+    }
+
+    setCurrentPage(safeCurrentPage);
+  }, [currentPage, isError, isFetching, productsData, safeCurrentPage, setCurrentPage]);
 
   // Show loading skeleton when fetching (not just initial load)
   const showLoading = isFetching;
@@ -149,7 +185,7 @@ export default function ProductsGrid({ selectedFilters, setSelectedFilters }: Pr
       {!showLoading && totalPages > 1 && (
         <div className="flex justify-center mt-6 sm:mt-8 lg:mt-12 mb-4">
           <Pagination
-            currentPage={currentPage}
+            currentPage={safeCurrentPage}
             totalPages={totalPages}
             mobileSimpleMode
             className="gap-4"
