@@ -49,7 +49,7 @@ describe('useAddToCart', () => {
     name: 'Catan',
     price: '49.99',
     stock: '10',
-    stars: '4',
+    stars: 4,
     images: [],
     reviews: [],
   } as Product;
