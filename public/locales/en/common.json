@@ -83,5 +83,21 @@
       "resend": "Resend",
       "continueShopping": "Continue shopping"
     }
+  },
+  "resetPass": {
+    "title": "🔐 Reset Your Password",
+    "descriptionLine1": "You've made it!",
+    "descriptionLine2": "Now enter a new password to continue your quest",
+    "labelPassword": "Password",
+    "labelConfirmPassword": "Confirm Password",
+    "placeholderPassword": "Enter password",
+    "placeholderConfirmPassword": "Enter password",
+    "reset": "RESET",
+    "resetting": "RESETTING...",
+    "dontNeedHelpAnymore": "Don't need help anymore?",
+    "signIn": "Sign in",
+    "toastTitle": "Success! Your password has been changed.",
+    "toastDescription": "You can now continue your adventure",
+    "errorResettingPassword": "Error resetting password. Try again."
   }
 }
