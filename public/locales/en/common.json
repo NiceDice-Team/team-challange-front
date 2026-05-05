@@ -51,7 +51,16 @@
     "subscribe": "Subscribe to news, updates & special offers",
     "submit": "REGISTER",
     "alreadyHaveAccount": "Already have an account?",
-    "logInHere": "Log in here"
+    "logInHere": "Log in here",
+    "success": {
+      "title": "Thank you for registering!",
+      "toastTitle": "Success! You are registered.",
+      "toastDescription": "A confirmation email has been sent to your inbox.",
+      "descriptionLine1": "A confirmation email has been sent to your inbox.",
+      "descriptionLine2": "Please click the link in that email to activate your account.",
+      "descriptionLine3": "Check the message for 5-10 minutes. If you don't find the list, please check your spam folder and resend it again.",
+      "browseGames": "Browse games"
+    }
   },
   "forgot-pass": {
     "title": "🔒Forgot your password?",
