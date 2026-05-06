@@ -13,14 +13,66 @@
     "submit": "Log In",
     "welcomeBack": "Welcome back!",
     "logInHere": "Log in here",
+    "createAccount": "Create account",
     "successPasswordChanged": "Success! Your password has been changed.",
     "youCanNowLogInAndContinueYourAdventure": "You can now log in and continue your adventure",
-    "dontForgetToLogIn": "Don&apos;t forget to log in!",
+    "dontForgetToLogIn": "Don't forget to log in!",
     "unlockExclusiveRewardsAndTrackYourOrdersWithEase": "Unlock exclusive rewards, and track your orders with ease.",
     "forgotPassword": "Forgot your password?",
     "continueAsGuest": "Continue as a guest",
     "successLoggedIn": "Success! You are logged in.",
     "errorLoggedIn": "Error! You are not logged in.",
     "youCanNowContinueYourAdventure": "You can now continue your adventure"
+  },
+  "register": {
+    "title": "Create account",
+    "subtitleLine1": "Join our community of board game enthusiasts! 🎲",
+    "subtitleLine2": "Fill in the details below to get started",
+    "labels": {
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password"
+    },
+    "placeholders": {
+      "firstName": "Enter your name",
+      "lastName": "Enter your last name",
+      "email": "Enter email address",
+      "password": "Enter password",
+      "confirmPassword": "Enter password"
+    },
+    "privacy": {
+      "agreeToThe": "I agree to the",
+      "privacyPolicy": "Privacy Policy",
+      "and": "and",
+      "termsOfService": "Terms of Service"
+    },
+    "subscribe": "Subscribe to news, updates & special offers",
+    "submit": "REGISTER",
+    "alreadyHaveAccount": "Already have an account?",
+    "logInHere": "Log in here"
+  },
+  "forgot-pass": {
+    "title": "🔒Forgot your password?",
+    "descriptionLine1": "🧩 No problem! Just enter your email address below and",
+    "descriptionLine2": "we’ll send you a link to reset your password",
+    "placeholderEmail": "Enter email address",
+    "labelEmail": "Email",
+    "submit": "SUBMIT",
+    "submitting": "SUBMITTING...",
+    "errorSendingResetEmail": "Error sending reset email. Try again.",
+    "dontNeedHelpAnymore": "Don’t need help anymore?",
+    "signIn": "Sign in",
+    "success": {
+      "title": "✉️ Check Your Inbox",
+      "toastTitle": "Success!",
+      "toastDescription": "A password reset link has been sent to your inbox.",
+      "descriptionLine1": "If the email address you entered is associated with an account, you’ll receive a password reset link shortly",
+      "descriptionLine2": "Check the message for 5-10 minutes. If you don't find the list, please check your spam folder and resend it again.",
+      "didntReceiveEmail": "Didn’t receive the email?",
+      "resend": "Resend",
+      "continueShopping": "Continue shopping"
+    }
   }
 }
