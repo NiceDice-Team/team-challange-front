@@ -1,0 +1,26 @@
+{
+  "appName": "NiceDice",
+  "common": {
+    "email": "Email",
+    "enterEmailAddress": "Enter email address",
+    "password": "Password",
+    "enterPassword": "Enter password",
+    "submit": "Submit",
+    "or": "or"
+  },
+  "login": {
+    "title": "Sign In",
+    "submit": "Log In",
+    "welcomeBack": "Welcome back!",
+    "logInHere": "Log in here",
+    "successPasswordChanged": "Success! Your password has been changed.",
+    "youCanNowLogInAndContinueYourAdventure": "You can now log in and continue your adventure",
+    "dontForgetToLogIn": "Don&apos;t forget to log in!",
+    "unlockExclusiveRewardsAndTrackYourOrdersWithEase": "Unlock exclusive rewards, and track your orders with ease.",
+    "forgotPassword": "Forgot your password?",
+    "continueAsGuest": "Continue as a guest",
+    "successLoggedIn": "Success! You are logged in.",
+    "errorLoggedIn": "Error! You are not logged in.",
+    "youCanNowContinueYourAdventure": "You can now continue your adventure"
+  }
+}

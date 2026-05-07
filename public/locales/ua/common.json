@@ -1,0 +1,9 @@
+{
+  "appName": "NiceDice",
+  "login": {
+    "title": "Вход",
+    "email": "Эл. почта",
+    "password": "Пароль",
+    "submit": "Войти"
+  }
+}
