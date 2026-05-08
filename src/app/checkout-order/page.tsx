@@ -26,18 +26,18 @@ function CheckoutPage() {
 
         {/* Mobile Header & Summary Toggle */}
         <div className="md:hidden flex flex-col px-4 w-full">
-          <div className="flex flex-col items-center py-4 bg-[#FCFBF9]/30 backdrop-blur-[5px] rounded-lg w-full">
+          <div className="flex flex-col items-center bg-[#FCFBF9]/30 backdrop-blur-[5px] py-4 rounded-lg w-full">
             <button
               onClick={() => setIsSummaryOpen(!isSummaryOpen)}
               className="flex justify-between items-center w-full text-[#494791]"
             >
-              <span className="flex-1 text-left font-normal text-base">Your order summary</span>
+              <span className="flex-1 font-normal text-base text-left">Your order summary</span>
               {isSummaryOpen ? <ChevronUp className="w-6 h-6" /> : <ChevronDown className="w-6 h-6" />}
             </button>
-            <div className="border-[#A4A3C8] border-b w-full h-px mt-4"></div>
+            <div className="mt-4 border-[#A4A3C8] border-b w-full h-px"></div>
 
             {isSummaryOpen && (
-              <div className="w-full mt-4">
+              <div className="mt-4 w-full">
                 <ProductsTable
                     setSubtotal={setSubtotal}
                     shippingPrice={paymentMethod?.price || 0}
@@ -52,7 +52,7 @@ function CheckoutPage() {
         <div className="flex md:flex-row flex-col justify-between gap-6 md:gap-6 mt-4">
           {/* Main Column (Shipping Form) */}
           <div className="flex flex-col px-4 md:px-0 w-full md:w-[648px]">
-            <h3 className="mb-6 font-medium text-2xl md:text-title uppercase text-[#040404]">Checkout</h3>
+            <h3 className="mb-6 font-medium text-[#040404] md:text-title text-xl uppercase">Checkout</h3>
 
             <ShippingForm paymentMethod={paymentMethod}>
               {/* Mobile-only sections inside the form to ensure they appear before the button */}
@@ -60,7 +60,7 @@ function CheckoutPage() {
                 <DeliveryOptions onPaymentMethodChange={setPaymentMethod} />
                 <div className="flex justify-between items-center -mt-4 text-purple">
                   <div className="font-bold text-foreground text-base uppercase">Order Total</div>
-                  <div className="font-bold text-foreground text-base ">
+                  <div className="font-bold text-foreground text-base">
                     ${((paymentMethod?.price || 0) + subtotal).toFixed(2)}
                   </div>
                 </div>
@@ -69,10 +69,10 @@ function CheckoutPage() {
           </div>
 
           {/* Desktop-only Side Column (Summary & Delivery) */}
-          <div className="hidden md:flex flex-col gap-10 p-6 border border-[#A4A3C8] w-[648px] h-fit ">
+          <div className="hidden md:flex flex-col gap-10 p-6 border border-[#A4A3C8] w-[648px] h-fit">
             <ProductsTable setSubtotal={setSubtotal} />
             <DeliveryOptions onPaymentMethodChange={setPaymentMethod} />
-            <div className="flex justify-between items-center -mt-4 h-10 text-purple px-6">
+            <div className="flex justify-between items-center -mt-4 px-6 h-10 text-purple">
               <div className="font-bold text-[#494791] text-base uppercase">Order Total</div>
               <div className="font-bold text-[#494791] text-lg">
                 ${((paymentMethod?.price || 0) + subtotal).toFixed(2)}

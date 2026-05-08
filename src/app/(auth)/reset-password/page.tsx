@@ -83,7 +83,7 @@ function ResetPasswordForm() {
 
   return (
     <div className="flex flex-col items-center mx-auto mt-20 mb-32">
-      <h1 className="mb-9 font-normal md:text-title text-2xl text-center uppercase">
+      <h1 className="mb-9 font-normal md:text-title text-xl text-center uppercase">
         🔐 Reset Your Password
       </h1>
       <div className="mb-12 text-base text-center">

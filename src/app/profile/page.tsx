@@ -130,7 +130,7 @@ function ProfileContent() {
           <CustomBreadcrumb items={breadcrumbItems} />
           <LogoutButton showText={true} showIcon={true} />
         </div>
-        <h3 className="mb-4 md:text-title text-2xl uppercase">
+        <h3 className="mb-4 md:text-title text-xl uppercase">
           Welcome, {isLoading ? "..." : userData?.first_name}!
         </h3>
         <p>

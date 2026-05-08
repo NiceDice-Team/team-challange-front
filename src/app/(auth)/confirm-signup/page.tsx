@@ -20,7 +20,7 @@ function ConfirmSignUpContent() {
   }, []);
   return (
     <div className="flex flex-col items-center mt-23 mb-65">
-      <h1 className="mb-9 md:text-title text-2xl text-center uppercase">
+      <h1 className="mb-9 md:text-title text-xl text-center uppercase">
         Thank you for registering!
       </h1>
       <p className="text-base">
