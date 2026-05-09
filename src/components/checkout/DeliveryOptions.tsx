@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import { useTranslation } from "react-i18next";
 import icon from "../../assets/icons/attention.svg";
 import { RadioButton } from "../shared/CustomRadio";
 import { useEffect } from "react";
@@ -14,6 +15,7 @@ const DeliveryOptions = ({
 }: {
   onPaymentMethodChange: (method: DeliveryOption) => void;
 }) => {
+  const { t } = useTranslation();
   const payment = usePaymentMethod();
   const { setPaymentMethod } = useCheckoutActions();
 
@@ -55,13 +57,13 @@ const DeliveryOptions = ({
 
   return (
     <div className="flex flex-col gap-4 w-full">
-      <div className="mb-6 text-xl uppercase">Choose delivery option</div>
+      <div className="mb-6 text-xl uppercase">{t("checkoutOrder.deliveryOptions.title")}</div>
       {deliveryOptionsLoading ? (
-        <div className="text-gray-2">Loading...</div>
+        <div className="text-gray-2">{t("checkoutOrder.deliveryOptions.loading")}</div>
       ) : error ? (
-        <div className="text-red-600">Failed to load delivery options</div>
+        <div className="text-red-600">{t("checkoutOrder.deliveryOptions.loadError")}</div>
       ) : deliveryOptions.length === 0 ? (
-        <div className="text-gray-2">No delivery options available</div>
+        <div className="text-gray-2">{t("checkoutOrder.deliveryOptions.noOptions")}</div>
       ) : (
         <>
           <div className="flex flex-col gap-3">
@@ -84,17 +86,13 @@ const DeliveryOptions = ({
             ))}
           </div>
           <div className="flex items-center gap-2 mb-10">
-            <Image src={icon} alt="info" className="w-6 h-6" />
-            <p className="max-w-[566px] text-gray-2">
-              Please note that all international shipments may be subject to customs duties and taxes depending on your
-              local regulations. These charges are the full responsibility of the buyer and are not included in the item
-              price.
-            </p>
+            <Image src={icon} alt={t("checkoutOrder.deliveryOptions.infoIconAlt")} className="w-6 h-6" />
+            <p className="max-w-[566px] text-gray-2">{t("checkoutOrder.deliveryOptions.customsNotice")}</p>
           </div>
         </>
       )}
       <div className="flex justify-between items-center mb-2 font-bold uppercase px-6">
-        <span>Shipping</span>
+        <span>{t("checkoutOrder.deliveryOptions.shippingLabel")}</span>
         <span>{selectedDeliveryOption ? `$${selectedDeliveryOption.price}` : "-"}</span>
       </div>
       <div className="border-purple/50 border-t w-full h-px"></div>

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useTranslation } from "react-i18next";
 import Navbar from "@/components/layout/Navbar";
 import {
   footerBrand,
@@ -25,6 +26,7 @@ export function ProductDetailMobileHeader() {
 }
 
 export function ProductDetailMobileFooter() {
+  const { t } = useTranslation();
   const currentYear = new Date().getFullYear();
 
   return (
@@ -69,7 +71,7 @@ export function ProductDetailMobileFooter() {
           <div className="flex flex-col gap-4">
             <input
               type="email"
-              placeholder="Email"
+              placeholder={t("product.mobileFooter.emailPlaceholder")}
               className="h-12 w-full border border-white bg-white px-4 text-base text-black placeholder:text-[var(--color-placeholder)] focus:outline-none"
             />
 
@@ -77,7 +79,7 @@ export function ProductDetailMobileFooter() {
               type="button"
               className="flex h-12 w-full items-center justify-center bg-[var(--color-orange)] px-8 text-base font-medium uppercase text-white"
             >
-              Subscribe
+              {t("product.mobileFooter.subscribe")}
             </button>
 
             <label className="flex items-start gap-2 text-base leading-5">

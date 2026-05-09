@@ -1,0 +1,600 @@
+{
+  "appName": "NiceDice",
+  "common": {
+    "email": "Email",
+    "enterEmailAddress": "Enter email address",
+    "password": "Password",
+    "enterPassword": "Enter password",
+    "submit": "Submit",
+    "or": "or"
+  },
+  "login": {
+    "title": "Sign In",
+    "submit": "Log In",
+    "welcomeBack": "Welcome back!",
+    "logInHere": "Log in here",
+    "createAccount": "Create account",
+    "successPasswordChanged": "Success! Your password has been changed.",
+    "youCanNowLogInAndContinueYourAdventure": "You can now log in and continue your adventure",
+    "dontForgetToLogIn": "Don't forget to log in!",
+    "unlockExclusiveRewardsAndTrackYourOrdersWithEase": "Unlock exclusive rewards, and track your orders with ease.",
+    "forgotPassword": "Forgot your password?",
+    "continueAsGuest": "Continue as a guest",
+    "successLoggedIn": "Success! You are logged in.",
+    "errorLoggedIn": "Error! You are not logged in.",
+    "youCanNowContinueYourAdventure": "You can now continue your adventure"
+  },
+  "register": {
+    "title": "Create account",
+    "subtitleLine1": "Join our community of board game enthusiasts! 🎲",
+    "subtitleLine2": "Fill in the details below to get started",
+    "labels": {
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password"
+    },
+    "placeholders": {
+      "firstName": "Enter your name",
+      "lastName": "Enter your last name",
+      "email": "Enter email address",
+      "password": "Enter password",
+      "confirmPassword": "Enter password"
+    },
+    "privacy": {
+      "agreeToThe": "I agree to the",
+      "privacyPolicy": "Privacy Policy",
+      "and": "and",
+      "termsOfService": "Terms of Service"
+    },
+    "subscribe": "Subscribe to news, updates & special offers",
+    "submit": "REGISTER",
+    "alreadyHaveAccount": "Already have an account?",
+    "logInHere": "Log in here",
+    "success": {
+      "title": "Thank you for registering!",
+      "toastTitle": "Success! You are registered.",
+      "toastDescription": "A confirmation email has been sent to your inbox.",
+      "descriptionLine1": "A confirmation email has been sent to your inbox.",
+      "descriptionLine2": "Please click the link in that email to activate your account.",
+      "descriptionLine3": "Check the message for 5-10 minutes. If you don't find the list, please check your spam folder and resend it again.",
+      "browseGames": "Browse games"
+    }
+  },
+  "forgot-pass": {
+    "title": "🔒Forgot your password?",
+    "descriptionLine1": "🧩 No problem! Just enter your email address below and",
+    "descriptionLine2": "we’ll send you a link to reset your password",
+    "placeholderEmail": "Enter email address",
+    "labelEmail": "Email",
+    "submit": "SUBMIT",
+    "submitting": "SUBMITTING...",
+    "errorSendingResetEmail": "Error sending reset email. Try again.",
+    "dontNeedHelpAnymore": "Don’t need help anymore?",
+    "signIn": "Sign in",
+    "success": {
+      "title": "✉️ Check Your Inbox",
+      "toastTitle": "Success!",
+      "toastDescription": "A password reset link has been sent to your inbox.",
+      "descriptionLine1": "If the email address you entered is associated with an account, you’ll receive a password reset link shortly",
+      "descriptionLine2": "Check the message for 5-10 minutes. If you don't find the list, please check your spam folder and resend it again.",
+      "didntReceiveEmail": "Didn’t receive the email?",
+      "resend": "Resend",
+      "continueShopping": "Continue shopping"
+    }
+  },
+  "resetPass": {
+    "title": "🔐 Reset Your Password",
+    "descriptionLine1": "You've made it!",
+    "descriptionLine2": "Now enter a new password to continue your quest",
+    "labelPassword": "Password",
+    "labelConfirmPassword": "Confirm Password",
+    "placeholderPassword": "Enter password",
+    "placeholderConfirmPassword": "Enter password",
+    "reset": "RESET",
+    "resetting": "RESETTING...",
+    "dontNeedHelpAnymore": "Don't need help anymore?",
+    "signIn": "Sign in",
+    "toastTitle": "Success! Your password has been changed.",
+    "toastDescription": "You can now continue your adventure",
+    "errorResettingPassword": "Error resetting password. Try again."
+  },
+  "layout": {
+    "feature": {
+      "shipping": {
+        "title": "24-Hour Fast Shipping",
+        "description": "Get your games delivered quickly and safely",
+        "iconAlt": "Shipping icon"
+      },
+      "securePayment": {
+        "title": "Secure Payment",
+        "description": "Shop with confidence, using trusted payment methods",
+        "iconAlt": "Lock icon"
+      },
+      "returns": {
+        "title": "Easy Returns and Exchanges",
+        "description": "Hassle-free shopping experience",
+        "iconAlt": "Returns icon"
+      }
+    },
+    "featureBottom": {
+      "wideSelection": {
+        "title": "Wide Selection",
+        "description": "From party games to deep strategy, we have something for everyone",
+        "iconAlt": "Puzzle icon"
+      },
+      "highQuality": {
+        "title": "High-Quality Games",
+        "description": "We source directly from trusted manufacturers",
+        "iconAlt": "Prize icon"
+      },
+      "support": {
+        "title": "Support",
+        "description": "Our team is here to help you find the perfect game",
+        "iconAlt": "Chat icon"
+      }
+    },
+    "partners": {
+      "title": "Our Trusted Brands & Partners",
+      "brands": {
+        "cmon": "CMON",
+        "ravensburger": "Ravensburger",
+        "mattel": "Mattel",
+        "hasbro": "Hasbro",
+        "kosmos": "Kosmos",
+        "luckyDuck": "LuckyDuck",
+        "ff": "FF",
+        "asmodee": "Asmodee"
+      }
+    },
+    "subscribe": {
+      "title": "Stay Updated & Get Exclusive Deals!",
+      "description": "Subscribe to our newsletter and be the first to know about new arrivals, special offers, and gaming news",
+      "placeholderEmail": "Email",
+      "button": "Subscribe",
+      "consentLabel": "I agree to receiving marketing emails and special deals"
+    },
+    "blog": {
+      "title": "Check out our blogs",
+      "viewAll": "view all",
+      "metaLine": "{{date}} - {{count}} min read",
+      "readFullArticle": "Read full article",
+      "posts": {
+        "post1": {
+          "date": "May 15, 2023",
+          "name": "Catan -The Ultimate Board Game Experience?",
+          "category": "Game Review"
+        },
+        "post2": {
+          "date": "June 2, 2023",
+          "name": "D&D, How to Start Playing",
+          "category": "Game Tutorial"
+        },
+        "post3": {
+          "date": "June 20, 2023",
+          "name": "Warhammer 40k - The Ultimate Guide",
+          "category": "Game Review"
+        }
+      }
+    },
+    "footer": {
+      "followUs": "follow us",
+      "sections": {
+        "products": {
+          "title": "products",
+          "links": {
+            "newArrivals": "New Arrivals",
+            "bestsellers": "Bestsellers",
+            "boardGames": "Board Games",
+            "comingSoon": "Coming soon",
+            "sale": "Sale"
+          }
+        },
+        "clients": {
+          "title": "clients",
+          "links": {
+            "blog": "Blog",
+            "reviews": "Reviews",
+            "shipping": "Shipping",
+            "returns": "Returns"
+          }
+        },
+        "company": {
+          "title": "company",
+          "links": {
+            "about": "About",
+            "contactUs": "Contact Us",
+            "termsOfService": "Terms of Service",
+            "privacyPolicy": "Privacy Policy"
+          }
+        }
+      }
+    }
+  },
+  "cart": {
+    "breadcrumb": {
+      "home": "Home",
+      "cart": "Cart"
+    },
+    "loading": "Loading cart...",
+    "title": "your cart ({{count}})",
+    "notReadyToCheckout": "Not ready to checkout?",
+    "continueShopping": "Continue Shopping",
+    "table": {
+      "product": "Product",
+      "price": "Price",
+      "quantity": "Quantity",
+      "total": "Total"
+    },
+    "empty": {
+      "message": "Your cart is empty",
+      "startShopping": "Start Shopping"
+    },
+    "shippingCalculatedAtCheckout": "shipping calculated at checkout",
+    "subtotal": "Subtotal:",
+    "freeShipping": {
+      "away": "You're just {{amount}} away from FREE shipping",
+      "unlocked": "🎉 FREE SHIPPING"
+    },
+    "specialNotes": {
+      "title": "Special notes for your order",
+      "placeholder": "Add any special instructions..."
+    },
+    "coupon": {
+      "placeholder": "Coupon code",
+      "apply": "Apply"
+    },
+    "checkout": "Checkout",
+    "youMayAlsoLike": "you may also like",
+    "errors": {
+      "failedToRemoveItem": "Failed to remove item",
+      "failedToUpdateQuantity": "Failed to update quantity"
+    },
+    "modal": {
+      "titlePrefix": "🔓Log in here or",
+      "createAccount": "create account",
+      "subtitleLine1": "🎯 Don't forget to log in!",
+      "subtitleLine2": "Unlock exclusive rewards, and track your orders with ease.",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Enter your Email",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Enter your new password",
+      "signIn": "SIGN IN",
+      "continueAsGuest": "Continue as a guest",
+      "validation": {
+        "emailRequired": "Email is required",
+        "invalidEmail": "Invalid email",
+        "passwordRequired": "Password is required",
+        "passwordMin": "Password must be at least 8 characters",
+        "passwordMax": "Password must be less than 128 characters"
+      },
+      "errors": {
+        "signinGeneric": "An error occurred during signin. Please try again.",
+        "invalidCredentials": "Invalid email or password.",
+        "noTokenReceived": "No token received"
+      }
+    },
+    "productCard": {
+      "starFilledAlt": "filled star",
+      "starEmptyAlt": "empty star",
+      "soldOutAlt": "sold out",
+      "veryLowStockAlt": "very low stock",
+      "mediumStockAlt": "medium stock",
+      "highStockAlt": "high stock",
+      "soldOutMessage": "Sold out",
+      "veryLowStock_one": "Very low stock ({{count}} unit)",
+      "veryLowStock_other": "Very low stock ({{count}} units)",
+      "inStock": "In stock",
+      "unknownBrand": "Unknown Brand",
+      "productAlt": "Product",
+      "productNameFallback": "Product Name",
+      "addToCart": "ADD TO CART",
+      "adding": "ADDING...",
+      "soldOutButton": "SOLD OUT"
+    }
+  },
+  "checkoutOrder": {
+    "breadcrumb": {
+      "home": "Home",
+      "boardGames": "Board games",
+      "cart": "Cart",
+      "checkout": "Checkout"
+    },
+    "pageTitle": "Checkout",
+    "yourOrderSummary": "Your order summary",
+    "orderTotal": "Order Total",
+    "deliveryOptions": {
+      "title": "Choose delivery option",
+      "loading": "Loading...",
+      "loadError": "Failed to load delivery options",
+      "noOptions": "No delivery options available",
+      "customsNotice": "Please note that all international shipments may be subject to customs duties and taxes depending on your local regulations. These charges are the full responsibility of the buyer and are not included in the item price.",
+      "shippingLabel": "Shipping",
+      "infoIconAlt": "info"
+    },
+    "shippingForm": {
+      "sectionShipping": "Shipping",
+      "sectionBilling": "Billing address",
+      "copyBilling": "Use shipping address as billing address",
+      "returnToCart": "Return to cart",
+      "orderReview": "Order review",
+      "labels": {
+        "countryRegion": "Country/region",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "address": "Address",
+        "apartment": "Apartment, suite, etc",
+        "zipCode": "Zip Code",
+        "city": "Town / City",
+        "email": "Email",
+        "phoneNumber": "Phone number"
+      },
+      "placeholders": {
+        "firstName": "Enter your first name",
+        "lastName": "Enter your last name",
+        "address": "Enter your address",
+        "apartment": "Enter your apartment, suite, etc",
+        "zipCode": "Enter your zip code",
+        "city": "Enter your city",
+        "email": "Enter your email"
+      },
+      "validation": {
+        "chooseCountry": "Choose country",
+        "firstNameMin": "Name must be at least 2 characters",
+        "firstNameMax": "Name must be at most 50 characters",
+        "firstNameRegex": "Only letters, spaces and apostrophes are allowed",
+        "lastNameMin": "Name must be at least 2 characters",
+        "lastNameMax": "Name must be at most 50 characters",
+        "lastNameRegex": "Only letters, spaces and apostrophes are allowed",
+        "addressMin": "Address must be at least 5 characters",
+        "addressMax": "Address must be at most 100 characters",
+        "addressRegex": "Only letters, numbers and spaces are allowed",
+        "apartmentMax": "Apartment must be at most 50 characters",
+        "zipMin": "Zip code must be at least 3 characters",
+        "zipMax": "Zip code must be at most 12 characters",
+        "zipRegex": "Only numbers and letters are allowed",
+        "cityMin": "City must be at least 2 characters",
+        "cityMax": "City must be at most 50 characters",
+        "cityRegex": "Only letters and spaces are allowed",
+        "invalidEmail": "Invalid email",
+        "phoneMin": "Phone must be at least 8 characters",
+        "billingCountryRequired": "Billing country is required",
+        "billingFirstNameRequired": "First name is required",
+        "billingLastNameRequired": "Last name is required",
+        "billingAddressRequired": "Billing address is required",
+        "billingCityRequired": "City is required",
+        "billingZipRequired": "Zip code is required",
+        "billingEmailRequired": "Email is required",
+        "billingPhoneRequired": "Phone number is required"
+      }
+    },
+    "productsTable": {
+      "yourOrder": "Your order",
+      "loading": "Loading order...",
+      "headers": {
+        "product": "Product",
+        "quantity": "Quantity",
+        "total": "Total"
+      },
+      "productFallback": "Product",
+      "emptyCart": "No items in cart",
+      "subtotal": "Subtotal",
+      "shipping": "Shipping",
+      "shippingPending": "Enter shipping address",
+      "orderTotal": "Order Total"
+    }
+  },
+  "orderReview": {
+    "breadcrumb": {
+      "home": "Home",
+      "boardGames": "Board games",
+      "cart": "Cart",
+      "checkout": "Checkout"
+    },
+    "title": "Order review",
+    "edit": "Edit",
+    "shipping": "Shipping",
+    "billingAddress": "Billing address",
+    "payment": "Payment",
+    "togglePaymentAriaLabel": "Toggle payment section",
+    "loadingPaymentMethods": "Loading...",
+    "failedToLoadPaymentMethods": "Failed to load payment methods",
+    "returnToCheckout": "Return to checkout",
+    "placeOrder": "Place order",
+    "yourOrder": "Your order",
+    "loadingOrder": "Loading order...",
+    "headers": {
+      "product": "Product",
+      "quantity": "Quantity",
+      "total": "Total"
+    },
+    "productFallback": "Product",
+    "emptyCart": "No items in cart",
+    "subtotal": "Subtotal",
+    "delivery": "Delivery",
+    "noDeliveryMethod": "No delivery method selected",
+    "shippingRow": "Shipping",
+    "orderTotal": "Order Total",
+    "toast": {
+      "failedLoadCart": "Failed to load cart",
+      "orderPlacedTitle": "Order placed",
+      "orderPlacedDescription": "Your order has been placed successfully.",
+      "failedPlaceOrderTitle": "Failed to place order",
+      "failedPlaceOrderDescription": "Failed to place order. Please try again."
+    }
+  },
+  "catalog": {
+    "title": "Board games",
+    "loading": "Loading..."
+  },
+  "product": {
+    "breadcrumb": {
+      "home": "Home",
+      "boardGames": "Board games",
+      "fallbackName": "Product"
+    },
+    "errors": {
+      "invalidId": "Invalid product ID",
+      "invalidUrlHint": "Please check the URL and try again",
+      "loadFailed": "Error loading product",
+      "loadFailedHint": "Please try again later",
+      "notFound": "Product not found"
+    },
+    "descriptionUnavailable": "Product description is unavailable",
+    "noImage": "No image",
+    "imageAltProduct": "Product image",
+    "imageAltNumbered": "Product image {{number}}",
+    "wishlistAria": "Add to wishlist",
+    "viewImageAria": "View image {{number}}",
+    "brandFallback": "Brand",
+    "skuLabel": "SKU:",
+    "stock": {
+      "soldOut": "Sold out",
+      "veryLow": "Very low stock ({{count}} {{units}})",
+      "unit": "unit",
+      "units": "units",
+      "low": "Low stock ({{count}} units)",
+      "inStock": "In stock"
+    },
+    "addToCart": "Add to cart",
+    "addToCartDesktop": "ADD TO CART",
+    "addingToCart": "Adding...",
+    "addingToCartDesktop": "ADDING...",
+    "quantity": {
+      "decreaseAria": "Decrease quantity",
+      "increaseAria": "Increase quantity"
+    },
+    "reviews": {
+      "sectionTitle": "Reviews from our customers",
+      "ratingOutOf": "{{rating}} out of 5",
+      "basedOn_one": "Based on {{count}} review",
+      "basedOn_other": "Based on {{count}} reviews",
+      "sortBy": "Sort by",
+      "sortByDesktop": "sort by",
+      "placeholderSort": "Most recent",
+      "placeholderSortDesktop": "Most Recent",
+      "sortMostRecent": "Most recent",
+      "sortMostRecentDesktop": "Most Recent",
+      "sortOldest": "Oldest",
+      "sortHighestRated": "Highest rated",
+      "sortHighestRatedDesktop": "Highest Rated",
+      "sortLowestRated": "Lowest rated",
+      "sortLowestRatedDesktop": "Lowest Rated",
+      "loadingReviews": "Loading reviews...",
+      "loadReviewsError": "Unable to load reviews right now.",
+      "noReviewsYet": "No reviews yet for this product.",
+      "customerNumber": "Customer #{{id}}",
+      "anonymousCustomer": "Anonymous customer",
+      "cardTitleWithComment": "Rated {{rating}} out of 5",
+      "cardTitleWithoutComment": "Rating: {{rating}} out of 5",
+      "cardBodyNoComment": "This customer left a star rating without a written comment."
+    },
+    "reviewDialog": {
+      "button": "Write a Review",
+      "title": "Write a review",
+      "loginRequired": "You need to log in before you can submit a review",
+      "loginRequiredProductSuffix": " for {{productName}}",
+      "goToLogin": "Go to login",
+      "close": "Close",
+      "ratingLabel": "Rating",
+      "commentLabel": "Comment",
+      "commentPlaceholder": "Share your experience with this product",
+      "cancel": "Cancel",
+      "submitReview": "Submit review",
+      "submitting": "Submitting...",
+      "rating5": "5 - Excellent",
+      "rating4": "4 - Good",
+      "rating3": "3 - Average",
+      "rating2": "2 - Poor",
+      "rating1": "1 - Terrible",
+      "toastSuccessTitle": "Review submitted",
+      "toastSuccessDescription": "Your review was added successfully.",
+      "toastErrorTitle": "Unable to submit review",
+      "toastErrorDescription": "Please try again later."
+    },
+    "accordion": {
+      "description": "Description",
+      "gameInformation": "Game Information",
+      "publisher": "Publisher:",
+      "players": "Players:",
+      "playersValue": "2-5",
+      "ages": "Ages:",
+      "agesValue": "8+",
+      "playTime": "Play Time:",
+      "playTimeValue": "30-60 Minutes",
+      "includes": "Includes:",
+      "includesValue": "Game board of Europe, 225 colored train cars, 110 train cards, 46 destination tickets, and 3 train stations",
+      "gameFeatures": "Game Features:",
+      "gameFeaturesValue": "Strategic route building, exciting challenges with tunnels and ferries, and engaging player interaction",
+      "deliveryPayment": "Delivery and payment",
+      "shippingUaTitle": "📦 Shipping Within Ukraine",
+      "deliveryMethods": "Delivery Methods:",
+      "ukLineNovaPoshta": "•   Nova Poshta: 1–3 business days",
+      "ukLineUkrposhta": "•   Ukrposhta: 2–5 business days",
+      "intlShippingTitle": "🌍 International Shipping",
+      "intlLineCarriers": "•   Carriers: Ukrposhta, Nova Poshta, DHL, FedEx",
+      "intlLineDeliveryTime": "•   Delivery Time: Typically 7–14 business days, depending on the destination and customs processing",
+      "deliveryCostTitle": "💰 Delivery Cost",
+      "costLineFreeOver60": "•   Free shipping for orders over $60",
+      "costLineUnder60": "•   Orders under $60: according to the carrier's rates",
+      "costLineInternational": "•   International shipping: calculated individually based on destination and package weight. The final cost will be shown at checkout.",
+      "paymentMethodsTitle": "💳 Payment Methods",
+      "paymentLineOnline": "•   Online Payment: pay instantly via LiqPay, WayForPay, or any major bank card (Visa/MasterCard)",
+      "paymentLineWallet": "•   Google Pay / Apple Pay: fast and secure mobile payment with just a tap"
+    },
+    "mobileFooter": {
+      "emailPlaceholder": "Email",
+      "subscribe": "Subscribe"
+    }
+  },
+  "profile": {
+    "breadcrumb": {
+      "home": "Home",
+      "myAccount": "My account"
+    },
+    "welcome": "Welcome, {{name}}!",
+    "dashboardSubtitle": "🧩 Your account dashboard - manage your profile, track orders, and update your preferences",
+    "mailIconAlt": "Email",
+    "sidebar": {
+      "yourProfile": "Your Profile",
+      "quickView": "Quick view of your account details",
+      "nameLabel": "NAME",
+      "emailLabel": "EMAIL",
+      "loading": "Loading...",
+      "changePassword": "CHANGE PASSWORD"
+    },
+    "tabs": {
+      "orderHistory": "ORDER HISTORY",
+      "editProfile": "Edit Profile"
+    },
+    "orderHistory": {
+      "title": "ORDER HISTORY",
+      "subtitle": "View and track all your previous orders"
+    },
+    "editForm": {
+      "bannerTitle": "Edit Your Profile",
+      "bannerSubtitle": "Update your personal information and account details",
+      "labels": {
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email"
+      },
+      "placeholders": {
+        "firstName": "Enter your first name",
+        "lastName": "Enter your last name",
+        "email": "Enter your email"
+      },
+      "submit": "MAKE CHANGES",
+      "submitting": "UPDATING..."
+    },
+    "toast": {
+      "updateFailedTitle": "Failed to update profile",
+      "updateFailedDescription": "Failed to update profile",
+      "updateSuccessTitle": "Success! Your profile has been updated."
+    },
+    "errors": {
+      "updateFailed": "Failed to update profile"
+    }
+  }
+}

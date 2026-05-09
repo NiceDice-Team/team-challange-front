@@ -11,10 +11,12 @@ import { z } from "zod";
 import { forgotPasswordSchema } from "@/lib/definitions";
 import { useRouter } from "next/navigation";
 import { PublicRoute } from "@/components/auth/RouteGuards";
+import { useTranslation } from "react-i18next";
 
 type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
 function ForgotPasswordPageContent() {
+  const { t } = useTranslation();
   const [error, setError] = useState("");
   const router = useRouter();
 
@@ -42,18 +44,18 @@ function ForgotPasswordPageContent() {
       router.push("/forgot-password/success");
     } catch (error) {
       console.error("Error sending reset email:", error);
-      setError("Error sending reset email. Try again.");
+      setError(t("forgot-pass.errorSendingResetEmail"));
     }
   };
 
   return (
     <div className="flex flex-col items-center mx-auto mt-20 mb-32">
-      <h1 className="mb-9 font-normal md:text-title text-2xl text-center uppercase">
-        🔒Forgot your password?
+      <h1 className="mb-9 font-normal md:text-title text-xl text-center uppercase">
+        {t("forgot-pass.title")}
       </h1>
       <div className="mb-12 text-base text-center">
-        🧩 No problem! Just enter your email address below and <br /> we’ll send
-        you a link to reset your password
+        {t("forgot-pass.descriptionLine1")} <br />
+        {t("forgot-pass.descriptionLine2")}
       </div>
 
       <form
@@ -61,9 +63,9 @@ function ForgotPasswordPageContent() {
         onSubmit={handleSubmit(onSubmit)}
       >
         <CustomInput
-          placeholder="Enter email address"
+          placeholder={t("forgot-pass.placeholderEmail")}
           id="email"
-          label="Email"
+          label={t("forgot-pass.labelEmail")}
           name="email"
           {...register("email")}
           disabled={isSubmitting}
@@ -78,14 +80,15 @@ function ForgotPasswordPageContent() {
           disabled={isSubmitting}
           loading={isSubmitting}
         >
-          {isSubmitting ? "SUBMITTING..." : "SUBMIT"}
+          {isSubmitting ? t("forgot-pass.submitting") : t("forgot-pass.submit")}
         </CustomButton>
       </form>
 
       <div className="flex flex-row justify-center items-center gap-1 mt-12 text-purple text-center">
-        Don’t need help anymore?
+        {t("forgot-pass.dontNeedHelpAnymore")}
         <Link href="/login" className="underline">
-          Sign in<span className="inline-block ml-1">→</span>
+          {t("forgot-pass.signIn")}
+          <span className="inline-block ml-1">→</span>
         </Link>
       </div>
     </div>

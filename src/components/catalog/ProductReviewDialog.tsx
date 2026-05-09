@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -24,8 +25,10 @@ export default function ProductReviewDialog({
   productId,
   productName,
   buttonClassName = "",
-  buttonLabel = "Write a review",
+  buttonLabel,
 }: ProductReviewDialogProps) {
+  const { t } = useTranslation();
+  const resolvedButtonLabel = buttonLabel ?? t("product.reviewDialog.button");
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [rating, setRating] = useState(INITIAL_RATING);
@@ -53,8 +56,8 @@ export default function ProductReviewDialog({
 
       showCustomToast({
         type: "success",
-        title: "Review submitted",
-        description: "Your review was added successfully.",
+        title: t("product.reviewDialog.toastSuccessTitle"),
+        description: t("product.reviewDialog.toastSuccessDescription"),
       });
 
       resetForm();
@@ -63,11 +66,22 @@ export default function ProductReviewDialog({
     onError: (error) => {
       showCustomToast({
         type: "error",
-        title: "Unable to submit review",
-        description: error instanceof Error ? error.message : "Please try again later.",
+        title: t("product.reviewDialog.toastErrorTitle"),
+        description: error instanceof Error ? error.message : t("product.reviewDialog.toastErrorDescription"),
       });
     },
   });
+
+  const ratingOptions = useMemo(
+    () => [
+      { value: "5", label: t("product.reviewDialog.rating5") },
+      { value: "4", label: t("product.reviewDialog.rating4") },
+      { value: "3", label: t("product.reviewDialog.rating3") },
+      { value: "2", label: t("product.reviewDialog.rating2") },
+      { value: "1", label: t("product.reviewDialog.rating1") },
+    ],
+    [t],
+  );
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -91,27 +105,27 @@ export default function ProductReviewDialog({
   return (
     <>
       <button type="button" className={buttonClassName} onClick={() => setOpen(true)}>
-        {buttonLabel}
+        {resolvedButtonLabel}
       </button>
 
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent className="z-50 max-w-[560px] rounded-none border border-[var(--color-light-purple-2)] bg-white p-6 sm:p-8">
           <DialogHeader>
             <DialogTitle className="text-left text-2xl font-medium uppercase text-black">
-              Write a review
+              {t("product.reviewDialog.title")}
             </DialogTitle>
           </DialogHeader>
 
           {!isUserAuthenticated ? (
             <div className="space-y-6 pt-2">
               <p className="text-base leading-6 text-black">
-                You need to log in before you can submit a review
-                {productName ? ` for ${productName}` : ""}.
+                {t("product.reviewDialog.loginRequired")}
+                {productName ? t("product.reviewDialog.loginRequiredProductSuffix", { productName }) : ""}.
               </p>
 
               <div className="flex flex-wrap gap-3">
                 <Button asChild className="rounded-none bg-[var(--color-purple)] px-6 py-3 text-sm uppercase text-white hover:opacity-90">
-                  <Link href="/login">Go to login</Link>
+                  <Link href="/login">{t("product.reviewDialog.goToLogin")}</Link>
                 </Button>
                 <Button
                   type="button"
@@ -119,7 +133,7 @@ export default function ProductReviewDialog({
                   className="rounded-none border-[var(--color-purple)] px-6 py-3 text-sm uppercase text-[var(--color-purple)]"
                   onClick={() => setOpen(false)}
                 >
-                  Close
+                  {t("product.reviewDialog.close")}
                 </Button>
               </div>
             </div>
@@ -127,25 +141,19 @@ export default function ProductReviewDialog({
             <form className="space-y-6 pt-2" onSubmit={handleSubmit}>
               <div className="space-y-2">
                 <Label htmlFor="review-rating" className="text-sm font-medium uppercase text-black">
-                  Rating
+                  {t("product.reviewDialog.ratingLabel")}
                 </Label>
                 <CustomSelect
                   className="h-12 rounded-none border-[var(--color-light-purple-2)] text-black"
                   value={rating}
                   onValueChange={setRating}
-                  options={[
-                    { value: "5", label: "5 - Excellent" },
-                    { value: "4", label: "4 - Good" },
-                    { value: "3", label: "3 - Average" },
-                    { value: "2", label: "2 - Poor" },
-                    { value: "1", label: "1 - Terrible" },
-                  ]}
+                  options={ratingOptions}
                 />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="review-comment" className="text-sm font-medium uppercase text-black">
-                  Comment
+                  {t("product.reviewDialog.commentLabel")}
                 </Label>
                 <textarea
                   id="review-comment"
@@ -153,7 +161,7 @@ export default function ProductReviewDialog({
                   onChange={(event) => setComment(event.target.value)}
                   rows={6}
                   maxLength={1000}
-                  placeholder="Share your experience with this product"
+                  placeholder={t("product.reviewDialog.commentPlaceholder")}
                   className="w-full rounded-none border border-[var(--color-light-purple-2)] px-4 py-3 text-base text-black outline-none transition focus:border-[var(--color-purple)]"
                 />
                 <p className="text-sm text-[var(--color-gray-2)]">{comment.length}/1000</p>
@@ -166,14 +174,14 @@ export default function ProductReviewDialog({
                   className="rounded-none border-[var(--color-purple)] px-6 py-3 text-sm uppercase text-[var(--color-purple)]"
                   onClick={() => setOpen(false)}
                 >
-                  Cancel
+                  {t("product.reviewDialog.cancel")}
                 </Button>
                 <Button
                   type="submit"
                   className="rounded-none bg-[var(--color-purple)] px-6 py-3 text-sm uppercase text-white hover:opacity-90"
                   disabled={createReviewMutation.isPending}
                 >
-                  {createReviewMutation.isPending ? "Submitting..." : "Submit review"}
+                  {createReviewMutation.isPending ? t("product.reviewDialog.submitting") : t("product.reviewDialog.submitReview")}
                 </Button>
               </div>
             </form>

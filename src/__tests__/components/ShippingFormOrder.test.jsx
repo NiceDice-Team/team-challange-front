@@ -189,7 +189,7 @@ describe("ShippingForm", () => {
     test("does not render billing address fields by default (when copyBilling = true)", () => {
       render(<ShippingForm paymentMethod={mockPaymentMethod} />);
 
-      expect(screen.queryByText("Billing adress")).not.toBeInTheDocument();
+      expect(screen.queryByText("Billing address")).not.toBeInTheDocument();
     });
     test("renders billing address fields when copyBilling is false", async () => {
       const user = userEvent.setup();
@@ -199,7 +199,7 @@ describe("ShippingForm", () => {
       await user.click(checkbox);
 
       await waitFor(() => {
-        expect(screen.getByText("Billing adress")).toBeInTheDocument();
+        expect(screen.getByText("Billing address")).toBeInTheDocument();
       });
     });
   })
@@ -279,13 +279,13 @@ describe("ShippingForm", () => {
       await user.click(checkbox);
 
       await waitFor(() => {
-        expect(screen.getByText("Billing adress")).toBeInTheDocument();
+        expect(screen.getByText("Billing address")).toBeInTheDocument();
       });
 
       await user.click(checkbox);
 
       await waitFor(() => {
-        expect(screen.queryByText("Billing adress")).not.toBeInTheDocument();
+        expect(screen.queryByText("Billing address")).not.toBeInTheDocument();
       });
     });
   })
@@ -464,7 +464,7 @@ describe("ShippingForm", () => {
       await user.click(checkbox);
 
       await waitFor(() => {
-        expect(screen.getByText("Billing adress")).toBeInTheDocument();
+        expect(screen.getByText("Billing address")).toBeInTheDocument();
       });
 
       const billingCountry = screen.getByTestId("billingCountry");
@@ -516,7 +516,7 @@ describe("ShippingForm", () => {
       await user.click(checkbox);
 
       await waitFor(() => {
-        expect(screen.getByText("Billing adress")).toBeInTheDocument();
+        expect(screen.getByText("Billing address")).toBeInTheDocument();
       });
 
       const submitButton = screen.getByTestId("submit-button");

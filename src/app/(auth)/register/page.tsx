@@ -18,8 +18,10 @@ import { CustomButton } from "@/components/shared/CustomButton";
 import { PasswordInput } from "@/components/shared/PasswordInput";
 import { PublicRoute } from "@/components/auth/RouteGuards";
 import { API_BASE_URL } from "@/config/api";
+import { useTranslation } from "react-i18next";
 
 function RegisterPageContent() {
+  const { t } = useTranslation();
   const [isChecked, setIsChecked] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [serverErrors, setServerErrors] = useState<FormState["errors"]>({});
@@ -279,12 +281,12 @@ function RegisterPageContent() {
 
   return (
     <div className="mx-auto mt-20">
-      <h1 className="mb-9 font-normal md:text-title text-2xl text-center uppercase">
-        Create account
+      <h1 className="mb-9 font-normal md:text-title text-xl text-center uppercase">
+        {t("register.title")}
       </h1>
       <div className="mb-12 text-base text-center">
-        <p>Join our community of board game enthusiasts! 🎲</p>
-        <p>Fill in the details below to get started</p>
+        <p>{t("register.subtitleLine1")}</p>
+        <p>{t("register.subtitleLine2")}</p>
       </div>
 
       <div className="flex flex-col justify-center items-center mb-28">
@@ -293,9 +295,9 @@ function RegisterPageContent() {
           onSubmit={handleSubmit(onSubmit)}
         >
           <CustomInput
-            placeholder="Enter your name"
+            placeholder={t("register.placeholders.firstName")}
             id="firstname"
-            label="First name"
+            label={t("register.labels.firstName")}
             {...register("firstname", {
               onChange: () => handleFieldChange("firstname"),
             })}
@@ -313,9 +315,9 @@ function RegisterPageContent() {
             }
           />
           <CustomInput
-            placeholder="Enter your last name"
+            placeholder={t("register.placeholders.lastName")}
             id="lastname"
-            label="Last name"
+            label={t("register.labels.lastName")}
             {...register("lastname", {
               onChange: () => handleFieldChange("lastname"),
             })}
@@ -333,9 +335,9 @@ function RegisterPageContent() {
             }
           />
           <CustomInput
-            placeholder="Enter email address"
+            placeholder={t("register.placeholders.email")}
             id="email"
-            label="Email"
+            label={t("register.labels.email")}
             {...register("email", {
               onChange: () => handleFieldChange("email"),
             })}
@@ -353,9 +355,9 @@ function RegisterPageContent() {
             }
           />
           <PasswordInput
-            placeholder="Enter password"
+            placeholder={t("register.placeholders.password")}
             id="password"
-            label="password"
+            label={t("register.labels.password")}
             {...register("password", {
               onChange: () => handleFieldChange("password"),
             })}
@@ -373,9 +375,9 @@ function RegisterPageContent() {
             }
           />
           <PasswordInput
-            placeholder="Enter password"
+            placeholder={t("register.placeholders.confirmPassword")}
             id="confirmPassword"
-            label="Confirm Password"
+            label={t("register.labels.confirmPassword")}
             {...register("confirmPassword", {
               onChange: () => handleFieldChange("confirmPassword"),
             })}
@@ -408,20 +410,20 @@ function RegisterPageContent() {
               onCheckedChange={() => setIsChecked((prev) => !prev)}
               label={
                 <p>
-                  I agree to the{" "}
+                  {t("register.privacy.agreeToThe")}{" "}
                   <Link href="/" className="underline">
-                    Privacy Policy
+                    {t("register.privacy.privacyPolicy")}
                   </Link>{" "}
-                  and{" "}
+                  {t("register.privacy.and")}{" "}
                   <Link href="/" className="underline">
-                    Terms of Service
+                    {t("register.privacy.termsOfService")}
                   </Link>
                 </p>
               }
             />
             <CustomCheckbox
               id="subscribe"
-              label="Subscribe to news, updates & special offers"
+              label={t("register.subscribe")}
             />
           </div>
 
@@ -430,14 +432,14 @@ function RegisterPageContent() {
             disabled={isLoading || !isChecked}
             loading={isLoading}
           >
-            REGISTER
+            {t("register.submit")}
           </CustomButton>
         </form>
 
         <Link href="/login" className="flex flex-col items-center">
-          <p className="text-purple">Already have an account?</p>
+          <p className="text-purple">{t("register.alreadyHaveAccount")}</p>
           <div className="flex gap-1">
-            <span className="text-purple underline">Log in here</span>
+            <span className="text-purple underline">{t("register.logInHere")}</span>
             <Image src={ArrowNext} alt="arrow" />
           </div>
         </Link>

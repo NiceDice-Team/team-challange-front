@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useTranslation } from "react-i18next";
 import CMON_IMG from "../../../public/Brands/brand_1.png";
 import Ravensburger_IMG from "../../../public/Brands/brand_2.png";
 import Mattel_IMG from "../../../public/Brands/brand_3.png";
@@ -9,20 +12,24 @@ import FF_IMG from "../../../public/Brands/brand_7.png";
 import Asmodee_IMG from "../../../public/Brands/brand_8.png";
 
 const PARTNERS = [
-  { src: CMON_IMG, alt: "CMON", id: 1 },
-  { src: Ravensburger_IMG, alt: "Ravensburger", id: 2 },
-  { src: Mattel_IMG, alt: "Mattel", id: 3 },
-  { src: Hasbro_IMG, alt: "Hasbro", id: 4 },
-  { src: Kosmos_IMG, alt: "Kosmos", id: 5 },
-  { src: LuckyDuck_IMG, alt: "LuckyDuck", id: 6 },
-  { src: FF_IMG, alt: "FF", id: 7 },
-  { src: Asmodee_IMG, alt: "Asmodee", id: 8 },
+  { src: CMON_IMG, altKey: "layout.partners.brands.cmon", id: 1 },
+  { src: Ravensburger_IMG, altKey: "layout.partners.brands.ravensburger", id: 2 },
+  { src: Mattel_IMG, altKey: "layout.partners.brands.mattel", id: 3 },
+  { src: Hasbro_IMG, altKey: "layout.partners.brands.hasbro", id: 4 },
+  { src: Kosmos_IMG, altKey: "layout.partners.brands.kosmos", id: 5 },
+  { src: LuckyDuck_IMG, altKey: "layout.partners.brands.luckyDuck", id: 6 },
+  { src: FF_IMG, altKey: "layout.partners.brands.ff", id: 7 },
+  { src: Asmodee_IMG, altKey: "layout.partners.brands.asmodee", id: 8 },
 ];
 
 export default function PartnersScroller() {
+  const { t } = useTranslation();
+
   return (
     <section className="w-full group flex flex-col gap-2 sm:gap-4 md:gap-6 lg:gap-10 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-24">
-      <h2 className="uppercase text-base sm:text-lg md:text-xl lg:text-2xl xl:text-[40px]">Our Trusted Brands & Partners</h2>
+      <h2 className="uppercase text-base sm:text-lg md:text-xl lg:text-2xl xl:text-[40px]">
+        {t("layout.partners.title")}
+      </h2>
 
       <div
         className="flex relative overflow-hidden w-full mx-auto group py-4  
@@ -36,7 +43,7 @@ export default function PartnersScroller() {
             <div key={partner.id} className="flex items-center justify-center">
               <Image
                 src={partner.src}
-                alt={partner.alt}
+                alt={t(partner.altKey)}
                 width={88}
                 height={88}
                 className=" object-contain "
@@ -52,7 +59,7 @@ export default function PartnersScroller() {
         >
           {PARTNERS.map((partner) => (
             <div key={`${partner.id}-duplicate-1`} className="flex items-center justify-center">
-              <Image src={partner.src} alt={partner.alt} width={88} height={88} className=" object-contain" />
+              <Image src={partner.src} alt={t(partner.altKey)} width={88} height={88} className=" object-contain" />
             </div>
           ))}
         </div>
