@@ -1,5 +1,6 @@
 import {
   DEFAULT_CATALOG_PAGE_TITLE,
+  getCatalogBreadcrumbItems,
   getCatalogPageTitle,
   parseCatalogFiltersFromSearchParams,
   parsePositiveIntList,
@@ -149,6 +150,19 @@ describe("catalogQueryParams", () => {
       expect(getCatalogPageTitle({ ...emptyFilters, categories: [3] })).toBe(
         DEFAULT_CATALOG_PAGE_TITLE,
       );
+    });
+  });
+
+  describe("getCatalogBreadcrumbItems", () => {
+    test("builds home and dynamic category crumb from filters", () => {
+      expect(getCatalogBreadcrumbItems(emptyFilters)).toEqual([
+        { label: "Home", href: "/" },
+        { label: DEFAULT_CATALOG_PAGE_TITLE, current: true },
+      ]);
+      expect(getCatalogBreadcrumbItems({ ...emptyFilters, categories: [4] })).toEqual([
+        { label: "Home", href: "/" },
+        { label: "Sale", current: true },
+      ]);
     });
   });
 

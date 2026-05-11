@@ -254,6 +254,23 @@ export function getCatalogPageTitle(filters: SelectedFilters): string {
   return DEFAULT_CATALOG_PAGE_TITLE;
 }
 
+export type CatalogBreadcrumbItem = {
+  label: string;
+  href?: string;
+  current?: boolean;
+};
+
+export function getCatalogBreadcrumbItems(
+  filters: SelectedFilters,
+): CatalogBreadcrumbItem[] {
+  const title = getCatalogPageTitle(filters);
+
+  return [
+    { label: "Home", href: "/" },
+    { label: title, current: true },
+  ];
+}
+
 export function shouldNormalizeCatalogQuery(searchParams: URLSearchParams): boolean {
   const sanitizedFilters = parseCatalogFiltersFromSearchParams(searchParams);
   const sanitizedPage = parsePageParam(searchParams.get("page"));
