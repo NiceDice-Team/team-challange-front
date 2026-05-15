@@ -1,6 +1,8 @@
 "use client";
 
-import type React from "react";
+import { useState, type FormEvent, type ReactElement } from "react";
+import CustomCheckbox from "@/components/shared/CustomCheckbox";
+import { showCustomToast } from "@/components/shared/Toast";
 import {
   FacebookIcon,
   InstagramIcon,
@@ -15,8 +17,35 @@ import {
   footerSections,
 } from "./footerLinks";
 
-export default function MobileFooter(): React.ReactElement {
+export default function MobileFooter(): ReactElement {
   const currentYear = new Date().getFullYear();
+  const [email, setEmail] = useState("");
+  const [consentAccepted, setConsentAccepted] = useState(false);
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!email.trim()) {
+      return;
+    }
+
+    if (!consentAccepted) {
+      showCustomToast({
+        type: "info",
+        title: "Please confirm your subscription consent.",
+        description: "Check the marketing emails consent box to subscribe.",
+      });
+      return;
+    }
+
+    showCustomToast({
+      type: "success",
+      title: "Thank you for subscribing!",
+      description: "We will send updates and special deals to your email.",
+    });
+    setEmail("");
+    setConsentAccepted(false);
+  };
 
   return (
     <footer className="sm:hidden mt-10 bg-[var(--color-purple)] px-4 py-5 text-white">
@@ -48,7 +77,7 @@ export default function MobileFooter(): React.ReactElement {
             {footerNewsletter.title}
           </h3>
 
-          <div className="flex w-full flex-col items-start gap-4">
+          <form onSubmit={handleSubmit} className="flex w-full flex-col items-start gap-4">
             <p className="max-w-[324px] text-base leading-[19px]">
               {footerNewsletter.description}
             </p>
@@ -58,33 +87,38 @@ export default function MobileFooter(): React.ReactElement {
                 <input
                   type="email"
                   placeholder="Email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  required
                   className="h-12 w-full border-0 bg-white p-4 text-base leading-[19px] text-black shadow-none placeholder:text-[var(--color-placeholder)] focus:outline-none"
                 />
 
                 <button
-                  type="button"
-                  className="flex h-12 w-full items-center justify-center gap-2.5 bg-[var(--color-orange)] px-8 py-4 text-base font-medium leading-[19px] uppercase text-white"
+                  type="submit"
+                  className="flex h-12 w-full items-center justify-center gap-2.5 bg-[var(--color-orange)] px-8 py-4 text-base font-medium leading-[19px] uppercase text-white transition-colors duration-150 hover:bg-[#FF5F00] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
                 >
                   Subscribe
                 </button>
               </div>
 
-              <label className="flex w-full max-w-[390px] items-start gap-2 text-base leading-[19px]">
-                <input
-                  type="checkbox"
-                  className="h-5 w-5 shrink-0 cursor-pointer appearance-none border border-white bg-transparent checked:bg-white focus:outline-none focus:ring-2 focus:ring-white/40"
-                />
-                <span>
-                  {footerNewsletter.consentMobileLines.map((line, index) => (
-                    <span key={line}>
-                      {index > 0 && <br />}
-                      {line}
-                    </span>
-                  ))}
-                </span>
-              </label>
+              <CustomCheckbox
+                id="mobile-newsletter-consent"
+                checked={consentAccepted}
+                onCheckedChange={setConsentAccepted}
+                variant="inverse"
+                label={
+                  <span>
+                    {footerNewsletter.consentMobileLines.map((line, index) => (
+                      <span key={line}>
+                        {index > 0 && <br />}
+                        {line}
+                      </span>
+                    ))}
+                  </span>
+                }
+              />
             </div>
-          </div>
+          </form>
         </div>
 
         <div className="h-px w-full bg-[var(--color-light-purple-2)]" />
