@@ -47,7 +47,7 @@ const CheckoutModal = ({
     setIsLoading(true);
     setServerErrors({});
 
-    const validatedFields = loginSchema.safeParse({
+    const validatedFields = checkoutSchema.safeParse({
       email: data.email,
       password: data.password,
     });
