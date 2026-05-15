@@ -2,6 +2,7 @@ import About from "../components/layout/About";
 import BlogSection from "../components/home/BlogSection";
 import Footer from "../components/layout/Footer";
 import HeroScroller from "../components/home/HeroScroller";
+import MobileFooter from "../components/layout/MobileFooter";
 import Navbar from "../components/layout/Navbar";
 import NewArrivals from "../components/home/NewArrivals";
 import PartnersScroller from "../components/home/PartnersScroller";
@@ -29,7 +30,10 @@ export default function Home(): React.ReactElement {
       <BlogSection />
       <PartnersScroller />
       <About />
-      <Footer />
+      <div className="hidden sm:block">
+        <Footer />
+      </div>
+      <MobileFooter />
     </div>
   );
 }

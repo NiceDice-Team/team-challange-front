@@ -1,5 +1,6 @@
 import Navbar from "../../../components/layout/Navbar";
 import Footer from "../../../components/layout/Footer";
+import MobileFooter from "../../../components/layout/MobileFooter";
 import { CustomBreadcrumb } from "../../../components/shared/CustomBreadcrumb";
 
 export default function CatalogLayout({ children }) {
@@ -37,7 +38,10 @@ export default function CatalogLayout({ children }) {
 
       <main className="flex-1">{children}</main>
 
-      <Footer />
+      <div className="hidden sm:block">
+        <Footer />
+      </div>
+      <MobileFooter />
     </div>
   );
 }
