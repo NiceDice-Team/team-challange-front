@@ -93,6 +93,7 @@ export const footerNewsletter = {
   description:
     "Subscribe to our newsletter and be the first to know about new arrivals, special offers, and gaming news",
   consentLabel: "I agree to receiving marketing emails and special deals",
+  consentMobileLines: ["I agree to receiving marketing emails", "and special deals"],
 };
 
 export const footerLegal = {
