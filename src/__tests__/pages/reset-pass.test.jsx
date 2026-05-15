@@ -1,20 +1,8 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import path from "path";
-import fs from "fs";
-import ResetPassword from "@/app/(auth)/reset-password/page";
+import ResetPassword from "../../app/(auth)/reset-password/page";
 
-const resetPassCopy = JSON.parse(
-  fs.readFileSync(path.resolve(process.cwd(), "public/locales/en/common.json"), "utf8"),
-).resetPass;
-
-const headingMatcher = new RegExp(
-  resetPassCopy.title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
-  "i",
-);
-const submitButtonQuery = { name: new RegExp(resetPassCopy.reset, "i") };
-
-jest.mock("@/services/api", () => ({
+jest.mock("../../services/api", () => ({
   fetchAPI: jest.fn(),
 }));
 
@@ -23,7 +11,7 @@ jest.mock("next/navigation", () => ({
   useSearchParams: jest.fn(),
 }));
 
-jest.mock("@/components/shared/Toast", () => ({
+jest.mock("../../components/shared/Toast", () => ({
   showCustomToast: jest.fn(),
 }));
 
@@ -37,9 +25,9 @@ jest.mock("next/link", () => ({
 }));
 
 describe("ResetPassword Page", () => {
-  const { fetchAPI } = require("@/services/api");
+  const { fetchAPI } = require("../../services/api");
   const { useRouter, useSearchParams } = require("next/navigation");
-  const { showCustomToast } = require("@/components/shared/Toast");
+  const { showCustomToast } = require("../../components/shared/Toast");
 
   const mockPush = jest.fn();
 
@@ -62,7 +50,9 @@ describe("ResetPassword Page", () => {
       render(<ResetPassword />);
 
       await waitFor(() => {
-        expect(screen.getByRole("heading", { name: headingMatcher })).toBeInTheDocument();
+        expect(
+          screen.getByText(/🔐 Reset Your Password/i)
+        ).toBeInTheDocument();
       });
     });
     test("displays main heading", async () => {
@@ -74,7 +64,9 @@ describe("ResetPassword Page", () => {
       render(<ResetPassword />);
 
       await waitFor(() => {
-        expect(screen.getByRole("heading", { name: headingMatcher })).toBeInTheDocument();
+        expect(
+          screen.getByText(/🔐 Reset Your Password/i)
+        ).toBeInTheDocument();
       });
     });
     test("displays description text", async () => {
@@ -86,11 +78,10 @@ describe("ResetPassword Page", () => {
       render(<ResetPassword />);
 
       await waitFor(() => {
-        const heading = screen.getByRole("heading", { name: headingMatcher });
-        const intro = heading.nextElementSibling;
-        expect(intro).not.toBeNull();
-        expect(intro).toHaveTextContent(resetPassCopy.descriptionLine1);
-        expect(intro).toHaveTextContent(resetPassCopy.descriptionLine2);
+        expect(screen.getByText(/You've made it!/i)).toBeInTheDocument();
+        expect(
+          screen.getByText(/Now enter a new password to continue your quest/i)
+        ).toBeInTheDocument();
       });
     });
     test("renders password input field", async () => {
@@ -102,12 +93,12 @@ describe("ResetPassword Page", () => {
       render(<ResetPassword />);
 
       await waitFor(() => {
-        expect(screen.getByLabelText(resetPassCopy.labelPassword)).toBeInTheDocument();
+        expect(screen.getByLabelText("Password")).toBeInTheDocument();
       });
 
-      const passwordInput = screen.getByLabelText(resetPassCopy.labelPassword);
+      const passwordInput = screen.getByLabelText("Password");
       expect(passwordInput).toBeInTheDocument();
-      expect(passwordInput).toHaveAttribute("placeholder", resetPassCopy.placeholderPassword);
+      expect(passwordInput).toHaveAttribute("placeholder", "Enter password");
     });
     test("renders confirm password input field", async () => {
       const mockSearchParams = new URLSearchParams();
@@ -118,14 +109,14 @@ describe("ResetPassword Page", () => {
       render(<ResetPassword />);
 
       await waitFor(() => {
-        expect(screen.getByLabelText(resetPassCopy.labelConfirmPassword)).toBeInTheDocument();
+        expect(screen.getByLabelText("Confirm Password")).toBeInTheDocument();
       });
 
-      const confirmPasswordInput = screen.getByLabelText(resetPassCopy.labelConfirmPassword);
+      const confirmPasswordInput = screen.getByLabelText("Confirm Password");
       expect(confirmPasswordInput).toBeInTheDocument();
       expect(confirmPasswordInput).toHaveAttribute(
         "placeholder",
-        resetPassCopy.placeholderConfirmPassword
+        "Enter password"
       );
     });
     test("renders submit button", async () => {
@@ -137,7 +128,7 @@ describe("ResetPassword Page", () => {
       render(<ResetPassword />);
 
       await waitFor(() => {
-        expect(screen.getByRole("button", submitButtonQuery)).toBeInTheDocument();
+        expect(screen.getByRole("button", { name: /RESET/i })).toBeInTheDocument();
       });
     });
     test("renders sign in link", async () => {
@@ -149,10 +140,10 @@ describe("ResetPassword Page", () => {
       render(<ResetPassword />);
 
       await waitFor(() => {
-        expect(screen.getByRole("link", { name: /sign in/i })).toBeInTheDocument();
+        expect(screen.getByText(/Sign in/i)).toBeInTheDocument();
       });
 
-      const signInLink = screen.getByRole("link", { name: /sign in/i });
+      const signInLink = screen.getByText(/Sign in/i).closest("a");
       expect(signInLink).toHaveAttribute("href", "/login");
     });
   })
@@ -168,10 +159,10 @@ describe("ResetPassword Page", () => {
         render(<ResetPassword />);
 
         await waitFor(() => {
-          expect(screen.getByLabelText(resetPassCopy.labelPassword)).toBeInTheDocument();
+          expect(screen.getByLabelText("Password")).toBeInTheDocument();
         });
 
-        const submitButton = screen.getByRole("button", submitButtonQuery);
+        const submitButton = screen.getByRole("button", { name: /RESET/i });
         await user.click(submitButton);
 
         await waitFor(() => {
@@ -190,11 +181,11 @@ describe("ResetPassword Page", () => {
       render(<ResetPassword />);
 
       await waitFor(() => {
-        expect(screen.getByLabelText(resetPassCopy.labelPassword)).toBeInTheDocument();
+        expect(screen.getByLabelText("Password")).toBeInTheDocument();
       });
 
-      const passwordInput = screen.getByLabelText(resetPassCopy.labelPassword);
-      const submitButton = screen.getByRole("button", submitButtonQuery);
+      const passwordInput = screen.getByLabelText("Password");
+      const submitButton = screen.getByRole("button", { name: /RESET/i });
 
       await user.type(passwordInput, "123");
       await user.click(submitButton);
@@ -215,11 +206,11 @@ describe("ResetPassword Page", () => {
       render(<ResetPassword />);
 
       await waitFor(() => {
-        expect(screen.getByLabelText(resetPassCopy.labelPassword)).toBeInTheDocument();
+        expect(screen.getByLabelText("Password")).toBeInTheDocument();
       });
 
-      const passwordInput = screen.getByLabelText(resetPassCopy.labelPassword);
-      const submitButton = screen.getByRole("button", submitButtonQuery);
+      const passwordInput = screen.getByLabelText("Password");
+      const submitButton = screen.getByRole("button", { name: /RESET/i });
 
       await user.type(passwordInput, "12345678");
       await user.click(submitButton);
@@ -242,12 +233,12 @@ describe("ResetPassword Page", () => {
       render(<ResetPassword />);
 
       await waitFor(() => {
-        expect(screen.getByLabelText(resetPassCopy.labelPassword)).toBeInTheDocument();
+        expect(screen.getByLabelText("Password")).toBeInTheDocument();
       });
 
-      const passwordInput = screen.getByLabelText(resetPassCopy.labelPassword);
-      const confirmPasswordInput = screen.getByLabelText(resetPassCopy.labelConfirmPassword);
-      const submitButton = screen.getByRole("button", submitButtonQuery);
+      const passwordInput = screen.getByLabelText("Password");
+      const confirmPasswordInput = screen.getByLabelText("Confirm Password");
+      const submitButton = screen.getByRole("button", { name: /RESET/i });
 
       await user.type(passwordInput, "password123");
       await user.type(confirmPasswordInput, "password456");
@@ -267,11 +258,11 @@ describe("ResetPassword Page", () => {
         render(<ResetPassword />);
 
         await waitFor(() => {
-          expect(screen.getByLabelText(resetPassCopy.labelPassword)).toBeInTheDocument();
+          expect(screen.getByLabelText("Password")).toBeInTheDocument();
         });
 
-        const passwordInput = screen.getByLabelText(resetPassCopy.labelPassword);
-        const confirmPasswordInput = screen.getByLabelText(resetPassCopy.labelConfirmPassword);
+        const passwordInput = screen.getByLabelText("Password");
+        const confirmPasswordInput = screen.getByLabelText("Confirm Password");
 
         await user.type(passwordInput, "password123");
         await user.type(confirmPasswordInput, "password123");
@@ -293,12 +284,12 @@ describe("ResetPassword Page", () => {
         render(<ResetPassword />);
 
         await waitFor(() => {
-          expect(screen.getByLabelText(resetPassCopy.labelPassword)).toBeInTheDocument();
+          expect(screen.getByLabelText("Password")).toBeInTheDocument();
         });
 
-        const passwordInput = screen.getByLabelText(resetPassCopy.labelPassword);
-        const confirmPasswordInput = screen.getByLabelText(resetPassCopy.labelConfirmPassword);
-        const submitButton = screen.getByRole("button", submitButtonQuery);
+        const passwordInput = screen.getByLabelText("Password");
+        const confirmPasswordInput = screen.getByLabelText("Confirm Password");
+        const submitButton = screen.getByRole("button", { name: /RESET/i });
 
         await user.type(passwordInput, "password123");
         await user.type(confirmPasswordInput, "password123");
@@ -329,12 +320,12 @@ describe("ResetPassword Page", () => {
         render(<ResetPassword />);
 
         await waitFor(() => {
-          expect(screen.getByLabelText(resetPassCopy.labelPassword)).toBeInTheDocument();
+          expect(screen.getByLabelText("Password")).toBeInTheDocument();
         });
 
-        const passwordInput = screen.getByLabelText(resetPassCopy.labelPassword);
-        const confirmPasswordInput = screen.getByLabelText(resetPassCopy.labelConfirmPassword);
-        const submitButton = screen.getByRole("button", submitButtonQuery);
+        const passwordInput = screen.getByLabelText("Password");
+        const confirmPasswordInput = screen.getByLabelText("Confirm Password");
+        const submitButton = screen.getByRole("button", { name: /RESET/i });
 
         await user.type(passwordInput, "password123");
         await user.type(confirmPasswordInput, "password123");
@@ -362,12 +353,12 @@ describe("ResetPassword Page", () => {
         render(<ResetPassword />);
 
         await waitFor(() => {
-          expect(screen.getByLabelText(resetPassCopy.labelPassword)).toBeInTheDocument();
+          expect(screen.getByLabelText("Password")).toBeInTheDocument();
         });
 
-        const passwordInput = screen.getByLabelText(resetPassCopy.labelPassword);
-        const confirmPasswordInput = screen.getByLabelText(resetPassCopy.labelConfirmPassword);
-        const submitButton = screen.getByRole("button", submitButtonQuery);
+        const passwordInput = screen.getByLabelText("Password");
+        const confirmPasswordInput = screen.getByLabelText("Confirm Password");
+        const submitButton = screen.getByRole("button", { name: /RESET/i });
 
         await user.type(passwordInput, "password123");
         await user.type(confirmPasswordInput, "password123");
@@ -392,12 +383,12 @@ describe("ResetPassword Page", () => {
         render(<ResetPassword />);
 
         await waitFor(() => {
-          expect(screen.getByLabelText(resetPassCopy.labelPassword)).toBeInTheDocument();
+          expect(screen.getByLabelText("Password")).toBeInTheDocument();
         });
 
-        const passwordInput = screen.getByLabelText(resetPassCopy.labelPassword);
-        const confirmPasswordInput = screen.getByLabelText(resetPassCopy.labelConfirmPassword);
-        const submitButton = screen.getByRole("button", submitButtonQuery);
+        const passwordInput = screen.getByLabelText("Password");
+        const confirmPasswordInput = screen.getByLabelText("Confirm Password");
+        const submitButton = screen.getByRole("button", { name: /RESET/i });
 
         const user = userEvent.setup();
         await user.type(passwordInput, "password123");
@@ -423,12 +414,12 @@ describe("ResetPassword Page", () => {
         render(<ResetPassword />);
 
         await waitFor(() => {
-          expect(screen.getByLabelText(resetPassCopy.labelPassword)).toBeInTheDocument();
+          expect(screen.getByLabelText("Password")).toBeInTheDocument();
         });
 
-        const passwordInput = screen.getByLabelText(resetPassCopy.labelPassword);
-        const confirmPasswordInput = screen.getByLabelText(resetPassCopy.labelConfirmPassword);
-        const submitButton = screen.getByRole("button", submitButtonQuery);
+        const passwordInput = screen.getByLabelText("Password");
+        const confirmPasswordInput = screen.getByLabelText("Confirm Password");
+        const submitButton = screen.getByRole("button", { name: /RESET/i });
 
         const user = userEvent.setup();
         await user.type(passwordInput, "password123");
@@ -455,12 +446,12 @@ describe("ResetPassword Page", () => {
         render(<ResetPassword />);
 
         await waitFor(() => {
-          expect(screen.getByLabelText(resetPassCopy.labelPassword)).toBeInTheDocument();
+          expect(screen.getByLabelText("Password")).toBeInTheDocument();
         });
 
-        const passwordInput = screen.getByLabelText(resetPassCopy.labelPassword);
-        const confirmPasswordInput = screen.getByLabelText(resetPassCopy.labelConfirmPassword);
-        const submitButton = screen.getByRole("button", submitButtonQuery);
+        const passwordInput = screen.getByLabelText("Password");
+        const confirmPasswordInput = screen.getByLabelText("Confirm Password");
+        const submitButton = screen.getByRole("button", { name: /RESET/i });
 
         const user = userEvent.setup();
         await user.type(passwordInput, "password123");
@@ -491,10 +482,10 @@ describe("ResetPassword Page", () => {
       render(<ResetPassword />);
 
       await waitFor(() => {
-        expect(screen.getByLabelText(resetPassCopy.labelPassword)).toBeInTheDocument();
+        expect(screen.getByLabelText("Password")).toBeInTheDocument();
       });
 
-      const passwordInput = screen.getByLabelText(resetPassCopy.labelPassword);
+      const passwordInput = screen.getByLabelText("Password");
 
       await user.type(passwordInput, "newpassword123");
 
@@ -510,10 +501,10 @@ describe("ResetPassword Page", () => {
       render(<ResetPassword />);
 
       await waitFor(() => {
-        expect(screen.getByLabelText(resetPassCopy.labelConfirmPassword)).toBeInTheDocument();
+        expect(screen.getByLabelText("Confirm Password")).toBeInTheDocument();
       });
 
-      const confirmPasswordInput = screen.getByLabelText(resetPassCopy.labelConfirmPassword);
+      const confirmPasswordInput = screen.getByLabelText("Confirm Password");
 
       await user.type(confirmPasswordInput, "newpassword123");
 
@@ -534,12 +525,12 @@ describe("ResetPassword Page", () => {
       render(<ResetPassword />);
 
       await waitFor(() => {
-        expect(screen.getByLabelText(resetPassCopy.labelPassword)).toBeInTheDocument();
+        expect(screen.getByLabelText("Password")).toBeInTheDocument();
       });
 
-      const passwordInput = screen.getByLabelText(resetPassCopy.labelPassword);
-      const confirmPasswordInput = screen.getByLabelText(resetPassCopy.labelConfirmPassword);
-      const submitButton = screen.getByRole("button", submitButtonQuery);
+      const passwordInput = screen.getByLabelText("Password");
+      const confirmPasswordInput = screen.getByLabelText("Confirm Password");
+      const submitButton = screen.getByRole("button", { name: /RESET/i });
 
       await user.type(passwordInput, "password123");
       await user.type(confirmPasswordInput, "password123");
@@ -568,8 +559,8 @@ describe("ResetPassword Page", () => {
       render(<ResetPassword />);
 
       await waitFor(() => {
-        expect(screen.getByLabelText(resetPassCopy.labelPassword)).toBeInTheDocument();
-        expect(screen.getByLabelText(resetPassCopy.labelConfirmPassword)).toBeInTheDocument();
+        expect(screen.getByLabelText("Password")).toBeInTheDocument();
+        expect(screen.getByLabelText("Confirm Password")).toBeInTheDocument();
       });
     });
     test("has proper button roles", async () => {
@@ -581,7 +572,7 @@ describe("ResetPassword Page", () => {
       render(<ResetPassword />);
 
       await waitFor(() => {
-        expect(screen.getByRole("button", submitButtonQuery)).toBeInTheDocument();
+        expect(screen.getByRole("button", { name: /RESET/i })).toBeInTheDocument();
       });
     });
     test("has proper link accessibility", async () => {
@@ -593,10 +584,10 @@ describe("ResetPassword Page", () => {
       render(<ResetPassword />);
 
       await waitFor(() => {
-        expect(screen.getByRole("link", { name: /sign in/i })).toBeInTheDocument();
+        expect(screen.getByText(/Sign in/i)).toBeInTheDocument();
       });
 
-      const signInLink = screen.getByRole("link", { name: /sign in/i });
+      const signInLink = screen.getByText(/Sign in/i).closest("a");
       expect(signInLink).toHaveAttribute("href", "/login");
     });
   })
@@ -611,10 +602,10 @@ describe("ResetPassword Page", () => {
       render(<ResetPassword />);
 
       await waitFor(() => {
-        expect(screen.getByRole("button", submitButtonQuery)).toBeInTheDocument();
+        expect(screen.getByRole("button", { name: /RESET/i })).toBeInTheDocument();
       });
 
-      const submitButton = screen.getByRole("button", submitButtonQuery);
+      const submitButton = screen.getByRole("button", { name: /RESET/i });
       await user.click(submitButton);
 
       await waitFor(() => {
@@ -634,12 +625,12 @@ describe("ResetPassword Page", () => {
       render(<ResetPassword />);
 
       await waitFor(() => {
-        expect(screen.getByLabelText(resetPassCopy.labelPassword)).toBeInTheDocument();
+        expect(screen.getByLabelText("Password")).toBeInTheDocument();
       });
 
-      const passwordInput = screen.getByLabelText(resetPassCopy.labelPassword);
-      const confirmPasswordInput = screen.getByLabelText(resetPassCopy.labelConfirmPassword);
-      const submitButton = screen.getByRole("button", submitButtonQuery);
+      const passwordInput = screen.getByLabelText("Password");
+      const confirmPasswordInput = screen.getByLabelText("Confirm Password");
+      const submitButton = screen.getByRole("button", { name: /RESET/i });
 
       await user.type(passwordInput, "password123");
       await user.type(confirmPasswordInput, "password123");
@@ -647,7 +638,7 @@ describe("ResetPassword Page", () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText(resetPassCopy.errorResettingPassword)
+          screen.getByText("Error resetting password. Try again.")
         ).toBeInTheDocument();
       });
     });
@@ -664,12 +655,12 @@ describe("ResetPassword Page", () => {
       render(<ResetPassword />);
 
       await waitFor(() => {
-        expect(screen.getByLabelText(resetPassCopy.labelPassword)).toBeInTheDocument();
+        expect(screen.getByLabelText("Password")).toBeInTheDocument();
       });
 
-      const passwordInput = screen.getByLabelText(resetPassCopy.labelPassword);
-      const confirmPasswordInput = screen.getByLabelText(resetPassCopy.labelConfirmPassword);
-      const submitButton = screen.getByRole("button", submitButtonQuery);
+      const passwordInput = screen.getByLabelText("Password");
+      const confirmPasswordInput = screen.getByLabelText("Confirm Password");
+      const submitButton = screen.getByRole("button", { name: /RESET/i });
 
       await user.type(passwordInput, "password123");
       await user.type(confirmPasswordInput, "password123");
@@ -677,7 +668,7 @@ describe("ResetPassword Page", () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText(resetPassCopy.errorResettingPassword)
+          screen.getByText("Error resetting password. Try again.")
         ).toBeInTheDocument();
       });
     });
@@ -692,12 +683,12 @@ describe("ResetPassword Page", () => {
       render(<ResetPassword />);
 
       await waitFor(() => {
-        expect(screen.getByLabelText(resetPassCopy.labelPassword)).toBeInTheDocument();
+        expect(screen.getByLabelText("Password")).toBeInTheDocument();
       });
 
-      const passwordInput = screen.getByLabelText(resetPassCopy.labelPassword);
-      const confirmPasswordInput = screen.getByLabelText(resetPassCopy.labelConfirmPassword);
-      const submitButton = screen.getByRole("button", submitButtonQuery);
+      const passwordInput = screen.getByLabelText("Password");
+      const confirmPasswordInput = screen.getByLabelText("Confirm Password");
+      const submitButton = screen.getByRole("button", { name: /RESET/i });
 
       await user.type(passwordInput, "password123");
       await user.type(confirmPasswordInput, "password123");
@@ -705,7 +696,7 @@ describe("ResetPassword Page", () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText(resetPassCopy.errorResettingPassword)
+          screen.getByText("Error resetting password. Try again.")
         ).toBeInTheDocument();
       });
     });

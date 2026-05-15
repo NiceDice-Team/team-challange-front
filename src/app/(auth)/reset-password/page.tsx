@@ -11,17 +11,16 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { PasswordInput } from "@/components/shared/PasswordInput";
 import { resetPasswordSchema } from "@/lib/definitions";
 import { showCustomToast } from "@/components/shared/Toast";
-import { useTranslation } from "react-i18next";
 
 type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 
 function ResetPasswordForm() {
-  const { t } = useTranslation();
   const [error, setError] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
   const [token, setToken] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  console.log(userId, token);
   const {
     register,
     handleSubmit,
@@ -54,8 +53,8 @@ function ResetPasswordForm() {
       if (response) {
         showCustomToast({
           type: "success",
-          title: t("resetPass.toastTitle"),
-          description: t("resetPass.toastDescription"),
+          title: "Success! Your password has been changed.",
+          description: "You can now continue your adventure",
         });
 
         router.push("/login?mode=back");
@@ -74,22 +73,22 @@ function ResetPasswordForm() {
         if (firstError?.detail) {
           setError(firstError.detail);
         } else {
-          setError(t("resetPass.errorResettingPassword"));
+          setError("Error resetting password. Try again.");
         }
       } else {
-        setError(t("resetPass.errorResettingPassword"));
+        setError("Error resetting password. Try again.");
       }
     }
   };
 
   return (
     <div className="flex flex-col items-center mx-auto mt-20 mb-32">
-      <h1 className="mb-9 font-normal md:text-title text-xl text-center uppercase">
-        {t("resetPass.title")}
+      <h1 className="mb-9 font-normal md:text-title text-2xl text-center uppercase">
+        🔐 Reset Your Password
       </h1>
       <div className="mb-12 text-base text-center">
-        {t("resetPass.descriptionLine1")}
-        <br /> {t("resetPass.descriptionLine2")}
+        You&apos;ve made it!
+        <br /> Now enter a new password to continue your quest
       </div>
 
       <form
@@ -97,9 +96,9 @@ function ResetPasswordForm() {
         onSubmit={handleSubmit(onSubmit)}
       >
         <PasswordInput
-          placeholder={t("resetPass.placeholderPassword")}
+          placeholder="Enter password"
           id="password"
-          label={t("resetPass.labelPassword")}
+          label="Password"
           name="password"
           {...register("password")}
           disabled={isSubmitting}
@@ -108,9 +107,9 @@ function ResetPasswordForm() {
           }
         />
         <PasswordInput
-          placeholder={t("resetPass.placeholderConfirmPassword")}
+          placeholder="Enter password"
           id="confirmPassword"
-          label={t("resetPass.labelConfirmPassword")}
+          label="Confirm Password"
           name="confirmPassword"
           {...register("confirmPassword")}
           disabled={isSubmitting}
@@ -130,15 +129,14 @@ function ResetPasswordForm() {
           disabled={isSubmitting}
           loading={isSubmitting}
         >
-          {isSubmitting ? t("resetPass.resetting") : t("resetPass.reset")}
+          {isSubmitting ? "RESETTING..." : "RESET"}
         </CustomButton>
       </form>
 
       <div className="flex flex-row justify-center items-center gap-1 mt-12 text-purple text-center">
-        {t("resetPass.dontNeedHelpAnymore")}
+        Don&apos;t need help anymore?
         <Link href="/login" className="underline">
-          {t("resetPass.signIn")}
-          <span className="inline-block ml-1">→</span>
+          Sign in<span className="inline-block ml-1">→</span>
         </Link>
       </div>
     </div>

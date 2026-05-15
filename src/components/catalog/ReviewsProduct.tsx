@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo } from "react";
-import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import StarRating from "../layout/StarsLine";
 import { productServices } from "@/services/productServices";
@@ -17,8 +16,6 @@ interface ReviewsProductProps {
 const STAR_DISTRIBUTION = [5, 4, 3, 2, 1];
 
 export default function ReviewsProduct({ productId, children }: ReviewsProductProps) {
-  const { t } = useTranslation();
-
   const { data: product } = useQuery({
     queryKey: ["product", productId],
     queryFn: ({ signal }) => productServices.getProductById(productId, { signal }),
@@ -49,14 +46,6 @@ export default function ReviewsProduct({ productId, children }: ReviewsProductPr
       : normalizeReviewRating(product?.stars ?? 0);
   const roundedRating = Math.round(averageRating);
 
-  const basedOnText = useMemo(
-    () =>
-      reviewCount === 1
-        ? t("product.reviews.basedOn_one", { count: reviewCount })
-        : t("product.reviews.basedOn_other", { count: reviewCount }),
-    [t, reviewCount],
-  );
-
   const ratingDistribution = useMemo(() => {
     const counts = new Map<number, number>(STAR_DISTRIBUTION.map((star) => [star, 0]));
 
@@ -84,17 +73,19 @@ export default function ReviewsProduct({ productId, children }: ReviewsProductPr
       <section className="sm:hidden mx-auto mt-10 w-full max-w-[428px] px-4">
         {children}
         <div className="flex flex-col items-center gap-5">
-          <h2 className="text-center text-xl uppercase text-[#040404]">{t("product.reviews.sectionTitle")}</h2>
+          <h2 className="text-center text-xl uppercase text-[#040404]">Reviews from our customers</h2>
 
           <div className="flex w-full items-center justify-between gap-4 px-4">
             <div className="flex flex-col items-center gap-2 text-center">
               <div className="flex items-center gap-2">
                 <StarRating rating={roundedRating} />
                 <span className="text-base uppercase text-[var(--color-purple)] underline underline-offset-2">
-                  {t("product.reviews.ratingOutOf", { rating: averageRating.toFixed(2) })}
+                  {averageRating.toFixed(2)} out of 5
                 </span>
               </div>
-              <span className="text-base text-black">{basedOnText}</span>
+              <span className="text-base text-black">
+                Based on {reviewCount} review{reviewCount === 1 ? "" : "s"}
+              </span>
             </div>
 
             <ProductReviewDialog
@@ -112,7 +103,7 @@ export default function ReviewsProduct({ productId, children }: ReviewsProductPr
         {children}
         <div className="mx-auto mb-6 sm:mb-8 md:mb-10">
           <h2 className="text-center text-xl uppercase sm:text-2xl md:text-3xl lg:text-[40px]">
-            {t("product.reviews.sectionTitle")}
+            Reviews from our customers
           </h2>
         </div>
         <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-3 md:gap-4">
@@ -120,10 +111,12 @@ export default function ReviewsProduct({ productId, children }: ReviewsProductPr
             <div className="flex flex-nowrap items-center gap-1">
               <StarRating rating={roundedRating} />
               <span className="text-sm text-[var(--color-purple)] underline underline-offset-3 underline-[var(--color-purple)] sm:text-base">
-                {t("product.reviews.ratingOutOf", { rating: averageRating.toFixed(2) })}
+                {averageRating.toFixed(2)} out of 5
               </span>
             </div>
-            <span className="text-sm sm:text-base">{basedOnText}</span>
+            <span className="text-sm sm:text-base">
+              Based on {reviewCount} review{reviewCount === 1 ? "" : "s"}
+            </span>
           </div>
 
           <div className="flex flex-col items-center justify-center gap-1 py-4 md:py-0">
@@ -149,6 +142,7 @@ export default function ReviewsProduct({ productId, children }: ReviewsProductPr
               productId={productId}
               productName={product?.name}
               buttonClassName="bg-[var(--color-purple)] px-4 py-2 text-sm uppercase text-white transition-opacity hover:opacity-90 sm:text-base"
+              buttonLabel="Write a Review"
             />
           </div>
         </div>

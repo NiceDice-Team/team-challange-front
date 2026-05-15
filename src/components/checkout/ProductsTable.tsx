@@ -1,8 +1,5 @@
-"use client";
-
 import { useCartQuery } from "@/hooks/useCartQuery";
 import { useMemo, useEffect } from "react";
-import { useTranslation } from "react-i18next";
 import { DeliveryOption } from "./DeliveryOptions";
 
 interface ProductsTableProps {
@@ -12,13 +9,12 @@ interface ProductsTableProps {
   hideTitle?: boolean;
 }
 
-const ProductsTable = ({
-  setSubtotal,
-  shippingPrice,
+const ProductsTable = ({ 
+  setSubtotal, 
+  shippingPrice, 
   paymentMethod,
-  hideTitle = false,
+  hideTitle = false 
 }: ProductsTableProps) => {
-  const { t } = useTranslation();
   const { data: cartItems = [], isLoading: cartLoading } = useCartQuery();
 
   const subtotal = useMemo(() => {
@@ -38,35 +34,35 @@ const ProductsTable = ({
 
   return (
     <div className="flex flex-col gap-2 w-full">
-      {!hideTitle && (
-        <div className="text-xl uppercase mb-4">{t("checkoutOrder.productsTable.yourOrder")}</div>
-      )}
+      {!hideTitle && <div className="text-xl uppercase mb-4">Your order</div>}
       {cartLoading ? (
-        <div className="animate-pulse">{t("checkoutOrder.productsTable.loading")}</div>
+        <div className="animate-pulse">Loading order...</div>
       ) : (
         <>
           <div className="flex flex-col">
             {/* Table Header */}
             <div className="flex justify-between items-center h-10 font-normal text-[#040404] text-sm uppercase">
-              <div className="flex-1 min-w-0">{t("checkoutOrder.productsTable.headers.product")}</div>
-              <div className="w-20 text-center shrink-0">{t("checkoutOrder.productsTable.headers.quantity")}</div>
-              <div className="w-20 text-right shrink-0">{t("checkoutOrder.productsTable.headers.total")}</div>
+              <div className="flex-1 min-w-0">Product</div>
+              <div className="w-20 text-center shrink-0">Quantity</div>
+              <div className="w-20 text-right shrink-0">Total</div>
             </div>
 
             <div className="border-[#A4A3C8] border-t w-full h-px mb-2"></div>
-
+            
             {/* Product Rows */}
             <div className="flex flex-col">
               {cartItems.map((item, index) => (
                 <div key={item.id || index} className="flex flex-col">
                   <div className="flex justify-between items-center py-3 min-h-[48px] text-[#000000] text-base">
                     <div className="flex-1 min-w-0 pr-2 leading-tight">
-                      {item.product?.name || t("checkoutOrder.productsTable.productFallback")}
+                      {item.product?.name || "Product"}
                     </div>
                     <div className="w-20 text-center shrink-0">{item.quantity}</div>
                     <div className="w-20 text-right shrink-0">
                       $
-                      {((Number(item.product?.price) || 0) * item.quantity).toFixed(2)}
+                      {(
+                        (Number(item.product?.price) || 0) * item.quantity
+                      ).toFixed(2)}
                     </div>
                   </div>
                   <div className="border-[#A4A3C8] border-t w-full h-px"></div>
@@ -76,7 +72,7 @@ const ProductsTable = ({
 
             {cartItems.length === 0 && (
               <div className="flex justify-center items-center py-8">
-                <p className="text-gray-2 text-base">{t("checkoutOrder.productsTable.emptyCart")}</p>
+                <p className="text-gray-2 text-base">No items in cart</p>
               </div>
             )}
 
@@ -84,20 +80,22 @@ const ProductsTable = ({
             <div className="flex flex-col py-4 gap-4">
               {/* Subtotal */}
               <div className="flex justify-between items-center text-base">
-                <div className="font-normal text-[#000000] uppercase">{t("checkoutOrder.productsTable.subtotal")}</div>
-                <div className="font-bold text-[#000000]">${subtotal.toFixed(2)}</div>
+                <div className="font-normal text-[#000000] uppercase">
+                  Subtotal
+                </div>
+                <div className="font-bold text-[#000000]">
+                  ${subtotal.toFixed(2)}
+                </div>
               </div>
 
               {/* Shipping - Only show if props are provided (for mobile summary or full desktop summary) */}
               {shippingPrice !== undefined && (
                 <div className="flex justify-between items-center text-base">
                   <div className="font-normal text-[#000000] uppercase">
-                    {t("checkoutOrder.productsTable.shipping")}
+                    Shipping
                   </div>
                   <div className="font-normal text-[#000000]">
-                    {!paymentMethod
-                      ? t("checkoutOrder.productsTable.shippingPending")
-                      : `$${shippingPrice.toFixed(2)}`}
+                    {!paymentMethod ? "Enter shipping address" : `$${shippingPrice.toFixed(2)}`}
                   </div>
                 </div>
               )}
@@ -109,9 +107,11 @@ const ProductsTable = ({
                 <div className="border-[#A4A3C8] border-t w-full h-px"></div>
                 <div className="flex justify-between items-center h-12 text-base">
                   <div className="font-bold text-[#494791] uppercase">
-                    {t("checkoutOrder.productsTable.orderTotal")}
+                    Order Total
                   </div>
-                  <div className="font-bold text-[#494791]">${total.toFixed(2)}</div>
+                  <div className="font-bold text-[#494791]">
+                    ${total.toFixed(2)}
+                  </div>
                 </div>
                 <div className="border-[#A4A3C8] border-t w-full h-px"></div>
               </>

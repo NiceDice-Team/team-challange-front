@@ -4,19 +4,15 @@
 const path = require("path");
 
 module.exports = {
-  i18n: {
-    locales: ["ua", "en"],
-    defaultLocale: "en",
-  },
   images: {
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "cdn.bgshop.work.gd",
+        protocol: 'https',
+        hostname: 'cdn.bgshop.work.gd',
       },
       {
-        protocol: "https",
-        hostname: "placehold.co",
+        protocol: 'https',
+        hostname: 'placehold.co',
       },
     ],
   },
@@ -26,5 +22,5 @@ module.exports = {
     return config;
   },
   // Enable standalone output for Docker
-  output: "standalone",
+  output: 'standalone',
 };

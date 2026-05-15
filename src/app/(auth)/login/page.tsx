@@ -17,7 +17,6 @@ import { PublicRoute } from "@/components/auth/RouteGuards";
 import { showCustomToast } from "@/components/shared/Toast";
 import { getTokens, setTokens } from "@/lib/tokenManager";
 import { API_BASE_URL } from "@/config/api";
-import { useTranslation } from "react-i18next";
 
 function LoginPageContent() {
   const params = useSearchParams();
@@ -26,7 +25,6 @@ function LoginPageContent() {
   const message = params.get("message");
   const activationStatus = params.get("activation_status");
   const { refreshToken } = getTokens();
-  const { t } = useTranslation();
 
   const [isLoading, setIsLoading] = useState(false);
   const [serverErrors, setServerErrors] = useState<LoginFormState["errors"]>(
@@ -42,12 +40,12 @@ function LoginPageContent() {
     if (refreshToken) {
       showCustomToast({
         type: "success",
-        title: t("login.successLoggedIn"),
-        description: t("login.youCanNowContinueYourAdventure"),
+        title: "Success! You are logged in.",
+        description: "You can now continue your adventure",
       });
       setTimeout(() => router.push("/"), 1000);
     }
-  }, [refreshToken, router, t]);
+  }, [refreshToken, router]);
 
   useEffect(() => {
     if (message) {
@@ -55,18 +53,18 @@ function LoginPageContent() {
         case "success":
           showCustomToast({
             type: "success",
-            title: t("login.successLoggedIn"),
+            title: "Success! You are logged in.",
           });
           break;
         case "error":
           showCustomToast({
             type: "error",
-            title: t("login.errorLoggedIn"),
+            title: "Error! You are not logged in.",
           });
           break;
       }
     }
-  }, [message, activationStatus, t]);
+  }, [message, activationStatus]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -244,38 +242,36 @@ function LoginPageContent() {
 
   return (
     <div className="flex flex-col items-center mx-auto mt-20">
-      <div className="bg-purple md:bg-transparent mb-6 p-6 text-white md:text-black">
-        <h1 className="mb-9 font-normal md:text-title text-xl text-center uppercase">
-          {mode === "back" ? (
-            t("login.welcomeBack")
-          ) : (
-            <div className="flex md:flex-row flex-col items-center gap-2">
-              {t("login.logInHere")} {t("common.or")}{" "}
-              <Link href="/register" className="underline">
-                {t("login.createAccount")}
-              </Link>
-            </div>
-          )}
-        </h1>
+      <h1 className="mb-9 font-normal md:text-title text-2xl text-center uppercase">
         {mode === "back" ? (
-          <div className="mb-12 text-base text-center">
-            <p>{t("login.successPasswordChanged")}</p>
-            <p>{t("login.youCanNowLogInAndContinueYourAdventure")}</p>
-          </div>
+          "👋 Welcome back!"
         ) : (
-          <div className="text-base text-center">
-            <p>{t("login.dontForgetToLogIn")}</p>
-            <p>{t("login.unlockExclusiveRewardsAndTrackYourOrdersWithEase")}</p>
+          <div className="flex md:flex-row flex-col items-center gap-2">
+            Log in here or{" "}
+            <Link href="/register" className="underline">
+              create account
+            </Link>
           </div>
         )}
-      </div>
+      </h1>
+      {mode === "back" ? (
+        <div className="mb-12 text-base text-center">
+          <p>🎉 Success! Your password has been changed.</p>
+          <p>You can now log in and continue your adventure</p>
+        </div>
+      ) : (
+        <div className="mb-12 text-base text-center">
+          <p>🎯 Don&apos;t forget to log in!</p>
+          <p>Unlock exclusive rewards, and track your orders with ease.</p>
+        </div>
+      )}
 
       <div className="flex flex-col justify-center items-center mb-28 md:w-[500px] w-xs">
         <form className="flex flex-col gap-2 w-full" onSubmit={handleSubmit}>
           <CustomInput
-            placeholder={t("common.enterEmailAddress")}
+            placeholder="Enter email address"
             id="email"
-            label={t("common.email")}
+            label="Email"
             name="email"
             value={values.email}
             error={
@@ -291,9 +287,9 @@ function LoginPageContent() {
             onChange={handleChange}
           />
           <PasswordInput
-            placeholder={t("common.enterPassword")}
+            placeholder="Enter password"
             id="password"
-            label={t("common.password")}
+            label="password"
             name="password"
             value={values.password}
             error={
@@ -309,7 +305,7 @@ function LoginPageContent() {
             onChange={handleChange}
           />
           <Link href="/forgot-password" className="mb-4 text-right underline">
-            {t("login.forgotPassword")}
+            Forgot your password?
           </Link>
           {serverErrors?.serverError && (
             <div className="bg-red-50 mb-2 p-3 border border-red-200 rounded">
@@ -321,12 +317,12 @@ function LoginPageContent() {
             </div>
           )}
           <CustomButton type="submit" disabled={isLoading} loading={isLoading}>
-            {t("login.submit")}
+            SIGN IN
           </CustomButton>
         </form>
         <div className="flex items-center gap-2 mt-6 mb-4 w-full">
           <div className="bg-gray-text h-px grow"></div>
-          <span className="text-gray-text">{t("common.or")}</span>
+          <span className="text-gray-text">or</span>
           <div className="bg-gray-text h-px grow"></div>
         </div>
         <div className="flex flex-col gap-3 w-full">
@@ -335,8 +331,7 @@ function LoginPageContent() {
         </div>
 
         <Link href="/" className="mt-12 text-purple underline">
-          {t("login.continueAsGuest")}
-          <span className="inline-block ml-1">→</span>
+          Continue as a guest<span className="inline-block ml-1">→</span>
         </Link>
       </div>
     </div>

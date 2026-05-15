@@ -38,9 +38,9 @@ describe("FeatureSection", () => {
     test("renders feature icons", () => {
       render(<FeatureSection />);
 
-      expect(screen.getByTestId("image-Shipping icon")).toBeInTheDocument();
+      expect(screen.getByTestId("image-Car icon")).toBeInTheDocument();
       expect(screen.getByTestId("image-Lock icon")).toBeInTheDocument();
-      expect(screen.getByTestId("image-Returns icon")).toBeInTheDocument();
+      expect(screen.getByTestId("image-Arrows icon")).toBeInTheDocument();
     });
 
     test("renders feature descriptions", () => {

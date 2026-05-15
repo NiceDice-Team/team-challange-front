@@ -1,7 +1,7 @@
 "use client";
 
 import { useUserStore } from "@/store/user";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ProtectedRoute } from "@/components/auth/RouteGuards";
 import ProfileSVG from "@/assets/svg-components/ProfileSVG";
 import { CustomButton } from "@/components/shared/CustomButton";
@@ -22,21 +22,14 @@ import OrdersTable from "@/components/profile/OrdersTable";
 import { useUpdateProfile } from "@/hooks/useUpdateProfile";
 import Modal from "@/components/shared/Modal";
 import ChangePass from "@/components/profile/ChangePass";
-import { useTranslation } from "react-i18next";
 
+const breadcrumbItems = [
+  { label: "Home", href: "/" },
+  { label: "My account", href: "/profile", current: true },
+];
 type ProfileFormState = z.infer<typeof editProfileSchema>;
 
 function ProfileContent() {
-  const { t } = useTranslation();
-
-  const breadcrumbItems = useMemo(
-    () => [
-      { label: t("profile.breadcrumb.home"), href: "/" },
-      { label: t("profile.breadcrumb.myAccount"), href: "/profile", current: true },
-    ],
-    [t],
-  );
-
   const { userData, setUserData, fetchUserData, isLoading } = useUserStore(
     (state) => state
   );
@@ -72,17 +65,12 @@ function ProfileContent() {
     if (updateProfileMutation.isError) {
       showCustomToast({
         type: "error",
-        title: t("profile.toast.updateFailedTitle"),
+        title: "Failed to update profile",
         description:
-          updateProfileMutation.error?.message ||
-          t("profile.toast.updateFailedDescription"),
+          updateProfileMutation.error?.message || "Failed to update profile",
       });
     }
-  }, [
-    t,
-    updateProfileMutation.isError,
-    updateProfileMutation.error?.message,
-  ]);
+  }, [updateProfileMutation.isError, updateProfileMutation.error?.message]);
 
   useEffect(() => {
     if (updateProfileMutation.isSuccess && updateProfileMutation.data) {
@@ -102,11 +90,10 @@ function ProfileContent() {
 
       showCustomToast({
         type: "success",
-        title: t("profile.toast.updateSuccessTitle"),
+        title: "Success! Your profile has been updated.",
       });
     }
   }, [
-    t,
     updateProfileMutation.isSuccess,
     updateProfileMutation.data,
     setUserData,
@@ -128,10 +115,10 @@ function ProfileContent() {
 
       setError("");
     } catch (error) {
-      setError(t("profile.errors.updateFailed"));
+      setError("Failed to update profile");
       showCustomToast({
         type: "error",
-        title: t("profile.toast.updateFailedTitle"),
+        title: "Failed to update profile",
       });
     }
   };
@@ -143,36 +130,39 @@ function ProfileContent() {
           <CustomBreadcrumb items={breadcrumbItems} />
           <LogoutButton showText={true} showIcon={true} />
         </div>
-        <h3 className="mb-4 md:text-title text-xl uppercase">
-          {t("profile.welcome", {
-            name: isLoading ? "..." : userData?.first_name ?? "",
-          })}
+        <h3 className="mb-4 md:text-title text-2xl uppercase">
+          Welcome, {isLoading ? "..." : userData?.first_name}!
         </h3>
-        <p>{t("profile.dashboardSubtitle")}</p>
+        <p>
+          🧩 Your account dashboard - manage your profile, track orders, and
+          update your preferences
+        </p>
         <div className="flex lg:flex-row flex-col justify-between gap-6 mt-6 h-fit">
           <div className="flex flex-col gap-6 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.05)] pb-6 w-full lg:w-1/3">
             <div className="flex flex-col bg-purple p-6 text-white">
               <div className="flex items-center gap-2 text-xl uppercase">
                 <ProfileSVG color="white" />
-                {t("profile.sidebar.yourProfile")}
+                Your Profile
               </div>
-              <div className="text-base">{t("profile.sidebar.quickView")}</div>
+              <div className="text-base">
+                Quick view of your account details
+              </div>
             </div>
             <div className="flex flex-col gap-2 px-7 text-black">
-              <p className="text-sm uppercase">{t("profile.sidebar.nameLabel")}</p>
+              <p className="text-sm uppercase">NAME</p>
               <p className="text-gray-2">
                 {isLoading
-                  ? t("profile.sidebar.loading")
+                  ? "Loading..."
                   : `${userData?.first_name || ""} ${
                       userData?.last_name || ""
                     }`}
               </p>
             </div>
             <div className="flex flex-col gap-2 px-7 text-black">
-              <p className="text-sm uppercase">{t("profile.sidebar.emailLabel")}</p>
+              <p className="text-sm uppercase">EMAIL</p>
               <p className="flex items-center gap-2 text-gray-2">
-                <Image src={mail} alt={t("profile.mailIconAlt")} width={20} height={20} />
-                {isLoading ? t("profile.sidebar.loading") : userData?.email || ""}
+                <Image src={mail} alt="mail" width={20} height={20} />
+                {isLoading ? "Loading..." : userData?.email || ""}
               </p>
             </div>
             <CustomButton
@@ -180,7 +170,7 @@ function ProfileContent() {
               disabled={isLoading}
               onClick={() => setModalOpen(true)}
             >
-              {t("profile.sidebar.changePassword")}
+              CHANGE PASSWORD
             </CustomButton>
           </div>
 
@@ -192,23 +182,23 @@ function ProfileContent() {
                   className="group gap-2 data-[state=active]:bg-purple rounded-none w-1/2 h-[40px] text-gray-2 data-[state=active]:text-white uppercase"
                 >
                   <BoxSVG className="text-gray-2 group-data-[state=active]:text-white" />
-                  {t("profile.tabs.orderHistory")}
+                  ORDER HISTORY
                 </TabsTrigger>
                 <TabsTrigger
                   value="edit"
                   className="group gap-2 data-[state=active]:bg-purple rounded-none w-1/2 h-[40px] text-gray-2 data-[state=active]:text-white uppercase"
                 >
                   <ProfileSVG className="text-gray-2 group-data-[state=active]:text-white" />
-                  {t("profile.tabs.editProfile")}
+                  Edit Profile
                 </TabsTrigger>
               </TabsList>
               <TabsContent value="history" className="p-3 md:p-7">
                 <h3 className="flex items-center gap-2 text-black text-xl uppercase">
                   <BoxSVG />
-                  {t("profile.orderHistory.title")}
+                  ORDER HISTORY
                 </h3>
                 <p className="mt-2 mb-10 text-dark-gray">
-                  {t("profile.orderHistory.subtitle")}
+                  View and track all your previous orders
                 </p>
                 <OrdersTable />
               </TabsContent>
@@ -216,9 +206,9 @@ function ProfileContent() {
                 <div className="flex flex-col gap-2 bg-purple mb-10 p-7 text-white">
                   <h3 className="flex items-center gap-2 text-xl uppercase">
                     <ProfileSVG />
-                    {t("profile.editForm.bannerTitle")}
+                    Edit Your Profile
                   </h3>
-                  <p>{t("profile.editForm.bannerSubtitle")}</p>
+                  <p>Update your personal information and account details</p>
                 </div>
                 {error && <p className="text-red-500">{error}</p>}
 
@@ -228,10 +218,10 @@ function ProfileContent() {
                 >
                   <div className="gap-6 grid grid-cols-1 md:grid-cols-2 mb-6">
                     <CustomInput
-                      label={t("profile.editForm.labels.firstName")}
+                      label="First Name"
                       id="firstname"
                       name="firstname"
-                      placeholder={t("profile.editForm.placeholders.firstName")}
+                      placeholder="Enter your first name"
                       disabled={isLoading}
                       {...register("firstname")}
                       error={
@@ -241,10 +231,10 @@ function ProfileContent() {
                       }
                     />
                     <CustomInput
-                      label={t("profile.editForm.labels.lastName")}
+                      label="Last Name"
                       id="lastname"
                       name="lastname"
-                      placeholder={t("profile.editForm.placeholders.lastName")}
+                      placeholder="Enter your last name"
                       disabled={isLoading}
                       {...register("lastname")}
                       error={
@@ -256,10 +246,10 @@ function ProfileContent() {
                   </div>
                   <div className="w-full lg:w-1/2">
                     <CustomInput
-                      label={t("profile.editForm.labels.email")}
+                      label="Email"
                       id="email"
                       name="email"
-                      placeholder={t("profile.editForm.placeholders.email")}
+                      placeholder="Enter your email"
                       disabled={isLoading}
                       {...register("email")}
                       error={
@@ -275,8 +265,8 @@ function ProfileContent() {
                       disabled={updateProfileMutation.isPending || isLoading}
                     >
                       {updateProfileMutation.isPending
-                        ? t("profile.editForm.submitting")
-                        : t("profile.editForm.submit")}
+                        ? "UPDATING..."
+                        : "MAKE CHANGES"}
                     </CustomButton>
                   </div>
                 </form>

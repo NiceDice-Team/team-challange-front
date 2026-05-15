@@ -2,8 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { productServices } from "../../services/productServices";
 import { reviewServices } from "@/services/reviewServices";
-import { useState, useEffect, useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { ProductAccordion } from "./ProductPageAccordion";
 import { CustomBreadcrumb } from "../shared/CustomBreadcrumb";
@@ -34,7 +33,6 @@ interface StockStatus {
 }
 
 export default function ProductPage({ params }: ProductPageProps) {
-  const { t } = useTranslation();
   const [quantity, setQuantity] = useState(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -69,15 +67,6 @@ export default function ProductPage({ params }: ProductPageProps) {
     retry: 1,
   });
 
-  const breadcrumbItems = useMemo(
-    () => [
-      { label: t("product.breadcrumb.home"), href: "/" },
-      { label: t("product.breadcrumb.boardGames"), href: "/catalog" },
-      { label: product?.name || t("product.breadcrumb.fallbackName"), current: true },
-    ],
-    [t, product?.name],
-  );
-
   // Handle invalid product ID redirect
   useEffect(() => {
     if (isInvalidId) {
@@ -96,8 +85,8 @@ export default function ProductPage({ params }: ProductPageProps) {
     return (
       <div className="max-w-[1320px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 py-4 sm:py-6 md:py-8">
         <div className="text-center py-8 sm:py-12 md:py-16">
-          <p className="text-red-500 text-base sm:text-lg">{t("product.errors.invalidId")}</p>
-          <p className="text-gray-500 mt-2 text-sm sm:text-base">{t("product.errors.invalidUrlHint")}</p>
+          <p className="text-red-500 text-base sm:text-lg">Invalid product ID</p>
+          <p className="text-gray-500 mt-2 text-sm sm:text-base">Please check the URL and try again</p>
         </div>
       </div>
     );
@@ -126,8 +115,8 @@ export default function ProductPage({ params }: ProductPageProps) {
     return (
       <div className="max-w-[1320px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 py-4 sm:py-6 md:py-8">
         <div className="text-center py-8 sm:py-12 md:py-16">
-          <p className="text-red-500 text-base sm:text-lg">{t("product.errors.loadFailed")}</p>
-          <p className="text-gray-500 mt-2 text-sm sm:text-base">{t("product.errors.loadFailedHint")}</p>
+          <p className="text-red-500 text-base sm:text-lg">Error loading product</p>
+          <p className="text-gray-500 mt-2 text-sm sm:text-base">Please try again later</p>
         </div>
       </div>
     );
@@ -137,7 +126,7 @@ export default function ProductPage({ params }: ProductPageProps) {
     return (
       <div className="max-w-[1320px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 py-4 sm:py-6 md:py-8">
         <div className="text-center py-8 sm:py-12 md:py-16">
-          <p className="text-gray-500 text-base sm:text-lg">{t("product.errors.notFound")}</p>
+          <p className="text-gray-500 text-base sm:text-lg">Product not found</p>
         </div>
       </div>
     );
@@ -164,28 +153,25 @@ export default function ProductPage({ params }: ProductPageProps) {
   const getStockStatus = (stock: number): StockStatus => {
     if (stock === 0) {
       return {
-        message: t("product.stock.soldOut"),
+        message: "Sold out",
         color: "var(--color-gray-2)",
         status: "sold-out",
       };
     } else if (stock >= 1 && stock <= 5) {
       return {
-        message: t("product.stock.veryLow", {
-          count: stock,
-          units: stock === 1 ? t("product.stock.unit") : t("product.stock.units"),
-        }),
+        message: `Very low stock (${stock} unit${stock === 1 ? "" : "s"})`,
         color: "var(--color-red-stock)",
         status: "very-low",
       };
     } else if (stock >= 6 && stock <= 10) {
       return {
-        message: t("product.stock.low", { count: stock }),
+        message: `Low stock (${stock} units)`,
         color: "var(--color-orange)",
         status: "low",
       };
     } else {
       return {
-        message: t("product.stock.inStock"),
+        message: "In stock",
         color: "var(--color-green)",
         status: "in-stock",
       };
@@ -210,7 +196,7 @@ export default function ProductPage({ params }: ProductPageProps) {
   const currentImageSrc = currentImage?.url_lg || currentImage?.url_md || currentImage?.url_sm;
   const imageCount = product?.images?.length || 0;
   const hasMultipleImages = imageCount > 1;
-  const shortDescription = product.description || t("product.descriptionUnavailable");
+  const shortDescription = product.description || "Product description is unavailable";
 
   const handleQuantityChange = (nextQuantity: number) => {
     if (!isInStock) {
@@ -220,6 +206,13 @@ export default function ProductPage({ params }: ProductPageProps) {
 
     setQuantity(Math.max(1, Math.min(stockQuantity, nextQuantity)));
   };
+
+  // Breadcrumb items
+  const breadcrumbItems = [
+    { label: "Home", href: "/" },
+    { label: "Board games", href: "/catalog" },
+    { label: product?.name || "Product", current: true },
+  ];
 
   return (
     <div className="max-w-[1320px] mx-auto px-4 pt-0 pb-4 sm:px-6 sm:py-6 md:px-8 md:py-8 lg:px-12 xl:px-16">
@@ -243,7 +236,7 @@ export default function ProductPage({ params }: ProductPageProps) {
               type="button"
               onClick={() => setIsFavorite((prev) => !prev)}
               className="absolute right-2 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-sm"
-              aria-label={t("product.wishlistAria")}
+              aria-label="Add to wishlist"
             >
               {isFavorite ? <HeartFilledIcon className="h-4 w-4" /> : <HeartEmptyIcon className="h-4 w-4" />}
             </button>
@@ -252,7 +245,7 @@ export default function ProductPage({ params }: ProductPageProps) {
               {currentImageSrc ? (
                 <Image
                   src={currentImageSrc}
-                  alt={currentImage?.alt || product?.name || t("product.imageAltProduct")}
+                  alt={currentImage?.alt || product?.name || "Product image"}
                   fill
                   className="object-contain"
                   priority
@@ -260,7 +253,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center bg-gray-100 text-sm text-gray-400">
-                  {t("product.noImage")}
+                  No image
                 </div>
               )}
             </div>
@@ -275,7 +268,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                     className={`h-[3px] flex-1 border-0 ${
                       selectedImageIndex === index ? "bg-[var(--color-purple)]" : "bg-[var(--color-light-purple-2)]"
                     }`}
-                    aria-label={t("product.viewImageAria", { number: index + 1 })}
+                    aria-label={`View image ${index + 1}`}
                   />
                 ))}
               </div>
@@ -284,10 +277,8 @@ export default function ProductPage({ params }: ProductPageProps) {
 
           <div className="flex flex-col gap-4 p-4">
             <div className="flex items-center justify-between gap-3 text-sm uppercase">
-              <span className="text-[var(--color-purple)]">{product.brand || t("product.brandFallback")}</span>
-              <span className="text-[var(--color-gray-2)]">
-                {t("product.skuLabel")} {product.id.toString().padStart(6, "0")}
-              </span>
+              <span className="text-[var(--color-purple)]">{product.brand || "Brand"}</span>
+              <span className="text-[var(--color-gray-2)]">SKU: {product.id.toString().padStart(6, "0")}</span>
             </div>
 
             <div className="flex flex-col gap-2">
@@ -338,7 +329,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                   onClick={() => handleQuantityChange(quantity - 1)}
                   disabled={!isInStock || quantity <= 1}
                   className="flex h-6 w-6 items-center justify-center text-[var(--color-gray-2)] disabled:opacity-40"
-                  aria-label={t("product.quantity.decreaseAria")}
+                  aria-label="Decrease quantity"
                 >
                   <MinusIcon className="h-4 w-4" />
                 </button>
@@ -350,7 +341,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                   onClick={() => handleQuantityChange(quantity + 1)}
                   disabled={!isInStock || quantity >= stockQuantity}
                   className="flex h-6 w-6 items-center justify-center text-black disabled:opacity-40"
-                  aria-label={t("product.quantity.increaseAria")}
+                  aria-label="Increase quantity"
                 >
                   <PlusIcon className="h-4 w-4" />
                 </button>
@@ -365,7 +356,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                     : "cursor-not-allowed bg-gray-400"
                 }`}
               >
-                {addToCartMutation.isPending ? t("product.addingToCart") : t("product.addToCart")}
+                {addToCartMutation.isPending ? "Adding..." : "Add to cart"}
               </button>
             </div>
           </div>
@@ -403,7 +394,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                 {currentImageSrc ? (
                   <Image
                     src={currentImageSrc}
-                    alt={currentImage?.alt || product?.name || t("product.imageAltProduct")}
+                    alt={currentImage?.alt || product?.name || "Product image"}
                     fill
                     className="object-contain"
                     priority
@@ -411,7 +402,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                   />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center bg-gray-100 text-sm text-gray-400">
-                    {t("product.noImage")}
+                    No image
                   </div>
                 )}
               </div>
@@ -441,7 +432,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                 >
                   <Image
                     src={image.url_sm}
-                    alt={image.alt || t("product.imageAltNumbered", { number: index + 1 })}
+                    alt={image.alt || `Product image ${index + 1}`}
                     fill
                     className="object-contain p-1"
                     unoptimized={image.url_sm?.includes("placehold.co")}
@@ -456,7 +447,7 @@ export default function ProductPage({ params }: ProductPageProps) {
               <div className="mb-2 flex flex-col gap-1 text-sm uppercase text-[var(--color-purple)] sm:flex-row sm:items-center sm:justify-between sm:gap-2 sm:text-base lg:text-lg">
                 {product.brand && <span>{product.brand}</span>}
                 <span className="text-xs text-[var(--color-gray-2)] sm:text-sm lg:text-base">
-                  {t("product.skuLabel")} {product.id.toString().padStart(6, "0")}
+                  SKU: {product.id.toString().padStart(6, "0")}
                 </span>
               </div>
 
@@ -522,7 +513,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                       : "cursor-not-allowed bg-gray-400"
                   }`}
                 >
-                  {addToCartMutation.isPending ? t("product.addingToCartDesktop") : t("product.addToCartDesktop")}
+                  {addToCartMutation.isPending ? "ADDING..." : "ADD TO CART"}
                 </button>
               </div>
             </div>

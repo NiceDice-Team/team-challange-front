@@ -10,7 +10,6 @@ interface PhoneNumberInputProps {
   onChange?: (value: string) => void;
   onBlur?: () => void;
   name?: string;
-  label?: string;
 }
 
 const PhoneNumberInput = ({
@@ -19,7 +18,6 @@ const PhoneNumberInput = ({
   onChange,
   onBlur,
   name,
-  label = "Phone number",
 }: PhoneNumberInputProps) => {
   const [phone, setPhone] = useState(value || "");
 
@@ -41,7 +39,7 @@ const PhoneNumberInput = ({
 
   return (
     <>
-      <p className="font-normal text-base uppercase">{label}</p>
+      <p className="font-normal text-base uppercase">Phone number</p>
       <PhoneInput
         country={"us"}
         defaultCountry="US"

@@ -5,7 +5,6 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState } from "react";
 import { SessionProvider } from "next-auth/react";
 import { CartProvider } from "@/context/CartContext";
-import "@/lib/i18n";
 
 interface ProvidersProps {
   children: React.ReactNode;

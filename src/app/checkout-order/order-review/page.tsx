@@ -21,18 +21,16 @@ import { useQuery } from "@tanstack/react-query";
 import { orderServices, type PaymentMethod } from "@/services/orderServices";
 import { showCustomToast } from "@/components/shared/Toast";
 import { cartServices } from "@/services/cartServices";
-import { useTranslation } from "react-i18next";
 
 interface SectionProps {
   title: string;
-  editLabel: string;
   onEdit?: () => void;
   children: React.ReactNode;
   className?: string;
 }
 
 // Section Component for consistent styling
-const Section = ({ title, editLabel, onEdit, children, className = "" }: SectionProps) => {
+const Section = ({ title, onEdit, children, className = "" }: SectionProps) => {
   return (
     <div className={`flex flex-col gap-6 ${className}`}>
       <div className="flex justify-between items-center">
@@ -44,7 +42,7 @@ const Section = ({ title, editLabel, onEdit, children, className = "" }: Section
             onClick={onEdit}
             className="hover:opacity-80 text-purple text-base underline leading-[19px]"
           >
-            {editLabel}
+            Edit
           </button>
         )}
       </div>
@@ -52,6 +50,14 @@ const Section = ({ title, editLabel, onEdit, children, className = "" }: Section
     </div>
   );
 };
+
+const breadcrumbItems = [
+  { label: "Home", href: "/" },
+  { label: "Board games", href: "/catalog" },
+  { label: "Cart", href: "/cart" },
+  { label: "Checkout", href: "/checkout-order" },
+  { label: "Order review", current: true },
+];
 
 interface PaymentCardData {
   firstName: string;
@@ -62,19 +68,7 @@ interface PaymentCardData {
 }
 
 export default function OrderReviewPage() {
-  const { t } = useTranslation();
   const router = useRouter();
-
-  const breadcrumbItems = useMemo(
-    () => [
-      { label: t("orderReview.breadcrumb.home"), href: "/" },
-      { label: t("orderReview.breadcrumb.boardGames"), href: "/catalog" },
-      { label: t("orderReview.breadcrumb.cart"), href: "/cart" },
-      { label: t("orderReview.breadcrumb.checkout"), href: "/checkout-order" },
-      { label: t("orderReview.title"), current: true },
-    ],
-    [t],
-  );
 
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<
     number | null
@@ -152,7 +146,7 @@ export default function OrderReviewPage() {
     } catch (err) {
       showCustomToast({
         type: "error",
-        title: t("orderReview.toast.failedLoadCart"),
+        title: "Failed to load cart",
       });
       return;
     }
@@ -169,15 +163,15 @@ export default function OrderReviewPage() {
       .then((res) => {
         showCustomToast({
           type: "success",
-          title: t("orderReview.toast.orderPlacedTitle"),
-          description: t("orderReview.toast.orderPlacedDescription"),
+          title: "Order placed",
+          description: "Your order has been placed successfully.",
         });
       })
       .catch((err) => {
         showCustomToast({
           type: "error",
-          title: t("orderReview.toast.failedPlaceOrderTitle"),
-          description: t("orderReview.toast.failedPlaceOrderDescription"),
+          title: "Failed to place order",
+          description: "Failed to place order. Please try again.",
         });
       });
   };
@@ -193,7 +187,7 @@ export default function OrderReviewPage() {
         {/* Page Title */}
         <div className="flex flex-col gap-4 mb-18">
           <h1 className="flex items-center font-normal text-[var(--text-title)] uppercase leading-[48px]">
-            {t("orderReview.title")}
+            Order review
           </h1>
         </div>
 
@@ -202,11 +196,7 @@ export default function OrderReviewPage() {
           {/* Left Column - Order Information */}
           <div className="flex flex-col gap-12 py-6 w-full lg:w-[648px]">
             {/* Shipping Information */}
-            <Section
-              title={t("orderReview.shipping")}
-              editLabel={t("orderReview.edit")}
-              onEdit={handleEditShipping}
-            >
+            <Section title="Shipping" onEdit={handleEditShipping}>
               <div className="flex flex-col gap-2 text-gray-2 text-base leading-[19px]">
                 <div>
                   {checkoutUserData.shippingFirstName}{" "}
@@ -241,11 +231,7 @@ export default function OrderReviewPage() {
             </Section>
 
             {/* Billing Address */}
-            <Section
-              title={t("orderReview.billingAddress")}
-              editLabel={t("orderReview.edit")}
-              onEdit={handleEditBilling}
-            >
+            <Section title="Billing address" onEdit={handleEditBilling}>
               <div className="flex flex-col gap-2 text-gray-2 text-base leading-[19px]">
                 <div>
                   {checkoutUserData.billingFirstName}{" "}
@@ -284,12 +270,12 @@ export default function OrderReviewPage() {
               {/* Payment Header */}
               <div className="flex justify-between items-center h-6">
                 <h3 className="font-normal text-foreground text-xl uppercase leading-6">
-                  {t("orderReview.payment")}
+                  Payment
                 </h3>
                 <button
                   onClick={() => setIsPaymentExpanded(!isPaymentExpanded)}
                   className="flex justify-center items-center"
-                  aria-label={t("orderReview.togglePaymentAriaLabel")}
+                  aria-label="Toggle payment section"
                 >
                   <ChevronDownIcon
                     className="w-6 h-6"
@@ -304,11 +290,11 @@ export default function OrderReviewPage() {
                   <div className="flex flex-col gap-1">
                     {paymentMethodsLoading ? (
                       <div className="px-4 py-2 text-gray-2 text-base">
-                        {t("orderReview.loadingPaymentMethods")}
+                        Loading...
                       </div>
                     ) : paymentMethodsError ? (
                       <div className="px-4 py-2 text-red-600 text-base">
-                        {t("orderReview.failedToLoadPaymentMethods")}
+                        Failed to load payment methods
                       </div>
                     ) : (
                       paymentMethods.map((method: PaymentMethod) => (
@@ -349,14 +335,14 @@ export default function OrderReviewPage() {
                 className="flex items-center gap-2 hover:opacity-80 text-foreground text-base leading-[19px]"
               >
                 <ChevronLeft className="w-6 h-6 text-purple" />
-                {t("orderReview.returnToCheckout")}
+                Return to checkout
               </Link>
               <CustomButton
                 type="button"
                 onClick={handlePlaceOrder}
                 className="bg-purple hover:bg-purple/90 border border-purple w-full sm:w-72 h-12 text-white text-base uppercase leading-[19px]"
               >
-                {t("orderReview.placeOrder")}
+                Place order
               </CustomButton>
             </div>
           </div>
@@ -364,25 +350,23 @@ export default function OrderReviewPage() {
           {/* Right Column - Order Summary */}
           <div className="flex flex-col gap-10 p-6 border border-[#A4A3C8] w-full lg:w-[648px]">
             <h2 className="flex items-center w-full font-normal text-foreground text-xl uppercase leading-6">
-              {t("orderReview.yourOrder")}
+              Your order
             </h2>
 
             {cartLoading ? (
-              <div className="animate-pulse">{t("orderReview.loadingOrder")}</div>
+              <div className="animate-pulse">Loading order...</div>
             ) : (
               <>
                 {/* Product Table */}
                 <div className="flex flex-col gap-2">
                   {/* Table Header */}
                   <div className="flex justify-between items-center h-12 font-normal text-foreground text-sm sm:text-base uppercase leading-[19px]">
-                    <div className="flex-1 min-w-0">
-                      {t("orderReview.headers.product")}
-                    </div>
+                    <div className="flex-1 min-w-0">Product</div>
                     <div className="w-16 sm:w-24 text-center shrink-0">
-                      {t("orderReview.headers.quantity")}
+                      Quantity
                     </div>
                     <div className="w-16 sm:w-24 text-right shrink-0">
-                      {t("orderReview.headers.total")}
+                      Total
                     </div>
                   </div>
 
@@ -394,7 +378,7 @@ export default function OrderReviewPage() {
                     <div key={item.id || index}>
                       <div className="flex justify-between items-center py-2 min-h-12 text-foreground text-sm sm:text-base leading-[19px]">
                         <div className="flex-1 pr-2 min-w-0 break-words">
-                          {item.product?.name || t("orderReview.productFallback")}
+                          {item.product?.name || "Product"}
                         </div>
                         <div className="w-16 sm:w-24 text-center shrink-0">
                           {item.quantity}
@@ -414,7 +398,7 @@ export default function OrderReviewPage() {
                   {cartItems.length === 0 && (
                     <div className="flex justify-center items-center py-8">
                       <p className="text-gray-2 text-base leading-[19px]">
-                        {t("orderReview.emptyCart")}
+                        No items in cart
                       </p>
                     </div>
                   )}
@@ -422,7 +406,7 @@ export default function OrderReviewPage() {
                   {/* Subtotal */}
                   <div className="flex justify-between items-center h-12">
                     <div className="font-bold text-foreground text-base uppercase leading-[19px]">
-                      {t("orderReview.subtotal")}
+                      Subtotal
                     </div>
                     <div className="font-bold text-foreground text-base leading-[19px]">
                       ${subtotal.toFixed(2)}
@@ -439,13 +423,13 @@ export default function OrderReviewPage() {
             <div className="flex flex-col gap-6">
               <div className="flex justify-between items-center">
                 <h3 className="font-normal text-foreground text-xl uppercase leading-6">
-                  {t("orderReview.delivery")}
+                  Delivery
                 </h3>
                 <button
                   onClick={handleEditShipping}
                   className="hover:opacity-80 text-purple text-base underline leading-[19px]"
                 >
-                  {t("orderReview.edit")}
+                  Edit
                 </button>
               </div>
 
@@ -476,7 +460,7 @@ export default function OrderReviewPage() {
                 </RadioButton>
               ) : (
                 <div className="px-4 py-2 text-gray-2 text-base leading-[19px]">
-                  {t("orderReview.noDeliveryMethod")}
+                  No delivery method selected
                 </div>
               )}
             </div>
@@ -484,14 +468,14 @@ export default function OrderReviewPage() {
             {/* Order Total */}
             <div className="flex flex-col gap-2 font-bold text-base leading-[19px]">
               <div className="flex justify-between items-center h-12 text-foreground">
-                <div className="uppercase">{t("orderReview.shippingRow")}</div>
+                <div className="uppercase">Shipping</div>
                 <div>${shipping.toFixed(2)}</div>
               </div>
 
               <div className="border-purple/50 border-t w-full h-px"></div>
 
               <div className="flex justify-between items-center h-12 text-purple">
-                <div className="uppercase">{t("orderReview.orderTotal")}</div>
+                <div className="uppercase">Order Total</div>
                 <div>${total.toFixed(2)}</div>
               </div>
             </div>

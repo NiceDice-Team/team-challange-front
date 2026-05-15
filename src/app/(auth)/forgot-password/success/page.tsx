@@ -5,41 +5,41 @@ import ArrowNext from "../../../../../public/icons/ArrowNext.svg";
 import Image from "next/image";
 import { useEffect } from "react";
 import { showCustomToast } from "@/components/shared/Toast";
-import { useTranslation } from "react-i18next";
 
 export default function ForgotPasswordPage() {
-  const { t } = useTranslation();
-
   useEffect(() => {
+    // Only run on client-side
     if (typeof window !== "undefined") {
       showCustomToast({
         type: "success",
-        title: t("forgot-pass.success.toastTitle"),
-        description: t("forgot-pass.success.toastDescription"),
+        title: "Success!",
+        description: "A password reset link has been sent to your inbox.",
       });
     }
-  }, [t]);
+  }, []);
 
   return (
     <div className="flex flex-col items-center mx-auto mt-32 mb-32 md:w-[464px] w-xs">
-      <h1 className="mb-9 md:text-title text-xl uppercase">
-        {t("forgot-pass.success.title")}
+      <h1 className="mb-9 md:text-title text-2xl uppercase">
+        ✉️ Check Your Inbox
       </h1>
       <p className="mb-12 text-base text-center">
-        {t("forgot-pass.success.descriptionLine1")}
+        If the email address you entered is associated with an account, you’ll
+        receive a password reset link shortly
       </p>
       <p className="mb-12 text-base">
-        {t("forgot-pass.success.descriptionLine2")}
+        Check the message for 5-10 minutes. If you don&apos;t find the list,
+        please check your spam folder and resend it again.
       </p>
       <div className="flex flex-row justify-center items-center gap-1 mb-12">
-        <p className="text-base">{t("forgot-pass.success.didntReceiveEmail")}</p>
+        <p className="text-base">Didn’t receive the email?</p>
         <Link href="/forgot-password" className="flex gap-1">
-          <span className="underline">{t("forgot-pass.success.resend")}</span>
+          <span className="underline">Resend</span>
         </Link>
       </div>
 
       <Link href="/catalog" className="flex gap-1">
-        <span className="text-purple underline">{t("forgot-pass.success.continueShopping")}</span>
+        <span className="text-purple underline">Continue shopping</span>
         <Image src={ArrowNext} alt="arrow" />
       </Link>
     </div>

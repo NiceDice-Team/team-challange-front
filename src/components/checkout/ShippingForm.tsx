@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useEffect, useMemo } from "react";
-import { useForm, type Resolver } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { CustomInput } from "../shared/CustomInput";
 import CountrySelectWithSearch from "./CountrySelectWithSearch";
 import PhoneNumberInput from "./PhoneNumberInput";
-import { createCombinedFormSchema, type CombinedFormData } from "./schema";
+import { combinedFormSchema } from "./schema";
 import CustomCheckbox from "../shared/CustomCheckbox";
 import { ChevronLeft } from "lucide-react";
 import { CustomButton } from "../shared/CustomButton";
@@ -17,9 +18,8 @@ import {
   useCheckoutFormData,
   useCheckoutStore,
 } from "@/store/checkout";
-import { useTranslation } from "react-i18next";
 
-export type { CombinedFormData } from "./schema";
+export type CombinedFormData = z.infer<typeof combinedFormSchema>;
 
 export default function ShippingForm({
   paymentMethod,
@@ -28,55 +28,8 @@ export default function ShippingForm({
   paymentMethod: DeliveryOption | null;
   children?: React.ReactNode;
 }) {
-  const { t } = useTranslation();
   const router = useRouter();
   const checkoutUserData = useCheckoutFormData();
-
-  const validationMessages = useMemo(
-    () => ({
-      chooseCountry: t("checkoutOrder.shippingForm.validation.chooseCountry"),
-      firstNameMin: t("checkoutOrder.shippingForm.validation.firstNameMin"),
-      firstNameMax: t("checkoutOrder.shippingForm.validation.firstNameMax"),
-      firstNameRegex: t("checkoutOrder.shippingForm.validation.firstNameRegex"),
-      lastNameMin: t("checkoutOrder.shippingForm.validation.lastNameMin"),
-      lastNameMax: t("checkoutOrder.shippingForm.validation.lastNameMax"),
-      lastNameRegex: t("checkoutOrder.shippingForm.validation.lastNameRegex"),
-      addressMin: t("checkoutOrder.shippingForm.validation.addressMin"),
-      addressMax: t("checkoutOrder.shippingForm.validation.addressMax"),
-      addressRegex: t("checkoutOrder.shippingForm.validation.addressRegex"),
-      apartmentMax: t("checkoutOrder.shippingForm.validation.apartmentMax"),
-      zipMin: t("checkoutOrder.shippingForm.validation.zipMin"),
-      zipMax: t("checkoutOrder.shippingForm.validation.zipMax"),
-      zipRegex: t("checkoutOrder.shippingForm.validation.zipRegex"),
-      cityMin: t("checkoutOrder.shippingForm.validation.cityMin"),
-      cityMax: t("checkoutOrder.shippingForm.validation.cityMax"),
-      cityRegex: t("checkoutOrder.shippingForm.validation.cityRegex"),
-      invalidEmail: t("checkoutOrder.shippingForm.validation.invalidEmail"),
-      phoneMin: t("checkoutOrder.shippingForm.validation.phoneMin"),
-      billingCountryRequired: t(
-        "checkoutOrder.shippingForm.validation.billingCountryRequired",
-      ),
-      billingFirstNameRequired: t(
-        "checkoutOrder.shippingForm.validation.billingFirstNameRequired",
-      ),
-      billingLastNameRequired: t(
-        "checkoutOrder.shippingForm.validation.billingLastNameRequired",
-      ),
-      billingAddressRequired: t(
-        "checkoutOrder.shippingForm.validation.billingAddressRequired",
-      ),
-      billingCityRequired: t("checkoutOrder.shippingForm.validation.billingCityRequired"),
-      billingZipRequired: t("checkoutOrder.shippingForm.validation.billingZipRequired"),
-      billingEmailRequired: t("checkoutOrder.shippingForm.validation.billingEmailRequired"),
-      billingPhoneRequired: t("checkoutOrder.shippingForm.validation.billingPhoneRequired"),
-    }),
-    [t],
-  );
-
-  const combinedFormSchema = useMemo(
-    () => createCombinedFormSchema(validationMessages),
-    [validationMessages],
-  );
 
   const shouldUseStoredDefaults = useMemo(
     () =>
@@ -166,7 +119,7 @@ export default function ShippingForm({
     trigger,
     formState: { errors, isSubmitting },
   } = useForm<CombinedFormData>({
-    resolver: zodResolver(combinedFormSchema) as Resolver<CombinedFormData>,
+    resolver: zodResolver(combinedFormSchema),
     mode: "onSubmit",
     reValidateMode: "onChange",
     defaultValues,
@@ -227,10 +180,9 @@ export default function ShippingForm({
     <>
       <form onSubmit={handleSubmit(onSubmit, onError)}>
         <div className="flex flex-col gap-4 mb-12">
-          <div className="pb-6 text-xl uppercase">{t("checkoutOrder.shippingForm.sectionShipping")}</div>
+          <div className="pb-6 text-xl uppercase">Shipping</div>
 
           <CountrySelectWithSearch
-            label={t("checkoutOrder.shippingForm.labels.countryRegion")}
             value={watch("shippingCountry")}
             onChange={(value) => setValue("shippingCountry", value)}
             name="shippingCountry"
@@ -242,10 +194,10 @@ export default function ShippingForm({
           />
           <div className="gap-4 grid grid-cols-2">
             <CustomInput
-              label={t("checkoutOrder.shippingForm.labels.firstName")}
+              label="First Name"
               id="shippingFirstName"
               name="shippingFirstName"
-              placeholder={t("checkoutOrder.shippingForm.placeholders.firstName")}
+              placeholder="Enter your first name"
               {...register("shippingFirstName")}
               error={
                 errors.shippingFirstName?.message
@@ -254,10 +206,10 @@ export default function ShippingForm({
               }
             />
             <CustomInput
-              label={t("checkoutOrder.shippingForm.labels.lastName")}
+              label="Last Name"
               id="shippingLastName"
               name="shippingLastName"
-              placeholder={t("checkoutOrder.shippingForm.placeholders.lastName")}
+              placeholder="Enter your last name"
               {...register("shippingLastName")}
               error={
                 errors.shippingLastName?.message
@@ -267,10 +219,10 @@ export default function ShippingForm({
             />
           </div>
           <CustomInput
-            label={t("checkoutOrder.shippingForm.labels.address")}
+            label="Address"
             id="shippingAddress"
             name="shippingAddress"
-            placeholder={t("checkoutOrder.shippingForm.placeholders.address")}
+            placeholder="Enter your address"
             {...register("shippingAddress")}
             error={
               errors.shippingAddress?.message
@@ -279,10 +231,10 @@ export default function ShippingForm({
             }
           />
           <CustomInput
-            label={t("checkoutOrder.shippingForm.labels.apartment")}
+            label="Apartment, suite, etc"
             id="shippingApartment"
             name="shippingApartment"
-            placeholder={t("checkoutOrder.shippingForm.placeholders.apartment")}
+            placeholder="Enter your apartment, suite, etc"
             {...register("shippingApartment")}
             error={
               errors.shippingApartment?.message
@@ -292,10 +244,10 @@ export default function ShippingForm({
           />
           <div className="gap-4 grid grid-cols-1 md:grid-cols-2">
             <CustomInput
-              label={t("checkoutOrder.shippingForm.labels.zipCode")}
+              label="Zip Code"
               id="shippingZipCode"
               name="shippingZipCode"
-              placeholder={t("checkoutOrder.shippingForm.placeholders.zipCode")}
+              placeholder="Enter your zip code"
               {...register("shippingZipCode")}
               error={
                 errors.shippingZipCode?.message
@@ -304,10 +256,10 @@ export default function ShippingForm({
               }
             />
             <CustomInput
-              label={t("checkoutOrder.shippingForm.labels.city")}
+              label="Town / City"
               id="shippingCity"
               name="shippingCity"
-              placeholder={t("checkoutOrder.shippingForm.placeholders.city")}
+              placeholder="Enter your city"
               {...register("shippingCity")}
               error={
                 errors.shippingCity?.message
@@ -317,10 +269,10 @@ export default function ShippingForm({
             />
           </div>
           <CustomInput
-            label={t("checkoutOrder.shippingForm.labels.email")}
+            label="Email"
             id="shippingEmail"
             name="shippingEmail"
-            placeholder={t("checkoutOrder.shippingForm.placeholders.email")}
+            placeholder="Enter your email"
             {...register("shippingEmail")}
             error={
               errors.shippingEmail?.message
@@ -329,7 +281,6 @@ export default function ShippingForm({
             }
           />
           <PhoneNumberInput
-            label={t("checkoutOrder.shippingForm.labels.phoneNumber")}
             value={watch("shippingPhone")}
             onChange={(value) => setValue("shippingPhone", value)}
             name="shippingPhone"
@@ -342,7 +293,7 @@ export default function ShippingForm({
         </div>
 
         <CustomCheckbox
-          label={t("checkoutOrder.shippingForm.copyBilling")}
+          label="Use shipping address as billing address"
           id="copyBilling"
           checked={copyBilling}
           onCheckedChange={(checked) => {
@@ -364,10 +315,9 @@ export default function ShippingForm({
         />
         {!copyBilling && (
           <div className="flex flex-col gap-4 mt-6">
-            <div className="pb-6 text-xl uppercase">{t("checkoutOrder.shippingForm.sectionBilling")}</div>
+            <div className="pb-6 text-xl uppercase">Billing adress</div>
 
             <CountrySelectWithSearch
-              label={t("checkoutOrder.shippingForm.labels.countryRegion")}
               value={watch("billingCountry")}
               onChange={(value) => setValue("billingCountry", value)}
               name="billingCountry"
@@ -379,10 +329,10 @@ export default function ShippingForm({
             />
             <div className="gap-4 grid grid-cols-2">
               <CustomInput
-                label={t("checkoutOrder.shippingForm.labels.firstName")}
+                label="First Name"
                 id="billingFirstName"
                 name="billingFirstName"
-                placeholder={t("checkoutOrder.shippingForm.placeholders.firstName")}
+                placeholder="Enter your first name"
                 {...register("billingFirstName")}
                 error={
                   errors.billingFirstName?.message
@@ -391,10 +341,10 @@ export default function ShippingForm({
                 }
               />
               <CustomInput
-                label={t("checkoutOrder.shippingForm.labels.lastName")}
+                label="Last Name"
                 id="billingLastName"
                 name="billingLastName"
-                placeholder={t("checkoutOrder.shippingForm.placeholders.lastName")}
+                placeholder="Enter your last name"
                 {...register("billingLastName")}
                 error={
                   errors.billingLastName?.message
@@ -404,10 +354,10 @@ export default function ShippingForm({
               />
             </div>
             <CustomInput
-              label={t("checkoutOrder.shippingForm.labels.address")}
+              label="Address"
               id="billingAddress"
               name="billingAddress"
-              placeholder={t("checkoutOrder.shippingForm.placeholders.address")}
+              placeholder="Enter your address"
               {...register("billingAddress")}
               error={
                 errors.billingAddress?.message
@@ -416,10 +366,10 @@ export default function ShippingForm({
               }
             />
             <CustomInput
-              label={t("checkoutOrder.shippingForm.labels.apartment")}
+              label="Apartment, suite, etc"
               id="billingApartment"
               name="billingApartment"
-              placeholder={t("checkoutOrder.shippingForm.placeholders.apartment")}
+              placeholder="Enter your apartment, suite, etc"
               {...register("billingApartment")}
               error={
                 errors.billingApartment?.message
@@ -429,10 +379,10 @@ export default function ShippingForm({
             />
             <div className="gap-4 grid grid-cols-1 md:grid-cols-2">
               <CustomInput
-                label={t("checkoutOrder.shippingForm.labels.zipCode")}
+                label="Zip Code"
                 id="billingZipCode"
                 name="billingZipCode"
-                placeholder={t("checkoutOrder.shippingForm.placeholders.zipCode")}
+                placeholder="Enter your zip code"
                 {...register("billingZipCode")}
                 error={
                   errors.billingZipCode?.message
@@ -441,10 +391,10 @@ export default function ShippingForm({
                 }
               />
               <CustomInput
-                label={t("checkoutOrder.shippingForm.labels.city")}
+                label="Town / City"
                 id="billingCity"
                 name="billingCity"
-                placeholder={t("checkoutOrder.shippingForm.placeholders.city")}
+                placeholder="Enter your city"
                 {...register("billingCity")}
                 error={
                   errors.billingCity?.message
@@ -454,10 +404,10 @@ export default function ShippingForm({
               />
             </div>
             <CustomInput
-              label={t("checkoutOrder.shippingForm.labels.email")}
+              label="Email"
               id="billingEmail"
               name="billingEmail"
-              placeholder={t("checkoutOrder.shippingForm.placeholders.email")}
+              placeholder="Enter your email"
               {...register("billingEmail")}
               error={
                 errors.billingEmail?.message
@@ -466,7 +416,6 @@ export default function ShippingForm({
               }
             />
             <PhoneNumberInput
-              label={t("checkoutOrder.shippingForm.labels.phoneNumber")}
               value={watch("billingPhone")}
               onChange={(value) => setValue("billingPhone", value)}
               name="billingPhone"
@@ -487,14 +436,14 @@ export default function ShippingForm({
             className="flex items-center gap-2 hover:opacity-80 text-foreground text-base"
           >
             <ChevronLeft className="w-6 h-6 text-purple" />
-            {t("checkoutOrder.shippingForm.returnToCart")}
+            Return to cart
           </Link>
           <CustomButton
             type="submit"
             disabled={isSubmitting}
             className="bg-purple hover:bg-purple/90 border border-purple w-full sm:w-72 h-12 font-normal text-white text-base uppercase"
           >
-            {t("checkoutOrder.shippingForm.orderReview")}
+            Order review
           </CustomButton>
         </div>
       </form>

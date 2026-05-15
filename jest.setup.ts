@@ -1,29 +1,4 @@
 import "@testing-library/jest-dom";
-import path from "node:path";
-import fs from "node:fs";
-
-const COMMON_JSON_PATH = path.resolve(process.cwd(), "public/locales/en/common.json");
-const commonTranslations = JSON.parse(fs.readFileSync(COMMON_JSON_PATH, "utf8")) as Record<
-  string,
-  unknown
->;
-
-function lookupTranslation(key: string): string {
-  const parts = key.split(".");
-  let cur: unknown = commonTranslations;
-  for (const p of parts) {
-    cur = cur && typeof cur === "object" ? (cur as Record<string, unknown>)[p] : undefined;
-  }
-  return typeof cur === "string" ? cur : key;
-}
-
-jest.mock("react-i18next", () => ({
-  initReactI18next: { type: "3rdParty", init: jest.fn() },
-  useTranslation: () => ({
-    t: (key: string) => lookupTranslation(key),
-    i18n: { language: "en", changeLanguage: jest.fn() },
-  }),
-}));
 
 // Mock Next.js router
 jest.mock("next/navigation", () => ({

@@ -6,36 +6,35 @@ import Image from "next/image";
 import { PublicRoute } from "@/components/auth/RouteGuards";
 import { showCustomToast } from "@/components/shared/Toast";
 import { useEffect } from "react";
-import { useTranslation } from "react-i18next";
 
 function ConfirmSignUpContent() {
-  const { t } = useTranslation();
-
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    // Only run on client-side
+    if (typeof window !== 'undefined') {
       showCustomToast({
         type: "success",
-        title: t("register.success.toastTitle"),
-        description: t("register.success.toastDescription"),
+        title: "Success! You are registered.",
+        description: "A confirmation email has been sent to your inbox.",
       });
     }
-  }, [t]);
+  }, []);
   return (
     <div className="flex flex-col items-center mt-23 mb-65">
-      <h1 className="mb-9 md:text-title text-xl text-center uppercase">
-        {t("register.success.title")}
+      <h1 className="mb-9 md:text-title text-2xl text-center uppercase">
+        Thank you for registering!
       </h1>
       <p className="text-base">
-        {t("register.success.descriptionLine1")}
+        A confirmation email has been sent to your inbox.
       </p>
       <p className="mb-9 text-base">
-        {t("register.success.descriptionLine2")}
+        Please click the link in that email to activate your account.
       </p>
       <p className="mb-12 text-base">
-        {t("register.success.descriptionLine3")}
+        Check the message for 5-10 minutes. If you don&apos;t find the list,
+        please check your spam folder and resend it again.
       </p>
       <Link href="/catalog" className="flex gap-1">
-        <span className="text-purple underline">{t("register.success.browseGames")}</span>
+        <span className="text-purple underline">Browse games</span>
         <Image src={ArrowNext} alt="arrow" />
       </Link>
     </div>

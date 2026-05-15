@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
-import { useTranslation } from "react-i18next";
 import { CustomBreadcrumb } from "../../../components/shared/CustomBreadcrumb";
 import CartItem from "../../../components/cart/CartItem";
 import CartProductCard from "../../../components/cart/CartProductCard";
@@ -13,7 +12,6 @@ import { isAuthenticated } from "@/lib/tokenManager";
 import { useRouter } from "next/navigation";
 
 export default function CartPage() {
-  const { t } = useTranslation();
   const { data: cartItems = [], isLoading: cartLoading } = useCartQuery();
   const updateQuantityMutation = useUpdateCartQuantity();
   const removeItemMutation = useRemoveFromCart();
@@ -50,10 +48,10 @@ export default function CartPage() {
         setError(null);
         await removeItemMutation.mutateAsync(cartItemId);
       } catch (err) {
-        setError(err instanceof Error ? err.message : t("cart.errors.failedToRemoveItem"));
+        setError(err instanceof Error ? err.message : "Failed to remove item");
       }
     },
-    [removeItemMutation, t]
+    [removeItemMutation]
   );
 
   const updateQuantity = useCallback(
@@ -66,10 +64,10 @@ export default function CartPage() {
           await updateQuantityMutation.mutateAsync({ cartItemId, quantity: newQuantity });
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : t("cart.errors.failedToUpdateQuantity"));
+        setError(err instanceof Error ? err.message : "Failed to update quantity");
       }
     },
-    [updateQuantityMutation, removeItemMutation, t]
+    [updateQuantityMutation, removeItemMutation]
   );
 
   const applyCoupon = () => {
@@ -103,18 +101,15 @@ export default function CartPage() {
     };
   }, [cartItems]);
 
-  const breadcrumbItems = useMemo(
-    () => [
-      { label: t("cart.breadcrumb.home"), href: "/" },
-      { label: t("cart.breadcrumb.cart"), href: "/cart", current: true },
-    ],
-    [t],
-  );
+  const breadcrumbItems = [
+    { label: "Home", href: "/" },
+    { label: "Cart", href: "/cart", current: true },
+  ];
 
   if (cartLoading) {
     return (
       <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full max-w-7xl">
-        <div className="animate-pulse">{t("cart.loading")}</div>
+        <div className="animate-pulse">Loading cart...</div>
       </div>
     );
   }
@@ -149,13 +144,13 @@ export default function CartPage() {
       <div className="pt-6 pb-6 sm:pt-0">
         <div className="flex flex-col gap-4">
           <h1 className="font-normal text-[#040404] lg:text-[40px] text-2xl sm:text-3xl uppercase leading-tight">
-            {t("cart.title", { count: cartItems.length })}
+            your cart ({cartItems.length})
           </h1>
 
           <div className="flex sm:flex-row flex-col sm:items-center gap-2 text-base">
-            <span className="text-black">{t("cart.notReadyToCheckout")}</span>
+            <span className="text-black">Not ready to checkout?</span>
             <Link href="/catalog" className="flex items-center gap-1 text-black hover:text-[#494791] transition-colors">
-              <span>{t("cart.continueShopping")}</span>
+              <span>Continue Shopping</span>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M5 12H19M19 12L12 5M19 12L12 19"
@@ -181,19 +176,13 @@ export default function CartPage() {
             {/* Table Headers - Hidden on mobile, only show when cart has items */}
             {cartItems.length > 0 && (
               <div className="hidden md:flex justify-between items-center mb-6 pb-4 border-[#494791]/50 border-b">
-                <div className="flex-1 font-normal text-[#040404] text-sm md:text-base uppercase">
-                  {t("cart.table.product")}
-                </div>
+                <div className="flex-1 font-normal text-[#040404] text-sm md:text-base uppercase">Product</div>
                 <div className="flex items-center gap-6 md:gap-8 lg:gap-16">
-                  <span className="w-12 md:w-16 font-normal text-[#040404] text-sm md:text-base uppercase">
-                    {t("cart.table.price")}
-                  </span>
+                  <span className="w-12 md:w-16 font-normal text-[#040404] text-sm md:text-base uppercase">Price</span>
                   <span className="w-16 md:w-20 font-normal text-[#040404] text-sm md:text-base uppercase">
-                    {t("cart.table.quantity")}
+                    Quantity
                   </span>
-                  <span className="w-12 md:w-16 font-normal text-[#040404] text-sm md:text-base uppercase">
-                    {t("cart.table.total")}
-                  </span>
+                  <span className="w-12 md:w-16 font-normal text-[#040404] text-sm md:text-base uppercase">Total</span>
                 </div>
               </div>
             )}
@@ -201,12 +190,12 @@ export default function CartPage() {
             {/* Cart Items */}
             {cartItems.length === 0 ? (
               <div className="py-12 text-center">
-                <p className="text-gray-500 text-lg">{t("cart.empty.message")}</p>
+                <p className="text-gray-500 text-lg">Your cart is empty</p>
                 <Link
                   href="/catalog"
                   className="inline-block bg-[#494791] hover:bg-[#494791]/90 mt-4 px-6 py-3 text-white transition-colors"
                 >
-                  {t("cart.empty.startShopping")}
+                  Start Shopping
                 </Link>
               </div>
             ) : (
@@ -228,11 +217,11 @@ export default function CartPage() {
               <div className="pt-4 sm:pt-6 border-[#494791]/50 border-t">
                 <div className="flex sm:flex-row flex-col sm:justify-between sm:items-center gap-2 sm:gap-4">
                   <div className="font-normal text-[#040404] text-xs sm:text-sm md:text-base uppercase">
-                    {t("cart.shippingCalculatedAtCheckout")}
+                    shipping calculated at checkout
                   </div>
                   <div className="flex items-center gap-2 sm:gap-4 lg:gap-16">
                     <span className="font-bold text-[#040404] text-xs sm:text-sm md:text-base uppercase">
-                      {t("cart.subtotal")}
+                      Subtotal:
                     </span>
                     <span className="font-bold text-[#040404] text-xs sm:text-sm md:text-base uppercase">
                       ${subtotal.toFixed(2)}
@@ -252,14 +241,10 @@ export default function CartPage() {
               <div className="text-center">
                 {remainingForFreeShipping > 0 ? (
                   <p className="mb-4 text-black text-lg">
-                    {t("cart.freeShipping.away", {
-                      amount: `$${remainingForFreeShipping.toFixed(2)}`,
-                    })}
+                    You&apos;re just ${remainingForFreeShipping.toFixed(2)} away from FREE shipping
                   </p>
                 ) : (
-                  <p className="mb-4 font-medium text-[var(--color-green)] text-lg">
-                    {t("cart.freeShipping.unlocked")}
-                  </p>
+                  <p className="mb-4 font-medium text-[var(--color-green)] text-lg">🎉 FREE SHIPPING</p>
                 )}
                 <div className="relative bg-[#D9D9D9] rounded w-full h-[3px]">
                   <div
@@ -271,13 +256,13 @@ export default function CartPage() {
 
               {/* Special Notes */}
               <div className="flex flex-col gap-4">
-                <h3 className="text-black text-lg">{t("cart.specialNotes.title")}</h3>
+                <h3 className="text-black text-lg">Special notes for your order</h3>
                 <div className="relative">
                   <textarea
                     value={specialNotes}
                     onChange={(e) => setSpecialNotes(e.target.value)}
                     className="p-3 border border-[#A4A3C8] focus:outline-none focus:ring-[#494791]/20 focus:ring-2 w-full h-24 sm:h-32 text-sm resize-none"
-                    placeholder={t("cart.specialNotes.placeholder")}
+                    placeholder="Add any special instructions..."
                   />
                 </div>
               </div>
@@ -288,27 +273,27 @@ export default function CartPage() {
                   type="text"
                   value={couponCode}
                   onChange={(e) => setCouponCode(e.target.value)}
-                  placeholder={t("cart.coupon.placeholder")}
+                  placeholder="Coupon code"
                   className="flex-1 px-4 py-3 border border-[#A4A3C8] focus:outline-none focus:ring-[#494791]/20 focus:ring-2 text-base"
                 />
                 <button
                   onClick={applyCoupon}
                   className="hover:bg-[#494791] px-6 sm:px-10 py-3 border border-[#494791] text-[#494791] hover:text-white text-base transition-colors"
                 >
-                  {t("cart.coupon.apply")}
+                  Apply
                 </button>
               </div>
 
               {/* Subtotal */}
               <div className="flex justify-between items-center py-4">
-                <span className="font-bold text-[#040404] text-base uppercase">{t("cart.subtotal")}</span>
+                <span className="font-bold text-[#040404] text-base uppercase">Subtotal:</span>
                 <span className="font-bold text-[#040404] text-base uppercase">${subtotal.toFixed(2)}</span>
               </div>
 
               {/* Checkout Button */}
               <button className="bg-purple hover:bg-purple/90 py-4 border border-purple w-full font-normal text-white text-base uppercase transition-colors cursor-pointer"  
                 onClick={handleCheckout}>
-                {t("cart.checkout")}
+                Checkout
               </button>
             </div>
           </div>
@@ -319,9 +304,7 @@ export default function CartPage() {
       {(recommendationsLoading || recommendedProducts.length > 0) && (
         <div className="py-16">
           <div className="flex flex-col gap-10">
-            <h2 className="font-normal text-[#040404] text-[40px] uppercase leading-[48px]">
-              {t("cart.youMayAlsoLike")}
-            </h2>
+            <h2 className="font-normal text-[#040404] text-[40px] uppercase leading-[48px]">you may also like</h2>
 
             {/* Responsive grid - 5 cards per row, wrapping */}
             <div className="justify-items-center gap-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">

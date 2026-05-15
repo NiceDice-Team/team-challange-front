@@ -3,7 +3,6 @@ import SubscribeSection from "../home/SubscribeSection";
 import ReviewCard from "../home/ReviewCard";
 import { Pagination } from "../ui/pagination";
 import { useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { CustomSelect } from "../shared/CustomSelect";
 import { productServices } from "@/services/productServices";
@@ -44,29 +43,8 @@ const normalizeRating = (value: string | number | undefined): number => {
 };
 
 export default function ReviewsComments({ productId, children }: ReviewsCommentsProps) {
-  const { t } = useTranslation();
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState("most-recent");
-
-  const sortOptionsMobile = useMemo(
-    () => [
-      { value: "most-recent", label: t("product.reviews.sortMostRecent") },
-      { value: "oldest", label: t("product.reviews.sortOldest") },
-      { value: "highest-rated", label: t("product.reviews.sortHighestRated") },
-      { value: "lowest-rated", label: t("product.reviews.sortLowestRated") },
-    ],
-    [t],
-  );
-
-  const sortOptionsDesktop = useMemo(
-    () => [
-      { value: "most-recent", label: t("product.reviews.sortMostRecentDesktop") },
-      { value: "oldest", label: t("product.reviews.sortOldest") },
-      { value: "highest-rated", label: t("product.reviews.sortHighestRatedDesktop") },
-      { value: "lowest-rated", label: t("product.reviews.sortLowestRatedDesktop") },
-    ],
-    [t],
-  );
 
   const { data: product } = useQuery({
     queryKey: ["product", productId],
@@ -108,19 +86,15 @@ export default function ReviewsComments({ productId, children }: ReviewsComments
         rating: normalizedRating,
         date: formatReviewDate(review.created_at),
         avatarSrc: undefined,
-        name: review.user_id
-          ? t("product.reviews.customerNumber", { id: review.user_id })
-          : t("product.reviews.anonymousCustomer"),
+        name: review.user_id ? `Customer #${review.user_id}` : "Anonymous customer",
         aboutHref: product?.name ? `/product/${productId}` : undefined,
         aboutText: product?.name,
-        title: comment
-          ? t("product.reviews.cardTitleWithComment", { rating: normalizedRating })
-          : t("product.reviews.cardTitleWithoutComment", { rating: normalizedRating }),
-        body: comment || t("product.reviews.cardBodyNoComment"),
+        title: comment ? `Rated ${normalizedRating} out of 5` : `Rating: ${normalizedRating} out of 5`,
+        body: comment || "This customer left a star rating without a written comment.",
         images: [],
       };
     });
-  }, [product?.name, productId, reviewsData?.results, t]);
+  }, [product?.name, productId, reviewsData?.results]);
 
   const totalPages = Math.ceil(normalizedReviews.length / REVIEWS_PER_PAGE);
   const startIndex = (currentPage - 1) * REVIEWS_PER_PAGE;
@@ -140,32 +114,33 @@ export default function ReviewsComments({ productId, children }: ReviewsComments
     <>
       <section className="sm:hidden mx-auto w-full max-w-[428px] px-4">
         <div className="flex items-center gap-4">
-          <span className="text-[18px] font-medium leading-[22px] uppercase text-black">{t("product.reviews.sortBy")}</span>
+          <span className="text-[18px] font-medium leading-[22px] uppercase text-black">Sort by</span>
           <CustomSelect
             className="!h-6 !min-w-0 !w-auto border-0 px-0 py-0 text-base font-normal text-[var(--color-purple)] shadow-none [&_svg]:!ml-2 [&_svg]:h-6 [&_svg]:w-6"
-            placeholder={t("product.reviews.placeholderSort")}
+            placeholder="Most recent"
             value={sortBy}
             onValueChange={handleSortChange}
-            options={sortOptionsMobile}
+            options={[
+              { value: "most-recent", label: "Most recent" },
+              { value: "oldest", label: "Oldest" },
+              { value: "highest-rated", label: "Highest rated" },
+              { value: "lowest-rated", label: "Lowest rated" },
+            ]}
           />
         </div>
 
         <div className="mt-6 flex flex-col">
-          {isLoading && (
-            <div className="border-t border-[var(--color-light-purple-2)] px-6 py-6 text-base text-gray-500">
-              {t("product.reviews.loadingReviews")}
-            </div>
-          )}
+          {isLoading && <div className="border-t border-[var(--color-light-purple-2)] px-6 py-6 text-base text-gray-500">Loading reviews...</div>}
 
           {!isLoading && error && (
             <div className="border-t border-[var(--color-light-purple-2)] px-6 py-6 text-base text-red-500">
-              {t("product.reviews.loadReviewsError")}
+              Unable to load reviews right now.
             </div>
           )}
 
           {!isLoading && !error && currentReviews.length === 0 && (
             <div className="border-t border-[var(--color-light-purple-2)] px-6 py-6 text-base text-gray-500">
-              {t("product.reviews.noReviewsYet")}
+              No reviews yet for this product.
             </div>
           )}
 
@@ -191,32 +166,33 @@ export default function ReviewsComments({ productId, children }: ReviewsComments
       <section className="hidden w-full max-w-[1320px] grid-cols-1 items-start gap-6 px-4 sm:grid sm:px-6 md:px-8 lg:grid-cols-2 lg:gap-10 lg:px-12 xl:px-16">
         <div className="flex flex-col gap-4 sm:gap-6">
           <div className="flex items-center gap-2 sm:gap-4">
-            <span className="text-sm font-medium uppercase sm:text-base lg:text-lg">{t("product.reviews.sortByDesktop")}</span>
+            <span className="text-sm font-medium uppercase sm:text-base lg:text-lg">sort by</span>
             <CustomSelect
               className="h-auto border-0"
-              placeholder={t("product.reviews.placeholderSortDesktop")}
+              placeholder="Most Recent"
               value={sortBy}
               onValueChange={handleSortChange}
-              options={sortOptionsDesktop}
+              options={[
+                { value: "most-recent", label: "Most Recent" },
+                { value: "oldest", label: "Oldest" },
+                { value: "highest-rated", label: "Highest Rated" },
+                { value: "lowest-rated", label: "Lowest Rated" },
+              ]}
             />
           </div>
 
           <div className="flex flex-col gap-4 sm:gap-6">
-            {isLoading && (
-              <div className="border-t-2 border-[color:var(--color-light-purple)] py-6 text-base text-gray-500">
-                {t("product.reviews.loadingReviews")}
-              </div>
-            )}
+            {isLoading && <div className="border-t-2 border-[color:var(--color-light-purple)] py-6 text-base text-gray-500">Loading reviews...</div>}
 
             {!isLoading && error && (
               <div className="border-t-2 border-[color:var(--color-light-purple)] py-6 text-base text-red-500">
-                {t("product.reviews.loadReviewsError")}
+                Unable to load reviews right now.
               </div>
             )}
 
             {!isLoading && !error && currentReviews.length === 0 && (
               <div className="border-t-2 border-[color:var(--color-light-purple)] py-6 text-base text-gray-500">
-                {t("product.reviews.noReviewsYet")}
+                No reviews yet for this product.
               </div>
             )}
 

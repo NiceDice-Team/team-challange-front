@@ -1,24 +1,26 @@
-"use client";
-
 import z from "zod";
-import { useMemo, useState } from "react";
 import Modal from "../shared/Modal";
 import { PasswordInput } from "../shared/PasswordInput";
-import { useForm, type Resolver } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { CustomInput } from "../shared/CustomInput";
 import { CustomButton } from "../shared/CustomButton";
+import { useState } from "react";
 import { loginSchema, LoginFormState } from "@/lib/definitions";
 import { API_BASE_URL } from "@/config/api";
 import { setTokens } from "@/lib/tokenManager";
 import { useRouter } from "next/navigation";
-import { useTranslation } from "react-i18next";
 
-type CheckoutFormState = {
-  email: string;
-  password: string;
-};
+const checkoutSchema = z.object({
+  email: z.string().nonempty("Email is required").email("Invalid email"),
+  password: z
+    .string()
+    .nonempty("Password is required")
+    .min(8, "Password must be at least 8 characters")
+    .max(128, { message: "Password must be less than 128 characters" }),
+});
+type CheckoutFormState = z.infer<typeof checkoutSchema>;
 
 const CheckoutModal = ({
   open,
@@ -27,24 +29,7 @@ const CheckoutModal = ({
   open: boolean;
   onClose: () => void;
 }) => {
-  const { t } = useTranslation();
   const router = useRouter();
-  const checkoutSchema = useMemo(
-    () =>
-      z.object({
-        email: z
-          .string()
-          .min(1, t("cart.modal.validation.emailRequired"))
-          .email(t("cart.modal.validation.invalidEmail")),
-        password: z
-          .string()
-          .min(1, t("cart.modal.validation.passwordRequired"))
-          .min(8, t("cart.modal.validation.passwordMin"))
-          .max(128, { message: t("cart.modal.validation.passwordMax") }),
-      }),
-    [t],
-  );
-
   const [isLoading, setIsLoading] = useState(false);
   const [serverErrors, setServerErrors] = useState<LoginFormState["errors"]>(
     {},
@@ -54,7 +39,7 @@ const CheckoutModal = ({
     handleSubmit,
     formState: { errors },
   } = useForm<CheckoutFormState>({
-    resolver: zodResolver(checkoutSchema) as Resolver<CheckoutFormState>,
+    resolver: zodResolver(checkoutSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -145,12 +130,12 @@ const CheckoutModal = ({
                 } else {
                   acc.serverError =
                     error.detail ||
-                    t("cart.modal.errors.signinGeneric");
+                    "An error occurred during signin. Please try again.";
                 }
               } else {
                 acc.serverError =
                   error.detail ||
-                  t("cart.modal.errors.signinGeneric");
+                  "An error occurred during signin. Please try again.";
               }
               return acc;
             },
@@ -171,11 +156,11 @@ const CheckoutModal = ({
             errors.serverError =
               typeof res.error_message === "string"
                 ? res.error_message
-                : t("cart.modal.errors.invalidCredentials");
+                : "Invalid email or password.";
           }
         } else {
           errors.serverError =
-            res.detail || res.message || t("cart.modal.errors.invalidCredentials");
+            res.detail || res.message || "Invalid email or password.";
         }
 
         setServerErrors(errors);
@@ -188,7 +173,7 @@ const CheckoutModal = ({
 
       if (!token || !refresh) {
         setServerErrors({
-          serverError: t("cart.modal.errors.noTokenReceived"),
+          serverError: "No token received",
         });
         setIsLoading(false);
         return;
@@ -202,7 +187,7 @@ const CheckoutModal = ({
     } catch (error: any) {
       console.error("Error during signin:", error);
       setServerErrors({
-        serverError: t("cart.modal.errors.signinGeneric"),
+        serverError: "An error occurred during signin. Please try again.",
       });
       setIsLoading(false);
     }
@@ -219,15 +204,15 @@ const CheckoutModal = ({
     >
       <div className="flex flex-col items-center gap-4 max-w-2xl">
         <h3 className="flex items-center gap-2 text-black text-3xl uppercase">
-          {t("cart.modal.titlePrefix")}
+          🔓Log in here or
           <Link href="/register" className="underline">
-            {t("cart.modal.createAccount")}
+            create account
           </Link>
         </h3>
         <p className="mb-4 text-gray-2 text-base text-center">
-          {t("cart.modal.subtitleLine1")}
+          🎯 Don’t forget to log in!
           <br />
-          {t("cart.modal.subtitleLine2")}
+          Unlock exclusive rewards, and track your orders with ease.
         </p>
 
         <form
@@ -235,9 +220,9 @@ const CheckoutModal = ({
           className="flex flex-col gap-4 px-4 w-full"
         >
           <CustomInput
-            label={t("cart.modal.emailLabel")}
+            label="Email"
             id="email"
-            placeholder={t("cart.modal.emailPlaceholder")}
+            placeholder="Enter your Email"
             {...register("email")}
             error={
               [
@@ -251,9 +236,9 @@ const CheckoutModal = ({
             }
           />
           <PasswordInput
-            label={t("cart.modal.passwordLabel")}
+            label="Password"
             id="password"
-            placeholder={t("cart.modal.passwordPlaceholder")}
+            placeholder="Enter your new password"
             {...register("password")}
             error={
               [
@@ -281,13 +266,13 @@ const CheckoutModal = ({
             disabled={isLoading}
             loading={isLoading}
           >
-            {t("cart.modal.signIn")}
+            SIGN IN
           </CustomButton>
           <Link
             href="/checkout-order"
             className="text-purple text-center underline"
           >
-            {t("cart.modal.continueAsGuest")}
+            Continue as a guest
           </Link>
         </form>
       </div>
