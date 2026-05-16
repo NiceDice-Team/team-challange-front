@@ -1,5 +1,6 @@
 import { cartServices, productServices } from '../../services/cartServices';
 import { fetchAPI } from '../../services/api';
+import { getValidAccessToken, isAuthenticated } from '@/lib/tokenManager';
 
 // Mock the API service
 jest.mock('../../services/api', () => ({
@@ -20,6 +21,8 @@ Object.defineProperty(window, 'localStorage', {
 // Mock tokenManager
 jest.mock('@/lib/tokenManager', () => ({
   getTokens: jest.fn(() => ({ accessToken: 'mock-token' })),
+  getValidAccessToken: jest.fn(),
+  isAuthenticated: jest.fn(),
 }));
 
 // Mock console.error to avoid test output noise
@@ -30,6 +33,8 @@ describe('cartServices', () => {
     jest.clearAllMocks();
     localStorageMock.getItem.mockClear();
     localStorageMock.setItem.mockClear();
+    getValidAccessToken.mockResolvedValue('mock-token');
+    isAuthenticated.mockReturnValue(false);
   });
 
   describe('getCartItems', () => {
@@ -39,7 +44,7 @@ describe('cartServices', () => {
         { id: 2, product: { id: 2, name: 'Product 2' }, quantity: 1 },
       ];
 
-      localStorageMock.getItem.mockReturnValue('mock-token');
+      isAuthenticated.mockReturnValue(true);
       fetchAPI.mockResolvedValue({ results: mockCartItems });
 
       const result = await cartServices.getCartItems();
@@ -73,7 +78,7 @@ describe('cartServices', () => {
     });
 
     test('handles API error gracefully', async () => {
-      localStorageMock.getItem.mockReturnValue('mock-token');
+      isAuthenticated.mockReturnValue(true);
       fetchAPI.mockRejectedValue(new Error('API Error'));
 
       const result = await cartServices.getCartItems();
@@ -100,7 +105,7 @@ describe('cartServices', () => {
     test('adds item to authenticated user cart', async () => {
       const mockResponse = { id: 1, product: { id: 1 }, quantity: 2 };
 
-      localStorageMock.getItem.mockReturnValue('mock-token');
+      isAuthenticated.mockReturnValue(true);
       fetchAPI.mockResolvedValue(mockResponse);
 
       const result = await cartServices.addToCart(1, 2);
@@ -155,7 +160,7 @@ describe('cartServices', () => {
     });
 
     test('handles authenticated cart API error', async () => {
-      localStorageMock.getItem.mockReturnValue('mock-token');
+      isAuthenticated.mockReturnValue(true);
       fetchAPI.mockRejectedValue(new Error('API Error'));
 
       await expect(cartServices.addToCart(1, 2)).rejects.toThrow('API Error');
@@ -163,10 +168,7 @@ describe('cartServices', () => {
     });
 
     test('prevents adding more items than available stock', async () => {
-      localStorageMock.getItem.mockImplementation((key) => {
-        if (key === 'token') return 'mock-token';
-        return null;
-      });
+      isAuthenticated.mockReturnValue(true);
 
       fetchAPI.mockImplementation((endpoint) => {
         if (endpoint === 'products/1/') {
@@ -198,7 +200,7 @@ describe('cartServices', () => {
     test('updates authenticated user cart item', async () => {
       const mockResponse = { id: 1, product: { id: 1 }, quantity: 3 };
 
-      localStorageMock.getItem.mockReturnValue('mock-token');
+      isAuthenticated.mockReturnValue(true);
       fetchAPI.mockResolvedValue(mockResponse);
 
       const result = await cartServices.updateCartItem(1, 3);
@@ -235,17 +237,14 @@ describe('cartServices', () => {
     });
 
     test('handles update API error', async () => {
-      localStorageMock.getItem.mockReturnValue('mock-token');
+      isAuthenticated.mockReturnValue(true);
       fetchAPI.mockRejectedValue(new Error('Update API Error'));
 
       await expect(cartServices.updateCartItem(1, 3)).rejects.toThrow('Update API Error');
     });
 
     test('prevents updating cart quantity beyond available stock', async () => {
-      localStorageMock.getItem.mockImplementation((key) => {
-        if (key === 'token') return 'mock-token';
-        return null;
-      });
+      isAuthenticated.mockReturnValue(true);
 
       fetchAPI.mockResolvedValue({
         results: [{ id: 1, product: { id: 1, name: 'Product 1', stock: 2 }, quantity: 2 }],
@@ -265,7 +264,7 @@ describe('cartServices', () => {
 
   describe('removeFromCart', () => {
     test('removes item from authenticated user cart', async () => {
-      localStorageMock.getItem.mockReturnValue('mock-token');
+      isAuthenticated.mockReturnValue(true);
       fetchAPI.mockResolvedValue();
 
       const result = await cartServices.removeFromCart(1);
@@ -303,7 +302,7 @@ describe('cartServices', () => {
     });
 
     test('handles remove API error', async () => {
-      localStorageMock.getItem.mockReturnValue('mock-token');
+      isAuthenticated.mockReturnValue(true);
       fetchAPI.mockRejectedValue(new Error('Delete API Error'));
 
       await expect(cartServices.removeFromCart(1)).rejects.toThrow('Delete API Error');

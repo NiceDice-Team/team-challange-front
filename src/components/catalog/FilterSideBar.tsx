@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { catalogServices } from "../../services/catalogServices";
 import { productServices } from "../../services/productServices";
 import { useQuery } from "@tanstack/react-query";
@@ -24,13 +24,38 @@ interface FilterSideBarProps {
 
 export default function FilterSideBar({ selectedFilters, setSelectedFilters }: FilterSideBarProps) {
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(true);
-  const priceBoundsFilters = {
-    categories: selectedFilters.categories,
-    gameTypes: selectedFilters.gameTypes,
-    audiences: selectedFilters.audiences,
-    brands: selectedFilters.brands,
-    search: selectedFilters.search,
-  };
+  const normalizedCategories = useMemo(
+    () => [...selectedFilters.categories].sort((a, b) => a - b),
+    [selectedFilters.categories],
+  );
+  const normalizedGameTypes = useMemo(
+    () => [...selectedFilters.gameTypes].sort(),
+    [selectedFilters.gameTypes],
+  );
+  const normalizedAudiences = useMemo(
+    () => [...selectedFilters.audiences].sort(),
+    [selectedFilters.audiences],
+  );
+  const normalizedBrands = useMemo(
+    () => [...selectedFilters.brands].sort(),
+    [selectedFilters.brands],
+  );
+  const priceBoundsFilters = useMemo(
+    () => ({
+      categories: normalizedCategories,
+      gameTypes: normalizedGameTypes,
+      audiences: normalizedAudiences,
+      brands: normalizedBrands,
+      search: selectedFilters.search,
+    }),
+    [
+      normalizedAudiences,
+      normalizedBrands,
+      normalizedCategories,
+      normalizedGameTypes,
+      selectedFilters.search,
+    ],
+  );
 
   // Fetch all filter data
   const { data: categories = [], isLoading: categoriesLoading } = useQuery({
@@ -43,12 +68,19 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
     retry: 1,
   });
 
-  const featuredCategories = FEATURED_CATEGORY_CONFIG.flatMap(({ label, names }) => {
-    const category = categories.find((item: Category) => names.includes(normalizeCategoryName(item.name)));
-    return category ? [{ ...category, name: label }] : [];
-  });
+  const featuredCategories = useMemo(
+    () =>
+      FEATURED_CATEGORY_CONFIG.flatMap(({ label, names }) => {
+        const category = categories.find((item: Category) => names.includes(normalizeCategoryName(item.name)));
+        return category ? [{ ...category, name: label }] : [];
+      }),
+    [categories],
+  );
 
-  const featuredCategoryIds = featuredCategories.map((category: Category) => category.id);
+  const featuredCategoryIds = useMemo(
+    () => featuredCategories.map((category: Category) => category.id),
+    [featuredCategories],
+  );
 
   // Fetch product counts for all categories (includes search filter)
   const { data: categoryCounts = {} as Record<number, number>, isLoading: countsLoading } = useQuery({
@@ -117,11 +149,7 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
   const { data: priceBounds = { max: 0 }, isLoading: priceBoundsLoading } = useQuery({
     queryKey: [
       "price-bounds",
-      selectedFilters.categories,
-      selectedFilters.gameTypes,
-      selectedFilters.audiences,
-      selectedFilters.brands,
-      selectedFilters.search,
+      priceBoundsFilters,
     ],
     queryFn: async ({ signal }) => {
       const response = await productServices.getProductsWithFilters(1, 1, "price-high-low", priceBoundsFilters, { signal });

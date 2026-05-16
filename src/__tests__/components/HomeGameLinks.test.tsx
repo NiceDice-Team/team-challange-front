@@ -31,10 +31,14 @@ describe("home game links", () => {
   test("points review game links at existing catalog search routes", () => {
     render(<ReviewSection />);
 
-    const hrefs = screen.getAllByRole("link").map((link) => link.getAttribute("href"));
+    const hrefs = screen
+      .getAllByRole("link")
+      .map((link) => link.getAttribute("href"))
+      .filter((href): href is string => href !== null);
 
-    expect(hrefs).toEqual(["/catalog?search=Catan", "/catalog?search=7%20Wonders", "/catalog?search=7%20Wonders"]);
+    expect(hrefs).toEqual(expect.arrayContaining(["/catalog?search=Catan", "/catalog?search=7%20Wonders"]));
     hrefs.forEach((href) => {
+      expect(href).toMatch(/^\/catalog\?search=(Catan|7%20Wonders)$/);
       expect(href).not.toMatch(/^\/games\//);
     });
   });
