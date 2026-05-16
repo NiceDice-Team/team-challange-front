@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { InstagramIcon, TikTokIcon, FacebookIcon, XTwitterIcon, LogoFullIcon } from "@/svgs/icons";
 import { footerSections } from "./footerLinks";
 
@@ -13,7 +14,13 @@ export default function Footer() {
             <h3 className="uppercase mb-2 font-bold text-sm sm:text-base">{section.title}</h3>
             <ul className="flex flex-col gap-1.5 sm:gap-2 text-xs sm:text-sm">
               {section.links.map((item) => (
-                <li key={item.label}>{item.label}</li>
+                <li key={item.label}>
+                  {item.isLinkable ? (
+                    <Link href={item.href}>{item.label}</Link>
+                  ) : (
+                    item.label
+                  )}
+                </li>
               ))}
             </ul>
           </div>

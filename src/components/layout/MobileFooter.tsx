@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, type FormEvent, type ReactElement } from "react";
 import CustomCheckbox from "@/components/shared/CustomCheckbox";
 import { showCustomToast } from "@/components/shared/Toast";
@@ -63,7 +64,13 @@ export default function MobileFooter(): ReactElement {
               <h3 className="text-base font-medium uppercase">{section.title}</h3>
               <ul className="flex flex-col gap-2 text-base">
                 {section.links.map((item) => (
-                  <li key={item.label}>{item.mobileLabel ?? item.label}</li>
+                  <li key={item.label}>
+                    {item.isLinkable ? (
+                      <Link href={item.href}>{item.mobileLabel ?? item.label}</Link>
+                    ) : (
+                      item.mobileLabel ?? item.label
+                    )}
+                  </li>
                 ))}
               </ul>
             </div>
