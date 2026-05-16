@@ -3,6 +3,8 @@ import { getCookie, deleteCookie } from "@/utils/auth";
 import { API_ENDPOINTS, buildApiUrl } from '@/config/api';
 import { AuthTokens } from '@/types/api';
 
+export const AUTH_TOKENS_CHANGED_EVENT = "auth-tokens-changed";
+
 interface TokenPayload {
   exp: number;
   user_id: string;
@@ -43,6 +45,8 @@ export function setTokens(accessToken: string, refreshToken: string): void {
   if (refreshToken) {
     document.cookie = `refresh_token=${refreshToken}; path=/; max-age=604800; secure; samesite=strict`; // 7 days
   }
+
+  window.dispatchEvent(new Event(AUTH_TOKENS_CHANGED_EVENT));
 }
 
 /**
@@ -52,6 +56,10 @@ export function clearTokens(): void {
   deleteCookie("access_token");
   deleteCookie("refresh_token");
   deleteCookie("userId");
+
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new Event(AUTH_TOKENS_CHANGED_EVENT));
+  }
 }
 
 /**
