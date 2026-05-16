@@ -8,7 +8,9 @@ export interface ProductImage {
   url_sm: string;
   url_lg?: string;
   url_md?: string;
+  url_original?: string;
   alt?: string;
+  sort?: number;
 }
 
 // Product review types
