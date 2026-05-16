@@ -1,5 +1,4 @@
 "use client";
-import SubscribeSection from "../home/SubscribeSection";
 import ReviewCard from "../home/ReviewCard";
 import { Pagination } from "../ui/pagination";
 import { useMemo, useState } from "react";
@@ -163,7 +162,7 @@ export default function ReviewsComments({ productId, children }: ReviewsComments
         )}
       </section>
 
-      <section className="hidden w-full max-w-[1320px] grid-cols-1 items-start gap-6 px-4 sm:grid sm:px-6 md:px-8 lg:grid-cols-2 lg:gap-10 lg:px-12 xl:px-16">
+      <section className="hidden w-full max-w-[1320px] px-4 sm:block sm:px-6 md:px-8 lg:px-12 xl:px-16">
         <div className="flex flex-col gap-4 sm:gap-6">
           <div className="flex items-center gap-2 sm:gap-4">
             <span className="text-sm font-medium uppercase sm:text-base lg:text-lg">sort by</span>
@@ -215,9 +214,6 @@ export default function ReviewsComments({ productId, children }: ReviewsComments
           )}
         </div>
 
-        <div className="mt-6 lg:mt-0">
-          <SubscribeSection className="px-6 py-20 sm:px-10 sm:py-28 lg:px-14 lg:py-40" />
-        </div>
       </section>
     </>
   );

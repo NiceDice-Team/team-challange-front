@@ -17,8 +17,9 @@ export default function About() {
         to provide high-quality games for every type of player, whether you're a beginner or a seasoned strategist.
       </div>
 
-      {/* Sign up for deals form */}
-      <SubscribeSection />
+      <div className="hidden w-full sm:block">
+        <SubscribeSection variant="homeDesktop" />
+      </div>
     </section>
   );
 }

@@ -8,6 +8,7 @@ interface CheckboxProps {
   id: string;
   disabled?: boolean;
   className?: string;
+  variant?: "default" | "inverse";
   error?: string;
   checked?: boolean;
   onCheckedChange?: (checked: boolean) => void;
@@ -19,6 +20,7 @@ const CustomCheckbox: FC<CheckboxProps> = ({
   id,
   disabled,
   className,
+  variant = "default",
   error,
   checked,
   onCheckedChange,
@@ -33,8 +35,12 @@ const CustomCheckbox: FC<CheckboxProps> = ({
         onCheckedChange={onCheckedChange}
         disabled={disabled}
         className={cn(
-          "w-6 h-6 rounded-none border-purple cursor-pointer  ",
-          "data-[state=checked]:bg-purple data-[state=checked]:border-purple focus:outline-none focus-visible:outline-none focus-visible:ring-0",
+          "w-6 h-6 rounded-none cursor-pointer",
+          variant === "default" &&
+            "border-purple data-[state=checked]:bg-purple data-[state=checked]:border-purple",
+          variant === "inverse" &&
+            "border-white data-[state=checked]:bg-white data-[state=checked]:border-white data-[state=checked]:text-purple",
+          "focus:outline-none focus-visible:outline-none focus-visible:ring-0",
           { "border-error": error },
           className
         )}

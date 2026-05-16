@@ -4,7 +4,7 @@
 
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3000';
 
 
 test('test critical home elements', async ({ page }) => {
@@ -26,9 +26,8 @@ test('test critical home elements', async ({ page }) => {
   await expect(page.getByRole('link', { name: 'BESTSELLERS Shop now →' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'SALE Shop now →' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'BOARD GAMES Shop now →' })).toBeVisible();
-  await expect(page.getByRole('img', { name: 'Game Title 1' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Game Title 1' })).toBeVisible();
-  await expect(page.locator('div').filter({ hasText: /^Game Title 1Learn more→$/ }).getByRole('link')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Coming soon' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Game Title 1' })).toHaveCount(0);
   await page.getByRole('link', { name: /^about$/i }).first().click();
   await expect(page).toHaveURL(`${BASE_URL}/#about`);
 });

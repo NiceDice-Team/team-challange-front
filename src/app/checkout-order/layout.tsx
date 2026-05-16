@@ -3,6 +3,7 @@
 import React from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import MobileFooter from "@/components/layout/MobileFooter";
 
 export default function ProfileLayout({
   children,
@@ -17,7 +18,10 @@ export default function ProfileLayout({
         </div>
 
         <main>{children}</main>
-        <Footer />
+        <div className="hidden sm:block">
+          <Footer />
+        </div>
+        <MobileFooter />
       </div>
     </>
   );

@@ -21,23 +21,28 @@ export const footerSections = [
         label: "New Arrivals",
         mobileLabel: "New arrivals",
         href: getNavigationHref("New arrivals", "/catalog?categories=1"),
+        isLinkable: true,
       },
       {
         label: "Bestsellers",
         href: getNavigationHref("Bestsellers", "/catalog?categories=2"),
+        isLinkable: true,
       },
       {
         label: "Board Games",
         mobileLabel: "Board games",
         href: getNavigationHref("Board games", "/catalog"),
+        isLinkable: true,
       },
       {
         label: "Coming soon",
         href: getNavigationHref("Coming soon", "/catalog?categories=5"),
+        isLinkable: true,
       },
       {
         label: "Sale",
         href: getNavigationHref("Sale", "/catalog?categories=4"),
+        isLinkable: true,
       },
     ],
   },
@@ -47,10 +52,12 @@ export const footerSections = [
       {
         label: "Blog",
         href: getNavigationHref("Blog", "/#blog"),
+        isLinkable: true,
       },
       {
         label: "Reviews",
         href: getNavigationHref("Reviews", "/#reviews"),
+        isLinkable: true,
       },
       {
         label: "Shipping",
@@ -68,6 +75,7 @@ export const footerSections = [
       {
         label: "About",
         href: getNavigationHref("About", "/#about"),
+        isLinkable: true,
       },
       {
         label: "Contact Us",
@@ -93,6 +101,7 @@ export const footerNewsletter = {
   description:
     "Subscribe to our newsletter and be the first to know about new arrivals, special offers, and gaming news",
   consentLabel: "I agree to receiving marketing emails and special deals",
+  consentMobileLines: ["I agree to receiving marketing emails", "and special deals"],
 };
 
 export const footerLegal = {

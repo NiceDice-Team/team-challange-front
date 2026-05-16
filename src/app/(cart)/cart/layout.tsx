@@ -1,5 +1,6 @@
 import Navbar from "../../../components/layout/Navbar";
 import Footer from "../../../components/layout/Footer";
+import MobileFooter from "../../../components/layout/MobileFooter";
 import { ProductDetailMobileHeader } from "@/components/catalog/ProductDetailMobileChrome";
 
 interface CartLayoutProps {
@@ -21,7 +22,10 @@ export default function CartLayout({ children }: CartLayoutProps): React.ReactEl
 
       <main className="flex-1 px-4 pb-10 sm:px-8 lg:px-16 sm:py-10">{children}</main>
 
-      <Footer />
+      <div className="hidden sm:block">
+        <Footer />
+      </div>
+      <MobileFooter />
     </div>
   );
 }

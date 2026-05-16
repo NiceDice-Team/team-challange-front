@@ -27,6 +27,11 @@ jest.mock("../../components/layout/Footer", () => ({
   default: () => <footer data-testid="footer">Footer</footer>,
 }));
 
+jest.mock("../../components/layout/MobileFooter", () => ({
+  __esModule: true,
+  default: () => <footer data-testid="mobile-footer">Mobile Footer</footer>,
+}));
+
 jest.mock("../../components/layout/About", () => ({
   __esModule: true,
   default: () => <section data-testid="about-section">About Section</section>,
