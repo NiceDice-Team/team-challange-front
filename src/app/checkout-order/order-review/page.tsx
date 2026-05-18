@@ -7,7 +7,7 @@ import { RadioButton } from "@/components/shared/CustomRadio";
 import { CustomBreadcrumb } from "@/components/shared/CustomBreadcrumb";
 import { ChevronLeft } from "lucide-react";
 import { CreditCardIcon, ChevronDownIcon } from "@/svgs/icons";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCartQuery } from "@/hooks/useCartQuery";
 import {
@@ -17,6 +17,7 @@ import {
   useCheckoutActions,
 } from "@/store/checkout";
 import PaymentWrapper from "@/components/checkout/PaymentWrapper";
+import type { PaymentFormHandle } from "@/components/checkout/PaymentForm";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { orderServices, type PaymentMethod } from "@/services/orderServices";
 import { cartServices } from "@/services/cartServices";
@@ -76,6 +77,9 @@ export default function OrderReviewPage() {
     number | null
   >(null);
   const [isPaymentExpanded, setIsPaymentExpanded] = useState<boolean>(true);
+  const [isPaymentFormValid, setIsPaymentFormValid] = useState(false);
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+  const paymentFormRef = useRef<PaymentFormHandle>(null);
 
   // Get data from Zustand store
   const checkoutUserData = useCheckoutFormData();
@@ -139,8 +143,29 @@ export default function OrderReviewPage() {
     router.push("/checkout-order");
   };
 
+  const isCardPayment = selectedPaymentMethodId === 1;
+  const isPlaceOrderDisabled =
+    isPlacingOrder || (isCardPayment && !isPaymentFormValid);
+
+  const handlePaymentDataChange = (data: {
+    firstName: string;
+    lastName: string;
+  }) => {
+    setPaymentCardData((prev) => ({
+      ...prev,
+      firstName: data.firstName,
+      lastName: data.lastName,
+    }));
+  };
+
   const handlePlaceOrder = async () => {
+    if (isCardPayment) {
+      const isValid = await paymentFormRef.current?.validate();
+      if (!isValid) return;
+    }
+
     setPaymentCard(paymentCardData);
+    setIsPlacingOrder(true);
 
     try {
       await orderServices.createOrder({
@@ -170,6 +195,8 @@ export default function OrderReviewPage() {
         title: "Failed to place order",
         description: "Failed to place order. Please try again.",
       });
+    } finally {
+      setIsPlacingOrder(false);
     }
   };
 
@@ -320,7 +347,17 @@ export default function OrderReviewPage() {
                     )}
                   </div>
 
-                  {selectedPaymentMethodId === 1 && <PaymentWrapper />}
+                  {selectedPaymentMethodId === 1 && (
+                    <PaymentWrapper
+                      ref={paymentFormRef}
+                      initialData={{
+                        firstName: paymentCardData.firstName,
+                        lastName: paymentCardData.lastName,
+                      }}
+                      onDataChange={handlePaymentDataChange}
+                      onValidityChange={setIsPaymentFormValid}
+                    />
+                  )}
                 </>
               )}
             </div>
@@ -337,6 +374,8 @@ export default function OrderReviewPage() {
               <CustomButton
                 type="button"
                 onClick={handlePlaceOrder}
+                disabled={isPlaceOrderDisabled}
+                loading={isPlacingOrder}
                 className="bg-purple hover:bg-purple/90 border border-purple w-full sm:w-72 h-12 text-white text-base uppercase leading-[19px]"
               >
                 Place order

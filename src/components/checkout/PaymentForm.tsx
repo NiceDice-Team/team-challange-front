@@ -3,7 +3,6 @@
 import {
   useStripe,
   useElements,
-  CardElement,
   CardNumberElement,
   CardCvcElement,
   CardExpiryElement,
@@ -13,10 +12,23 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
-import { useEffect, useMemo } from "react";
+import { Info } from "lucide-react";
+import { forwardRef, useEffect, useImperativeHandle, useMemo } from "react";
 import { usePaymentProcess } from "@/hooks/usePaymentProcess";
 import { useCartQuery } from "@/hooks/useCartQuery";
 import { showCustomToast } from "../shared/Toast";
+import { CustomButton } from "../shared/CustomButton";
+
+function FieldError({ message }: { message?: string }) {
+  if (!message) return null;
+
+  return (
+    <div className="flex items-center gap-1 mt-1">
+      <Info size={16} color="#e30000" />
+      <p className="text-error text-sm normal-case">{message}</p>
+    </div>
+  );
+}
 
 const CARD_ELEMENT_OPTIONS = {
   style: {
@@ -32,6 +44,9 @@ const CARD_ELEMENT_OPTIONS = {
   },
 };
 
+const requiredCardField = (message: string) =>
+  z.boolean().refine((value) => value === true, { message });
+
 const schema = z.object({
   firstName: z
     .string()
@@ -43,19 +58,25 @@ const schema = z.object({
     .min(2, "Last name is required")
     .trim()
     .regex(/^[a-zA-Z]+$/, "Only letters are allowed"),
+  cardNumberComplete: requiredCardField("Card number is required"),
+  cardExpiryComplete: requiredCardField("Expiration date is required"),
+  cardCvcComplete: requiredCardField("CVV is required"),
 });
 
-type PaymentFormData = z.infer<typeof schema>;
+export type PaymentFormData = z.infer<typeof schema>;
+
+export type PaymentFormHandle = {
+  validate: () => Promise<boolean>;
+};
 
 interface PaymentFormProps {
   onDataChange?: (data: PaymentFormData) => void;
+  onValidityChange?: (isValid: boolean) => void;
   initialData?: Partial<PaymentFormData>;
 }
 
-export default function PaymentForm({
-  onDataChange,
-  initialData,
-}: PaymentFormProps) {
+const PaymentForm = forwardRef<PaymentFormHandle, PaymentFormProps>(
+  function PaymentForm({ onDataChange, onValidityChange, initialData }, ref) {
   const stripe = useStripe();
   const elements = useElements();
   const {
@@ -67,12 +88,28 @@ export default function PaymentForm({
     formState: { errors },
   } = useForm<PaymentFormData>({
     resolver: zodResolver(schema),
-    mode: "onBlur",
+    mode: "onSubmit",
+    reValidateMode: "onChange",
     defaultValues: {
       firstName: initialData?.firstName || "",
       lastName: initialData?.lastName || "",
+      cardNumberComplete: false,
+      cardExpiryComplete: false,
+      cardCvcComplete: false,
     },
   });
+
+  const handleCardChange =
+    (field: "cardNumberComplete" | "cardExpiryComplete" | "cardCvcComplete") =>
+    (event: { complete: boolean }) => {
+      setValue(field, event.complete, { shouldValidate: true });
+    };
+
+  const handleCardBlur =
+    (field: "cardNumberComplete" | "cardExpiryComplete" | "cardCvcComplete") =>
+    () => {
+      void trigger(field);
+    };
   const { processPayment, isProcessing, error } = usePaymentProcess();
   const { data: cartItems = [], isLoading: cartLoading } = useCartQuery();
   const amountInCents = cartItems.reduce(
@@ -81,6 +118,26 @@ export default function PaymentForm({
   );
   const formData = watch();
   const stableFormData = useMemo(() => formData, [formData]);
+
+  const isPaymentReady = useMemo(
+    () => schema.safeParse(formData).success,
+    [formData]
+  );
+
+  const isPayDisabled =
+    !stripe ||
+    !isPaymentReady ||
+    isProcessing ||
+    cartLoading ||
+    amountInCents <= 0;
+
+  useImperativeHandle(ref, () => ({
+    validate: () => trigger(),
+  }));
+
+  useEffect(() => {
+    onValidityChange?.(isPaymentReady && !!stripe);
+  }, [isPaymentReady, stripe, onValidityChange]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -100,11 +157,10 @@ export default function PaymentForm({
     }
   }, [initialData, setValue]);
 
-  const handleSubmitForm = async (data: any) => {
-    console.log("   data", data);
+  const handleSubmitForm = async (data: PaymentFormData) => {
     if (!stripe || !elements) return;
 
-    const card = elements.getElement(CardElement);
+    const card = elements.getElement(CardNumberElement);
     if (card) {
       const { error, paymentMethod } = await stripe.createPaymentMethod({
         type: "card",
@@ -162,10 +218,15 @@ export default function PaymentForm({
         <label className="font-normal text-base uppercase">
           Card number
           <div
-            className="relative px-4 pt-4 border border-black rounded h-12"
+            className={cn(
+              "relative px-4 pt-4 border border-black rounded h-12",
+              errors.cardNumberComplete && "border-error"
+            )}
             style={{ position: "relative" }}
           >
             <CardNumberElement
+              onChange={handleCardChange("cardNumberComplete")}
+              onBlur={handleCardBlur("cardNumberComplete")}
               options={{
                 placeholder: "• • • •  • • • •  • • • •  • • • •",
                 style: {
@@ -179,6 +240,7 @@ export default function PaymentForm({
               }}
             />
           </div>
+          <FieldError message={errors.cardNumberComplete?.message} />
         </label>
 
         <div className="flex gap-6">
@@ -186,34 +248,53 @@ export default function PaymentForm({
             Expiration Date
             <div
               className={cn(
-                "px-4 pt-4 border-1 border-black rounded-none h-12"
+                "px-4 pt-4 border-1 border-black rounded-none h-12",
+                errors.cardExpiryComplete && "border-error"
               )}
             >
               <CardExpiryElement
+                onChange={handleCardChange("cardExpiryComplete")}
+                onBlur={handleCardBlur("cardExpiryComplete")}
                 options={{
                   placeholder: "MM/YY",
                   ...CARD_ELEMENT_OPTIONS,
                 }}
               />
             </div>
+            <FieldError message={errors.cardExpiryComplete?.message} />
           </div>
           <label className={cn("w-1/2 font-normal text-base uppercase")}>
             cvv
             <div
               className={cn(
-                "px-4 pt-4 border-1 border-black rounded-none h-12"
+                "px-4 pt-4 border-1 border-black rounded-none h-12",
+                errors.cardCvcComplete && "border-error"
               )}
             >
               <CardCvcElement
+                onChange={handleCardChange("cardCvcComplete")}
+                onBlur={handleCardBlur("cardCvcComplete")}
                 options={{
                   placeholder: "• • •",
                   ...CARD_ELEMENT_OPTIONS,
                 }}
               />
             </div>
+            <FieldError message={errors.cardCvcComplete?.message} />
           </label>
         </div>
+
+        <CustomButton
+          type="submit"
+          disabled={isPayDisabled}
+          loading={isProcessing}
+          className="bg-purple hover:bg-purple/90 border border-purple w-full h-12 text-white text-base uppercase leading-[19px]"
+        >
+          Pay
+        </CustomButton>
       </form>
     </>
   );
-}
+});
+
+export default PaymentForm;
