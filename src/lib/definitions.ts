@@ -44,7 +44,7 @@ export const SignupFormSchema = z
       .email({ message: "Please enter a valid email." })
       .trim(),
     password: passwordSchema,
-    confirmPassword: z.string(),
+    confirmPassword: z.string().trim(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
@@ -93,6 +93,7 @@ export type LoginFormState = {
 export const loginFrontSchema = z.object({
   email: z
     .string()
+    .trim()
     .nonempty("Email is required")
     .email("Please enter a valid email. Invalid email"),
   password: requiredPasswordSchema,
@@ -121,7 +122,7 @@ export const signupFrontSchema = z
       .email({ message: "Please enter a valid email." })
       .trim(),
     password: passwordSchema,
-    confirmPassword: z.string(),
+    confirmPassword: z.string().trim(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",

@@ -20,6 +20,9 @@ import { PublicRoute } from "@/components/auth/RouteGuards";
 import { API_BASE_URL } from "@/config/api";
 import { mergeNoCacheHeaders } from "@/lib/noCacheHeaders";
 
+const trimValue = (value: unknown) =>
+  typeof value === "string" ? value.trim() : value;
+
 function RegisterPageContent() {
   const [isChecked, setIsChecked] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -302,6 +305,7 @@ function RegisterPageContent() {
             id="firstname"
             label="First name"
             {...register("firstname", {
+              setValueAs: trimValue,
               onChange: () => handleFieldChange("firstname"),
             })}
             error={
@@ -322,6 +326,7 @@ function RegisterPageContent() {
             id="lastname"
             label="Last name"
             {...register("lastname", {
+              setValueAs: trimValue,
               onChange: () => handleFieldChange("lastname"),
             })}
             error={
@@ -342,6 +347,7 @@ function RegisterPageContent() {
             id="email"
             label="Email"
             {...register("email", {
+              setValueAs: trimValue,
               onChange: () => handleFieldChange("email"),
             })}
             error={
@@ -362,6 +368,7 @@ function RegisterPageContent() {
             id="password"
             label="password"
             {...register("password", {
+              setValueAs: trimValue,
               onChange: () => handleFieldChange("password"),
             })}
             error={
@@ -382,6 +389,7 @@ function RegisterPageContent() {
             id="confirmPassword"
             label="Confirm Password"
             {...register("confirmPassword", {
+              setValueAs: trimValue,
               onChange: () => handleFieldChange("confirmPassword"),
             })}
             error={
