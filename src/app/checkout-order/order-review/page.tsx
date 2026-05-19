@@ -17,9 +17,11 @@ import {
   useCheckoutActions,
 } from "@/store/checkout";
 import PaymentWrapper from "@/components/checkout/PaymentWrapper";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { orderServices, type PaymentMethod } from "@/services/orderServices";
+import { cartServices } from "@/services/cartServices";
 import { showCustomToast } from "@/components/shared/Toast";
+import { queryKeys } from "@/lib/queryKeys";
 
 interface SectionProps {
   title: string;
@@ -68,6 +70,7 @@ interface PaymentCardData {
 
 export default function OrderReviewPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<
     number | null
@@ -148,11 +151,19 @@ export default function OrderReviewPage() {
         payment_method: selectedPaymentMethodId ?? 0,
       });
 
+      await cartServices.clearGuestCartItems();
+      queryClient.setQueryData(queryKeys.cart, []);
+      queryClient.invalidateQueries({ queryKey: queryKeys.cart });
+
       showCustomToast({
         type: "success",
         title: "Order placed",
         description: "Your order has been placed successfully.",
       });
+
+      setTimeout(() => {
+        router.push("/");
+      }, 2000);
     } catch {
       showCustomToast({
         type: "error",
