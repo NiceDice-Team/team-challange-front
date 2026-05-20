@@ -12,6 +12,15 @@ const SORT_OPTIONS: readonly SortOption[] = [
   "newest",
 ] as const;
 
+const CATEGORY_PAGE_TITLES: Record<number, string> = {
+  1: "New arrivals",
+  2: "Bestsellers",
+  4: "Sale",
+  5: "Coming soon",
+};
+
+export const DEFAULT_CATALOG_PAGE_TITLE = "Board games";
+
 const MAX_FILTER_TOKEN_LENGTH = 100;
 const MAX_SEARCH_LENGTH = 200;
 
@@ -223,6 +232,26 @@ function areSearchParamsEqual(
   }
 
   return leftKeys.every((key) => left.get(key) === right.get(key));
+}
+
+export function getCatalogPageTitle(filters: SelectedFilters): string {
+  if (filters.categories.length === 1) {
+    const categoryTitle = CATEGORY_PAGE_TITLES[filters.categories[0]];
+    if (categoryTitle) {
+      return categoryTitle;
+    }
+  }
+
+  if (filters.categories.length === 0) {
+    if (filters.sortBy === "bestsellers") {
+      return "Bestsellers";
+    }
+    if (filters.sortBy === "newest") {
+      return "New arrivals";
+    }
+  }
+
+  return DEFAULT_CATALOG_PAGE_TITLE;
 }
 
 export function shouldNormalizeCatalogQuery(searchParams: URLSearchParams): boolean {

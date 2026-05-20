@@ -96,4 +96,22 @@ describe("FilterSideBar featured categories", () => {
     expect(screen.queryByRole("button", { name: "Sold out" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Accessories" })).not.toBeInTheDocument();
   });
+
+  test("keeps bestsellers category from navigation links", async () => {
+    const setSelectedFilters = jest.fn();
+
+    render(
+      <FilterSideBar
+        selectedFilters={{ ...defaultFilters, categories: [2] }}
+        setSelectedFilters={setSelectedFilters}
+      />,
+      { wrapper: createWrapper() },
+    );
+
+    await waitFor(() => {
+      expect(mockedCatalogServices.getCategories).toHaveBeenCalled();
+    });
+
+    expect(setSelectedFilters).not.toHaveBeenCalled();
+  });
 });

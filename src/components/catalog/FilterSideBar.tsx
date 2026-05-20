@@ -82,6 +82,11 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
     [featuredCategories],
   );
 
+  const validCategoryIds = useMemo(
+    () => categories.map((category: Category) => category.id),
+    [categories],
+  );
+
   // Fetch product counts for all categories (includes search filter)
   const { data: categoryCounts = {} as Record<number, number>, isLoading: countsLoading } = useQuery({
     queryKey: ["category-counts", featuredCategoryIds, selectedFilters.search],
@@ -218,15 +223,17 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
   useEffect(() => {
     if (categoriesLoading) return;
 
-    const nextCategoryIds = selectedFilters.categories.filter((id) => featuredCategoryIds.includes(id));
+    const sanitizedCategories = selectedFilters.categories.filter((id) =>
+      validCategoryIds.includes(id),
+    );
 
-    if (nextCategoryIds.length !== selectedFilters.categories.length) {
+    if (sanitizedCategories.length !== selectedFilters.categories.length) {
       setSelectedFilters((previousFilters) => ({
         ...previousFilters,
-        categories: previousFilters.categories.filter((id) => featuredCategoryIds.includes(id)),
+        categories: sanitizedCategories,
       }));
     }
-  }, [categoriesLoading, featuredCategoryIds, selectedFilters.categories, setSelectedFilters]);
+  }, [categoriesLoading, selectedFilters.categories, setSelectedFilters, validCategoryIds]);
 
   // Toggle filter value with scroll position preservation
   const toggleFilter = (filterType: string, value: number | string, event?: React.SyntheticEvent): void => {
