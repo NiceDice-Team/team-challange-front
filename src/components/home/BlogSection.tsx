@@ -1,5 +1,6 @@
 import React from "react";
 import BlogCard from "./BlogCard";
+import Link from "next/link";
 
 import BLOG_IMG1 from "../../../public/Blog/blog_1.png";
 import BLOG_IMG2 from "../../../public/Blog/blog_2.png";
@@ -40,8 +41,15 @@ export default function BlogSection() {
     <section id="blog" className="  mb-25 px-8 lg:px-50">
       <div className="container mx-auto ">
         <div className="flex items-center justify-between">
-          <h2 className="text-title font-semibold tracking-wide uppercase mb-8">Check out our blogs</h2>
-          <div className="self-end mb-8 md:mb-0  md:self-start underline underline-offset-2 text-nowrap">view all</div>
+          <h2 className="text-title font-semibold tracking-wide uppercase mb-8">
+            Check out our blogs
+          </h2>
+          <Link
+            href="/blog"
+            className="self-end mb-8 md:mb-0  md:self-start underline underline-offset-2 text-nowrap pointer"
+          >
+            view all
+          </Link>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
