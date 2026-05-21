@@ -14,7 +14,12 @@ import {
 
 import { mergeNoCacheHeaders } from "@/lib/noCacheHeaders";
 
-import { getGuestToken, useGuestCartStore } from "@/store/guestCart";
+import {
+  getGuestToken,
+  removeGuestCartFromLocalStorage,
+  saveGuestCartTokenToLocalStorage,
+  useGuestCartStore,
+} from "@/store/guestCart";
 
 import type { ApiRequestOptions } from "@/types/api";
 
@@ -66,6 +71,53 @@ function resolveGuestProductId(cartItemId: string): number {
   return Number(item.product.id);
 }
 
+function extractApiErrorMessage(errorData: unknown, fallback: string): string {
+  if (!errorData || typeof errorData !== "object") {
+    return fallback;
+  }
+
+  const record = errorData as Record<string, unknown>;
+
+  if (typeof record.message === "string" && record.message) {
+    return record.message;
+  }
+
+  if (typeof record.detail === "string" && record.detail) {
+    return record.detail;
+  }
+
+  const errors = record.errors;
+
+  if (Array.isArray(errors) && errors.length > 0) {
+    const firstError = errors[0] as { detail?: string };
+
+    if (firstError.detail) {
+      return firstError.detail;
+    }
+  }
+
+  return fallback;
+}
+
+function isInvalidGuestCartError(status: number, message: string): boolean {
+  return status === 404;
+}
+
+async function recreateGuestCart(): Promise<void> {
+  if (hasValidAuthSession()) {
+    return;
+  }
+
+  removeGuestCartFromLocalStorage();
+
+  const response = await fetchAPI<GuestCartCreateResponse>("cart/guest/", {
+    method: "POST",
+    body: { email: "", phone: "" },
+  });
+
+  saveGuestCartTokenToLocalStorage(response.token);
+}
+
 // export const getALLGuestCarts = async () => {
 //   const response = await fetchAPI<GuestCartCreateResponse>("cart/guest/", {
 //     method: "GET",
@@ -91,7 +143,10 @@ export async function ensureGuestCart(): Promise<void> {
   useGuestCartStore.getState().setToken(response.token);
 }
 
-async function fetchGuestCartItemsByToken(token: string): Promise<CartItem[]> {
+async function fetchGuestCartItemsByToken(
+  token: string,
+  isRetry = false,
+): Promise<CartItem[]> {
   const response = await fetch(`${API_URL}cart/guest/`, {
     headers: mergeNoCacheHeaders({
       "Content-Type": "application/json",
@@ -101,7 +156,25 @@ async function fetchGuestCartItemsByToken(token: string): Promise<CartItem[]> {
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch guest cart: ${response.status}`);
+    let errorMessage = `Failed to fetch guest cart: ${response.status}`;
+
+    try {
+      const errorData = await response.json();
+      errorMessage = extractApiErrorMessage(errorData, errorMessage);
+    } catch {
+      // non-JSON error body
+    }
+
+    if (!isRetry && isInvalidGuestCartError(response.status, errorMessage)) {
+      await recreateGuestCart();
+      const newToken = getGuestToken();
+
+      if (newToken) {
+        return fetchGuestCartItemsByToken(newToken, true);
+      }
+    }
+
+    throw new Error(errorMessage);
   }
 
   const text = await response.text();
@@ -119,6 +192,8 @@ async function guestFetch<T = unknown>(
   endpoint: string,
 
   options: ApiRequestOptions = {},
+
+  isRetry = false,
 ): Promise<T | void> {
   await ensureGuestCart();
 
@@ -153,14 +228,14 @@ async function guestFetch<T = unknown>(
 
     try {
       const errorData = await response.json();
-
-      if ((errorData as { errors?: { detail?: string }[] }).errors?.length) {
-        errorMessage =
-          (errorData as { errors: { detail?: string }[] }).errors[0].detail ||
-          errorMessage;
-      }
+      errorMessage = extractApiErrorMessage(errorData, errorMessage);
     } catch {
       // non-JSON error body
+    }
+
+    if (!isRetry && isInvalidGuestCartError(response.status, errorMessage)) {
+      await recreateGuestCart();
+      return guestFetch<T>(endpoint, options, true);
     }
 
     throw new Error(errorMessage);
@@ -210,10 +285,7 @@ export async function mergeGuestCartIntoUserCart(): Promise<void> {
     try {
       await cartServices.addToCart(item.product.id, item.quantity);
     } catch (error) {
-      console.error(
-        `Error merging guest cart item ${item.product.id}:`,
-        error,
-      );
+      console.error(`Error merging guest cart item ${item.product.id}:`, error);
     }
   }
 }

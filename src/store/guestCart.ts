@@ -3,6 +3,43 @@ import { persist } from "zustand/middleware";
 import { idsMatch } from "@/lib/cartStock";
 import type { CartItem } from "@/types/cart";
 
+export const GUEST_CART_STORAGE_KEY = "guest-cart";
+
+function writeGuestCartToLocalStorage(
+  token: string | null,
+  items: CartItem[],
+): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  if (!token) {
+    localStorage.removeItem(GUEST_CART_STORAGE_KEY);
+    return;
+  }
+
+  localStorage.setItem(
+    GUEST_CART_STORAGE_KEY,
+    JSON.stringify({
+      state: { token, items },
+      version: 0,
+    }),
+  );
+}
+
+export function removeGuestCartFromLocalStorage(): void {
+  if (typeof window !== "undefined") {
+    localStorage.removeItem(GUEST_CART_STORAGE_KEY);
+  }
+
+  useGuestCartStore.setState({ token: null, items: [] });
+}
+
+export function saveGuestCartTokenToLocalStorage(token: string): void {
+  useGuestCartStore.setState({ token, items: [] });
+  writeGuestCartToLocalStorage(token, []);
+}
+
 export type GuestCartState = {
   token: string | null;
   items: CartItem[];
@@ -43,7 +80,7 @@ export const useGuestCartStore = create<GuestCartState>()(
         });
       },
       clearGuestCart: () => {
-        set({ token: null, items: [] });
+        removeGuestCartFromLocalStorage();
         api.persist.clearStorage();
       },
     }),
