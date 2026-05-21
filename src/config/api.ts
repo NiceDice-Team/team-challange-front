@@ -29,6 +29,7 @@ export interface ApiEndpoints {
   
   // Cart endpoints
   cart: string;
+  cartItem: string;
   
   // Order endpoints
   orders: string;
@@ -79,6 +80,7 @@ export const API_ENDPOINTS: ApiEndpoints = {
   
   // Cart endpoints
   cart: 'cart/',
+  cartItem: 'cart/item/',
   
   // Order endpoints
   orders: 'orders/',

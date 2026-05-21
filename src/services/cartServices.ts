@@ -5,7 +5,14 @@ import {
   parseStockQuantity,
 } from "@/lib/cartStock";
 
+import { API_ENDPOINTS } from "@/config/api";
 import { fetchAPI, API_URL } from "./api";
+
+const AUTH_CART_ENDPOINT = API_ENDPOINTS.cart;
+const AUTH_CART_ITEM_ENDPOINT = API_ENDPOINTS.cartItem;
+
+const getAuthCartItemEndpoint = (cartItemId: string | number) =>
+  `${AUTH_CART_ITEM_ENDPOINT}${cartItemId}/`;
 
 import {
   getValidAccessToken,
@@ -29,29 +36,11 @@ import type {
   GuestCartItemResponse,
 } from "@/types/cart";
 
-import { mapGuestCartItemToCartItem } from "@/types/cart";
-
-function parseGuestCartListResponse(
-  response: unknown,
-): GuestCartItemResponse[] {
-  if (Array.isArray(response)) {
-    return response as GuestCartItemResponse[];
-  }
-
-  if (response && typeof response === "object") {
-    const record = response as Record<string, unknown>;
-
-    if (Array.isArray(record.results)) {
-      return record.results as GuestCartItemResponse[];
-    }
-
-    if (Array.isArray(record.items)) {
-      return record.items as GuestCartItemResponse[];
-    }
-  }
-
-  return [];
-}
+import {
+  mapGuestCartItemToCartItem,
+  parseAuthCartItems,
+  parseCartListResponse,
+} from "@/types/cart";
 
 function findGuestCartItemById(cartItemId: string): CartItem | undefined {
   return useGuestCartStore
@@ -183,7 +172,7 @@ async function fetchGuestCartItemsByToken(
     return [];
   }
 
-  const apiItems = parseGuestCartListResponse(JSON.parse(text));
+  const apiItems = parseCartListResponse(JSON.parse(text));
 
   return apiItems.map(mapGuestCartItemToCartItem);
 }
@@ -391,7 +380,7 @@ export const cartServices = {
           signal: options.signal,
         });
 
-        const apiItems = parseGuestCartListResponse(response);
+        const apiItems = parseCartListResponse(response);
 
         const items = apiItems.map(mapGuestCartItemToCartItem);
 
@@ -420,12 +409,12 @@ export const cartServices = {
         requestOptions.signal = options.signal;
       }
 
-      const response: unknown = await fetchAPI("carts/", requestOptions);
+      const response: unknown = await fetchAPI(
+        AUTH_CART_ENDPOINT,
+        requestOptions,
+      );
 
-      const cartItems =
-        (response as { results?: CartItem[] })?.results ?? response;
-
-      return Array.isArray(cartItems) ? (cartItems as CartItem[]) : [];
+      return parseAuthCartItems(response);
     } catch (error) {
       console.error("Error fetching cart items:", error);
 
@@ -436,7 +425,7 @@ export const cartServices = {
   async getCartId(): Promise<number> {
     const accessToken = await getValidAccessToken();
 
-    const response: { id?: number } = await fetchAPI("cart/", {
+    const response: { id?: number } = await fetchAPI(AUTH_CART_ENDPOINT, {
       method: "GET",
 
       headers: {
@@ -491,7 +480,7 @@ export const cartServices = {
 
       const accessToken = await getValidAccessToken();
 
-      const response = await fetchAPI("carts/", {
+      const response = await fetchAPI(AUTH_CART_ITEM_ENDPOINT, {
         method: "POST",
 
         headers: {
@@ -499,7 +488,7 @@ export const cartServices = {
         },
 
         body: {
-          product: productId,
+          product_id: Number(productId),
 
           quantity: quantity,
         },
@@ -555,7 +544,7 @@ export const cartServices = {
 
       const accessToken = await getValidAccessToken();
 
-      const response = await fetchAPI(`carts/${cartItemId}/`, {
+      const response = await fetchAPI(getAuthCartItemEndpoint(cartItemId), {
         method: "PATCH",
 
         headers: {
@@ -599,7 +588,7 @@ export const cartServices = {
     try {
       const accessToken = await getValidAccessToken();
 
-      await fetchAPI(`carts/${cartItemId}/`, {
+      await fetchAPI(getAuthCartItemEndpoint(cartItemId), {
         method: "DELETE",
 
         headers: {
