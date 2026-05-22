@@ -1,5 +1,26 @@
 import { z } from "zod";
 
+export const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)\S+$/;
+
+export const passwordSchema = z
+  .string()
+  .min(8, { message: "Password must be at least 8 characters" })
+  .max(128, { message: "Password must be less than 128 characters" })
+  .regex(PASSWORD_REGEX, {
+    message: "Contain at least one letter and one number.",
+  })
+  .trim();
+
+export const requiredPasswordSchema = z
+  .string()
+  .nonempty("Password is required")
+  .min(8, { message: "Password must be at least 8 characters" })
+  .max(128, { message: "Password must be less than 128 characters" })
+  .regex(PASSWORD_REGEX, {
+    message: "Password must contain at least one letter and one number.",
+  })
+  .trim();
+
 export const SignupFormSchema = z
   .object({
     firstname: z
@@ -22,14 +43,7 @@ export const SignupFormSchema = z
       .string({ required_error: "Please enter your email address" })
       .email({ message: "Please enter a valid email." })
       .trim(),
-    password: z
-      .string()
-      .min(8, { message: "Password must be at least 8 characters" })
-      .max(128, { message: "Password must be less than 128 characters" })
-      .regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/, {
-        message: "Contain at least one letter and one number.",
-      })
-      .trim(),
+    password: passwordSchema,
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -62,15 +76,7 @@ export const loginSchema = z.object({
     .string({ required_error: "Please enter your email address" })
     .email({ message: "Please enter a valid email." })
     .trim(),
-  password: z
-    .string()
-    .trim()
-    .min(8, { message: "Password must be at least 8 characters" })
-    .max(128, { message: "Password must be less than 128 characters" })
-    .regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/, {
-      message: "Contain at least one letter and one number.",
-    })
-    .trim(),
+  password: passwordSchema,
 });
 export type LoginFormState = {
   email?: string;
@@ -89,14 +95,7 @@ export const loginFrontSchema = z.object({
     .string()
     .nonempty("Email is required")
     .email("Please enter a valid email. Invalid email"),
-  password: z
-    .string()
-    .nonempty("Password is required")
-    .min(8, "Password must be at least 8 characters")
-    .max(128, { message: "Password must be less than 128 characters" })
-    .regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/, {
-      message: "Password must сontain at least one letter and one number.",
-    }),
+  password: requiredPasswordSchema,
 });
 
 export const signupFrontSchema = z
@@ -121,14 +120,7 @@ export const signupFrontSchema = z
       .string({ required_error: "Please enter your email address" })
       .email({ message: "Please enter a valid email." })
       .trim(),
-    password: z
-      .string()
-      .min(8, { message: "Password must be at least 8 characters" })
-      .max(128, { message: "Password must be less than 128 characters" })
-      .regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/, {
-        message: "Contain at least one letter and one number.",
-      })
-      .trim(),
+    password: passwordSchema,
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -146,14 +138,7 @@ export const forgotPasswordSchema = z.object({
 
 export const resetPasswordSchema = z
   .object({
-    password: z
-      .string()
-      .min(8, { message: "Password must be at least 8 characters" })
-      .max(128, { message: "Password must be less than 128 characters" })
-      .regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/, {
-        message: "Contain at least one letter and one number.",
-      })
-      .trim(),
+    password: passwordSchema,
     confirmPassword: z.string().trim(),
   })
   .refine((data) => data.password === data.confirmPassword, {
