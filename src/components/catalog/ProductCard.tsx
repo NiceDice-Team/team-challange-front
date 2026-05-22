@@ -1,8 +1,8 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   StarEmptyIcon,
@@ -16,23 +16,29 @@ import { Heart } from "lucide-react";
 import { useAddToCart } from "@/hooks/useCartQuery";
 import { CustomButton } from "@/components/shared/CustomButton";
 import { calculateAverageRating, normalizeReviewRating, roundRatingToNearestHalf } from "@/lib/reviewMetrics";
+import { productServices } from "@/services/productServices";
 import { reviewServices } from "@/services/reviewServices";
 import type { Product, ProductReview } from "@/types/product";
+
+const PRODUCT_CARD_IMAGE_SIZES = "(max-width: 640px) 100vw, 240px";
 
 // Component props
 interface ProductCardProps {
   product?: Product;
+  cardIndex?: number;
 }
 
 const isProductReview = (review: NonNullable<Product["reviews"]>[number]): review is ProductReview =>
   typeof review === "object" && review !== null && "rating" in review;
 
-export default function ProductCard({ product = {} as Product }: ProductCardProps) {
+export default function ProductCard({ product = {} as Product, cardIndex = 0 }: ProductCardProps) {
   const [activeImage, setActiveImage] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
-  const galleryRef = useRef(null);
+  const galleryRef = useRef<HTMLDivElement | null>(null);
+  const queryClient = useQueryClient();
   const addToCartMutation = useAddToCart();
   const productId = product?.id ? String(product.id) : "";
+  const shouldPrioritizeImage = cardIndex < 4;
   const productReviews = Array.isArray(product?.reviews) ? product.reviews : [];
   const embeddedReviews = productReviews.filter(isProductReview);
   const productReviewCount = productReviews.length;
@@ -171,6 +177,16 @@ export default function ProductCard({ product = {} as Product }: ProductCardProp
   };
 
   // Handler for adding product to cart
+  const prefetchProduct = useCallback(() => {
+    if (!productId) return;
+
+    void queryClient.prefetchQuery({
+      queryKey: ["product", productId],
+      queryFn: ({ signal }) => productServices.getProductById(productId, { signal }),
+      staleTime: 15 * 60 * 1000,
+    });
+  }, [productId, queryClient]);
+
   const handleAddToCart = async (e: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
     e.preventDefault();
     if (addToCartMutation.isPending) return; // Prevent multiple rapid clicks
@@ -187,7 +203,11 @@ export default function ProductCard({ product = {} as Product }: ProductCardProp
   };
 
   return (
-    <Link href={`/product/${product.id}`}>
+    <Link
+      href={`/product/${product.id}`}
+      onMouseEnter={prefetchProduct}
+      onFocus={prefetchProduct}
+    >
       <article className="mx-auto flex min-h-[539px] w-full max-w-[396px] min-w-0 flex-col bg-white shadow-[0px_4px_4px_rgba(0,0,0,0.1)] sm:h-[427px] sm:max-w-[240px] sm:min-h-0 sm:min-w-[200px]">
         <div className="relative isolate flex h-[307px] w-full flex-col items-center gap-4 pt-4 sm:h-[190px]">
           {/* Image gallery container - hiding scrollbar */}
@@ -208,17 +228,25 @@ export default function ProductCard({ product = {} as Product }: ProductCardProp
 
             {/* Individual images - show only available images (max 3) */}
             {availableImages.length > 0 ? (
-              availableImages.map((image, index) => (
-                <div key={image.id || index} className="min-w-full h-full flex-shrink-0 relative snap-center">
-                  <Image
-                    src={image.url_sm}
-                    alt={image.alt || product?.name || "Product"}
-                    fill
-                    className="object-contain"
-                    unoptimized={image.url_sm?.includes("placehold.co")}
-                  />
-                </div>
-              ))
+              availableImages.map((image, index) => {
+                const shouldLoadImage = Math.abs(index - activeImage) <= 1;
+
+                return (
+                  <div key={image.id || index} className="min-w-full h-full flex-shrink-0 relative snap-center">
+                    {shouldLoadImage ? (
+                      <Image
+                        src={image.url_sm}
+                        alt={image.alt || product?.name || "Product"}
+                        fill
+                        sizes={PRODUCT_CARD_IMAGE_SIZES}
+                        className="object-contain"
+                        priority={shouldPrioritizeImage && index === activeImage}
+                        unoptimized={image.url_sm?.includes("placehold.co")}
+                      />
+                    ) : null}
+                  </div>
+                );
+              })
             ) : (
               <div className="min-w-full h-full flex-shrink-0 relative snap-center flex items-center justify-center bg-gray-100">
                 <span className="text-gray-400">No image</span>

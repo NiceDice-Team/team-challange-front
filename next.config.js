@@ -23,6 +23,8 @@ module.exports = {
         hostname: 'cdn.shopify.com',
       },
     ],
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 60 * 60 * 24 * 30,
   },
   webpack: (config) => {
     config.resolve.alias["@"] = path.resolve(__dirname, "src");

@@ -33,6 +33,7 @@ function CartDropdownItem({ item, updateQuantity, removeItem }) {
           alt={product.name || "Product"}
           width={104}
           height={104}
+          sizes="104px"
           className="w-full h-full object-cover rounded"
         />
       </Link>
