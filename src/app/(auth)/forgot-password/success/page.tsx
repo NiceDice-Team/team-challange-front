@@ -20,7 +20,7 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="flex flex-col items-center mx-auto mt-32 mb-32 md:w-[464px] w-xs">
-      <h1 className="mb-9 md:text-title text-2xl uppercase">
+      <h1 className="mb-9 md:text-title text-xl uppercase">
         ✉️ Check Your Inbox
       </h1>
       <p className="mb-12 text-base text-center">

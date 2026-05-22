@@ -4,109 +4,184 @@ import {
   idsMatch,
   parseStockQuantity,
 } from "@/lib/cartStock";
-import { fetchAPI } from "./api";
+
+import { fetchAPI, API_URL } from "./api";
+
 import {
   getValidAccessToken,
   isAuthenticated as hasValidAuthSession,
 } from "@/lib/tokenManager";
+
+import { getGuestToken, useGuestCartStore } from "@/store/guestCart";
+
 import type { ApiRequestOptions } from "@/types/api";
 
-// Guest cart management using localStorage
-const GUEST_CART_KEY = "guest_cart";
+import type {
+  CartItem,
+  GuestCartCreateResponse,
+  GuestCartItemResponse,
+} from "@/types/cart";
 
-type GuestCartItem = {
-  id: string;
-  product: { id: number | string } & Record<string, any>;
-  quantity: number;
-};
+import { mapGuestCartItemToCartItem } from "@/types/cart";
 
-export const guestCartManager = {
-  // Get guest cart from localStorage
-  getGuestCart(): GuestCartItem[] {
-    if (typeof window === "undefined") return [];
+function parseGuestCartListResponse(
+  response: unknown,
+): GuestCartItemResponse[] {
+  if (Array.isArray(response)) {
+    return response as GuestCartItemResponse[];
+  }
+
+  if (response && typeof response === "object") {
+    const record = response as Record<string, unknown>;
+
+    if (Array.isArray(record.results)) {
+      return record.results as GuestCartItemResponse[];
+    }
+
+    if (Array.isArray(record.items)) {
+      return record.items as GuestCartItemResponse[];
+    }
+  }
+
+  return [];
+}
+
+function findGuestCartItemById(cartItemId: string): CartItem | undefined {
+  return useGuestCartStore
+
+    .getState()
+
+    .items.find((item) => idsMatch(item.id, cartItemId));
+}
+
+function resolveGuestProductId(cartItemId: string): number {
+  const item = findGuestCartItemById(cartItemId);
+
+  if (!item?.product?.id) {
+    throw new Error(`Cart item ${cartItemId} not found`);
+  }
+
+  return Number(item.product.id);
+}
+
+// export const getALLGuestCarts = async () => {
+//   const response = await fetchAPI<GuestCartCreateResponse>("cart/guest/", {
+//     method: "GET",
+//   });
+//   return response;
+// };
+
+export async function ensureGuestCart(): Promise<void> {
+  if (hasValidAuthSession()) {
+    return;
+  }
+
+  if (getGuestToken()) {
+    return;
+  }
+
+  const response = await fetchAPI<GuestCartCreateResponse>("cart/guest/", {
+    method: "POST",
+
+    body: { email: "", phone: "" },
+  });
+
+  useGuestCartStore.getState().setToken(response.token);
+}
+
+async function guestFetch<T = unknown>(
+  endpoint: string,
+
+  options: ApiRequestOptions = {},
+): Promise<T | void> {
+  await ensureGuestCart();
+
+  const token = getGuestToken();
+
+  if (!token) {
+    throw new Error("Guest cart token not available");
+  }
+
+  const url = `${API_URL}${endpoint}`;
+
+  const response = await fetch(url, {
+    method: options.method || "GET",
+
+    headers: {
+      "Content-Type": "application/json",
+
+      "X-Guest-Token": token,
+
+      ...options.headers,
+    },
+
+    body: options.body ? JSON.stringify(options.body) : null,
+
+    signal: options.signal,
+
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    let errorMessage = `API Error! status: ${response.status}`;
+
     try {
-      const cart = localStorage.getItem(GUEST_CART_KEY);
-      return cart ? (JSON.parse(cart) as GuestCartItem[]) : [];
-    } catch (error) {
-      console.error("Error reading guest cart:", error);
-      return [];
-    }
-  },
+      const errorData = await response.json();
 
-  // Save guest cart to localStorage
-  saveGuestCart(cartItems: GuestCartItem[]) {
-    if (typeof window === "undefined") return;
-    try {
-      localStorage.setItem(GUEST_CART_KEY, JSON.stringify(cartItems));
-    } catch (error) {
-      console.error("Error saving guest cart:", error);
-    }
-  },
-
-  // Add item to guest cart
-  addToGuestCart(productId: number | string, quantity = 1) {
-    const cart = this.getGuestCart();
-    const existingItemIndex = cart.findIndex(
-      (item) => item.product.id === productId,
-    );
-
-    if (existingItemIndex >= 0) {
-      // Update existing item quantity
-      cart[existingItemIndex].quantity += quantity;
-    } else {
-      // Add new item (we'll need to fetch product details)
-      const newItem: GuestCartItem = {
-        id: `guest_${productId}_${Date.now()}`, // Generate unique ID
-        product: { id: productId }, // Basic product info, will be enriched later
-        quantity: quantity,
-      };
-      cart.push(newItem);
-    }
-
-    this.saveGuestCart(cart);
-    return cart;
-  },
-
-  // Update guest cart item quantity
-  updateGuestCartItem(cartItemId: string, quantity: number) {
-    const cart = this.getGuestCart();
-    const itemIndex = cart.findIndex((item) => item.id === cartItemId);
-
-    if (itemIndex >= 0) {
-      if (quantity <= 0) {
-        cart.splice(itemIndex, 1);
-      } else {
-        cart[itemIndex].quantity = quantity;
+      if ((errorData as { errors?: { detail?: string }[] }).errors?.length) {
+        errorMessage =
+          (errorData as { errors: { detail?: string }[] }).errors[0].detail ||
+          errorMessage;
       }
-      this.saveGuestCart(cart);
+    } catch {
+      // non-JSON error body
     }
 
-    return cart;
-  },
+    throw new Error(errorMessage);
+  }
 
-  // Remove item from guest cart
-  removeFromGuestCart(cartItemId: string) {
-    const cart = this.getGuestCart();
-    const filteredCart = cart.filter((item) => item.id !== cartItemId);
-    this.saveGuestCart(filteredCart);
-    return filteredCart;
-  },
-};
+  const text = await response.text();
+
+  if (!text) {
+    return undefined;
+  }
+
+  return JSON.parse(text) as T;
+}
+
+export async function deleteGuestCart(): Promise<void> {
+  const token = getGuestToken();
+
+  if (token) {
+    try {
+      await guestFetch("cart/guest/", { method: "DELETE" });
+    } catch (error) {
+      console.error("Error deleting guest cart:", error);
+    }
+  }
+
+  useGuestCartStore.getState().clearGuestCart();
+}
 
 async function getLatestProductStock(
   productId: number | string,
 ): Promise<number | null> {
   const product = await productServices.getProductById(productId);
+
   return parseStockQuantity(product?.stock);
 }
 
-async function validateAddToCartStock(productId: number | string, quantity: number) {
+async function validateAddToCartStock(
+  productId: number | string,
+  quantity: number,
+) {
   if (quantity <= 0) {
     return;
   }
 
   const [productStock, cartItems] = await Promise.all([
     getLatestProductStock(productId),
+
     cartServices.getCartItems(),
   ]);
 
@@ -129,13 +204,17 @@ async function validateCartItemStock(cartItemId: string, quantity: number) {
   }
 
   const cartItems = await cartServices.getCartItems();
-  const currentCartItem = cartItems.find((item) => idsMatch(item.id, cartItemId));
+
+  const currentCartItem = cartItems.find((item) =>
+    idsMatch(item.id, cartItemId),
+  );
 
   if (!currentCartItem?.product?.id) {
     return;
   }
 
   const cachedStock = parseStockQuantity(currentCartItem.product.stock);
+
   const productStock =
     cachedStock ?? (await getLatestProductStock(currentCartItem.product.id));
 
@@ -145,52 +224,41 @@ async function validateCartItemStock(cartItemId: string, quantity: number) {
 }
 
 // Cart API services
+
 export const cartServices = {
-  // Get all cart items for the current user
-  async getCartItems(options: ApiRequestOptions = {}): Promise<any[]> {
+  async getCartItems(options: ApiRequestOptions = {}): Promise<CartItem[]> {
     if (!hasValidAuthSession()) {
-      // Return guest cart for non-authenticated users
-      const guestCart = guestCartManager.getGuestCart();
+      try {
+        await ensureGuestCart();
 
-      // Enrich guest cart items with full product data
-      const enrichedCart = await Promise.all(
-        guestCart.map(async (item) => {
-          try {
-            const product = await productServices.getProductById(
-              item.product.id,
-            );
-            return {
-              ...item,
-              product: product,
-            };
-          } catch (error) {
-            console.error(
-              `Error fetching product ${item.product.id}, removing from cart:`,
-              error,
-            );
-            // Return null for items that no longer exist
-            return null;
-          }
-        }),
-      );
+        if (!getGuestToken()) {
+          return useGuestCartStore.getState().items;
+        }
 
-      // Filter out null items (products that no longer exist)
-      const validCart = enrichedCart.filter(
-        (item): item is NonNullable<typeof item> => item !== null,
-      );
+        const response = await guestFetch<unknown>("cart/guest/", {
+          signal: options.signal,
+        });
 
-      // Update localStorage if some items were removed
-      if (validCart.length !== guestCart.length) {
-        guestCartManager.saveGuestCart(validCart as GuestCartItem[]);
+        const apiItems = parseGuestCartListResponse(response);
+
+        const items = apiItems.map(mapGuestCartItemToCartItem);
+
+        useGuestCartStore.getState().setItems(items);
+
+        return items;
+      } catch (error) {
+        console.error("Error fetching guest cart items:", error);
+
+        return useGuestCartStore.getState().items;
       }
-
-      return validCart as any[];
     }
 
     try {
       const accessToken = await getValidAccessToken();
+
       const requestOptions: ApiRequestOptions = {
         method: "GET",
+
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -200,20 +268,25 @@ export const cartServices = {
         requestOptions.signal = options.signal;
       }
 
-      const response: any = await fetchAPI("carts/", requestOptions);
-      const cartItems = response?.results ?? response;
-      return Array.isArray(cartItems) ? (cartItems as any[]) : [];
+      const response: unknown = await fetchAPI("carts/", requestOptions);
+
+      const cartItems =
+        (response as { results?: CartItem[] })?.results ?? response;
+
+      return Array.isArray(cartItems) ? (cartItems as CartItem[]) : [];
     } catch (error) {
       console.error("Error fetching cart items:", error);
+
       return [];
     }
   },
 
-  // Get cart id for checkout/order placement
   async getCartId(): Promise<number> {
     const accessToken = await getValidAccessToken();
-    const response: any = await fetchAPI("cart/", {
+
+    const response: { id?: number } = await fetchAPI("cart/", {
       method: "GET",
+
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -222,155 +295,257 @@ export const cartServices = {
     return Number(response?.id ?? 0);
   },
 
-  // Add item to cart
   async addToCart(productId: number | string, quantity = 1) {
     if (!hasValidAuthSession()) {
-      // Handle guest cart
       try {
         await validateAddToCartStock(productId, quantity);
-        const cart = guestCartManager.addToGuestCart(productId, quantity);
-        return { success: true, cart };
+
+        const response = await guestFetch<GuestCartItemResponse>(
+          "cart/guest/item/",
+
+          {
+            method: "POST",
+
+            body: {
+              product_id: Number(productId),
+
+              quantity,
+
+              attrs: "",
+
+              metadata: "",
+            },
+          },
+        );
+
+        if (response) {
+          const item = mapGuestCartItemToCartItem(response);
+
+          useGuestCartStore.getState().upsertItem(item);
+
+          return item;
+        }
+
+        return { success: true };
       } catch (error) {
         console.error("Error adding to guest cart:", error);
+
         throw error;
       }
     }
 
     try {
       await validateAddToCartStock(productId, quantity);
+
       const accessToken = await getValidAccessToken();
+
       const response = await fetchAPI("carts/", {
         method: "POST",
+
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
+
         body: {
           product: productId,
+
           quantity: quantity,
         },
       });
+
       return response;
     } catch (error) {
       console.error("Error adding to cart:", error);
+
       throw error;
     }
   },
 
-  // Update cart item quantity
   async updateCartItem(cartItemId: string, quantity: number) {
     if (!hasValidAuthSession()) {
-      // Handle guest cart
       try {
         await validateCartItemStock(cartItemId, quantity);
-        const cart = guestCartManager.updateGuestCartItem(cartItemId, quantity);
-        return { success: true, cart };
+
+        const productId = resolveGuestProductId(cartItemId);
+
+        const response = await guestFetch<GuestCartItemResponse>(
+          "cart/guest/item/",
+
+          {
+            method: "PATCH",
+
+            body: {
+              product_id: productId,
+
+              quantity,
+            },
+          },
+        );
+
+        if (response) {
+          const item = mapGuestCartItemToCartItem(response);
+
+          useGuestCartStore.getState().upsertItem(item);
+
+          return item;
+        }
+
+        return { success: true };
       } catch (error) {
         console.error("Error updating guest cart item:", error);
+
         throw error;
       }
     }
 
     try {
       await validateCartItemStock(cartItemId, quantity);
+
       const accessToken = await getValidAccessToken();
+
       const response = await fetchAPI(`carts/${cartItemId}/`, {
         method: "PATCH",
+
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
+
         body: {
           quantity: quantity,
         },
       });
+
       return response;
     } catch (error) {
       console.error("Error updating cart item:", error);
+
       throw error;
     }
   },
 
-  // Remove item from cart
   async removeFromCart(cartItemId: string) {
     if (!hasValidAuthSession()) {
-      // Handle guest cart
       try {
-        guestCartManager.removeFromGuestCart(cartItemId);
+        const productId = resolveGuestProductId(cartItemId);
+
+        await guestFetch("cart/guest/item/", {
+          method: "DELETE",
+
+          body: { product_id: productId },
+        });
+
+        useGuestCartStore.getState().removeItemByProductId(productId);
+
         return true;
       } catch (error) {
         console.error("Error removing from guest cart:", error);
+
         throw error;
       }
     }
 
     try {
       const accessToken = await getValidAccessToken();
+
       await fetchAPI(`carts/${cartItemId}/`, {
         method: "DELETE",
+
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
+
       return true;
     } catch (error) {
       console.error("Error removing from cart:", error);
+
+      throw error;
+    }
+  },
+
+  async clearGuestCartItems(): Promise<void> {
+    if (hasValidAuthSession()) {
+      return;
+    }
+
+    try {
+      await guestFetch("cart/guest/clear/", { method: "DELETE" });
+
+      useGuestCartStore.getState().setItems([]);
+    } catch (error) {
+      console.error("Error clearing guest cart:", error);
+
       throw error;
     }
   },
 };
 
 // Product API services for recommendations
+
 export const productServices = {
-  // Get single product by ID
   async getProductById(productId: number | string) {
     try {
       const response = await fetchAPI(`products/${productId}/`);
-      return response as any;
+
+      return response as CartItem["product"];
     } catch (error) {
       console.error(`Error fetching product ${productId}:`, error);
+
       throw error;
     }
   },
 
-  // Get random products for recommendations
   async getRandomProducts(limit = 5) {
     try {
-      const response: any = await fetchAPI(
+      const response: { results?: CartItem["product"][] } = await fetchAPI(
         `products/?limit=20&ordering=-created_at`,
       );
-      const products = response.results || response;
 
-      // Randomly select 5 from the fetched products
+      const products = response.results || (response as CartItem["product"][]);
+
       const shuffled = [...products].sort(() => Math.random() - 0.5);
+
       return shuffled.slice(0, limit);
     } catch (error) {
       console.error("Error fetching random products:", error);
-      return [] as any[];
+
+      return [] as CartItem["product"][];
     }
   },
 
-  // Get products with filtering
-  async getProducts(params: Record<string, any> = {}) {
+  async getProducts(params: Record<string, unknown> = {}) {
     try {
       const queryParams = new URLSearchParams();
 
-      if (params.search) queryParams.append("search", params.search);
-      if (params.brand) queryParams.append("brand", params.brand);
-      if (params.categories)
-        queryParams.append("categories", params.categories);
-      if (params.audiences) queryParams.append("audiences", params.audiencesWH);
-      if (params.types) queryParams.append("types", params.types);
-      if (params.ordering) queryParams.append("ordering", params.ordering);
-      if (params.limit) queryParams.append("limit", params.limit);
-      if (params.offset !== undefined)
-        queryParams.append("offset", params.offset);
+      if (params.search) queryParams.append("search", String(params.search));
 
-      const response: any = await fetchAPI(
+      if (params.brand) queryParams.append("brand", String(params.brand));
+
+      if (params.categories)
+        queryParams.append("categories", String(params.categories));
+
+      if (params.audiences)
+        queryParams.append("audiences", String(params.audiences));
+
+      if (params.types) queryParams.append("types", String(params.types));
+
+      if (params.ordering)
+        queryParams.append("ordering", String(params.ordering));
+
+      if (params.limit) queryParams.append("limit", String(params.limit));
+
+      if (params.offset !== undefined)
+        queryParams.append("offset", String(params.offset));
+
+      const response: { results?: CartItem["product"][] } = await fetchAPI(
         `products/?${queryParams.toString()}`,
       );
-      return response.results || response;
+
+      return response.results || (response as CartItem["product"][]);
     } catch (error) {
       console.error("Error fetching products:", error);
-      return [] as any[];
+
+      return [] as CartItem["product"][];
     }
   },
 };

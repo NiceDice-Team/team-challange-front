@@ -25,6 +25,7 @@ export default function Navbar({ isPagination = true, hideMobilePaginationChrome
   const pathname = usePathname();
   const mobileHeaderRef = useRef(null);
 
+
   useEffect(() => {
     if (!userData && refreshToken) {
       decodeToken(refreshToken);
@@ -115,7 +116,7 @@ export default function Navbar({ isPagination = true, hideMobilePaginationChrome
           <Link href="/" className="flex-shrink-0">
             <img src={LogoIcon} alt="DICE DECKS Logo" className="w-auto h-8 sm:h-10 md:h-12" />
           </Link>
-          <SearchBar className="hidden sm:flex flex-1 max-w-xs md:max-w-md lg:max-w-lg mx-2 md:mx-4" />
+          <SearchBar className="hidden sm:flex flex-1 mx-2 md:mx-4 max-w-xs md:max-w-md lg:max-w-lg" />
           <div className="flex flex-row items-center gap-2 sm:gap-2 md:gap-3 lg:gap-4">
             {/* Mobile Search Icon */}
             {enableMobileInlineSearch && (
@@ -179,7 +180,7 @@ export default function Navbar({ isPagination = true, hideMobilePaginationChrome
         </div>
 
         {enableMobileInlineSearch && isMobileInlineSearchOpen && (
-          <div className="mt-4 sm:hidden">
+          <div className="sm:hidden mt-4">
             <div className="mx-auto max-w-[392px]">
               <SearchBar
                 variant="catalog-mobile"
