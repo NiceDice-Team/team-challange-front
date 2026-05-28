@@ -1,3 +1,6 @@
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -12,27 +15,59 @@ import {
 import { Heart } from "lucide-react";
 import { useAddToCart } from "@/hooks/useCartQuery";
 import { CustomButton } from "@/components/shared/CustomButton";
-import type { Product } from "@/types/product";
+import { calculateAverageRating, normalizeReviewRating } from "@/lib/reviewMetrics";
+import { reviewServices } from "@/services/reviewServices";
+import type { Product, ProductReview } from "@/types/product";
 
 // Component props
 interface ProductCardProps {
   product?: Product;
 }
 
+const isProductReview = (review: NonNullable<Product["reviews"]>[number]): review is ProductReview =>
+  typeof review === "object" && review !== null && "rating" in review;
+
 export default function ProductCard({ product = {} as Product }: ProductCardProps) {
   const [activeImage, setActiveImage] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
   const galleryRef = useRef(null);
   const addToCartMutation = useAddToCart();
+  const productId = product?.id ? String(product.id) : "";
+  const productReviews = Array.isArray(product?.reviews) ? product.reviews : [];
+  const embeddedReviews = productReviews.filter(isProductReview);
+  const productReviewCount = productReviews.length;
+  const catalogRating = normalizeReviewRating(product?.stars ?? 0);
+  const fallbackRating =
+    embeddedReviews.length > 0
+      ? calculateAverageRating(embeddedReviews)
+      : catalogRating;
+  const shouldFetchReviewSummary =
+    Boolean(productId) &&
+    productReviewCount > 0 &&
+    embeddedReviews.length < productReviewCount &&
+    catalogRating <= 0;
+
+  const { data: reviewsData } = useQuery({
+    queryKey: ["product-reviews-summary", productId],
+    queryFn: ({ signal }) => reviewServices.getAllProductReviews(productId, {}, { signal }),
+    enabled: shouldFetchReviewSummary,
+    staleTime: 15 * 60 * 1000,
+    gcTime: 60 * 60 * 1000,
+  });
+
+  const reviewCount = reviewsData?.count ?? productReviewCount;
+  const averageRating =
+    reviewsData?.results?.length
+      ? calculateAverageRating(reviewsData.results)
+      : fallbackRating;
 
   // Create star rating display
   const renderStars = () => {
-    const rating = parseFloat(String(product?.stars || 0));
     const stars = [];
     for (let i = 1; i <= 5; i++) {
       stars.push(
         <span key={i} className="text-blue-800">
-          {i <= rating ? (
+          {i <= averageRating ? (
             <img src={StarFilledIcon} alt="filled star" className="h-4 w-4" />
           ) : (
             <img src={StarEmptyIcon} alt="empty star" className="h-4 w-4" />
@@ -255,7 +290,7 @@ export default function ProductCard({ product = {} as Product }: ProductCardProp
               <div className="flex h-[19px] w-fit items-center gap-1">
                 <div className="flex h-4 w-[80px] items-start">{renderStars()}</div>
                 <span className="h-[19px] w-5 text-base uppercase leading-[19px] text-black">
-                  ({product?.reviews?.length || 0})
+                  ({reviewCount})
                 </span>
               </div>
             </div>

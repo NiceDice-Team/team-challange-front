@@ -16,11 +16,13 @@ export interface ProductImage {
 // Product review types
 export interface ProductReview {
   id: number;
-  rating: number;
+  rating: string | number;
   comment?: string;
   author?: string;
   created_at?: string;
 }
+
+export type ProductReviewReference = number | ProductReview;
 
 // Product types
 export interface Product {
@@ -31,9 +33,9 @@ export interface Product {
   discount?: string | number;
   brand?: string;
   stock: string | number;
-  stars?: number;
+  stars?: string | number;
   images?: ProductImage[];
-  reviews?: ProductReview[];
+  reviews?: ProductReviewReference[];
   categories?: number[];
   audiences?: string[];
   types?: string[];
