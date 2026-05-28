@@ -1,4 +1,4 @@
-import z from "zod";
+import { z } from "zod";
 
 const addressFields = {
   country: z.string().min(1, "Choose country"),

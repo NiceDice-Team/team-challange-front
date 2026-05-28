@@ -1,7 +1,15 @@
+"use client";
+
 import { Info } from "lucide-react";
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import { CountryDropdown } from "react-country-region-selector";
 import { cn } from "@/lib/utils";
+
+const CountryDropdown = dynamic(
+  () =>
+    import("react-country-region-selector").then((mod) => mod.CountryDropdown),
+  { ssr: false }
+);
 
 interface CountrySelectWithSearchProps {
   error?: string[];

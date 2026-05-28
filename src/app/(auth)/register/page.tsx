@@ -279,7 +279,7 @@ function RegisterPageContent() {
 
   return (
     <div className="mx-auto mt-20">
-      <h1 className="mb-9 font-normal md:text-title text-2xl text-center uppercase">
+      <h1 className="mb-9 font-normal md:text-title text-xl text-center uppercase">
         Create account
       </h1>
       <div className="mb-12 text-base text-center">

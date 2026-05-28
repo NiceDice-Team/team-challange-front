@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { SessionProvider } from "next-auth/react";
 import { AUTH_TOKENS_CHANGED_EVENT } from "@/lib/tokenManager";
 import { queryKeys } from "@/lib/queryKeys";
+import { useGuestCartInit } from "@/hooks/useGuestCartInit";
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -16,6 +17,8 @@ interface ProvidersProps {
  * Combines QueryClient and SessionProvider.
  */
 export default function Providers({ children }: ProvidersProps): React.ReactElement {
+  useGuestCartInit();
+
   // This ensures that data is not shared between different users and requests
   const [queryClient] = useState(
     () =>

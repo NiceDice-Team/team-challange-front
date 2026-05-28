@@ -242,29 +242,31 @@ function LoginPageContent() {
 
   return (
     <div className="flex flex-col items-center mx-auto mt-20">
-      <h1 className="mb-9 font-normal md:text-title text-2xl text-center uppercase">
+      <div className="bg-purple md:bg-transparent mb-6 p-6 text-white md:text-black">
+        <h1 className="mb-9 font-normal md:text-title text-xl text-center uppercase">
+          {mode === "back" ? (
+            "👋 Welcome back!"
+          ) : (
+            <div className="flex md:flex-row flex-col items-center gap-2">
+              Log in here or{" "}
+              <Link href="/register" className="underline">
+                create account
+              </Link>
+            </div>
+          )}
+        </h1>
         {mode === "back" ? (
-          "👋 Welcome back!"
+          <div className="mb-12 text-base text-center">
+            <p>🎉 Success! Your password has been changed.</p>
+            <p>You can now log in and continue your adventure</p>
+          </div>
         ) : (
-          <div className="flex md:flex-row flex-col items-center gap-2">
-            Log in here or{" "}
-            <Link href="/register" className="underline">
-              create account
-            </Link>
+          <div className="text-base text-center">
+            <p>🎯 Don&apos;t forget to log in!</p>
+            <p>Unlock exclusive rewards, and track your orders with ease.</p>
           </div>
         )}
-      </h1>
-      {mode === "back" ? (
-        <div className="mb-12 text-base text-center">
-          <p>🎉 Success! Your password has been changed.</p>
-          <p>You can now log in and continue your adventure</p>
-        </div>
-      ) : (
-        <div className="mb-12 text-base text-center">
-          <p>🎯 Don&apos;t forget to log in!</p>
-          <p>Unlock exclusive rewards, and track your orders with ease.</p>
-        </div>
-      )}
+      </div>
 
       <div className="flex flex-col justify-center items-center mb-28 md:w-[500px] w-xs">
         <form className="flex flex-col gap-2 w-full" onSubmit={handleSubmit}>

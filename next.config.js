@@ -4,6 +4,10 @@
 const path = require("path");
 
 module.exports = {
+  transpilePackages: [
+    "react-country-region-selector",
+    "react-phone-number-input",
+  ],
   images: {
     remotePatterns: [
       {
