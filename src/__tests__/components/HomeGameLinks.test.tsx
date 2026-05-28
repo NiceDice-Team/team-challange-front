@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
+import HeroScroller, { HERO_SCROLLER_ITEMS } from "@/components/home/HeroScroller";
 import NewArrivals from "@/components/home/NewArrivals";
 import ReviewSection from "@/components/home/ReviewSection";
 
@@ -17,6 +18,18 @@ jest.mock("next/link", () => ({
 }));
 
 describe("home game links", () => {
+  test("points hero slide CTAs at their matching game routes", () => {
+    expect(HERO_SCROLLER_ITEMS.map((item) => item.buttonHref)).toEqual([
+      "/catalog?search=Heat",
+      "/product/7",
+      "/product/8",
+    ]);
+
+    render(<HeroScroller />);
+
+    expect(screen.getByRole("link", { name: "BUY NOW" })).toHaveAttribute("href", "/catalog?search=Heat");
+  });
+
   test("points product promo links at existing catalog routes", () => {
     render(<NewArrivals />);
 

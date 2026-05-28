@@ -95,7 +95,7 @@ export default function ProductReviewDialog({
       </button>
 
       <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent className="z-50 max-w-[560px] rounded-none border border-[var(--color-light-purple-2)] bg-white p-6 sm:p-8">
+        <DialogContent className="z-50 max-w-[560px] rounded-none border border-[var(--color-light-purple-2)] bg-white p-6 sm:rounded-none sm:p-8">
           <DialogHeader>
             <DialogTitle className="text-left text-2xl font-medium uppercase text-black">
               Write a review
