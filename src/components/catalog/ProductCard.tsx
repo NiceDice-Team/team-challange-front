@@ -90,7 +90,13 @@ export default function ProductCard({ product = {} as Product }: ProductCardProp
   };
 
   // Format price
-  const displayPrice = product?.price ? `$${parseFloat(String(product.price)).toFixed(2)}` : "$35.99";
+  const priceValue = parseFloat(String(product.price));
+  const discountPercent = parseFloat(String(product.discount));
+  const displayPrice = Number.isFinite(priceValue) ? `$${priceValue.toFixed(2)}` : "$35.99";
+  const discountPrice =
+    Number.isFinite(priceValue) && Number.isFinite(discountPercent) && discountPercent > 0
+      ? `$${(priceValue * (1 - discountPercent / 100)).toFixed(2)}`
+      : null;
 
   const productName = product?.name || "PRODUCT NAME";
 
@@ -308,7 +314,18 @@ export default function ProductCard({ product = {} as Product }: ProductCardProp
 
             <div className="flex min-w-[150px] flex-col items-end gap-2 text-right sm:min-w-0 sm:w-full sm:items-start sm:text-left">
               <div className="flex h-6 items-end justify-end gap-2 sm:h-[29px]">
-                <p className="text-[20px] font-bold uppercase leading-6 text-black sm:text-2xl sm:leading-[29px]">{displayPrice}</p>
+                {discountPrice ? (
+                  <>
+                    <p className="text-[20px] font-bold uppercase leading-6 text-[var(--color-red-price)] sm:text-2xl sm:leading-[29px]">
+                      {discountPrice}
+                    </p>
+                    <p className="text-sm leading-[17px] text-[var(--color-gray-2)] line-through">{displayPrice}</p>
+                  </>
+                ) : (
+                  <p className="text-[20px] font-bold uppercase leading-6 text-black sm:text-2xl sm:leading-[29px]">
+                    {displayPrice}
+                  </p>
+                )}
               </div>
 
               {/* Stock status */}

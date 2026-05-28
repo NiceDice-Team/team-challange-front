@@ -124,4 +124,18 @@ describe("ProductCard", () => {
     expect(screen.getByAltText("half star")).toBeInTheDocument();
     expect(mockedReviewServices.getAllProductReviews).not.toHaveBeenCalled();
   });
+
+  test("renders discounted price with original price struck through", () => {
+    renderWithQueryClient({
+      ...product,
+      id: 33,
+      discount: "20.00",
+      reviews: [],
+      stars: "4.00",
+    });
+
+    expect(screen.getByText("$12.79")).toHaveClass("text-[var(--color-red-price)]");
+    expect(screen.getByText("$15.99")).toHaveClass("line-through");
+    expect(mockedReviewServices.getAllProductReviews).not.toHaveBeenCalled();
+  });
 });
