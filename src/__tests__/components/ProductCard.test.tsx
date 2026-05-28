@@ -112,4 +112,16 @@ describe("ProductCard", () => {
     expect(screen.getAllByAltText("filled star")).toHaveLength(3);
     expect(mockedReviewServices.getAllProductReviews).not.toHaveBeenCalled();
   });
+
+  test("renders a half star for half-step ratings", () => {
+    renderWithQueryClient({
+      ...product,
+      id: 32,
+      stars: "4.50",
+    });
+
+    expect(screen.getAllByAltText("filled star")).toHaveLength(4);
+    expect(screen.getByAltText("half star")).toBeInTheDocument();
+    expect(mockedReviewServices.getAllProductReviews).not.toHaveBeenCalled();
+  });
 });

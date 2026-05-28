@@ -15,7 +15,7 @@ import {
 import { Heart } from "lucide-react";
 import { useAddToCart } from "@/hooks/useCartQuery";
 import { CustomButton } from "@/components/shared/CustomButton";
-import { calculateAverageRating, normalizeReviewRating } from "@/lib/reviewMetrics";
+import { calculateAverageRating, normalizeReviewRating, roundRatingToNearestHalf } from "@/lib/reviewMetrics";
 import { reviewServices } from "@/services/reviewServices";
 import type { Product, ProductReview } from "@/types/product";
 
@@ -60,15 +60,26 @@ export default function ProductCard({ product = {} as Product }: ProductCardProp
     reviewsData?.results?.length
       ? calculateAverageRating(reviewsData.results)
       : fallbackRating;
+  const displayedRating = roundRatingToNearestHalf(averageRating);
 
   // Create star rating display
   const renderStars = () => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
+      const isFilled = i <= displayedRating;
+      const isHalfFilled = !isFilled && i - 0.5 === displayedRating;
+
       stars.push(
-        <span key={i} className="text-blue-800">
-          {i <= averageRating ? (
+        <span key={i} className="relative block h-4 w-4 text-blue-800">
+          {isFilled ? (
             <img src={StarFilledIcon} alt="filled star" className="h-4 w-4" />
+          ) : isHalfFilled ? (
+            <>
+              <img src={StarEmptyIcon} alt="half star" className="h-4 w-4" />
+              <span className="absolute inset-0 block w-1/2 overflow-hidden" aria-hidden="true">
+                <img src={StarFilledIcon} alt="" className="h-4 w-4 max-w-none" />
+              </span>
+            </>
           ) : (
             <img src={StarEmptyIcon} alt="empty star" className="h-4 w-4" />
           )}

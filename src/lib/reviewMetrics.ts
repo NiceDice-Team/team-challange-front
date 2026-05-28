@@ -18,3 +18,7 @@ export const calculateAverageRating = (
   const total = reviews.reduce((sum, review) => sum + normalizeReviewRating(review.rating), 0);
   return total / reviews.length;
 };
+
+export const roundRatingToNearestHalf = (value: string | number | undefined): number => {
+  return Math.round(normalizeReviewRating(value) * 2) / 2;
+};
