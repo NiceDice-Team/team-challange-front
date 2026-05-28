@@ -20,7 +20,6 @@ import PaymentWrapper from "@/components/checkout/PaymentWrapper";
 import { useQuery } from "@tanstack/react-query";
 import { orderServices, type PaymentMethod } from "@/services/orderServices";
 import { showCustomToast } from "@/components/shared/Toast";
-import { cartServices } from "@/services/cartServices";
 
 interface SectionProps {
   title: string;
@@ -140,40 +139,27 @@ export default function OrderReviewPage() {
   const handlePlaceOrder = async () => {
     setPaymentCard(paymentCardData);
 
-    let cartId = 0
     try {
-      cartId = await cartServices.getCartId();
-    } catch (err) {
-      showCustomToast({
-        type: "error",
-        title: "Failed to load cart",
-      });
-      return;
-    }
-
-    orderServices
-      .createOrder({
+      await orderServices.createOrder({
         checkoutUserData,
         deliveryOptionId: deliveryMethod?.id ?? 0,
         paymentMethodId: selectedPaymentMethodId ?? 0,
-        cartId,
         delivery_option: deliveryMethod?.id ?? 0,
-        payment_method: selectedPaymentMethodId,
-      })
-      .then((res) => {
-        showCustomToast({
-          type: "success",
-          title: "Order placed",
-          description: "Your order has been placed successfully.",
-        });
-      })
-      .catch((err) => {
-        showCustomToast({
-          type: "error",
-          title: "Failed to place order",
-          description: "Failed to place order. Please try again.",
-        });
+        payment_method: selectedPaymentMethodId ?? 0,
       });
+
+      showCustomToast({
+        type: "success",
+        title: "Order placed",
+        description: "Your order has been placed successfully.",
+      });
+    } catch {
+      showCustomToast({
+        type: "error",
+        title: "Failed to place order",
+        description: "Failed to place order. Please try again.",
+      });
+    }
   };
 
   return (

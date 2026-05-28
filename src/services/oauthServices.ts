@@ -1,4 +1,5 @@
 import { API_BASE_URL, API_ENDPOINTS, buildApiUrl } from '@/config/api';
+import { mergeNoCacheHeaders } from '@/lib/noCacheHeaders';
 import { OAuthProvider, OAuthResponse } from '@/types/api';
 
 export const sendOAuthToken = async (provider: OAuthProvider): Promise<OAuthResponse> => {
@@ -9,10 +10,14 @@ export const sendOAuthToken = async (provider: OAuthProvider): Promise<OAuthResp
 
   const response = await fetch(buildApiUrl(API_ENDPOINTS.oauth), {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: mergeNoCacheHeaders(
+      {
+        "Content-Type": "application/json",
+      },
+      { force: true },
+    ),
     body: JSON.stringify(body),
+    cache: "no-store",
   });
 
   if (!response.ok) {

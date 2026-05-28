@@ -1,4 +1,4 @@
-import { cartServices, productServices, ensureGuestCart, deleteGuestCart } from '../../services/cartServices';
+import { cartServices, productServices, ensureGuestCart, deleteGuestCart, mergeGuestCartIntoUserCart } from '../../services/cartServices';
 import { fetchAPI } from '../../services/api';
 import { getValidAccessToken, isAuthenticated } from '@/lib/tokenManager';
 
@@ -448,6 +448,107 @@ describe('cartServices', () => {
         }),
       );
       expect(guestStoreState.clearGuestCart).toHaveBeenCalled();
+    });
+  });
+
+  describe('mergeGuestCartIntoUserCart', () => {
+    test('merges guest cart items into authenticated cart after resolving cart id', async () => {
+      isAuthenticated.mockReturnValue(true);
+      guestStoreState.token = 'guest-token';
+      guestStoreState.items = [
+        {
+          id: '1',
+          quantity: 2,
+          product: { id: 10, name: 'Dice', price: 5, stock: 20 },
+        },
+      ];
+
+      global.fetch.mockResolvedValueOnce(
+        mockFetchResponse({
+          body: [
+            mockGuestApiItem({
+              id: 1,
+              quantity: 2,
+              product_details: {
+                id: 10,
+                name: 'Dice',
+                price: 5,
+                stock: 20,
+              },
+            }),
+          ],
+        }),
+      );
+
+      fetchAPI
+        .mockResolvedValueOnce({ id: 99 })
+        .mockResolvedValueOnce({ id: 10, name: 'Dice', stock: 20 })
+        .mockResolvedValueOnce({ results: [] })
+        .mockResolvedValueOnce({ id: 100, product: { id: 10 }, quantity: 2 });
+
+      getValidAccessToken.mockResolvedValue('mock-token');
+
+      await mergeGuestCartIntoUserCart();
+
+      expect(fetchAPI).toHaveBeenCalledWith('cart/', {
+        method: 'GET',
+        headers: {
+          Authorization: 'Bearer mock-token',
+        },
+      });
+      expect(fetchAPI).toHaveBeenCalledWith('carts/', {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer mock-token',
+        },
+        body: {
+          product: 10,
+          quantity: 2,
+        },
+      });
+    });
+
+    test('skips merge when guest cart is empty', async () => {
+      isAuthenticated.mockReturnValue(true);
+      guestStoreState.token = null;
+      guestStoreState.items = [];
+
+      await mergeGuestCartIntoUserCart();
+
+      expect(fetchAPI).not.toHaveBeenCalled();
+      expect(global.fetch).not.toHaveBeenCalled();
+    });
+
+    test('throws when user cart id cannot be resolved', async () => {
+      isAuthenticated.mockReturnValue(true);
+      guestStoreState.token = 'guest-token';
+      guestStoreState.items = [
+        {
+          id: '1',
+          quantity: 1,
+          product: { id: 10, name: 'Dice', price: 5, stock: 20 },
+        },
+      ];
+
+      global.fetch.mockResolvedValueOnce(
+        mockFetchResponse({
+          body: [
+            mockGuestApiItem({
+              product_details: { id: 10, name: 'Dice', price: 5, stock: 20 },
+            }),
+          ],
+        }),
+      );
+
+      fetchAPI.mockRejectedValueOnce(new Error('No cart'));
+
+      getValidAccessToken.mockResolvedValue('mock-token');
+
+      await expect(mergeGuestCartIntoUserCart()).rejects.toThrow('No cart');
+      expect(fetchAPI).not.toHaveBeenCalledWith(
+        'carts/',
+        expect.objectContaining({ method: 'POST' }),
+      );
     });
   });
 });

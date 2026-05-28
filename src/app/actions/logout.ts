@@ -3,6 +3,7 @@
 import { clearTokens } from "@/lib/tokenManager";
 import { cookies } from "next/headers";
 import { API_ENDPOINTS, buildApiUrl } from '@/config/api';
+import { mergeNoCacheHeaders } from '@/lib/noCacheHeaders';
 
 interface LogoutActionParams {
   provider?: string;
@@ -18,13 +19,17 @@ export async function logoutAction({ provider }: LogoutActionParams = {}) {
       try {
         const response = await fetch(buildApiUrl(API_ENDPOINTS.logout), {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
+          headers: mergeNoCacheHeaders(
+            {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+            { force: true },
+          ),
           body: JSON.stringify({
             refresh: refreshToken,
           }),
+          cache: "no-store",
         });
         if (!response.ok) {
           console.error("Server error logout", response.status);

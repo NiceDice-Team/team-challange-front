@@ -1,13 +1,42 @@
 import { orderServices } from '../../services/orderServices';
 import { fetchAPI } from '../../services/api';
-import { getTokens } from '@/lib/tokenManager';
+import { getTokens, isAuthenticated } from '@/lib/tokenManager';
+import { getGuestToken } from '@/store/guestCart';
+import { cartServices } from '../../services/cartServices';
 
 // Mock the dependencies
 jest.mock('../../services/api');
 jest.mock('@/lib/tokenManager');
+jest.mock('@/store/guestCart');
+jest.mock('../../services/cartServices');
 
 const mockFetchAPI = fetchAPI as jest.MockedFunction<typeof fetchAPI>;
 const mockGetTokens = getTokens as jest.MockedFunction<typeof getTokens>;
+const mockIsAuthenticated = isAuthenticated as jest.MockedFunction<typeof isAuthenticated>;
+const mockGetGuestToken = getGuestToken as jest.MockedFunction<typeof getGuestToken>;
+const mockCartServices = cartServices as jest.Mocked<typeof cartServices>;
+
+const checkoutUserData = {
+  shippingCountry: 'US',
+  shippingFirstName: 'John',
+  shippingLastName: 'Doe',
+  shippingAddress: '123 Main St',
+  shippingApartment: '',
+  shippingZipCode: '12345',
+  shippingCity: 'New York',
+  shippingEmail: 'john@example.com',
+  shippingPhone: '+1234567890',
+  billingCountry: 'US',
+  billingFirstName: 'John',
+  billingLastName: 'Doe',
+  billingAddress: '123 Main St',
+  billingApartment: '',
+  billingZipCode: '12345',
+  billingCity: 'New York',
+  billingEmail: 'john@example.com',
+  billingPhone: '+1234567890',
+  copyBilling: true,
+};
 
 describe('Order Services', () => {
   beforeEach(() => {
@@ -18,6 +47,9 @@ describe('Order Services', () => {
       accessToken: 'mock-access-token',
       refreshToken: 'mock-refresh-token',
     });
+    mockIsAuthenticated.mockReturnValue(true);
+    mockGetGuestToken.mockReturnValue(null);
+    mockCartServices.getCartId.mockResolvedValue(42);
   });
 
   describe('getOrders', () => {
@@ -184,6 +216,85 @@ describe('Order Services', () => {
           description: '3-5 business days (4 days)',
         },
       ]);
+    });
+  });
+
+  describe('createOrder', () => {
+    test('sends cart_id for authenticated users', async () => {
+      mockFetchAPI.mockResolvedValue({ id: 1 });
+
+      await orderServices.createOrder({
+        checkoutUserData,
+        deliveryOptionId: 1,
+        paymentMethodId: 2,
+        delivery_option: 1,
+        payment_method: 2,
+      });
+
+      expect(mockCartServices.getCartId).toHaveBeenCalled();
+      expect(mockFetchAPI).toHaveBeenCalledWith('orders/', {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer mock-access-token',
+        },
+        body: expect.objectContaining({
+          cart_id: 42,
+          delivery_option_id: 1,
+          payment_method_id: 2,
+        }),
+      });
+      expect(mockFetchAPI.mock.calls[0][1]?.body).not.toHaveProperty(
+        'guest_cart_token',
+      );
+    });
+
+    test('sends guest_cart_token for unauthenticated users', async () => {
+      mockIsAuthenticated.mockReturnValue(false);
+      mockGetTokens.mockReturnValue({
+        accessToken: null,
+        refreshToken: null,
+      });
+      mockGetGuestToken.mockReturnValue('guest-token-123');
+      mockFetchAPI.mockResolvedValue({ id: 1 });
+
+      await orderServices.createOrder({
+        checkoutUserData,
+        deliveryOptionId: 1,
+        paymentMethodId: 2,
+        delivery_option: 1,
+        payment_method: 2,
+      });
+
+      expect(mockCartServices.getCartId).not.toHaveBeenCalled();
+      expect(mockFetchAPI).toHaveBeenCalledWith('orders/', {
+        method: 'POST',
+        headers: {},
+        body: expect.objectContaining({
+          guest_cart_token: 'guest-token-123',
+          delivery_option_id: 1,
+          payment_method_id: 2,
+        }),
+      });
+      expect(mockFetchAPI.mock.calls[0][1]?.body).not.toHaveProperty('cart_id');
+    });
+
+    test('throws when guest cart token is missing for unauthenticated users', async () => {
+      mockIsAuthenticated.mockReturnValue(false);
+      mockGetTokens.mockReturnValue({
+        accessToken: null,
+        refreshToken: null,
+      });
+      mockGetGuestToken.mockReturnValue(null);
+
+      await expect(
+        orderServices.createOrder({
+          checkoutUserData,
+          deliveryOptionId: 1,
+          paymentMethodId: 2,
+        }),
+      ).rejects.toThrow('Guest cart token not available');
+
+      expect(mockFetchAPI).not.toHaveBeenCalled();
     });
   });
 });

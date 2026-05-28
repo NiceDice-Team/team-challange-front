@@ -18,6 +18,7 @@ import { CustomButton } from "@/components/shared/CustomButton";
 import { PasswordInput } from "@/components/shared/PasswordInput";
 import { PublicRoute } from "@/components/auth/RouteGuards";
 import { API_BASE_URL } from "@/config/api";
+import { mergeNoCacheHeaders } from "@/lib/noCacheHeaders";
 
 function RegisterPageContent() {
   const [isChecked, setIsChecked] = useState(true);
@@ -122,10 +123,14 @@ function RegisterPageContent() {
     try {
       const response = await fetch(`${API_BASE_URL}users/register/`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: mergeNoCacheHeaders(
+          {
+            "Content-Type": "application/json",
+          },
+          { force: true },
+        ),
         body: JSON.stringify(requestBody),
+        cache: "no-store",
       });
 
       if (!response.ok) {
