@@ -12,6 +12,7 @@ import {
   HeartEmptyIcon,
 } from "@/svgs/icons";
 import { useAddToCart } from "@/hooks/useCartQuery";
+import { roundRatingToNearestHalf } from "@/lib/reviewMetrics";
 
 export default function CartProductCard({ product = {} }) {
   const [isFavorite, setIsFavorite] = useState(false);
@@ -20,13 +21,23 @@ export default function CartProductCard({ product = {} }) {
 
   // Create star rating display
   const renderStars = () => {
-    const rating = parseFloat(product?.stars || 0);
+    const rating = roundRatingToNearestHalf(product?.stars || 0);
     const stars = [];
     for (let i = 1; i <= 5; i++) {
+      const isFilled = i <= rating;
+      const isHalfFilled = !isFilled && i - 0.5 === rating;
+
       stars.push(
-        <div key={i} className="text-[#494791]">
-          {i <= rating ? (
+        <div key={i} className="relative block h-4 w-4 text-[#494791]">
+          {isFilled ? (
             <img src={StarFilledIcon} alt="filled star" className="h-4 w-4" />
+          ) : isHalfFilled ? (
+            <>
+              <img src={StarEmptyIcon} alt="half star" className="h-4 w-4" />
+              <span className="absolute inset-0 block w-1/2 overflow-hidden" aria-hidden="true">
+                <img src={StarFilledIcon} alt="" className="h-4 w-4 max-w-none" />
+              </span>
+            </>
           ) : (
             <img src={StarEmptyIcon} alt="empty star" className="h-4 w-4" />
           )}

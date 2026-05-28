@@ -6,7 +6,7 @@ import StarRating from "../layout/StarsLine";
 import { productServices } from "@/services/productServices";
 import { reviewServices } from "@/services/reviewServices";
 import ProductReviewDialog from "./ProductReviewDialog";
-import { calculateAverageRating, normalizeReviewRating } from "@/lib/reviewMetrics";
+import { calculateAverageRating, normalizeReviewRating, roundRatingToNearestHalf } from "@/lib/reviewMetrics";
 
 interface ReviewsProductProps {
   productId: string;
@@ -44,7 +44,7 @@ export default function ReviewsProduct({ productId, children }: ReviewsProductPr
     fetchedReviewCount > 0
       ? calculateAverageRating(reviewsData?.results ?? [])
       : normalizeReviewRating(product?.stars ?? 0);
-  const roundedRating = Math.round(averageRating);
+  const displayedRating = roundRatingToNearestHalf(averageRating);
 
   const ratingDistribution = useMemo(() => {
     const counts = new Map<number, number>(STAR_DISTRIBUTION.map((star) => [star, 0]));
@@ -78,7 +78,7 @@ export default function ReviewsProduct({ productId, children }: ReviewsProductPr
           <div className="flex w-full items-center justify-between gap-4 px-4">
             <div className="flex flex-col items-center gap-2 text-center">
               <div className="flex items-center gap-2">
-                <StarRating rating={roundedRating} />
+                <StarRating rating={displayedRating} />
                 <span className="text-base uppercase text-[var(--color-purple)] underline underline-offset-2">
                   {averageRating.toFixed(2)} out of 5
                 </span>
@@ -109,7 +109,7 @@ export default function ReviewsProduct({ productId, children }: ReviewsProductPr
         <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-3 md:gap-4">
           <div className="flex flex-col items-center justify-center border-b-2 border-[var(--color-purple)]/50 pb-6 md:border-b-0 md:border-r-2 md:pb-0">
             <div className="flex flex-nowrap items-center gap-1">
-              <StarRating rating={roundedRating} />
+              <StarRating rating={displayedRating} />
               <span className="text-sm text-[var(--color-purple)] underline underline-offset-3 underline-[var(--color-purple)] sm:text-base">
                 {averageRating.toFixed(2)} out of 5
               </span>

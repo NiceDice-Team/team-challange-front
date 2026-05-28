@@ -1,3 +1,6 @@
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -12,28 +15,71 @@ import {
 import { Heart } from "lucide-react";
 import { useAddToCart } from "@/hooks/useCartQuery";
 import { CustomButton } from "@/components/shared/CustomButton";
-import type { Product } from "@/types/product";
+import { calculateAverageRating, normalizeReviewRating, roundRatingToNearestHalf } from "@/lib/reviewMetrics";
+import { reviewServices } from "@/services/reviewServices";
+import type { Product, ProductReview } from "@/types/product";
 
 // Component props
 interface ProductCardProps {
   product?: Product;
 }
 
+const isProductReview = (review: NonNullable<Product["reviews"]>[number]): review is ProductReview =>
+  typeof review === "object" && review !== null && "rating" in review;
+
 export default function ProductCard({ product = {} as Product }: ProductCardProps) {
   const [activeImage, setActiveImage] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
   const galleryRef = useRef(null);
   const addToCartMutation = useAddToCart();
+  const productId = product?.id ? String(product.id) : "";
+  const productReviews = Array.isArray(product?.reviews) ? product.reviews : [];
+  const embeddedReviews = productReviews.filter(isProductReview);
+  const productReviewCount = productReviews.length;
+  const catalogRating = normalizeReviewRating(product?.stars ?? 0);
+  const fallbackRating =
+    embeddedReviews.length > 0
+      ? calculateAverageRating(embeddedReviews)
+      : catalogRating;
+  const shouldFetchReviewSummary =
+    Boolean(productId) &&
+    productReviewCount > 0 &&
+    embeddedReviews.length < productReviewCount &&
+    catalogRating <= 0;
+
+  const { data: reviewsData } = useQuery({
+    queryKey: ["product-reviews-summary", productId],
+    queryFn: ({ signal }) => reviewServices.getAllProductReviews(productId, {}, { signal }),
+    enabled: shouldFetchReviewSummary,
+    staleTime: 15 * 60 * 1000,
+    gcTime: 60 * 60 * 1000,
+  });
+
+  const reviewCount = reviewsData?.count ?? productReviewCount;
+  const averageRating =
+    reviewsData?.results?.length
+      ? calculateAverageRating(reviewsData.results)
+      : fallbackRating;
+  const displayedRating = roundRatingToNearestHalf(averageRating);
 
   // Create star rating display
   const renderStars = () => {
-    const rating = parseFloat(String(product?.stars || 0));
     const stars = [];
     for (let i = 1; i <= 5; i++) {
+      const isFilled = i <= displayedRating;
+      const isHalfFilled = !isFilled && i - 0.5 === displayedRating;
+
       stars.push(
-        <span key={i} className="text-blue-800">
-          {i <= rating ? (
+        <span key={i} className="relative block h-4 w-4 text-blue-800">
+          {isFilled ? (
             <img src={StarFilledIcon} alt="filled star" className="h-4 w-4" />
+          ) : isHalfFilled ? (
+            <>
+              <img src={StarEmptyIcon} alt="half star" className="h-4 w-4" />
+              <span className="absolute inset-0 block w-1/2 overflow-hidden" aria-hidden="true">
+                <img src={StarFilledIcon} alt="" className="h-4 w-4 max-w-none" />
+              </span>
+            </>
           ) : (
             <img src={StarEmptyIcon} alt="empty star" className="h-4 w-4" />
           )}
@@ -44,7 +90,13 @@ export default function ProductCard({ product = {} as Product }: ProductCardProp
   };
 
   // Format price
-  const displayPrice = product?.price ? `$${parseFloat(String(product.price)).toFixed(2)}` : "$35.99";
+  const priceValue = parseFloat(String(product.price));
+  const discountPercent = parseFloat(String(product.discount));
+  const displayPrice = Number.isFinite(priceValue) ? `$${priceValue.toFixed(2)}` : "$35.99";
+  const discountPrice =
+    Number.isFinite(priceValue) && Number.isFinite(discountPercent) && discountPercent > 0
+      ? `$${(priceValue * (1 - discountPercent / 100)).toFixed(2)}`
+      : null;
 
   const productName = product?.name || "PRODUCT NAME";
 
@@ -255,14 +307,25 @@ export default function ProductCard({ product = {} as Product }: ProductCardProp
               <div className="flex h-[19px] w-fit items-center gap-1">
                 <div className="flex h-4 w-[80px] items-start">{renderStars()}</div>
                 <span className="h-[19px] w-5 text-base uppercase leading-[19px] text-black">
-                  ({product?.reviews?.length || 0})
+                  ({reviewCount})
                 </span>
               </div>
             </div>
 
             <div className="flex min-w-[150px] flex-col items-end gap-2 text-right sm:min-w-0 sm:w-full sm:items-start sm:text-left">
               <div className="flex h-6 items-end justify-end gap-2 sm:h-[29px]">
-                <p className="text-[20px] font-bold uppercase leading-6 text-black sm:text-2xl sm:leading-[29px]">{displayPrice}</p>
+                {discountPrice ? (
+                  <>
+                    <p className="text-[20px] font-bold uppercase leading-6 text-[var(--color-red-price)] sm:text-2xl sm:leading-[29px]">
+                      {discountPrice}
+                    </p>
+                    <p className="text-sm leading-[17px] text-[var(--color-gray-2)] line-through">{displayPrice}</p>
+                  </>
+                ) : (
+                  <p className="text-[20px] font-bold uppercase leading-6 text-black sm:text-2xl sm:leading-[29px]">
+                    {displayPrice}
+                  </p>
+                )}
               </div>
 
               {/* Stock status */}

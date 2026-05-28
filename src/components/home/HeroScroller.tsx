@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
+import Link from "next/link";
 import HERO_IMG1 from "../../../public/HeroScroller/HeroScroll1.png";
 import HERO_IMG2 from "../../../public/HeroScroller/HeroScroll2.png";
 import HERO_IMG3 from "../../../public/HeroScroller/HeroScroll3.png";
@@ -13,40 +14,45 @@ interface ScrollerItem {
   title: string;
   description: string;
   buttonText: string;
+  buttonHref: string;
 }
+
+export const HERO_SCROLLER_ITEMS: ScrollerItem[] = [
+  {
+    id: 1,
+    image: HERO_IMG1,
+    category: "NEW ARRIVALS",
+    title: "Heat: Pedal to the metal - The ultimate racing board game!",
+    description:
+      "Experience the intensity of classic motorsport, where every turn, every decision, and every ounce of risk can make or break your victory.",
+    buttonText: "BUY NOW",
+    buttonHref: "/catalog?search=Heat",
+  },
+  {
+    id: 2,
+    image: HERO_IMG2,
+    category: "BESTSELLERS",
+    title: "CATAN – The legendary game of trading and expansion!",
+    description:
+      "Settle the island, trade resources, and outbuild your rivals in this classic strategy game of expansion and negotiation.",
+    buttonText: "SHOP NOW",
+    buttonHref: "/product/7",
+  },
+  {
+    id: 3,
+    image: HERO_IMG3,
+    category: "COMING SOON",
+    title: "Ticket to Ride – The classic game of railway adventure!",
+    description:
+      "Collect train cards, claim routes, and connect distant cities across the map. Build the most impressive rail network!",
+    buttonText: "BUY NOW",
+    buttonHref: "/product/8",
+  },
+];
 
 export default function HeroScroller() {
   const aspectRatio = 1320 / 700;
-
-  const scrollerData: ScrollerItem[] = [
-    {
-      id: 1,
-      image: HERO_IMG1,
-      category: "NEW ARRIVALS",
-      title: "Heat: Pedal to the metal - The ultimate racing board game!",
-      description:
-        "Experience the intensity of classic motorsport, where every turn, every decision, and every ounce of risk can make or break your victory.",
-      buttonText: "BUY NOW",
-    },
-    {
-      id: 2,
-      image: HERO_IMG2,
-      category: "BESTSELLERS",
-      title: "CATAN – The legendary game of trading and expansion!",
-      description:
-        "Settle the island, trade resources, and outbuild your rivals in this classic strategy game of expansion and negotiation.",
-      buttonText: "SHOP NOW",
-    },
-    {
-      id: 3,
-      image: HERO_IMG3,
-      category: "COMING SOON",
-      title: "Ticket to Ride – The classic game of railway adventure!",
-      description:
-        "Collect train cards, claim routes, and connect distant cities across the map. Build the most impressive rail network!",
-      buttonText: "BUY NOW",
-    },
-  ];
+  const scrollerData = HERO_SCROLLER_ITEMS;
   const [currentSection, setCurrentSection] = useState(0);
   const [isScrollable, setIsScrollable] = useState(true);
   const [isCardVisible, setIsCardVisible] = useState(true);
@@ -165,9 +171,12 @@ export default function HeroScroller() {
             {scrollerData[currentSection].title}
           </h4>
           <p className="text-base md:text-lg mb-4 line-clamp-3">{scrollerData[currentSection].description}</p>
-          <button className="bg-white text-slate-700 py-2.5 px-6 md:py-3 md:px-8 text-base font-medium hover:bg-[#FF5F00]/80 hover:text-white transition-all duration-150 w-auto">
+          <Link
+            href={scrollerData[currentSection].buttonHref}
+            className="inline-block w-auto bg-white px-6 py-2.5 text-base font-medium text-slate-700 transition-all duration-150 hover:bg-[#FF5F00]/80 hover:text-white md:px-8 md:py-3"
+          >
             {scrollerData[currentSection].buttonText}
-          </button>
+          </Link>
         </div>
 
         <button

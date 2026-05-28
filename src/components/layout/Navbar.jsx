@@ -1,5 +1,4 @@
 "use client";
-import LanguageSelector from "./LanguageSelector";
 import MobileMenuOverlay from "./MobileMenuOverlay";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -148,10 +147,6 @@ export default function Navbar({ isPagination = true, hideMobilePaginationChrome
                 <SearchOutlineIcon className="w-6 h-6" />
               </button>
             )}
-            {/* Language Selector */}
-            <div className="hidden sm:block">
-              <LanguageSelector />
-            </div>
             {/* Profile Logo */}
             <Link
               href={userData ? "/profile" : "/login"}
