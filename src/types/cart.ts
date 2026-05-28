@@ -1,5 +1,28 @@
 import { Product } from './product';
 
+export interface GuestCartCreateResponse {
+  token: string;
+}
+
+export interface GuestCartItemResponse {
+  id: number;
+  quantity: number;
+  product_details: Product;
+  attrs?: string;
+  metadata?: string;
+  [key: string]: unknown;
+}
+
+export function mapGuestCartItemToCartItem(
+  apiItem: GuestCartItemResponse,
+): CartItem {
+  return {
+    id: String(apiItem.id),
+    product: apiItem.product_details,
+    quantity: apiItem.quantity,
+  };
+}
+
 export interface CartItem {
   id: string;
   product: Product;

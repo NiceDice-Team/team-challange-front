@@ -1,8 +1,14 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import { Info } from "lucide-react";
-import React, { useState, useEffect } from "react";
-import PhoneInput from "react-phone-number-input";
+import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
 import "react-phone-number-input/style.css";
+
+const PhoneInput = dynamic(() => import("react-phone-number-input"), {
+  ssr: false,
+});
 
 interface PhoneNumberInputProps {
   error?: string[];
