@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useUserStore } from "@/store/user";
 import { LogoIcon, ProfileIcon, CartIcon, BurgerMenuIcon, CloseIcon, SearchOutlineIcon } from "@/svgs/icons";
-import { useState, useEffect, useRef } from "react";
+import { Suspense, useState, useEffect, useRef } from "react";
 import CartDropdown from "@/components/cart/CartDropdown";
 import { useCartSummary } from "@/hooks/useCartQuery";
 import { getTokens } from "@/lib/tokenManager";
@@ -17,7 +17,15 @@ import {
   navigationLinks,
 } from "./navigationLinks";
 
-export default function Navbar({ isPagination = true, hideMobilePaginationChrome = false, enableMobileInlineSearch = true }) {
+export default function Navbar(props) {
+  return (
+    <Suspense fallback={null}>
+      <NavbarContent {...props} />
+    </Suspense>
+  );
+}
+
+function NavbarContent({ isPagination = true, hideMobilePaginationChrome = false, enableMobileInlineSearch = true }) {
   const { userData } = useUserStore((state) => state);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
