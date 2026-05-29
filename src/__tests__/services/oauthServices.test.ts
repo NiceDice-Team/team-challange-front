@@ -47,12 +47,14 @@ describe('OAuth Services', () => {
         expect.objectContaining({
           method: 'POST',
           headers: {
+            'Cache-Control': 'no-store, no-cache, must-revalidate',
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             provider: 'google',
             access_token: 'google_oauth_token_123',
           }),
+          cache: 'no-store',
         })
       );
       

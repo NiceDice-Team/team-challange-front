@@ -216,8 +216,10 @@ describe("Login Page", () => {
           expect.objectContaining({
             method: "POST",
             headers: {
+              "Cache-Control": "no-store, no-cache, must-revalidate",
               "Content-Type": "application/json",
             },
+            cache: "no-store",
           })
         );
       });
