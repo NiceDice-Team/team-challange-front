@@ -121,10 +121,6 @@ export function useAddToCart() {
         duration: 3000,
       });
     },
-
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
-    },
   });
 }
 
@@ -154,13 +150,31 @@ export function useUpdateCartQuantity() {
 
       queryClient.setQueryData<CartItem[]>(CART_QUERY_KEY, (oldCart = []) => {
         return quantity <= 0
-          ? oldCart.filter((item) => item.id !== cartItemId)
+          ? oldCart.filter((item) => !idsMatch(item.id, cartItemId))
           : oldCart.map((item) =>
-              item.id === cartItemId ? { ...item, quantity } : item,
+              idsMatch(item.id, cartItemId) ? { ...item, quantity } : item,
             );
       });
 
       return { previousCart };
+    },
+
+    onSuccess: (data, { cartItemId, quantity }) => {
+      const updatedItem = mapAuthCartItemResponse(data);
+
+      queryClient.setQueryData<CartItem[]>(CART_QUERY_KEY, (oldCart = []) => {
+        if (updatedItem) {
+          return oldCart.map((item) =>
+            idsMatch(item.id, cartItemId) || idsMatch(item.id, updatedItem.id)
+              ? updatedItem
+              : item,
+          );
+        }
+
+        return oldCart.map((item) =>
+          idsMatch(item.id, cartItemId) ? { ...item, quantity } : item,
+        );
+      });
     },
 
     onError: (error, _variables, context) => {
@@ -179,10 +193,6 @@ export function useUpdateCartQuantity() {
       });
       console.error("Failed to update cart quantity:", error);
     },
-
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
-    },
   });
 }
 
@@ -197,7 +207,7 @@ export function useRemoveFromCart() {
       const previousCart = queryClient.getQueryData<CartItem[]>(CART_QUERY_KEY);
 
       queryClient.setQueryData<CartItem[]>(CART_QUERY_KEY, (oldCart = []) =>
-        oldCart.filter((item) => item.id !== cartItemId),
+        oldCart.filter((item) => !idsMatch(item.id, cartItemId)),
       );
 
       return { previousCart };
@@ -208,10 +218,6 @@ export function useRemoveFromCart() {
         queryClient.setQueryData(CART_QUERY_KEY, context.previousCart);
       }
       console.error("Failed to remove item:", error);
-    },
-
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
     },
   });
 }
