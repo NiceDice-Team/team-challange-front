@@ -16,7 +16,7 @@ import {
   PlusIcon,
 } from "@/svgs/icons";
 import StarsLine from "../layout/StarsLine";
-import { calculateAverageRating, normalizeReviewRating } from "@/lib/reviewMetrics";
+import { calculateAverageRating, normalizeReviewRating, roundRatingToNearestHalf } from "@/lib/reviewMetrics";
 
 // Component props
 interface ProductPageProps {
@@ -191,7 +191,7 @@ export default function ProductPage({ params }: ProductPageProps) {
     fetchedReviewCount > 0
       ? calculateAverageRating(reviewsData?.results ?? [])
       : normalizeReviewRating(product.stars ?? 0);
-  const rating = Math.round(averageRating);
+  const rating = roundRatingToNearestHalf(averageRating);
   const currentImage = product?.images?.[selectedImageIndex];
   const currentImageSrc = currentImage?.url_lg || currentImage?.url_md || currentImage?.url_sm;
   const imageCount = product?.images?.length || 0;

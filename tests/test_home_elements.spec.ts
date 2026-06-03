@@ -20,7 +20,7 @@ test('test critical home elements', async ({ page }) => {
   await expect(page.getByRole('link', { name: /^reviews$/i }).first()).toBeVisible();
   await expect(page.getByRole('link', { name: /^about$/i }).first()).toBeVisible();
   await expect(page.getByRole('button', { name: 'Next slide' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'BUY NOW' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'BUY NOW' })).toHaveAttribute('href', '/catalog?search=Heat');
   await expect(page.getByRole('link', { name: 'Profile' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Cart' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'BESTSELLERS Shop now →' })).toBeVisible();

@@ -68,6 +68,8 @@ describe("Navbar mobile menu", () => {
 
     render(<Navbar isPagination={false} />);
 
+    expect(screen.queryByTestId("language-selector")).not.toBeInTheDocument();
+
     await user.click(screen.getByRole("button", { name: /open mobile menu/i }));
 
     const dialog = screen.getByRole("dialog", { name: /mobile menu/i });
