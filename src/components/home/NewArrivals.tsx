@@ -10,9 +10,9 @@ interface CaptionProps {
 }
 
 const HOME_CATALOG_LINKS = {
-  newArrivals: "/catalog?sort=newest",
-  bestsellers: "/catalog?sort=bestsellers",
-  sale: "/catalog",
+  newArrivals: "/catalog?categories=1",
+  bestsellers: "/catalog?categories=2",
+  sale: "/catalog?categories=4",
   boardGames: "/catalog",
 };
 
@@ -32,9 +32,17 @@ export default function NewArrivals() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 md:gap-6 max-w-[1320px] mx-auto">
         {/* Left Card - NEW ARRIVALS */}
         <div className="w-full">
-          <Link href={HOME_CATALOG_LINKS.newArrivals} className="flex flex-col h-64 sm:h-80 md:h-[400px] lg:h-[500px] xl:h-[648px]">
+          <Link
+            href={HOME_CATALOG_LINKS.newArrivals}
+            className="flex flex-col h-64 sm:h-80 md:h-[400px] lg:h-[500px] xl:h-[648px]"
+          >
             <div className="relative flex-grow overflow-hidden">
-              <Image src={NEW_GAME2_IMG} alt="New Arrivals" fill className="object-cover object-left" />
+              <Image
+                src={NEW_GAME2_IMG}
+                alt="New Arrivals"
+                fill
+                className="object-cover object-left"
+              />
               <span className="absolute top-4 left-4 sm:top-5 sm:left-5 md:top-6 md:left-6 bg-white px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base md:text-lg lg:text-xl font-medium text-[#494791]">
                 NEW ARRIVALS
               </span>
@@ -48,26 +56,50 @@ export default function NewArrivals() {
           {/* Top Row on Desktop / Stacked on Mobile */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 md:gap-6">
             {/* BESTSELLERS Card */}
-            <Link href={HOME_CATALOG_LINKS.bestsellers} className="flex flex-col h-48 sm:h-36 md:h-40 lg:h-48 xl:h-[312px]">
+            <Link
+              href={HOME_CATALOG_LINKS.bestsellers}
+              className="flex flex-col h-48 sm:h-36 md:h-40 lg:h-48 xl:h-[312px]"
+            >
               <div className="relative flex-grow overflow-hidden">
-                <Image src={NEW_GAME1_IMG} alt="Bestsellers" fill className="object-cover" />
+                <Image
+                  src={NEW_GAME1_IMG}
+                  alt="Bestsellers"
+                  fill
+                  className="object-cover"
+                />
               </div>
               <Caption label="BESTSELLERS" />
             </Link>
 
             {/* SALE Card */}
-            <Link href={HOME_CATALOG_LINKS.sale} className="flex flex-col h-48 sm:h-36 md:h-40 lg:h-48 xl:h-[312px]">
+            <Link
+              href={HOME_CATALOG_LINKS.sale}
+              className="flex flex-col h-48 sm:h-36 md:h-40 lg:h-48 xl:h-[312px]"
+            >
               <div className="relative flex-grow overflow-hidden">
-                <Image src={NEW_GAME3_IMG} alt="Sale" fill className="object-cover" />
+                <Image
+                  src={NEW_GAME3_IMG}
+                  alt="Sale"
+                  fill
+                  className="object-cover"
+                />
               </div>
               <Caption label="SALE" />
             </Link>
           </div>
 
           {/* BOARD GAMES Card */}
-          <Link href={HOME_CATALOG_LINKS.boardGames} className="flex w-full flex-col h-48 sm:h-40 md:h-44 lg:h-52 xl:h-[312px]">
+          <Link
+            href={HOME_CATALOG_LINKS.boardGames}
+            className="flex w-full flex-col h-48 sm:h-40 md:h-44 lg:h-52 xl:h-[312px]"
+          >
             <div className="relative flex-grow overflow-hidden">
-              <Image src={NEW_GAME4_IMG} alt="Board Games" fill className="object-cover" />
+              <Image
+                src={NEW_GAME4_IMG}
+                alt="Board Games"
+                fill
+                className="object-cover"
+              />
             </div>
             <Caption label="BOARD GAMES" />
           </Link>
