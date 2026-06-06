@@ -7,7 +7,7 @@ import Link from "next/link";
 import { CustomInput } from "../shared/CustomInput";
 import { CustomButton } from "../shared/CustomButton";
 import { useState } from "react";
-import { loginSchema, LoginFormState } from "@/lib/definitions";
+import { LoginFormState, requiredPasswordSchema } from "@/lib/definitions";
 import { API_BASE_URL } from "@/config/api";
 import { mergeNoCacheHeaders } from "@/lib/noCacheHeaders";
 import { setTokens } from "@/lib/tokenManager";
@@ -15,11 +15,7 @@ import { useRouter } from "next/navigation";
 
 const checkoutSchema = z.object({
   email: z.string().nonempty("Email is required").email("Invalid email"),
-  password: z
-    .string()
-    .nonempty("Password is required")
-    .min(8, "Password must be at least 8 characters")
-    .max(128, { message: "Password must be less than 128 characters" }),
+  password: requiredPasswordSchema,
 });
 type CheckoutFormState = z.infer<typeof checkoutSchema>;
 
@@ -51,7 +47,7 @@ const CheckoutModal = ({
     setIsLoading(true);
     setServerErrors({});
 
-    const validatedFields = loginSchema.safeParse({
+    const validatedFields = checkoutSchema.safeParse({
       email: data.email,
       password: data.password,
     });

@@ -133,6 +133,9 @@ export default function HeroScroller() {
     }
   }
 
+  const isFirstSlide = currentSection === 0;
+  const isLastSlide = currentSection === scrollerData.length - 1;
+
   function handleRightClick() {
     if (currentSection < scrollerData.length - 1) {
       // Hide the card before scrolling
@@ -180,20 +183,26 @@ export default function HeroScroller() {
         </div>
 
         <button
+          type="button"
           onClick={handleLeftClick}
-          className={`absolute left-2 sm:left-3 md:left-4 top-1/2 z-10 -translate-y-1/2 rounded-full shadow-lg transition-all duration-200 p-1.5 sm:p-2 ${
-            currentSection === 0 ? "bg-[#4a479189]" : "bg-[#494791]"
+          disabled={isFirstSlide}
+          className={`absolute left-2 sm:left-3 md:left-4 top-1/2 z-10 -translate-y-1/2 rounded-full shadow-lg transition-all duration-200 p-1.5 sm:p-2 disabled:cursor-not-allowed ${
+            isFirstSlide ? "bg-[#4a479189]" : "bg-[#494791] hover:bg-[#5a57a8]"
           }`}
           aria-label="Previous slide"
+          aria-disabled={isFirstSlide}
         >
           <ChevronLeftIcon className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-white" />
         </button>
         <button
+          type="button"
           onClick={handleRightClick}
-          className={`absolute right-2 sm:right-3 md:right-4 top-1/2 z-10 -translate-y-1/2 rounded-full shadow-lg transition-all duration-200 p-1.5 sm:p-2 ${
-            currentSection === scrollerData.length - 1 ? "bg-[#4a479189]" : "bg-[#494791]"
+          disabled={isLastSlide}
+          className={`absolute right-2 sm:right-3 md:right-4 top-1/2 z-10 -translate-y-1/2 rounded-full shadow-lg transition-all duration-200 p-1.5 sm:p-2 disabled:cursor-not-allowed ${
+            isLastSlide ? "bg-[#4a479189]" : "bg-[#494791] hover:bg-[#5a57a8]"
           }`}
           aria-label="Next slide"
+          aria-disabled={isLastSlide}
         >
           <ChevronRightIcon className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-white" />
         </button>

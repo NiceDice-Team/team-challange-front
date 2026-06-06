@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { PasswordInput } from "../shared/PasswordInput";
 import { fetchAPI } from "@/services/api";
 import { showCustomToast } from "../shared/Toast";
+import { requiredPasswordSchema } from "@/lib/definitions";
 
 const changePasswordSchema = z.object({
   currentPassword: z
@@ -13,14 +14,7 @@ const changePasswordSchema = z.object({
     .nonempty("Password is required")
     .min(8, "Password must be at least 8 characters")
     .max(128, { message: "Password must be less than 128 characters" }),
-  newPassword: z
-    .string()
-    .nonempty("Password is required")
-    .min(8, "Password must be at least 8 characters")
-    .max(128, { message: "Password must be less than 128 characters" })
-    .regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/, {
-      message: "Password must сontain at least one letter and one number.",
-    }),
+  newPassword: requiredPasswordSchema,
   confirmNewPassword: z
     .string()
     .nonempty("Confirm password is required")

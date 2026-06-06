@@ -1,21 +1,22 @@
-'use client';
+"use client";
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getCartProductQuantity,
   idsMatch,
   parseStockQuantity,
-} from '@/lib/cartStock';
-import { cartServices } from '@/services/cartServices';
-import { showCustomToast } from '@/components/shared/Toast';
-import { queryKeys } from '@/lib/queryKeys';
-import type {
-  CartItem,
-  AddToCartVariables,
-  UpdateCartQuantityVariables,
-  CartMutationContext,
-  CartSummary,
-} from '@/types/cart';
+} from "@/lib/cartStock";
+import { cartServices } from "@/services/cartServices";
+import { showCustomToast } from "@/components/shared/Toast";
+import { queryKeys } from "@/lib/queryKeys";
+import {
+  mapAuthCartItemResponse,
+  type AddToCartVariables,
+  type CartItem,
+  type CartMutationContext,
+  type CartSummary,
+  type UpdateCartQuantityVariables,
+} from "@/types/cart";
 
 const CART_QUERY_KEY = queryKeys.cart;
 
@@ -34,7 +35,11 @@ export function useAddToCart() {
     mutationFn: ({ productId, quantity = 1 }: AddToCartVariables) =>
       cartServices.addToCart(productId, quantity),
 
-    onMutate: async ({ productId, quantity = 1, productData }: AddToCartVariables) => {
+    onMutate: async ({
+      productId,
+      quantity = 1,
+      productData,
+    }: AddToCartVariables) => {
       await queryClient.cancelQueries({ queryKey: CART_QUERY_KEY });
       const previousCart = queryClient.getQueryData<CartItem[]>(CART_QUERY_KEY);
       const availableStock = parseStockQuantity(productData?.stock);
@@ -47,7 +52,7 @@ export function useAddToCart() {
 
       queryClient.setQueryData<CartItem[]>(CART_QUERY_KEY, (oldCart = []) => {
         const existingItemIndex = oldCart.findIndex(
-          (item) => item.product?.id === productId
+          (item) => item.product?.id === productId,
         );
 
         if (existingItemIndex >= 0) {
@@ -82,17 +87,37 @@ export function useAddToCart() {
       }
 
       showCustomToast({
-        type: 'error',
-        title: _variables.productData?.name || 'Unable to add to cart',
+        type: "error",
+        title: _variables.productData?.name || "Unable to add to cart",
         description: error.message,
       });
-      console.error('Failed to add to cart:', error);
+      console.error("Failed to add to cart:", error);
     },
 
-    onSuccess: (_data, variables) => {
+    onSuccess: (data, variables) => {
+      const addedItem = mapAuthCartItemResponse(data);
+
+      if (addedItem) {
+        queryClient.setQueryData<CartItem[]>(CART_QUERY_KEY, (oldCart = []) => {
+          const existingIndex = oldCart.findIndex(
+            (item) =>
+              idsMatch(item.id, addedItem.id) ||
+              item.product?.id === addedItem.product?.id,
+          );
+
+          if (existingIndex >= 0) {
+            const updatedCart = [...oldCart];
+            updatedCart[existingIndex] = addedItem;
+            return updatedCart;
+          }
+
+          return [...oldCart, addedItem];
+        });
+      }
+
       showCustomToast({
-        title: variables.productData?.name || 'Product',
-        description: 'Added to cart',
+        title: variables.productData?.name || "Product",
+        description: "Added to cart",
         duration: 3000,
       });
     },
@@ -106,14 +131,21 @@ export function useAddToCart() {
 export function useUpdateCartQuantity() {
   const queryClient = useQueryClient();
 
-  return useMutation<unknown, Error, UpdateCartQuantityVariables, CartMutationContext>({
+  return useMutation<
+    unknown,
+    Error,
+    UpdateCartQuantityVariables,
+    CartMutationContext
+  >({
     mutationFn: ({ cartItemId, quantity }: UpdateCartQuantityVariables) =>
       cartServices.updateCartItem(cartItemId, quantity),
 
     onMutate: async ({ cartItemId, quantity }: UpdateCartQuantityVariables) => {
       await queryClient.cancelQueries({ queryKey: CART_QUERY_KEY });
       const previousCart = queryClient.getQueryData<CartItem[]>(CART_QUERY_KEY);
-      const currentItem = previousCart?.find((item) => idsMatch(item.id, cartItemId));
+      const currentItem = previousCart?.find((item) =>
+        idsMatch(item.id, cartItemId),
+      );
       const availableStock = parseStockQuantity(currentItem?.product?.stock);
 
       if (availableStock !== null && quantity > availableStock) {
@@ -124,7 +156,7 @@ export function useUpdateCartQuantity() {
         return quantity <= 0
           ? oldCart.filter((item) => item.id !== cartItemId)
           : oldCart.map((item) =>
-              item.id === cartItemId ? { ...item, quantity } : item
+              item.id === cartItemId ? { ...item, quantity } : item,
             );
       });
 
@@ -137,15 +169,15 @@ export function useUpdateCartQuantity() {
       }
 
       const affectedItem = context?.previousCart?.find((item) =>
-        idsMatch(item.id, _variables.cartItemId)
+        idsMatch(item.id, _variables.cartItemId),
       );
 
       showCustomToast({
-        type: 'error',
-        title: affectedItem?.product?.name || 'Unable to update cart',
+        type: "error",
+        title: affectedItem?.product?.name || "Unable to update cart",
         description: error.message,
       });
-      console.error('Failed to update cart quantity:', error);
+      console.error("Failed to update cart quantity:", error);
     },
 
     onSettled: () => {
@@ -165,7 +197,7 @@ export function useRemoveFromCart() {
       const previousCart = queryClient.getQueryData<CartItem[]>(CART_QUERY_KEY);
 
       queryClient.setQueryData<CartItem[]>(CART_QUERY_KEY, (oldCart = []) =>
-        oldCart.filter((item) => item.id !== cartItemId)
+        oldCart.filter((item) => item.id !== cartItemId),
       );
 
       return { previousCart };
@@ -175,7 +207,7 @@ export function useRemoveFromCart() {
       if (context?.previousCart) {
         queryClient.setQueryData(CART_QUERY_KEY, context.previousCart);
       }
-      console.error('Failed to remove item:', error);
+      console.error("Failed to remove item:", error);
     },
 
     onSettled: () => {
@@ -190,7 +222,7 @@ export function useCartSummary(): CartSummary {
   const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = cartItems.reduce((sum, item) => {
     const price =
-      typeof item.product?.price === 'string'
+      typeof item.product?.price === "string"
         ? parseFloat(item.product.price)
         : (item.product?.price ?? 0);
     return sum + price * item.quantity;

@@ -69,7 +69,11 @@ function LoginPageContent() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setValues((prev) => ({ ...prev, [name]: value }));
+    const nextValues = {
+      email: name === "email" ? value.trim() : values.email.trim(),
+      password: name === "password" ? value.trim() : values.password.trim(),
+    };
+    setValues(nextValues);
 
     if (serverErrors[name as keyof typeof serverErrors]) {
       setServerErrors((prev) => {
@@ -79,7 +83,7 @@ function LoginPageContent() {
       });
     }
 
-    const result = loginFrontSchema.safeParse({ ...values, [name]: value });
+    const result = loginFrontSchema.safeParse(nextValues);
     if (!result.success) {
       const fieldError = result.error.flatten().fieldErrors[name]?.[0];
       setErrors((prev) => ({ ...prev, [name]: fieldError }));
@@ -95,8 +99,8 @@ function LoginPageContent() {
     setErrors({});
 
     const validatedFields = loginSchema.safeParse({
-      email: values.email,
-      password: values.password,
+      email: values.email.trim(),
+      password: values.password.trim(),
     });
 
     if (!validatedFields.success) {

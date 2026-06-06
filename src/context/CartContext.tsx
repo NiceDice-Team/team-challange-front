@@ -14,7 +14,9 @@ interface CartProviderProps {
 /**
  * Cart provider component that manages cart state and operations
  */
-export function CartProvider({ children }: CartProviderProps): React.ReactElement {
+export function CartProvider({
+  children,
+}: CartProviderProps): React.ReactElement {
   const cartMethods = useOptimisticCart();
 
   // Memoize the context value to prevent unnecessary re-renders
@@ -28,7 +30,7 @@ export function CartProvider({ children }: CartProviderProps): React.ReactElemen
       cartMethods.addToCartOptimistic,
       cartMethods.updateQuantityOptimistic,
       cartMethods.removeItemOptimistic,
-    ]
+    ],
   );
 
   return (
@@ -52,13 +54,16 @@ export function useCart(): CartContextValue {
  * Hook specifically for add-to-cart functionality in product components
  */
 export function useAddToCart(): {
-  addToCart: (product: Product, quantity?: number) => Promise<AddToCartResponse>;
+  addToCart: (
+    product: Product,
+    quantity?: number,
+  ) => Promise<AddToCartResponse>;
 } {
   const { addToCartOptimistic } = useCart();
 
   const addToCart = async (
     product: Product,
-    quantity: number = 1
+    quantity: number = 1,
   ): Promise<AddToCartResponse> => {
     try {
       await addToCartOptimistic(product.id, quantity, product);

@@ -23,6 +23,60 @@ export function mapGuestCartItemToCartItem(
   };
 }
 
+export type AuthCartItemResponse = GuestCartItemResponse & {
+  product?: Product;
+};
+
+export function parseCartListResponse(response: unknown): AuthCartItemResponse[] {
+  if (Array.isArray(response)) {
+    return response as AuthCartItemResponse[];
+  }
+
+  if (response && typeof response === "object") {
+    const record = response as Record<string, unknown>;
+
+    if (Array.isArray(record.results)) {
+      return record.results as AuthCartItemResponse[];
+    }
+
+    if (Array.isArray(record.items)) {
+      return record.items as AuthCartItemResponse[];
+    }
+  }
+
+  return [];
+}
+
+export function mapAuthCartItemToCartItem(
+  apiItem: AuthCartItemResponse,
+): CartItem | null {
+  const product = apiItem.product ?? apiItem.product_details;
+
+  if (!product || typeof product !== "object") {
+    return null;
+  }
+
+  return {
+    id: String(apiItem.id),
+    product,
+    quantity: apiItem.quantity,
+  };
+}
+
+export function parseAuthCartItems(response: unknown): CartItem[] {
+  return parseCartListResponse(response)
+    .map(mapAuthCartItemToCartItem)
+    .filter((item): item is CartItem => item !== null);
+}
+
+export function mapAuthCartItemResponse(response: unknown): CartItem | null {
+  if (!response || typeof response !== "object") {
+    return null;
+  }
+
+  return mapAuthCartItemToCartItem(response as AuthCartItemResponse);
+}
+
 export interface CartItem {
   id: string;
   product: Product;

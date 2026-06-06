@@ -17,6 +17,10 @@ import {
 } from "@/svgs/icons";
 import StarsLine from "../layout/StarsLine";
 import { calculateAverageRating, normalizeReviewRating, roundRatingToNearestHalf } from "@/lib/reviewMetrics";
+import { useViewportIsDesktop } from "@/hooks/useViewport";
+
+const PRODUCT_MAIN_IMAGE_SIZES = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 600px";
+const PRODUCT_THUMB_IMAGE_SIZES = "(max-width: 640px) 80px, 104px";
 
 // Component props
 interface ProductPageProps {
@@ -37,6 +41,7 @@ export default function ProductPage({ params }: ProductPageProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
   const addToCartMutation = useAddToCart();
+  const isDesktop = useViewportIsDesktop();
 
   const productId = params?.id;
   const isInvalidId = productId === "[object Object]";
@@ -197,6 +202,9 @@ export default function ProductPage({ params }: ProductPageProps) {
   const imageCount = product?.images?.length || 0;
   const hasMultipleImages = imageCount > 1;
   const shortDescription = product.description || "Product description is unavailable";
+  const showMobileHeroImage = isDesktop !== true;
+  const showDesktopHeroImage = isDesktop === true;
+  const isPlaceholdImage = currentImageSrc?.includes("placehold.co") ?? false;
 
   const handleQuantityChange = (nextQuantity: number) => {
     if (!isInStock) {
@@ -242,20 +250,21 @@ export default function ProductPage({ params }: ProductPageProps) {
             </button>
 
             <div className="relative h-[275px] w-full">
-              {currentImageSrc ? (
+              {currentImageSrc && showMobileHeroImage ? (
                 <Image
                   src={currentImageSrc}
                   alt={currentImage?.alt || product?.name || "Product image"}
                   fill
+                  sizes={PRODUCT_MAIN_IMAGE_SIZES}
                   className="object-contain"
-                  priority
-                  unoptimized={currentImageSrc.includes("placehold.co")}
+                  priority={isDesktop === false}
+                  unoptimized={isPlaceholdImage}
                 />
-              ) : (
+              ) : !currentImageSrc ? (
                 <div className="flex h-full w-full items-center justify-center bg-gray-100 text-sm text-gray-400">
                   No image
                 </div>
-              )}
+              ) : null}
             </div>
 
             {hasMultipleImages && (
@@ -391,20 +400,21 @@ export default function ProductPage({ params }: ProductPageProps) {
               </button>
 
               <div className="relative aspect-square flex-1">
-                {currentImageSrc ? (
+                {currentImageSrc && showDesktopHeroImage ? (
                   <Image
                     src={currentImageSrc}
                     alt={currentImage?.alt || product?.name || "Product image"}
                     fill
+                    sizes={PRODUCT_MAIN_IMAGE_SIZES}
                     className="object-contain"
                     priority
-                    unoptimized={currentImageSrc.includes("placehold.co")}
+                    unoptimized={isPlaceholdImage}
                   />
-                ) : (
+                ) : !currentImageSrc ? (
                   <div className="flex h-full w-full items-center justify-center bg-gray-100 text-sm text-gray-400">
                     No image
                   </div>
-                )}
+                ) : null}
               </div>
 
               <button
@@ -434,6 +444,8 @@ export default function ProductPage({ params }: ProductPageProps) {
                     src={image.url_sm}
                     alt={image.alt || `Product image ${index + 1}`}
                     fill
+                    sizes={PRODUCT_THUMB_IMAGE_SIZES}
+                    loading="lazy"
                     className="object-contain p-1"
                     unoptimized={image.url_sm?.includes("placehold.co")}
                   />

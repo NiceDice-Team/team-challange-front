@@ -110,7 +110,7 @@ describe('cartServices', () => {
   });
 
   describe('getCartItems', () => {
-    test('returns authenticated user cart items', async () => {
+    test('returns authenticated user cart items from results', async () => {
       const mockCartItems = [
         { id: 1, product: { id: 1, name: 'Product 1' }, quantity: 2 },
         { id: 2, product: { id: 2, name: 'Product 2' }, quantity: 1 },
@@ -121,13 +121,49 @@ describe('cartServices', () => {
 
       const result = await cartServices.getCartItems();
 
-      expect(fetchAPI).toHaveBeenCalledWith('carts/', {
+      expect(fetchAPI).toHaveBeenCalledWith('cart/', {
         method: 'GET',
         headers: {
           Authorization: 'Bearer mock-token',
         },
       });
-      expect(result).toEqual(mockCartItems);
+      expect(result).toEqual([
+        { id: '1', product: { id: 1, name: 'Product 1' }, quantity: 2 },
+        { id: '2', product: { id: 2, name: 'Product 2' }, quantity: 1 },
+      ]);
+    });
+
+    test('returns authenticated user cart items from items with product_details', async () => {
+      isAuthenticated.mockReturnValue(true);
+      fetchAPI.mockResolvedValue({
+        id: 99,
+        items: [
+          {
+            id: 10,
+            quantity: 2,
+            product_details: { id: 1, name: 'Product 1', price: 10.99, stock: 5 },
+          },
+        ],
+      });
+
+      const result = await cartServices.getCartItems();
+
+      expect(result).toEqual([
+        {
+          id: '10',
+          quantity: 2,
+          product: { id: 1, name: 'Product 1', price: 10.99, stock: 5 },
+        },
+      ]);
+    });
+
+    test('returns empty cart when authenticated response has no item list', async () => {
+      isAuthenticated.mockReturnValue(true);
+      fetchAPI.mockResolvedValue({ id: 99 });
+
+      const result = await cartServices.getCartItems();
+
+      expect(result).toEqual([]);
     });
 
     test('returns guest cart items from API with X-Guest-Token', async () => {
@@ -200,13 +236,13 @@ describe('cartServices', () => {
 
       const result = await cartServices.addToCart(1, 2);
 
-      expect(fetchAPI).toHaveBeenCalledWith('carts/', {
+      expect(fetchAPI).toHaveBeenCalledWith('cart/item/', {
         method: 'POST',
         headers: {
           Authorization: 'Bearer mock-token',
         },
         body: {
-          product: 1,
+          product_id: 1,
           quantity: 2,
         },
       });
@@ -271,7 +307,7 @@ describe('cartServices', () => {
           return Promise.resolve({ id: 1, name: 'Product 1', stock: 3 });
         }
 
-        if (endpoint === 'carts/') {
+        if (endpoint === 'cart/') {
           return Promise.resolve({
             results: [
               {
@@ -293,7 +329,7 @@ describe('cartServices', () => {
       expect(
         fetchAPI.mock.calls.some(
           ([endpoint, options]) =>
-            endpoint === 'carts/' && options?.method === 'POST',
+            endpoint === 'cart/item/' && options?.method === 'POST',
         ),
       ).toBe(false);
     });
@@ -308,7 +344,7 @@ describe('cartServices', () => {
 
       const result = await cartServices.updateCartItem('1', 3);
 
-      expect(fetchAPI).toHaveBeenCalledWith('carts/1/', {
+      expect(fetchAPI).toHaveBeenCalledWith('cart/item/1/', {
         method: 'PATCH',
         headers: {
           Authorization: 'Bearer mock-token',
@@ -374,7 +410,7 @@ describe('cartServices', () => {
       expect(
         fetchAPI.mock.calls.some(
           ([endpoint, options]) =>
-            endpoint === 'carts/1/' && options?.method === 'PATCH',
+            endpoint === 'cart/item/1/' && options?.method === 'PATCH',
         ),
       ).toBe(false);
     });
@@ -387,7 +423,7 @@ describe('cartServices', () => {
 
       const result = await cartServices.removeFromCart('1');
 
-      expect(fetchAPI).toHaveBeenCalledWith('carts/1/', {
+      expect(fetchAPI).toHaveBeenCalledWith('cart/item/1/', {
         method: 'DELETE',
         headers: {
           Authorization: 'Bearer mock-token',
@@ -496,13 +532,13 @@ describe('cartServices', () => {
           Authorization: 'Bearer mock-token',
         },
       });
-      expect(fetchAPI).toHaveBeenCalledWith('carts/', {
+      expect(fetchAPI).toHaveBeenCalledWith('cart/item/', {
         method: 'POST',
         headers: {
           Authorization: 'Bearer mock-token',
         },
         body: {
-          product: 10,
+          product_id: 10,
           quantity: 2,
         },
       });
@@ -546,7 +582,7 @@ describe('cartServices', () => {
 
       await expect(mergeGuestCartIntoUserCart()).rejects.toThrow('No cart');
       expect(fetchAPI).not.toHaveBeenCalledWith(
-        'carts/',
+        'cart/item/',
         expect.objectContaining({ method: 'POST' }),
       );
     });

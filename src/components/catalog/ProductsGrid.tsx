@@ -95,6 +95,8 @@ export default function ProductsGrid({
       return productServices.getProductsWithFilters(1, totalCount, sortBy, nonPriceFilters, { signal });
     },
     staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    placeholderData: (previousData) => previousData,
   });
 
   const allProducts = Array.isArray(productsData?.results) ? productsData.results : [];
@@ -178,7 +180,9 @@ export default function ProductsGrid({
 
         {!showLoading &&
           currentProducts &&
-          currentProducts.map((product: Product) => <ProductCard product={product} key={product.id} />)}
+          currentProducts.map((product: Product, index: number) => (
+            <ProductCard product={product} cardIndex={index} key={product.id} />
+          ))}
       </div>
 
       {/* Pagination - Shows page numbers for visited pages */}

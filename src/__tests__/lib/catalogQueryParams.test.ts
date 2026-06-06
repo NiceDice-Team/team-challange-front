@@ -1,4 +1,6 @@
 import {
+  DEFAULT_CATALOG_PAGE_TITLE,
+  getCatalogPageTitle,
   parseCatalogFiltersFromSearchParams,
   parsePositiveIntList,
   parseSafeFilterTokenList,
@@ -7,6 +9,17 @@ import {
   serializeCatalogFiltersToQueryString,
   shouldNormalizeCatalogQuery,
 } from "@/lib/catalogQueryParams";
+import type { SelectedFilters } from "@/types/catalog";
+
+const emptyFilters: SelectedFilters = {
+  categories: [],
+  gameTypes: [],
+  audiences: [],
+  brands: [],
+  priceRange: { min: 0, max: Number.POSITIVE_INFINITY },
+  sortBy: "relevance",
+  search: "",
+};
 
 describe("catalogQueryParams", () => {
   describe("parsePositiveIntList", () => {
@@ -100,6 +113,42 @@ describe("catalogQueryParams", () => {
       );
 
       expect(query).toBe("categories=1%2C2&search=dice");
+    });
+  });
+
+  describe("getCatalogPageTitle", () => {
+    test("maps single category filters to navigation titles", () => {
+      expect(getCatalogPageTitle({ ...emptyFilters, categories: [1] })).toBe(
+        "New arrivals",
+      );
+      expect(getCatalogPageTitle({ ...emptyFilters, categories: [2] })).toBe(
+        "Bestsellers",
+      );
+      expect(getCatalogPageTitle({ ...emptyFilters, categories: [4] })).toBe(
+        "Sale",
+      );
+      expect(getCatalogPageTitle({ ...emptyFilters, categories: [5] })).toBe(
+        "Coming soon",
+      );
+    });
+
+    test("maps sort-only catalog routes to titles", () => {
+      expect(
+        getCatalogPageTitle({ ...emptyFilters, sortBy: "bestsellers" }),
+      ).toBe("Bestsellers");
+      expect(getCatalogPageTitle({ ...emptyFilters, sortBy: "newest" })).toBe(
+        "New arrivals",
+      );
+    });
+
+    test("falls back to the default board games title", () => {
+      expect(getCatalogPageTitle(emptyFilters)).toBe(DEFAULT_CATALOG_PAGE_TITLE);
+      expect(getCatalogPageTitle({ ...emptyFilters, categories: [1, 2] })).toBe(
+        DEFAULT_CATALOG_PAGE_TITLE,
+      );
+      expect(getCatalogPageTitle({ ...emptyFilters, categories: [3] })).toBe(
+        DEFAULT_CATALOG_PAGE_TITLE,
+      );
     });
   });
 

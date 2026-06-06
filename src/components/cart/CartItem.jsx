@@ -39,6 +39,7 @@ function CartItem({ item, index, updateQuantity, removeItem }) {
               alt={product.name || "Product"}
               width={192}
               height={192}
+              sizes="(max-width: 1024px) 96px, 192px"
               className="w-full h-full object-cover "
             />
           </Link>

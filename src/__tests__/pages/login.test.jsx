@@ -143,7 +143,7 @@ describe("Login Page", () => {
       await user.tab();
       
       await waitFor(() => {
-        expect(screen.getByText("Password must сontain at least one letter and one number.")).toBeInTheDocument();
+        expect(screen.getByText("Password must contain at least one letter and one number.")).toBeInTheDocument();
       });
     });
 

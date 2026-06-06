@@ -108,6 +108,7 @@ export default function CartProductCard({ product = {} }) {
             src={imageUrl}
             alt={product.name || 'Product'}
             fill
+            sizes="245px"
             className="object-cover"
           />
         </Link>
