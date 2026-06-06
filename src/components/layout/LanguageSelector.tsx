@@ -8,6 +8,8 @@ interface Language {
   id: number;
 }
 
+const SHOW_LANGUAGE_SELECTOR = false;
+
 export default function LanguageSelector() {
   const languages: Language[] = [
     { lan: "EN", id: 1 }, //🇬🇧
@@ -22,7 +24,7 @@ export default function LanguageSelector() {
   });
 
   return (
-    <div className="relative " ref={dropdownRef}>
+    <div className="relative " ref={dropdownRef} hidden={!SHOW_LANGUAGE_SELECTOR}>
       <button
         className="flex flex-row items-center gap-1 hover:bg-gray-200 hover:text-blue-700 rounded-md px-1 transition duration-200"
         onClick={() => {

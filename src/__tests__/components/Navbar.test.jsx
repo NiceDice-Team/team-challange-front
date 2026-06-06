@@ -78,7 +78,8 @@ describe("Navbar mobile menu", () => {
     expect(document.body.style.overflow).toBe("hidden");
     expect(within(dialog).getByRole("link", { name: /new arrival/i })).toBeInTheDocument();
     expect(within(dialog).getByRole("link", { name: /blog/i })).toBeInTheDocument();
-    expect(within(dialog).getByRole("button", { name: /select language/i })).toBeInTheDocument();
+    expect(within(dialog).queryByRole("button", { name: /select language/i })).not.toBeInTheDocument();
+    expect(within(dialog).getByRole("button", { name: /select language/i, hidden: true }).closest("[hidden]")).toBeInTheDocument();
     expect(within(dialog).queryByTestId("mobile-search-bar")).not.toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: /close mobile menu/i }));

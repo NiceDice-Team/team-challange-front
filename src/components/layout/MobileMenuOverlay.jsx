@@ -10,6 +10,8 @@ import {
   navigationLinks,
 } from "./navigationLinks";
 
+const SHOW_LANGUAGE_SELECTOR = false;
+
 const languages = [
   { id: "en", label: "English" },
   { id: "ua", label: "Ukrainian" },
@@ -127,7 +129,7 @@ export default function MobileMenuOverlay({ isOpen, topOffset = 0, onClose }) {
             </ul>
           </nav>
 
-          <div className="mt-auto flex flex-col gap-6">
+          <div className="mt-auto flex flex-col gap-6" hidden={!SHOW_LANGUAGE_SELECTOR}>
             <div className="h-px w-full bg-[var(--color-light-purple-2)]" />
 
             <div className="relative">
