@@ -31,10 +31,13 @@ const AccordionTrigger = React.forwardRef(({ className, children, ...props }, re
 ));
 AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName;
 
-const AccordionContent = React.forwardRef(({ className, children, ...props }, ref) => (
+const AccordionContent = React.forwardRef(({ className, rootClassName, children, ...props }, ref) => (
   <AccordionPrimitive.Content
     ref={ref}
-    className="overflow-hidden pt-2  transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+    className={cn(
+      "overflow-hidden pt-2 transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down",
+      rootClassName
+    )}
     {...props}
   >
     <div className={cn("pb-4 pt-0", className)}>{children}</div>

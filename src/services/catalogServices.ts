@@ -1,4 +1,6 @@
 import { fetchAPI } from "./api";
+import type { ApiRequestOptions } from "@/types/api";
+import type { Brand } from "@/types/catalog";
 
 export const catalogServices = {
   getCategories: async (params: Record<string, any> = {}, fetchOpts: any = {}) => {
@@ -37,6 +39,10 @@ export const catalogServices = {
     const endpoint = queryParams.toString() ? `brands/?${queryParams.toString()}` : 'brands/';
     const response: any = await fetchAPI(endpoint, fetchOpts);
     return response.results || response;
+  },
+
+  getBrandById: async (id: number | string, fetchOpts: ApiRequestOptions = {}) => {
+    return fetchAPI<Brand>(`brands/${id}/`, fetchOpts);
   },
 
   getProductCount: async (params: Record<string, any> = {}, fetchOpts: any = {}) => {
