@@ -36,5 +36,19 @@ export async function fetchAPI<T = any>(
     throw new Error(errorMessage);
   }
 
-  return response.json() as Promise<T>;
+  if (response.status === 204) {
+    return undefined as T;
+  }
+
+  if (typeof response.text !== "function") {
+    return response.json() as Promise<T>;
+  }
+
+  const text = await response.text();
+
+  if (!text) {
+    return undefined as T;
+  }
+
+  return JSON.parse(text) as T;
 }

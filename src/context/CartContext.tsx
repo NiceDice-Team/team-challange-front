@@ -30,6 +30,7 @@ export function CartProvider({
       cartMethods.addToCartOptimistic,
       cartMethods.updateQuantityOptimistic,
       cartMethods.removeItemOptimistic,
+      cartMethods.clearCartOptimistic,
     ],
   );
 

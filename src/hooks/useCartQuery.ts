@@ -1,6 +1,11 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  type QueryClient,
+} from "@tanstack/react-query";
 import {
   getCartProductQuantity,
   idsMatch,
@@ -10,7 +15,6 @@ import { cartServices } from "@/services/cartServices";
 import { showCustomToast } from "@/components/shared/Toast";
 import { queryKeys } from "@/lib/queryKeys";
 import {
-  mapAuthCartItemResponse,
   type AddToCartVariables,
   type CartItem,
   type CartMutationContext,
@@ -20,11 +24,17 @@ import {
 
 const CART_QUERY_KEY = queryKeys.cart;
 
+async function syncCartFromApi(queryClient: QueryClient): Promise<void> {
+  const cartItems = await cartServices.getCartItems();
+  queryClient.setQueryData<CartItem[]>(CART_QUERY_KEY, cartItems);
+}
+
 export function useCartQuery() {
   return useQuery<CartItem[]>({
     queryKey: CART_QUERY_KEY,
     queryFn: ({ signal }) => cartServices.getCartItems({ signal }),
     staleTime: 5 * 60 * 1000,
+    refetchOnMount: "always",
   });
 }
 
@@ -94,26 +104,8 @@ export function useAddToCart() {
       console.error("Failed to add to cart:", error);
     },
 
-    onSuccess: (data, variables) => {
-      const addedItem = mapAuthCartItemResponse(data);
-
-      if (addedItem) {
-        queryClient.setQueryData<CartItem[]>(CART_QUERY_KEY, (oldCart = []) => {
-          const existingIndex = oldCart.findIndex(
-            (item) =>
-              idsMatch(item.id, addedItem.id) ||
-              item.product?.id === addedItem.product?.id,
-          );
-
-          if (existingIndex >= 0) {
-            const updatedCart = [...oldCart];
-            updatedCart[existingIndex] = addedItem;
-            return updatedCart;
-          }
-
-          return [...oldCart, addedItem];
-        });
-      }
+    onSuccess: async (_data, variables) => {
+      await syncCartFromApi(queryClient);
 
       showCustomToast({
         title: variables.productData?.name || "Product",
@@ -159,22 +151,8 @@ export function useUpdateCartQuantity() {
       return { previousCart };
     },
 
-    onSuccess: (data, { cartItemId, quantity }) => {
-      const updatedItem = mapAuthCartItemResponse(data);
-
-      queryClient.setQueryData<CartItem[]>(CART_QUERY_KEY, (oldCart = []) => {
-        if (updatedItem) {
-          return oldCart.map((item) =>
-            idsMatch(item.id, cartItemId) || idsMatch(item.id, updatedItem.id)
-              ? updatedItem
-              : item,
-          );
-        }
-
-        return oldCart.map((item) =>
-          idsMatch(item.id, cartItemId) ? { ...item, quantity } : item,
-        );
-      });
+    onSuccess: async () => {
+      await syncCartFromApi(queryClient);
     },
 
     onError: (error, _variables, context) => {
@@ -211,6 +189,10 @@ export function useRemoveFromCart() {
       );
 
       return { previousCart };
+    },
+
+    onSuccess: async () => {
+      await syncCartFromApi(queryClient);
     },
 
     onError: (error, _variables, context) => {

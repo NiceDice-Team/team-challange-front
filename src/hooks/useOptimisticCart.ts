@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { cartServices } from '@/services/cartServices';
+import { CART_CLEARED_EVENT, cartServices } from '@/services/cartServices';
 
 // Custom hook for optimistic cart updates with debouncing
 export function useOptimisticCart() {
@@ -12,6 +12,15 @@ export function useOptimisticCart() {
   // Debounce timers for different operations
   const addToCartTimeouts = useRef(new Map());
   const updateQuantityTimeouts = useRef(new Map());
+
+  const clearCartOptimistic = useCallback(() => {
+    addToCartTimeouts.current.forEach(timeout => clearTimeout(timeout));
+    updateQuantityTimeouts.current.forEach(timeout => clearTimeout(timeout));
+    addToCartTimeouts.current.clear();
+    updateQuantityTimeouts.current.clear();
+    setCartItems([]);
+    setCartItemCount(0);
+  }, []);
   
   // Load initial cart data
   const loadCartItems = useCallback(async () => {
@@ -201,6 +210,14 @@ export function useOptimisticCart() {
     loadCartItems();
   }, [loadCartItems]);
 
+  useEffect(() => {
+    window.addEventListener(CART_CLEARED_EVENT, clearCartOptimistic);
+
+    return () => {
+      window.removeEventListener(CART_CLEARED_EVENT, clearCartOptimistic);
+    };
+  }, [clearCartOptimistic]);
+
   // Cleanup timeouts on unmount
   useEffect(() => {
     const addTimeouts = addToCartTimeouts.current;
@@ -222,6 +239,7 @@ export function useOptimisticCart() {
     loadCartItems,
     addToCartOptimistic,
     updateQuantityOptimistic,
-    removeItemOptimistic
+    removeItemOptimistic,
+    clearCartOptimistic
   };
 }

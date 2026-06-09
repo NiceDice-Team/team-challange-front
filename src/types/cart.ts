@@ -123,6 +123,7 @@ export interface CartContextValue {
     newQuantity: number
   ) => Promise<void>;
   removeItemOptimistic: (cartItemId: string) => Promise<void>;
+  clearCartOptimistic: () => void;
 }
 
 export interface AddToCartResponse {

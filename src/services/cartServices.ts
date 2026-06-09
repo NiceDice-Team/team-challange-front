@@ -11,6 +11,16 @@ import { fetchAPI, API_URL } from "./api";
 const AUTH_CART_ENDPOINT = API_ENDPOINTS.cart;
 const AUTH_CART_ITEM_ENDPOINT = API_ENDPOINTS.cartItem;
 
+export const CART_CLEARED_EVENT = "cart-cleared";
+
+function notifyCartCleared(): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  window.dispatchEvent(new Event(CART_CLEARED_EVENT));
+}
+
 import {
   getValidAccessToken,
   isAuthenticated as hasValidAuthSession,
@@ -659,6 +669,11 @@ export const cartServices = {
 
       throw error;
     }
+  },
+
+  clearLocalCartItems(): void {
+    useGuestCartStore.getState().setItems([]);
+    notifyCartCleared();
   },
 };
 

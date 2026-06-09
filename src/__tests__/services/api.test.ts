@@ -176,11 +176,11 @@ describe('API Service', () => {
       (fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         status: 204,
-        json: async () => null,
+        text: async () => '',
       });
 
       const result = await fetchAPI('/empty');
-      expect(result).toBeNull();
+      expect(result).toBeUndefined();
     });
 
     test('uses correct API_URL constant', () => {
