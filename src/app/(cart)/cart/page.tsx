@@ -235,8 +235,8 @@ export default function CartPage() {
 
         {/* Cart Sidebar */}
         {cartItems.length > 0 && (
-          <div className="w-full xl:w-96">
-            <div className="top-4 sticky flex flex-col gap-4 p-4 sm:p-6 border border-[#A4A3C8]">
+          <div className="w-full xl:w-96 min-w-0">
+            <div className="top-4 sticky flex flex-col gap-4 p-4 sm:p-6 border border-[#A4A3C8] min-w-0 overflow-hidden">
               {/* Free Shipping Progress */}
               <div className="text-center">
                 {remainingForFreeShipping > 0 ? (
@@ -268,17 +268,17 @@ export default function CartPage() {
               </div>
 
               {/* Coupon Code */}
-              <div className="flex sm:flex-row flex-col gap-2">
+              <div className="flex sm:flex-row flex-col gap-2 w-full min-w-0">
                 <input
                   type="text"
                   value={couponCode}
                   onChange={(e) => setCouponCode(e.target.value)}
                   placeholder="Coupon code"
-                  className="flex-1 px-4 py-3 border border-[#A4A3C8] focus:outline-none focus:ring-[#494791]/20 focus:ring-2 text-base"
+                  className="flex-1 min-w-0 px-4 py-3 border border-[#A4A3C8] focus:outline-none focus:ring-[#494791]/20 focus:ring-2 text-base"
                 />
                 <button
                   onClick={applyCoupon}
-                  className="hover:bg-[#494791] px-6 sm:px-10 py-3 border border-[#494791] text-[#494791] hover:text-white text-base transition-colors"
+                  className="shrink-0 hover:bg-[#494791] px-6 py-3 border border-[#494791] text-[#494791] hover:text-white text-base transition-colors"
                 >
                   Apply
                 </button>
