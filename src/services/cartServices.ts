@@ -11,8 +11,15 @@ import { fetchAPI, API_URL } from "./api";
 const AUTH_CART_ENDPOINT = API_ENDPOINTS.cart;
 const AUTH_CART_ITEM_ENDPOINT = API_ENDPOINTS.cartItem;
 
-const getAuthCartItemEndpoint = (cartItemId: string | number) =>
-  `${AUTH_CART_ITEM_ENDPOINT}${cartItemId}/`;
+export const CART_CLEARED_EVENT = "cart-cleared";
+
+function notifyCartCleared(): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  window.dispatchEvent(new Event(CART_CLEARED_EVENT));
+}
 
 import {
   getValidAccessToken,
@@ -48,6 +55,30 @@ function findGuestCartItemById(cartItemId: string): CartItem | undefined {
     .getState()
 
     .items.find((item) => idsMatch(item.id, cartItemId));
+}
+
+async function findCartItemById(
+  cartItemId: string,
+): Promise<CartItem | undefined> {
+  const guestItem = findGuestCartItemById(cartItemId);
+
+  if (guestItem) {
+    return guestItem;
+  }
+
+  const cartItems = await cartServices.getCartItems();
+
+  return cartItems.find((item) => idsMatch(item.id, cartItemId));
+}
+
+async function resolveProductIdForCartItem(cartItemId: string): Promise<number> {
+  const item = await findCartItemById(cartItemId);
+
+  if (!item?.product?.id) {
+    throw new Error(`Cart item ${cartItemId} not found`);
+  }
+
+  return Number(item.product.id);
 }
 
 function resolveGuestProductId(cartItemId: string): number {
@@ -88,8 +119,14 @@ function extractApiErrorMessage(errorData: unknown, fallback: string): string {
   return fallback;
 }
 
-function isInvalidGuestCartError(status: number, message: string): boolean {
-  return status === 404;
+function isInvalidGuestCartTokenError(status: number, endpoint: string): boolean {
+  if (status !== 404) {
+    return false;
+  }
+
+  const normalizedEndpoint = endpoint.replace(/^\/+|\/+$/g, "");
+
+  return normalizedEndpoint === "cart/guest";
 }
 
 async function recreateGuestCart(): Promise<void> {
@@ -154,7 +191,10 @@ async function fetchGuestCartItemsByToken(
       // non-JSON error body
     }
 
-    if (!isRetry && isInvalidGuestCartError(response.status, errorMessage)) {
+    if (
+      !isRetry &&
+      isInvalidGuestCartTokenError(response.status, "cart/guest/")
+    ) {
       await recreateGuestCart();
       const newToken = getGuestToken();
 
@@ -222,7 +262,7 @@ async function guestFetch<T = unknown>(
       // non-JSON error body
     }
 
-    if (!isRetry && isInvalidGuestCartError(response.status, errorMessage)) {
+    if (!isRetry && isInvalidGuestCartTokenError(response.status, endpoint)) {
       await recreateGuestCart();
       return guestFetch<T>(endpoint, options, true);
     }
@@ -344,13 +384,13 @@ async function validateCartItemStock(cartItemId: string, quantity: number) {
     return;
   }
 
-  const cartItems = await cartServices.getCartItems();
-
-  const currentCartItem = cartItems.find((item) =>
-    idsMatch(item.id, cartItemId),
-  );
+  const currentCartItem = await findCartItemById(cartItemId);
 
   if (!currentCartItem?.product?.id) {
+    return;
+  }
+
+  if (quantity <= currentCartItem.quantity) {
     return;
   }
 
@@ -503,6 +543,10 @@ export const cartServices = {
   },
 
   async updateCartItem(cartItemId: string, quantity: number) {
+    if (quantity <= 0) {
+      return cartServices.removeFromCart(cartItemId);
+    }
+
     if (!hasValidAuthSession()) {
       try {
         await validateCartItemStock(cartItemId, quantity);
@@ -543,8 +587,9 @@ export const cartServices = {
       await validateCartItemStock(cartItemId, quantity);
 
       const accessToken = await getValidAccessToken();
+      const productId = await resolveProductIdForCartItem(cartItemId);
 
-      const response = await fetchAPI(getAuthCartItemEndpoint(cartItemId), {
+      const response = await fetchAPI(AUTH_CART_ITEM_ENDPOINT, {
         method: "PATCH",
 
         headers: {
@@ -552,7 +597,8 @@ export const cartServices = {
         },
 
         body: {
-          quantity: quantity,
+          product_id: productId,
+          quantity,
         },
       });
 
@@ -587,12 +633,17 @@ export const cartServices = {
 
     try {
       const accessToken = await getValidAccessToken();
+      const productId = await resolveProductIdForCartItem(cartItemId);
 
-      await fetchAPI(getAuthCartItemEndpoint(cartItemId), {
+      await fetchAPI(AUTH_CART_ITEM_ENDPOINT, {
         method: "DELETE",
 
         headers: {
           Authorization: `Bearer ${accessToken}`,
+        },
+
+        body: {
+          product_id: productId,
         },
       });
 
@@ -618,6 +669,11 @@ export const cartServices = {
 
       throw error;
     }
+  },
+
+  clearLocalCartItems(): void {
+    useGuestCartStore.getState().setItems([]);
+    notifyCartCleared();
   },
 };
 

@@ -25,6 +25,7 @@ const trimValue = (value: unknown) =>
 
 function RegisterPageContent() {
   const [isChecked, setIsChecked] = useState(true);
+  const [isSubscribed, setIsSubscribed] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [serverErrors, setServerErrors] = useState<FormState["errors"]>({});
   const router = useRouter();
@@ -145,7 +146,11 @@ function RegisterPageContent() {
             const res = await response.json();
             const errors: FormState["errors"] = {};
 
-            if (res.errors && typeof res.errors === "object" && !Array.isArray(res.errors)) {
+            if (
+              res.errors &&
+              typeof res.errors === "object" &&
+              !Array.isArray(res.errors)
+            ) {
               if (res.errors.email) {
                 errors.email = Array.isArray(res.errors.email)
                   ? res.errors.email
@@ -167,7 +172,9 @@ function RegisterPageContent() {
                   : [res.errors.password];
               }
               if (res.errors.password_confirm) {
-                errors.confirmPassword = Array.isArray(res.errors.password_confirm)
+                errors.confirmPassword = Array.isArray(
+                  res.errors.password_confirm,
+                )
                   ? res.errors.password_confirm
                   : [res.errors.password_confirm];
               }
@@ -265,7 +272,7 @@ function RegisterPageContent() {
       }
 
       const responseData = await response.json();
-      
+
       router.push("/confirm-signup");
     } catch (error: any) {
       console.error("Error during signup:", error);
@@ -435,6 +442,8 @@ function RegisterPageContent() {
             <CustomCheckbox
               id="subscribe"
               label="Subscribe to news, updates & special offers"
+              checked={isSubscribed}
+              onCheckedChange={setIsSubscribed}
             />
           </div>
 

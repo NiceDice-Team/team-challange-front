@@ -176,9 +176,15 @@ export default function OrderReviewPage() {
         payment_method: selectedPaymentMethodId ?? 0,
       });
 
-      await cartServices.clearGuestCartItems();
+      try {
+        await cartServices.clearGuestCartItems();
+      } catch (error) {
+        console.error("Failed to clear guest cart after order:", error);
+      }
+
+      await queryClient.cancelQueries({ queryKey: queryKeys.cart });
+      cartServices.clearLocalCartItems();
       queryClient.setQueryData(queryKeys.cart, []);
-      queryClient.invalidateQueries({ queryKey: queryKeys.cart });
 
       showCustomToast({
         type: "success",

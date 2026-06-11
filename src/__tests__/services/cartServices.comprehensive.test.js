@@ -340,16 +340,30 @@ describe('cartServices', () => {
       const mockResponse = { id: 1, product: { id: 1 }, quantity: 3 };
 
       isAuthenticated.mockReturnValue(true);
-      fetchAPI.mockResolvedValue(mockResponse);
+      fetchAPI.mockImplementation((endpoint, options = {}) => {
+        if (endpoint === 'cart/' && options.method === 'GET') {
+          return Promise.resolve({
+            results: [
+              {
+                id: 1,
+                product: { id: 1, name: 'Product 1', stock: 10 },
+                quantity: 2,
+              },
+            ],
+          });
+        }
+
+        return Promise.resolve(mockResponse);
+      });
 
       const result = await cartServices.updateCartItem('1', 3);
 
-      expect(fetchAPI).toHaveBeenCalledWith('cart/item/1/', {
+      expect(fetchAPI).toHaveBeenCalledWith('cart/item/', {
         method: 'PATCH',
         headers: {
           Authorization: 'Bearer mock-token',
         },
-        body: { quantity: 3 },
+        body: { product_id: 1, quantity: 3 },
       });
       expect(result).toEqual(mockResponse);
     });
@@ -387,7 +401,15 @@ describe('cartServices', () => {
 
     test('handles update API error', async () => {
       isAuthenticated.mockReturnValue(true);
-      fetchAPI.mockRejectedValue(new Error('Update API Error'));
+      fetchAPI.mockImplementation((endpoint, options = {}) => {
+        if (endpoint === 'cart/' && options.method === 'GET') {
+          return Promise.resolve({
+            results: [{ id: 1, product: { id: 1, stock: 10 }, quantity: 2 }],
+          });
+        }
+
+        return Promise.reject(new Error('Update API Error'));
+      });
 
       await expect(cartServices.updateCartItem('1', 3)).rejects.toThrow(
         'Update API Error',
@@ -410,24 +432,54 @@ describe('cartServices', () => {
       expect(
         fetchAPI.mock.calls.some(
           ([endpoint, options]) =>
-            endpoint === 'cart/item/1/' && options?.method === 'PATCH',
+            endpoint === 'cart/item/' && options?.method === 'PATCH',
         ),
       ).toBe(false);
+    });
+
+    test('updates guest cart quantity without refetching cart when decreasing', async () => {
+      guestStoreState.token = 'guest-token';
+      guestStoreState.items = [
+        { id: '42', product: { id: 1, name: 'Product 1', stock: 10 }, quantity: 3 },
+      ];
+      const apiItem = mockGuestApiItem({ quantity: 2 });
+
+      global.fetch.mockImplementation((url, options = {}) => {
+        if (url.includes('cart/guest/item/') && options.method === 'PATCH') {
+          return Promise.resolve(mockFetchResponse({ body: apiItem }));
+        }
+
+        throw new Error(`Unexpected fetch call: ${url} ${options.method}`);
+      });
+
+      const result = await cartServices.updateCartItem('42', 2);
+
+      expect(global.fetch).toHaveBeenCalledTimes(1);
+      expect(result.quantity).toBe(2);
     });
   });
 
   describe('removeFromCart', () => {
     test('removes item from authenticated user cart', async () => {
       isAuthenticated.mockReturnValue(true);
-      fetchAPI.mockResolvedValue({});
+      fetchAPI.mockImplementation((endpoint, options = {}) => {
+        if (endpoint === 'cart/' && options.method === 'GET') {
+          return Promise.resolve({
+            results: [{ id: 1, product: { id: 1 }, quantity: 2 }],
+          });
+        }
+
+        return Promise.resolve({});
+      });
 
       const result = await cartServices.removeFromCart('1');
 
-      expect(fetchAPI).toHaveBeenCalledWith('cart/item/1/', {
+      expect(fetchAPI).toHaveBeenCalledWith('cart/item/', {
         method: 'DELETE',
         headers: {
           Authorization: 'Bearer mock-token',
         },
+        body: { product_id: 1 },
       });
       expect(result).toBe(true);
     });
@@ -459,7 +511,15 @@ describe('cartServices', () => {
 
     test('handles remove API error', async () => {
       isAuthenticated.mockReturnValue(true);
-      fetchAPI.mockRejectedValue(new Error('Delete API Error'));
+      fetchAPI.mockImplementation((endpoint, options = {}) => {
+        if (endpoint === 'cart/' && options.method === 'GET') {
+          return Promise.resolve({
+            results: [{ id: 1, product: { id: 1 }, quantity: 2 }],
+          });
+        }
+
+        return Promise.reject(new Error('Delete API Error'));
+      });
 
       await expect(cartServices.removeFromCart('1')).rejects.toThrow(
         'Delete API Error',

@@ -185,24 +185,24 @@ export default function HeroScroller() {
         <button
           type="button"
           onClick={handleLeftClick}
-          disabled={isFirstSlide}
-          className={`absolute left-2 sm:left-3 md:left-4 top-1/2 z-10 -translate-y-1/2 rounded-full shadow-lg transition-all duration-200 p-1.5 sm:p-2 disabled:cursor-not-allowed ${
-            isFirstSlide ? "bg-[#4a479189]" : "bg-[#494791] hover:bg-[#5a57a8]"
+          className={`absolute left-2 sm:left-3 md:left-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-[#494791] shadow-lg transition-all duration-200 p-1.5 sm:p-2 hover:bg-[#5a57a8] ${
+            isFirstSlide ? "pointer-events-none opacity-0" : "opacity-100"
           }`}
           aria-label="Previous slide"
-          aria-disabled={isFirstSlide}
+          aria-hidden={isFirstSlide}
+          tabIndex={isFirstSlide ? -1 : 0}
         >
           <ChevronLeftIcon className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-white" />
         </button>
         <button
           type="button"
           onClick={handleRightClick}
-          disabled={isLastSlide}
-          className={`absolute right-2 sm:right-3 md:right-4 top-1/2 z-10 -translate-y-1/2 rounded-full shadow-lg transition-all duration-200 p-1.5 sm:p-2 disabled:cursor-not-allowed ${
-            isLastSlide ? "bg-[#4a479189]" : "bg-[#494791] hover:bg-[#5a57a8]"
+          className={`absolute right-2 sm:right-3 md:right-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-[#494791] shadow-lg transition-all duration-200 p-1.5 sm:p-2 hover:bg-[#5a57a8] ${
+            isLastSlide ? "pointer-events-none opacity-0" : "opacity-100"
           }`}
           aria-label="Next slide"
-          aria-disabled={isLastSlide}
+          aria-hidden={isLastSlide}
+          tabIndex={isLastSlide ? -1 : 0}
         >
           <ChevronRightIcon className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-white" />
         </button>
