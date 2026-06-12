@@ -17,7 +17,7 @@ export default function CatalogLayout({ children }) {
 
       <div className="px-4 sm:hidden">
         <div className="mx-auto max-w-[396px] border-b border-[var(--color-light-purple-2)] py-6">
-          <div className="w-full overflow-x-auto no-scrollbar">
+          <div className="w-full overflow-x-auto no-scrollbar px-1 py-1">
             <CustomBreadcrumb
               items={breadcrumbItems}
               className="w-max"
