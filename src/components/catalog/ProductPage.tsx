@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { ProductAccordion } from "./ProductPageAccordion";
 import { CustomBreadcrumb } from "../shared/CustomBreadcrumb";
+import { CustomButton } from "../shared/CustomButton";
 import { useAddToCart } from "@/hooks/useCartQuery";
 import {
   CircleChevronLeft,
@@ -435,17 +436,14 @@ export default function ProductPage({ params }: ProductPageProps) {
                 </button>
               </div>
 
-              <button
+              <CustomButton
                 onClick={handleAddToCart}
                 disabled={!isInStock || addToCartMutation.isPending}
-                className={`flex h-12 items-center justify-center whitespace-nowrap px-3 text-sm font-medium uppercase text-white transition-colors min-[380px]:px-6 min-[428px]:px-8 min-[428px]:text-base ${
-                  isInStock && !addToCartMutation.isPending
-                    ? "bg-[var(--color-purple)] hover:opacity-90"
-                    : "cursor-not-allowed bg-gray-400"
-                }`}
+                styleType="productCart"
+                className="h-12 whitespace-nowrap px-3 text-sm min-[380px]:px-6 min-[428px]:px-8 min-[428px]:text-base"
               >
-                {addToCartMutation.isPending ? "Adding..." : "Add to cart"}
-              </button>
+                {addToCartMutation.isPending ? "ADDING..." : "ADD TO CART"}
+              </CustomButton>
             </div>
           </div>
         </div>
@@ -618,17 +616,14 @@ export default function ProductPage({ params }: ProductPageProps) {
                     </button>
                   </div>
 
-                  <button
+                  <CustomButton
                     onClick={handleAddToCart}
                     disabled={!isInStock || addToCartMutation.isPending}
-                    className={`flex h-12 flex-1 items-center justify-center whitespace-nowrap px-4 text-sm font-medium leading-[17px] text-white transition-colors sm:min-w-[179px] sm:px-6 sm:text-base sm:leading-[19px] 2xl:w-[422px] 2xl:min-w-0 2xl:flex-none ${
-                      isInStock && !addToCartMutation.isPending
-                        ? "bg-[color:var(--color-purple)] hover:opacity-90"
-                        : "cursor-not-allowed bg-gray-400"
-                    }`}
+                    styleType="productCart"
+                    className="h-12 flex-1 whitespace-nowrap px-4 text-sm leading-[17px] sm:min-w-[179px] sm:px-6 sm:text-base sm:leading-[19px] 2xl:w-[422px] 2xl:min-w-0 2xl:flex-none"
                   >
                     {addToCartMutation.isPending ? "ADDING..." : "ADD TO CART"}
-                  </button>
+                  </CustomButton>
                 </div>
               </div>
             </div>

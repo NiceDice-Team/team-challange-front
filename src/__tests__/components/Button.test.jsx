@@ -42,7 +42,7 @@ describe("CustomButton", () => {
     test("renders productCart style correctly", () => {
       render(<CustomButton styleType="productCart">Add to Cart</CustomButton>);
       const button = screen.getByRole("button");
-      expect(button).toHaveClass("border-2", "border-[#494791]", "bg-transparent", "text-[#494791]");
+      expect(button).toHaveClass("border-purple", "bg-purple", "text-white", "hover:bg-light-purple-2");
     });
 
     test("renders wishlist style correctly", () => {
@@ -63,7 +63,12 @@ describe("CustomButton", () => {
       render(<CustomButton disabled>Disabled Button</CustomButton>);
       const button = screen.getByRole("button");
       expect(button).toBeDisabled();
-      expect(button).toHaveClass("disabled:bg-gray-2", "disabled:cursor-auto");
+      expect(button).toHaveClass(
+        "disabled:border-gray-2",
+        "disabled:bg-gray-2",
+        "disabled:cursor-not-allowed",
+        "disabled:opacity-100"
+      );
     });
 
     test("renders loading state correctly", () => {
@@ -140,7 +145,11 @@ describe("CustomButton", () => {
     test("has proper focus styles", () => {
       render(<CustomButton>Focus test</CustomButton>);
       const button = screen.getByRole("button");
-      expect(button).toHaveClass("focus-visible:ring-0", "focus-visible:outline-none");
+      expect(button).toHaveClass(
+        "focus-visible:bg-light-purple-2",
+        "focus-visible:ring-0",
+        "focus-visible:outline-none"
+      );
     });
   });
 
