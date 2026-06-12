@@ -125,6 +125,25 @@ describe("ProductCard", () => {
     expect(mockedReviewServices.getAllProductReviews).not.toHaveBeenCalled();
   });
 
+  test("renders product images inside the fixed card image area", () => {
+    renderWithQueryClient({
+      ...product,
+      id: 34,
+      images: [
+        { id: 1, url_sm: "/uno.jpg", alt: "UNO Flip box" },
+        { id: 2, url_sm: "/uno-detail.jpg", alt: "UNO detail" },
+        { id: 3, url_sm: "/uno-cards.jpg", alt: "UNO cards" },
+      ],
+      reviews: [],
+      stars: "4.00",
+    });
+
+    expect(screen.getByAltText("UNO Flip box")).toHaveClass("object-contain", "object-top");
+    expect(screen.getByAltText("UNO Flip box")).not.toHaveClass("object-cover");
+    expect(screen.getAllByRole("button", { name: /view image/i })).toHaveLength(3);
+    expect(mockedReviewServices.getAllProductReviews).not.toHaveBeenCalled();
+  });
+
   test("renders discounted price with original price struck through", () => {
     renderWithQueryClient({
       ...product,

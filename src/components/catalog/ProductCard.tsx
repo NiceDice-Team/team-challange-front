@@ -239,7 +239,7 @@ export default function ProductCard({ product = {} as Product, cardIndex = 0 }: 
                         alt={image.alt || product?.name || "Product"}
                         fill
                         sizes={PRODUCT_CARD_IMAGE_SIZES}
-                        className="object-contain"
+                        className="object-contain object-top"
                         priority={shouldPrioritizeImage && index === activeImage}
                         unoptimized={image.url_sm?.includes("placehold.co")}
                       />
