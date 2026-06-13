@@ -23,7 +23,7 @@ interface FilterSideBarProps {
 }
 
 export default function FilterSideBar({ selectedFilters, setSelectedFilters }: FilterSideBarProps) {
-  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(true);
+  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const normalizedCategories = useMemo(
     () => [...selectedFilters.categories].sort((a, b) => a - b),
     [selectedFilters.categories],
@@ -394,7 +394,9 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
       {/* Mobile Filter Toggle */}
       <button
         type="button"
-        onClick={() => setIsMobileFiltersOpen(!isMobileFiltersOpen)}
+        aria-controls="catalog-filter-content"
+        aria-expanded={isMobileFiltersOpen}
+        onClick={() => setIsMobileFiltersOpen((isOpen) => !isOpen)}
         className="mb-6 flex h-12 w-full items-center justify-between  border border-[#494791] bg-white px-4 lg:hidden"
       >
         <div className="flex items-center gap-2">
@@ -405,7 +407,7 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
       </button>
 
       {/* Filter content - hidden on mobile unless toggled */}
-      <div className={`${isMobileFiltersOpen ? "flex" : "hidden"} flex-col gap-6 lg:flex`}>
+      <div id="catalog-filter-content" className={`${isMobileFiltersOpen ? "flex" : "hidden"} flex-col gap-6 lg:flex`}>
         {/* Active Filters Display Card */}
         {hasActiveFilters && (
           <div className="flex flex-col gap-6 bg-white p-4 shadow-[0px_4px_4px_rgba(0,0,0,0.05)]">
