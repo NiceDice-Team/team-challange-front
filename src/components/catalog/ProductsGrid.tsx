@@ -153,7 +153,7 @@ export default function ProductsGrid({
           ]}
         />
       </div>
-      <div className="mx-auto grid max-w-[396px] min-h-[400px] grid-cols-1 gap-6 sm:max-w-none sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="mx-auto grid max-w-[380px] min-h-[400px] grid-cols-1 justify-center gap-6 sm:max-w-none sm:grid-cols-[repeat(auto-fit,minmax(240px,240px))]">
         {showLoading &&
           // Show skeleton cards while loading
           Array.from({ length: productsPerPage }).map((_, index) => <ProductCardSkeleton key={`skeleton-${index}`} />)}

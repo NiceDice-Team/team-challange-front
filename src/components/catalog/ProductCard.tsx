@@ -76,7 +76,7 @@ export default function ProductCard({ product = {} as Product, cardIndex = 0 }: 
       const isHalfFilled = !isFilled && i - 0.5 === displayedRating;
 
       stars.push(
-        <span key={i} className="relative block h-4 w-4 text-blue-800">
+        <span key={i} className="relative block h-4 w-4">
           {isFilled ? (
             <img src={StarFilledIcon} alt="filled star" className="h-4 w-4" />
           ) : isHalfFilled ? (
@@ -208,8 +208,8 @@ export default function ProductCard({ product = {} as Product, cardIndex = 0 }: 
       onMouseEnter={prefetchProduct}
       onFocus={prefetchProduct}
     >
-      <article className="mx-auto flex min-h-[539px] w-full max-w-[396px] min-w-0 flex-col bg-white shadow-[0px_4px_4px_rgba(0,0,0,0.1)] sm:h-[427px] sm:max-w-[240px] sm:min-h-0 sm:min-w-[200px]">
-        <div className="relative isolate flex h-[307px] w-full flex-col items-center gap-4 pt-4 sm:h-[190px]">
+      <article className="mx-auto flex w-full max-w-[380px] min-w-0 flex-col bg-white shadow-[0px_4px_4px_rgba(0,0,0,0.1)] sm:h-[427px] sm:max-w-[240px]">
+        <div className="relative isolate flex h-[307px] w-full flex-col items-center pt-4 pb-4 sm:h-[190px]">
           {/* Image gallery container - hiding scrollbar */}
           <div
             ref={galleryRef}
@@ -279,18 +279,17 @@ export default function ProductCard({ product = {} as Product, cardIndex = 0 }: 
             onClick={(e) => {
               e.preventDefault();
               setIsFavorite(!isFavorite);
-              console.log("Toggle wishlist:", product.name, !isFavorite);
             }}
             styleType="wishlist"
-            className="absolute top-2 right-2 z-20"
+            className="absolute top-2 right-2 z-20 sm:right-4"
             aria-label="Add to wishlist"
           >
             <Heart className={`w-4 h-4 ${isFavorite ? "fill-[#494791] text-[#494791]" : "text-[#494791]"}`} />
           </CustomButton>
 
-          {/* Navigation lines - positioned within image container */}
+          {/* Navigation lines sit in the bottom 16px image-frame padding. */}
           {imageCount > 1 && (
-            <div className="absolute bottom-0 left-0 right-0 w-full h-0 flex justify-center items-start z-10">
+            <div className="absolute bottom-0 left-0 right-0 z-30 flex h-[3px] w-full items-start justify-center">
               <div className="flex justify-center items-start gap-0">
                 {availableImages.map((_, index) => {
                   const isLast = index === imageCount - 1;
@@ -316,51 +315,47 @@ export default function ProductCard({ product = {} as Product, cardIndex = 0 }: 
         </div>
 
         {/* Product Card Details */}
-        <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="flex items-start justify-between gap-3 sm:flex-col sm:items-start">
-            <div className="flex min-w-0 flex-col gap-2 sm:w-[145px]">
-              <h3
-                className="min-h-[38px] text-base font-medium uppercase leading-[19px] text-black sm:min-h-[44px] sm:w-[145px] sm:text-lg sm:font-normal sm:leading-[22px]"
-                style={{
-                  display: "-webkit-box",
-                  WebkitBoxOrient: "vertical",
-                  WebkitLineClamp: 2,
-                  overflow: "hidden",
-                }}
-              >
-                {productName}
-              </h3>
+        <div className="flex flex-col items-start gap-4 px-4 pt-4 pb-4 sm:h-[237px] sm:gap-0">
+          <h3
+            className="max-w-[145px] text-base font-medium uppercase leading-[19px] text-black sm:h-[44px] sm:w-[145px] sm:text-lg sm:leading-[22px]"
+            style={{
+              display: "-webkit-box",
+              WebkitBoxOrient: "vertical",
+              WebkitLineClamp: 2,
+              overflow: "hidden",
+            }}
+          >
+            {productName}
+          </h3>
 
-              {/* Stars and Reviews */}
-              <div className="flex h-[19px] w-fit items-center gap-1">
-                <div className="flex h-4 w-[80px] items-start">{renderStars()}</div>
-                <span className="h-[19px] w-5 text-base uppercase leading-[19px] text-black">
-                  ({reviewCount})
-                </span>
-              </div>
+          {/* Stars and Reviews */}
+          <div className="flex h-[19px] w-fit items-center gap-1 sm:mt-2">
+            <div className="flex h-4 w-[80px] items-start">{renderStars()}</div>
+            <span className="h-[19px] w-fit text-base uppercase leading-[19px] text-black">
+              ({reviewCount})
+            </span>
+          </div>
+
+          <div className="flex flex-col items-start gap-2 sm:mt-4">
+            <div className="flex h-6 items-end gap-2 sm:h-[29px]">
+              {discountPrice ? (
+                <>
+                  <p className="text-[20px] font-bold uppercase leading-6 text-[var(--color-red-price)] sm:text-2xl sm:leading-[29px]">
+                    {discountPrice}
+                  </p>
+                  <p className="text-sm leading-[17px] text-[var(--color-gray-2)] line-through">{displayPrice}</p>
+                </>
+              ) : (
+                <p className="text-[20px] font-bold uppercase leading-6 text-black sm:text-2xl sm:leading-[29px]">
+                  {displayPrice}
+                </p>
+              )}
             </div>
 
-            <div className="flex min-w-[150px] flex-col items-end gap-2 text-right sm:min-w-0 sm:w-full sm:items-start sm:text-left">
-              <div className="flex h-6 items-end justify-end gap-2 sm:h-[29px]">
-                {discountPrice ? (
-                  <>
-                    <p className="text-[20px] font-bold uppercase leading-6 text-[var(--color-red-price)] sm:text-2xl sm:leading-[29px]">
-                      {discountPrice}
-                    </p>
-                    <p className="text-sm leading-[17px] text-[var(--color-gray-2)] line-through">{displayPrice}</p>
-                  </>
-                ) : (
-                  <p className="text-[20px] font-bold uppercase leading-6 text-black sm:text-2xl sm:leading-[29px]">
-                    {displayPrice}
-                  </p>
-                )}
-              </div>
-
-              {/* Stock status */}
-              <div className={`flex min-h-[17px] max-w-[166px] items-center justify-end gap-2 text-sm ${stockStyle} sm:justify-start`}>
-                {stockCircle}
-                <span className="text-sm leading-[17px]">{stockMessage}</span>
-              </div>
+            {/* Stock status */}
+            <div className={`flex min-h-[17px] items-center justify-start gap-2 text-sm ${stockStyle}`}>
+              {stockCircle}
+              <span className="text-sm leading-[17px]">{stockMessage}</span>
             </div>
           </div>
 
@@ -369,7 +364,7 @@ export default function ProductCard({ product = {} as Product, cardIndex = 0 }: 
             onClick={handleAddToCart}
             disabled={addToCartMutation.isPending || isOutOfStock}
             styleType="productCart"
-            className="mt-auto h-12 w-full gap-2 bg-[#494791] px-8 py-4 text-center"
+            className="h-12 w-full shrink-0 gap-2 bg-[#494791] px-8 py-4 text-center sm:mt-4"
           >
             <span className="text-base font-medium leading-[19px] text-white uppercase">
               {isOutOfStock ? "SOLD OUT" : addToCartMutation.isPending ? "ADDING..." : "ADD TO CART"}

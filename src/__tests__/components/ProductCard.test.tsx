@@ -126,7 +126,7 @@ describe("ProductCard", () => {
   });
 
   test("renders product images inside the fixed card image area", () => {
-    renderWithQueryClient({
+    const { container } = renderWithQueryClient({
       ...product,
       id: 34,
       images: [
@@ -138,9 +138,35 @@ describe("ProductCard", () => {
       stars: "4.00",
     });
 
+    expect(container.querySelector("article")).toHaveClass("max-w-[380px]", "sm:max-w-[240px]", "sm:h-[427px]");
+    expect(container.querySelector("article")).not.toHaveClass("min-h-[539px]");
     expect(screen.getByAltText("UNO Flip box")).toHaveClass("object-contain", "object-top");
+    expect(screen.getByAltText("UNO Flip box")).toHaveAttribute("sizes", "(max-width: 640px) 100vw, 240px");
     expect(screen.getByAltText("UNO Flip box")).not.toHaveClass("object-cover");
     expect(screen.getAllByRole("button", { name: /view image/i })).toHaveLength(3);
+    expect(screen.getAllByRole("button", { name: /view image/i })[0]).toHaveClass("h-[3px]");
+    expect(screen.getAllByRole("button", { name: /view image/i })[0].parentElement?.parentElement).toHaveClass(
+      "bottom-0",
+      "z-30",
+      "h-[3px]"
+    );
+    expect(screen.getAllByRole("button", { name: /view image/i })[0].parentElement?.parentElement?.parentElement).toHaveClass(
+      "pt-4",
+      "pb-4",
+      "sm:h-[190px]"
+    );
+    const details = container.querySelector("article")?.children[1];
+    expect(details).toHaveClass("gap-4", "px-4", "pt-4", "pb-4", "items-start", "sm:h-[237px]", "sm:gap-0");
+    expect(details).not.toHaveClass("min-h-[232px]", "p-4");
+    expect(details?.children[0]).toHaveClass("max-w-[145px]", "sm:h-[44px]", "sm:w-[145px]");
+    expect(details?.children[0]).not.toHaveClass("h-[44px]", "w-[145px]");
+    expect(details?.children[1]).toHaveClass("h-[19px]", "sm:mt-2");
+    expect(details?.children[1]).not.toHaveClass("mt-4");
+    expect(details?.children[2]).toHaveClass("gap-2", "sm:mt-4");
+    expect(details?.children[2]?.children[0]).toHaveClass("h-6", "sm:h-[29px]");
+    expect(details?.children[2]?.children[1]).toHaveClass("min-h-[17px]");
+    expect(details?.children[3]).toHaveClass("h-12", "w-full", "shrink-0", "sm:mt-4");
+    expect(details?.children[3]).not.toHaveClass("mt-auto");
     expect(mockedReviewServices.getAllProductReviews).not.toHaveBeenCalled();
   });
 
