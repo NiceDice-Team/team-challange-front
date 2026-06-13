@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { CustomSelect } from "../shared/CustomSelect";
 import { productServices } from "@/services/productServices";
 import { reviewServices } from "@/services/reviewServices";
+import { getReviewAuthorName } from "@/lib/reviewAuthor";
 
 const REVIEWS_PER_PAGE = 2;
 const SORT_TO_ORDERING: Record<string, string> = {
@@ -85,7 +86,7 @@ export default function ReviewsComments({ productId, children }: ReviewsComments
         rating: normalizedRating,
         date: formatReviewDate(review.created_at),
         avatarSrc: undefined,
-        name: review.user_id ? `Customer #${review.user_id}` : "Anonymous customer",
+        name: getReviewAuthorName(review),
         aboutHref: product?.name ? `/product/${productId}` : undefined,
         aboutText: product?.name,
         title: comment ? `Rated ${normalizedRating} out of 5` : `Rating: ${normalizedRating} out of 5`,

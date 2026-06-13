@@ -24,32 +24,69 @@ export interface ProductReview {
 
 export type ProductReviewReference = number | ProductReview;
 
+export type ProductGameInfoValue =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | ProductGameInfoValue[]
+  | { [key: string]: ProductGameInfoValue };
+
+export interface ProductGameInformation {
+  [key: string]: ProductGameInfoValue;
+  publisher?: ProductGameInfoValue;
+  players?: ProductGameInfoValue;
+  age?: ProductGameInfoValue;
+  time?: ProductGameInfoValue;
+  includes?: ProductGameInfoValue;
+  gameFeatures?: ProductGameInfoValue;
+}
+
+export type ProductDeliveryAndPayment = string | string[] | null;
+
 // Product types
 export interface Product {
   id: number;
   name: string;
   description?: string;
+  shortDescription?: string;
+  gameInformation?: ProductGameInformation;
+  deliveryAndPayment?: ProductDeliveryAndPayment;
   price: string | number;
   discount?: string | number;
-  brand?: string;
+  brand?: string | number;
   stock: string | number;
   stars?: string | number;
   images?: ProductImage[];
   reviews?: ProductReviewReference[];
   categories?: number[];
-  audiences?: string[];
-  types?: string[];
+  audiences?: Array<string | number>;
+  types?: Array<string | number>;
   created_at?: string;
   updated_at?: string;
-  [key: string]: any; // Allow additional properties
+}
+
+export interface ProductApiResponse extends Omit<Product, "shortDescription" | "gameInformation" | "deliveryAndPayment"> {
+  short_description?: string;
+  shortDescription?: string;
+  game_information?: ProductGameInformation;
+  gameInformation?: ProductGameInformation;
+  delivery_and_payments?: ProductDeliveryAndPayment;
+  deliveryAndPayment?: ProductDeliveryAndPayment;
 }
 
 // API response types
 export interface ProductListResponse {
   results: Product[];
+  total_count?: number;
   count?: number;
   next?: string | null;
   previous?: string | null;
+}
+
+export interface ProductListApiResponse extends Omit<ProductListResponse, "results"> {
+  results: ProductApiResponse[];
 }
 
 export interface ProductCountResponse {

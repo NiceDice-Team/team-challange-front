@@ -11,7 +11,7 @@ export default function FilterSideBarSkeleton() {
       </div>
 
       {/* Filter sections */}
-      <div className="flex flex-col gap-6">
+      <div id="catalog-filter-skeleton-content" className="hidden flex-col gap-6 lg:flex">
         {[1, 2, 3, 4].map((section) => (
           <div
             key={section}

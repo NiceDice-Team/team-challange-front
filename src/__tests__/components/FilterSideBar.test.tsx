@@ -1,5 +1,6 @@
 import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import FilterSideBar from "@/components/catalog/FilterSideBar";
 import { catalogServices } from "@/services/catalogServices";
@@ -113,5 +114,40 @@ describe("FilterSideBar featured categories", () => {
     });
 
     expect(setSelectedFilters).not.toHaveBeenCalled();
+  });
+
+  test("collapses mobile filters by default and toggles them without reloading", async () => {
+    const user = userEvent.setup();
+
+    render(<FilterSideBar selectedFilters={defaultFilters} setSelectedFilters={jest.fn()} />, {
+      wrapper: createWrapper(),
+    });
+
+    const skeletonContent = document.getElementById("catalog-filter-skeleton-content");
+    expect(skeletonContent).toHaveClass("hidden", "lg:flex");
+
+    const mobileFilterToggle = await screen.findByRole("button", { name: /filters/i });
+    const filterContent = document.getElementById("catalog-filter-content");
+    const getToggleIcon = () => mobileFilterToggle.querySelector("svg");
+
+    expect(mobileFilterToggle).toHaveAttribute("aria-controls", "catalog-filter-content");
+    expect(mobileFilterToggle).toHaveAttribute("aria-expanded", "false");
+    expect(filterContent).toHaveClass("hidden", "lg:flex");
+    expect(filterContent).not.toHaveClass("flex");
+    expect(getToggleIcon()).toHaveClass("rotate-0");
+
+    await user.click(mobileFilterToggle);
+
+    expect(mobileFilterToggle).toHaveAttribute("aria-expanded", "true");
+    expect(filterContent).toHaveClass("flex", "lg:flex");
+    expect(filterContent).not.toHaveClass("hidden");
+    expect(getToggleIcon()).toHaveClass("rotate-180");
+
+    await user.click(mobileFilterToggle);
+
+    expect(mobileFilterToggle).toHaveAttribute("aria-expanded", "false");
+    expect(filterContent).toHaveClass("hidden", "lg:flex");
+    expect(filterContent).not.toHaveClass("flex");
+    expect(getToggleIcon()).toHaveClass("rotate-0");
   });
 });

@@ -1,30 +1,148 @@
 "use client";
 
+import Link from "next/link";
 import {
   CustomAccordion,
   CustomAccordionContent,
   CustomAccordionItem,
   CustomAccordionTrigger,
 } from "@/components/shared/CustomAccordion";
+import type { Product, ProductDeliveryAndPayment, ProductGameInfoValue, ProductGameInformation } from "@/types/product";
+
+const GAME_INFORMATION_FIELDS = [
+  { key: "publisher", label: "Publisher", aliases: ["publisher"] },
+  { key: "players", label: "Players", aliases: ["players"] },
+  { key: "age", label: "Ages", aliases: ["age", "ages"] },
+  { key: "time", label: "Play Time", aliases: ["time", "playTime", "play_time", "play time"] },
+  { key: "includes", label: "Includes", aliases: ["includes"] },
+  { key: "gameFeatures", label: "Game Features", aliases: ["gameFeatures", "game_features", "game features"] },
+];
+
+const GAME_INFORMATION_ALIASES = new Set(GAME_INFORMATION_FIELDS.flatMap((field) => field.aliases));
+
+const hasDisplayValue = (value: ProductGameInfoValue): boolean => {
+  if (value === undefined || value === null) {
+    return false;
+  }
+
+  if (typeof value === "string") {
+    return value.trim().length > 0;
+  }
+
+  if (Array.isArray(value)) {
+    return value.some(hasDisplayValue);
+  }
+
+  if (typeof value === "object") {
+    return Object.values(value).some(hasDisplayValue);
+  }
+
+  return true;
+};
+
+const formatDisplayValue = (value: ProductGameInfoValue): string => {
+  if (!hasDisplayValue(value)) {
+    return "";
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(formatDisplayValue).filter(Boolean).join(", ");
+  }
+
+  if (typeof value === "object" && value !== null) {
+    return Object.entries(value)
+      .filter(([, nestedValue]) => hasDisplayValue(nestedValue))
+      .map(([key, nestedValue]) => `${formatFieldLabel(key)}: ${formatDisplayValue(nestedValue)}`)
+      .join(", ");
+  }
+
+  if (typeof value === "boolean") {
+    return value ? "Yes" : "No";
+  }
+
+  return String(value);
+};
+
+const formatFieldLabel = (key: string): string =>
+  key
+    .replace(/_/g, " ")
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+
+const getGameInformationValue = (
+  gameInformation: ProductGameInformation,
+  aliases: string[]
+): ProductGameInfoValue => {
+  const matchingAlias = aliases.find((alias) => hasDisplayValue(gameInformation[alias]));
+  return matchingAlias ? gameInformation[matchingAlias] : undefined;
+};
+
+const getGameInformationRows = (gameInformation?: ProductGameInformation) => {
+  if (!gameInformation) {
+    return [];
+  }
+
+  const primaryRows = GAME_INFORMATION_FIELDS
+    .map(({ label, aliases }) => ({
+      label,
+      value: getGameInformationValue(gameInformation, aliases),
+    }))
+    .filter(({ value }) => hasDisplayValue(value))
+    .map(({ label, value }) => ({ label, value: formatDisplayValue(value) }));
+
+  const extraRows = Object.entries(gameInformation)
+    .filter(([key, value]) => !GAME_INFORMATION_ALIASES.has(key) && hasDisplayValue(value))
+    .map(([key, value]) => ({
+      label: formatFieldLabel(key),
+      value: formatDisplayValue(value),
+    }));
+
+  return [...primaryRows, ...extraRows];
+};
+
+const getDeliveryAndPaymentRows = (deliveryAndPayment?: ProductDeliveryAndPayment): string[] => {
+  if (!hasDisplayValue(deliveryAndPayment)) {
+    return [];
+  }
+
+  if (Array.isArray(deliveryAndPayment)) {
+    return deliveryAndPayment.map(formatDisplayValue).filter(Boolean);
+  }
+
+  return [formatDisplayValue(deliveryAndPayment)];
+};
+
+const productAccordionItemClassName = "first:pt-4 sm:first:pt-0";
+const productAccordionTriggerClassName = "py-0 data-[state=closed]:pb-4 hover:no-underline";
+const productAccordionContentClassName = "pb-4 pt-0";
+const productAccordionContentRootClassName = "pt-0 data-[state=closed]:pt-0 data-[state=open]:pt-6";
 
 // Component props
 interface ProductAccordionProps {
-  accordionParams?: {
-    description?: string;
-    brand?: string;
-    [key: string]: any;
-  };
+  accordionParams?: Product;
   className?: string;
   defaultValue?: string[];
+  publisherHref?: string;
 }
 
-export const ProductAccordion = ({ accordionParams, className = "", defaultValue }: ProductAccordionProps) => {
+export const ProductAccordion = ({
+  accordionParams,
+  className = "",
+  defaultValue,
+  publisherHref,
+}: ProductAccordionProps) => {
+  const gameInformationRows = getGameInformationRows(accordionParams?.gameInformation);
+  const deliveryAndPaymentRows = getDeliveryAndPaymentRows(accordionParams?.deliveryAndPayment);
+
   return (
-    <CustomAccordion type="multiple" defaultValue={defaultValue} className={`w-full ${className}`}>
+    <CustomAccordion type="multiple" defaultValue={defaultValue} className={`flex w-full flex-col gap-4 ${className}`}>
       {/* Description */}
-      <CustomAccordionItem value="description" className="">
-        <CustomAccordionTrigger className="">Description</CustomAccordionTrigger>
-        <CustomAccordionContent className="">
+      <CustomAccordionItem value="description" className={productAccordionItemClassName}>
+        <CustomAccordionTrigger className={productAccordionTriggerClassName}>Description</CustomAccordionTrigger>
+        <CustomAccordionContent
+          className={productAccordionContentClassName}
+          rootClassName={productAccordionContentRootClassName}
+        >
           <span className="text-base text-pretty">
             {accordionParams?.description || "Product description is unavailable"}
           </span>
@@ -32,110 +150,46 @@ export const ProductAccordion = ({ accordionParams, className = "", defaultValue
       </CustomAccordionItem>
 
       {/* Game information */}
-      <CustomAccordionItem value="game-info" className="">
-        <CustomAccordionTrigger className="">Game Information</CustomAccordionTrigger>
-        <CustomAccordionContent className="">
+      <CustomAccordionItem value="game-info" className={productAccordionItemClassName}>
+        <CustomAccordionTrigger className={productAccordionTriggerClassName}>Game Information</CustomAccordionTrigger>
+        <CustomAccordionContent
+          className={productAccordionContentClassName}
+          rootClassName={productAccordionContentRootClassName}
+        >
           <div className="flex flex-col gap-4 text-base">
-            <div>
-              <span className="font-semibold">• Publisher: </span>
-              <span className="underline underline-offset-2">{accordionParams.brand}</span>
-            </div>
-            <div>
-              <span className="font-semibold">• Players: </span>
-              <span>2-5</span>
-            </div>
-            <div>
-              <span className="font-semibold">• Ages: </span>
-              <span>8+</span>
-            </div>
-            <div>
-              <span className="font-semibold">• Play Time: </span>
-              <span>30-60 Minutes</span>
-            </div>
-            <div>
-              <span className="font-semibold">• Includes: </span>
-              <span>
-                Game board of Europe, 225 colored train cars, 110 train cards, 46 destination tickets, and 3 train
-                stations
-              </span>
-            </div>
-            <div>
-              <span className="font-semibold">• Game Features: </span>
-              <span>
-                Strategic route building, exciting challenges with tunnels and ferries, and engaging player interaction
-              </span>
-            </div>
+            {gameInformationRows.length > 0 ? (
+              gameInformationRows.map(({ label, value }) => (
+                <div key={label}>
+                  <span className="font-semibold">• {label}: </span>
+                  {label === "Publisher" && publisherHref ? (
+                    <Link href={publisherHref} className="underline underline-offset-2">
+                      {value}
+                    </Link>
+                  ) : (
+                    <span className={label === "Publisher" ? "underline underline-offset-2" : undefined}>{value}</span>
+                  )}
+                </div>
+              ))
+            ) : (
+              <span>Game information is unavailable</span>
+            )}
           </div>
         </CustomAccordionContent>
       </CustomAccordionItem>
 
       {/* Delivery and payment */}
-      <CustomAccordionItem value="delivery" className="">
-        <CustomAccordionTrigger className="">Delivery and payment</CustomAccordionTrigger>
-        <CustomAccordionContent className="">
+      <CustomAccordionItem value="delivery" className={productAccordionItemClassName}>
+        <CustomAccordionTrigger className={productAccordionTriggerClassName}>Delivery and payment</CustomAccordionTrigger>
+        <CustomAccordionContent
+          className={productAccordionContentClassName}
+          rootClassName={productAccordionContentRootClassName}
+        >
           <div className="flex flex-col gap-6 text-base">
-            {/* Shipping Within Ukraine */}
-            <div className="flex flex-col gap-4 ">
-              <h4 className="font-medium  ">📦 Shipping Within Ukraine</h4>
-              <div className="flex flex-col gap-2">
-                <p className=" font-medium ">Delivery Methods:</p>
-                <div className="flex flex-col gap-1">
-                  <p className="ml-3   ">
-                    •&nbsp;&nbsp;<span className="font-medium">Nova Poshta:</span> 1–3 business days
-                  </p>
-                  <p className="ml-3  ">
-                    •&nbsp;&nbsp;<span className="font-medium">Ukrposhta:</span> 2–5 business days
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* International Shipping */}
-            <div className="flex flex-col gap-4">
-              <h4 className="font-medium ">🌍 International Shipping</h4>
-              <div className="flex flex-col gap-1">
-                <p className="ml-3">
-                  •&nbsp;&nbsp;<span className="font-medium">Carriers:</span> Ukrposhta, Nova Poshta, DHL, FedEx
-                </p>
-                <p className="ml-3">
-                  •&nbsp;&nbsp;<span className="font-medium">Delivery Time:</span> Typically 7–14 business days,
-                  depending on the destination and customs processing
-                </p>
-              </div>
-            </div>
-
-            {/* Delivery Cost */}
-            <div className="flex flex-col gap-4">
-              <h4 className="font-medium text-base">💰 Delivery Cost</h4>
-              <div className="flex flex-col gap-1">
-                <p className="ml-3 ">
-                  •&nbsp;&nbsp;<span className="font-medium">Free shipping</span> for orders over{" "}
-                  <span className="font-medium">$60</span>
-                </p>
-                <p className="ml-3">
-                  •&nbsp;&nbsp;<span className="font-medium">Orders under $60:</span> according to the carrier&apos;s rates
-                </p>
-                <p className="ml-3">
-                  •&nbsp;&nbsp;<span className="font-medium">International shipping:</span> calculated individually
-                  based on destination and package weight. The final cost will be shown at checkout.
-                </p>
-              </div>
-            </div>
-
-            {/* Payment Methods */}
-            <div className="flex flex-col gap-4">
-              <h4 className="font-medium text-base ">💳 Payment Methods</h4>
-              <div className="flex flex-col gap-1">
-                <p className="ml-3">
-                  •&nbsp;&nbsp;<span className="font-medium">Online Payment:</span> pay instantly via LiqPay, WayForPay,
-                  or any major bank card (Visa/MasterCard)
-                </p>
-                <p className="ml-3">
-                  •&nbsp;&nbsp;<span className="font-medium">Google Pay / Apple Pay:</span> fast and secure mobile
-                  payment with just a tap
-                </p>
-              </div>
-            </div>
+            {deliveryAndPaymentRows.length > 0 ? (
+              deliveryAndPaymentRows.map((row, index) => <p key={`${row}-${index}`}>{row}</p>)
+            ) : (
+              <p>Delivery and payment information is unavailable</p>
+            )}
           </div>
         </CustomAccordionContent>
       </CustomAccordionItem>

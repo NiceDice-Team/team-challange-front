@@ -13,6 +13,7 @@ import {
 } from "@/svgs/icons";
 import { useAddToCart } from "@/hooks/useCartQuery";
 import { roundRatingToNearestHalf } from "@/lib/reviewMetrics";
+import { CustomButton } from "@/components/shared/CustomButton";
 
 export default function CartProductCard({ product = {} }) {
   const [isFavorite, setIsFavorite] = useState(false);
@@ -174,17 +175,14 @@ export default function CartProductCard({ product = {} }) {
         </div>
 
         {/* Add to Cart Button - Always at bottom with fixed height */}
-        <button 
-          className={`w-full py-3 px-8 border border-[#494791] text-base font-medium uppercase transition-colors duration-200 h-[49px] flex items-center justify-center ${
-            addToCartMutation.isPending || isOutOfStock
-              ? 'bg-[#494791]/70 text-white cursor-not-allowed' 
-              : 'text-[#494791] hover:bg-[#494791] hover:text-white'
-          }`}
+        <CustomButton
+          type="button"
+          styleType="productCart"
           onClick={handleAddToCart}
           disabled={addToCartMutation.isPending || isOutOfStock}
         >
           {isOutOfStock ? 'SOLD OUT' : addToCartMutation.isPending ? 'ADDING...' : 'ADD TO CART'}
-        </button>
+        </CustomButton>
       </div>
     </div>
   );

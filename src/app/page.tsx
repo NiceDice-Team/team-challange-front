@@ -18,8 +18,10 @@ import CommingSoonSection from "../components/home/CommingSoonSection";
 export default function Home(): React.ReactElement {
   return (
     <div className="py-4 sm:py-6 font-[family-name:var(--font-noto-sans)]">
-      <div className="flex flex-col gap-4 px-4 sm:px-6 md:px-8 lg:px-12 2xl:px-24 xl:px-16 pb-8 sm:pb-12 md:pb-16">
+      <div className="sticky top-0 z-40 bg-white px-4 sm:px-6 md:px-8 lg:px-12 2xl:px-24 xl:px-16">
         <Navbar enableMobileInlineSearch />
+      </div>
+      <div className="px-4 pt-4 sm:px-6 md:px-8 lg:px-12 2xl:px-24 xl:px-16 pb-8 sm:pb-12 md:pb-16">
         <HeroScroller />
       </div>
       <FeatureSection />

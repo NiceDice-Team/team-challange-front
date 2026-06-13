@@ -302,6 +302,44 @@ describe('productServices', () => {
       expect(result).toEqual(mockProduct);
     });
 
+    test('normalizes backend product detail fields', async () => {
+      const mockProduct = {
+        id: 9,
+        name: 'UNO',
+        price: '7.99',
+        stock: 7,
+        description: 'Backend full product description',
+        short_description: 'Backend short description',
+        game_information: {
+          ages: 5,
+          players: 3,
+          includes: 'Cards and rules',
+          'play time': '50 minutes',
+          publisher: 2,
+          'game features': 'Fast matching',
+        },
+        delivery_and_payments: 'Backend delivery information',
+      };
+
+      fetchAPI.mockResolvedValue(mockProduct);
+
+      const result = await productServices.getProductById(9);
+
+      expect(result).toMatchObject({
+        id: 9,
+        shortDescription: 'Backend short description',
+        gameInformation: {
+          age: 5,
+          players: 3,
+          includes: 'Cards and rules',
+          time: '50 minutes',
+          publisher: 2,
+          gameFeatures: 'Fast matching',
+        },
+        deliveryAndPayment: 'Backend delivery information',
+      });
+    });
+
     test('fetches product with custom options', async () => {
       const mockProduct = { id: 2, name: 'Another Product' };
       fetchAPI.mockResolvedValue(mockProduct);

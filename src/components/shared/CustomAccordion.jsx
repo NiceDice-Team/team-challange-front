@@ -25,6 +25,6 @@ export const CustomAccordionTrigger = ({ className, ...props }) => {
   );
 };
 
-export const CustomAccordionContent = ({ className, ...props }) => {
-  return <AccordionContent className={cn("", className)} {...props} />;
+export const CustomAccordionContent = ({ className, rootClassName, ...props }) => {
+  return <AccordionContent className={cn("", className)} rootClassName={rootClassName} {...props} />;
 };

@@ -12,11 +12,16 @@ interface CartLayoutProps {
  * Used for cart-related pages
  */
 export default function CartLayout({ children }: CartLayoutProps): React.ReactElement {
+  const breadcrumbItems = [
+    { label: "Home", href: "/" },
+    { label: "Cart", href: "/cart", current: true },
+  ];
+
   return (
     <div className="min-h-screen flex flex-col">
-      <ProductDetailMobileHeader />
+      <ProductDetailMobileHeader breadcrumbItems={breadcrumbItems} />
 
-      <div className="hidden sm:block px-8 lg:px-16 py-6">
+      <div className="sticky top-0 z-40 hidden bg-white px-8 lg:px-16 py-6 sm:block">
         <Navbar />
       </div>
 
