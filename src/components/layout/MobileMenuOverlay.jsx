@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { ChevronDownIcon } from "@/svgs/icons";
+import SearchBar from "@/components/shared/SearchBar";
 import {
   getMobileNavigationLinkClassName,
   isNavigationLinkActive,
@@ -83,9 +84,16 @@ export default function MobileMenuOverlay({ isOpen, topOffset = 0, onClose }) {
       aria-modal="true"
       aria-label="Mobile menu"
     >
-      <div className="mx-auto flex h-full w-full max-w-[428px] flex-col px-4 pb-6 pt-6">
+      <div className="mx-auto flex h-full w-full max-w-[428px] flex-col px-4 pb-6 pt-4">
         <div className="mx-auto flex w-full max-w-[396px] flex-1 flex-col gap-8 overflow-y-auto">
-          <div className="h-px w-full bg-[var(--color-light-purple-2)]" />
+          <SearchBar
+            variant="catalog-mobile"
+            placeholder="Search games"
+            className="w-full"
+            autoFocus
+          />
+
+          <div className="h-0 w-full border-t border-[#A4A3C8]" />
 
           <nav aria-label="Mobile navigation">
             <ul className="flex flex-col gap-6 px-4 text-[18px] leading-[22px] uppercase">

@@ -8,6 +8,7 @@ import Image from "next/image";
 import { ProductAccordion } from "./ProductPageAccordion";
 import { CustomBreadcrumb } from "../shared/CustomBreadcrumb";
 import { CustomButton } from "../shared/CustomButton";
+import { ProductDetailMobileHeader } from "./ProductDetailMobileChrome";
 import { useAddToCart } from "@/hooks/useCartQuery";
 import {
   CircleChevronLeft,
@@ -135,6 +136,14 @@ export default function ProductPage({ params }: ProductPageProps) {
     }
   }, [isInvalidId]);
 
+  const breadcrumbItems = [
+    { label: "Home", href: "/" },
+    { label: "Board games", href: "/catalog" },
+    { label: product?.name || "Product", current: true },
+  ];
+
+  const mobileHeader = <ProductDetailMobileHeader breadcrumbItems={breadcrumbItems} />;
+
   // Show nothing while redirecting
   if (isInvalidId) {
     return null;
@@ -143,52 +152,64 @@ export default function ProductPage({ params }: ProductPageProps) {
   // If no product ID, show error
   if (!productId) {
     return (
-      <div className="max-w-[1320px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 py-4 sm:py-6 md:py-8">
-        <div className="text-center py-8 sm:py-12 md:py-16">
-          <p className="text-red-500 text-base sm:text-lg">Invalid product ID</p>
-          <p className="text-gray-500 mt-2 text-sm sm:text-base">Please check the URL and try again</p>
+      <>
+        {mobileHeader}
+        <div className="max-w-[1320px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 py-4 sm:py-6 md:py-8">
+          <div className="text-center py-8 sm:py-12 md:py-16">
+            <p className="text-red-500 text-base sm:text-lg">Invalid product ID</p>
+            <p className="text-gray-500 mt-2 text-sm sm:text-base">Please check the URL and try again</p>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   if (isLoading) {
     return (
-      <div className="max-w-[1320px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 py-4 sm:py-6 md:py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
-          <div className="aspect-square bg-gray-200 animate-pulse"></div>
-          <div className="space-y-4 sm:space-y-6">
-            <div className="h-6 sm:h-8 bg-gray-200 animate-pulse"></div>
-            <div className="h-5 sm:h-6 bg-gray-200 animate-pulse w-1/3"></div>
-            <div className="space-y-2">
-              <div className="h-3 sm:h-4 bg-gray-200 animate-pulse"></div>
-              <div className="h-3 sm:h-4 bg-gray-200 animate-pulse"></div>
-              <div className="h-3 sm:h-4 bg-gray-200 animate-pulse w-2/3"></div>
+      <>
+        {mobileHeader}
+        <div className="max-w-[1320px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 py-4 sm:py-6 md:py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
+            <div className="aspect-square bg-gray-200 animate-pulse"></div>
+            <div className="space-y-4 sm:space-y-6">
+              <div className="h-6 sm:h-8 bg-gray-200 animate-pulse"></div>
+              <div className="h-5 sm:h-6 bg-gray-200 animate-pulse w-1/3"></div>
+              <div className="space-y-2">
+                <div className="h-3 sm:h-4 bg-gray-200 animate-pulse"></div>
+                <div className="h-3 sm:h-4 bg-gray-200 animate-pulse"></div>
+                <div className="h-3 sm:h-4 bg-gray-200 animate-pulse w-2/3"></div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
   if (error) {
     return (
-      <div className="max-w-[1320px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 py-4 sm:py-6 md:py-8">
-        <div className="text-center py-8 sm:py-12 md:py-16">
-          <p className="text-red-500 text-base sm:text-lg">Error loading product</p>
-          <p className="text-gray-500 mt-2 text-sm sm:text-base">Please try again later</p>
+      <>
+        {mobileHeader}
+        <div className="max-w-[1320px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 py-4 sm:py-6 md:py-8">
+          <div className="text-center py-8 sm:py-12 md:py-16">
+            <p className="text-red-500 text-base sm:text-lg">Error loading product</p>
+            <p className="text-gray-500 mt-2 text-sm sm:text-base">Please try again later</p>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   if (!product) {
     return (
-      <div className="max-w-[1320px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 py-4 sm:py-6 md:py-8">
-        <div className="text-center py-8 sm:py-12 md:py-16">
-          <p className="text-gray-500 text-base sm:text-lg">Product not found</p>
+      <>
+        {mobileHeader}
+        <div className="max-w-[1320px] mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 py-4 sm:py-6 md:py-8">
+          <div className="text-center py-8 sm:py-12 md:py-16">
+            <p className="text-gray-500 text-base sm:text-lg">Product not found</p>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
@@ -293,30 +314,13 @@ export default function ProductPage({ params }: ProductPageProps) {
     setQuantity(Math.max(1, Math.min(stockQuantity, nextQuantity)));
   };
 
-  // Breadcrumb items
-  const breadcrumbItems = [
-    { label: "Home", href: "/" },
-    { label: "Board games", href: "/catalog" },
-    { label: product?.name || "Product", current: true },
-  ];
-
   return (
-    <div className="max-w-[1320px] mx-auto px-4 pt-0 pb-0 sm:px-6 sm:py-6 md:px-8 md:py-8 lg:px-12 xl:px-16">
-      <div className="sm:hidden">
-        <div className="mx-auto max-w-[396px] border-b border-[var(--color-light-purple-2)] py-6">
-          <div className="w-full overflow-x-auto no-scrollbar">
-            <CustomBreadcrumb
-              items={breadcrumbItems}
-              className="w-max"
-              listClassName="gap-2"
-              linkClassName="text-base leading-[19px]"
-              pageClassName="text-base leading-[19px]"
-              separatorClassName="mx-0"
-            />
-          </div>
-        </div>
+    <>
+      {mobileHeader}
 
-        <div className="mx-auto mt-6 max-w-[380px] overflow-hidden bg-white shadow-[0_4px_4px_rgba(0,0,0,0.1)]">
+      <div className="max-w-[1320px] mx-auto px-4 pt-0 pb-0 sm:px-6 sm:py-6 md:px-8 md:py-8 lg:px-12 xl:px-16">
+        <div className="sm:hidden">
+          <div className="mx-auto mt-6 max-w-[380px] overflow-hidden bg-white shadow-[0_4px_4px_rgba(0,0,0,0.1)]">
           <div className="relative isolate flex flex-col items-center gap-4 pt-4">
             <button
               type="button"
@@ -632,6 +636,7 @@ export default function ProductPage({ params }: ProductPageProps) {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

@@ -168,6 +168,21 @@ describe("Home Page", () => {
       expect(mainDiv).toHaveClass("py-4", "sm:py-6");
     });
 
+    test("renders Navbar in a sticky wrapper without changing page padding", () => {
+      render(<Home />);
+
+      const navbarWrapper = screen.getByTestId("navbar").parentElement;
+
+      expect(navbarWrapper).toHaveClass(
+        "sticky",
+        "top-0",
+        "z-40",
+        "bg-white",
+        "px-4",
+      );
+      expect(navbarWrapper).not.toHaveClass("pt-4", "pb-4");
+    });
+
     test("renders all main sections in correct order", () => {
       render(<Home />);
 

@@ -25,7 +25,12 @@ export default function Navbar(props) {
   );
 }
 
-function NavbarContent({ isPagination = true, hideMobilePaginationChrome = false, enableMobileInlineSearch = true }) {
+function NavbarContent({
+  isPagination = true,
+  hideMobilePaginationChrome = false,
+  enableMobileInlineSearch = true,
+  showMobileDivider = false,
+}) {
   const { userData } = useUserStore((state) => state);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -134,33 +139,37 @@ function NavbarContent({ isPagination = true, hideMobilePaginationChrome = false
   return (
     <div className="flex flex-col">
       <div className="mx-auto w-full max-w-[1320px]">
-        <div ref={mobileHeaderRef} className="flex flex-row justify-between items-center gap-2 sm:gap-3 md:gap-4">
-          <Link href="/" className="flex-shrink-0">
-            <img src={LogoIcon} alt="DICE DECKS Logo" className="w-auto h-8 sm:h-10 md:h-12" />
+        <div ref={mobileHeaderRef} className="flex min-h-11 flex-row items-center justify-between gap-0 sm:min-h-0 sm:gap-3 md:gap-4">
+          <Link href="/" className="min-w-0 shrink">
+            <img
+              src={LogoIcon}
+              alt="DICE DECKS Logo"
+              className="h-auto w-[min(13.75rem,calc(100vw-13rem))] sm:w-auto sm:h-10 md:h-12"
+            />
           </Link>
           <SearchBar className="hidden sm:flex flex-1 mx-2 md:mx-4 max-w-xs md:max-w-md lg:max-w-lg" />
-          <div className="flex flex-row items-center gap-2 sm:gap-2 md:gap-3 lg:gap-4">
+          <div className="flex shrink-0 flex-row items-center gap-0 sm:gap-2 md:gap-3 lg:gap-4">
             {/* Mobile Search Icon */}
             {enableMobileInlineSearch && (
               <button
                 type="button"
                 className={cn(
-                  "sm:hidden flex justify-center items-center p-1 rounded transition-colors cursor-pointer",
+                  "sm:hidden flex h-11 w-11 shrink-0 justify-center items-center rounded transition-colors cursor-pointer",
                   isMobileInlineSearchOpen ? "text-[var(--color-purple)]" : "text-black"
                 )}
                 aria-label={isMobileInlineSearchOpen ? "Hide mobile search" : "Show mobile search"}
                 aria-pressed={isMobileInlineSearchOpen}
                 onClick={handleToggleMobileSearch}
               >
-                <SearchOutlineIcon className="w-6 h-6" />
+                <SearchOutlineIcon className="w-6 h-6 shrink-0" />
               </button>
             )}
             {/* Profile Logo */}
             <Link
               href={userData ? "/profile" : "/login"}
-              className="flex flex-col items-center gap-1 hover:bg-gray-100 p-1 rounded transition-colors cursor-pointer"
+              className="flex h-11 w-11 shrink-0 flex-col items-center justify-center gap-1 rounded transition-colors hover:bg-gray-100 sm:h-auto sm:w-auto sm:p-1 cursor-pointer"
             >
-              <img src={ProfileIcon} alt="Profile" className="w-6 h-6" />
+              <img src={ProfileIcon} alt="Profile" className="w-6 h-6 shrink-0" />
             </Link>
             {/* Cart Button */}
             <div className="relative">
@@ -168,9 +177,9 @@ function NavbarContent({ isPagination = true, hideMobilePaginationChrome = false
                 type="button"
                 onClick={handleCartToggle}
                 aria-label="Open cart"
-                className="flex justify-center items-center hover:bg-gray-100 p-1 rounded transition-colors cursor-pointer"
+                className="flex h-11 w-11 shrink-0 justify-center items-center rounded transition-colors hover:bg-gray-100 sm:h-auto sm:w-auto sm:p-1 cursor-pointer"
               >
-                <img src={CartIcon} alt="Cart" className="w-6 h-6" />
+                <img src={CartIcon} alt="Cart" className="w-6 h-6 shrink-0" />
                 {itemCount > 0 && (
                   <span
                     key={itemCount} // This triggers re-render with animation on count change
@@ -184,22 +193,22 @@ function NavbarContent({ isPagination = true, hideMobilePaginationChrome = false
             {/* Mobile Menu Icon */}
             <button
               type="button"
-              className="sm:hidden flex justify-center items-center hover:bg-gray-100 p-1 rounded transition-colors cursor-pointer"
+              className="sm:hidden flex h-11 w-11 shrink-0 justify-center items-center rounded transition-colors hover:bg-gray-100 cursor-pointer"
               aria-label={isMobileMenuOpen ? "Close mobile menu" : "Open mobile menu"}
               onClick={isMobileMenuOpen ? handleCloseMobileMenu : handleOpenMobileMenu}
             >
               {isMobileMenuOpen ? (
-                <CloseIcon className="w-6 h-6 text-black" strokeWidth={1.5} />
+                <CloseIcon className="w-6 h-6 shrink-0 text-black" strokeWidth={1.5} />
               ) : (
-                <img src={BurgerMenuIcon} alt="Menu" className="w-6 h-6" />
+                <img src={BurgerMenuIcon} alt="Menu" className="w-6 h-6 shrink-0" />
               )}
             </button>
           </div>
         </div>
 
         {enableMobileInlineSearch && isMobileInlineSearchOpen && (
-          <div className="sm:hidden mt-4">
-            <div className="mx-auto max-w-[392px]">
+          <div className="mt-4 sm:hidden">
+            <div className="mx-auto max-w-[396px]">
               <SearchBar
                 variant="catalog-mobile"
                 placeholder="Search games"
@@ -212,7 +221,10 @@ function NavbarContent({ isPagination = true, hideMobilePaginationChrome = false
 
         {/* Navigation list */}
         {isPagination && (
-          <div className={cn("mt-4 sm:mt-5 md:mt-6", hideMobilePaginationChrome && "hidden sm:block")}>
+          <div
+            className="mt-4 sm:mt-5 md:mt-6"
+            data-mobile-pagination-hidden={hideMobilePaginationChrome ? "true" : undefined}
+          >
             <ul className="hidden sm:flex flex-row flex-wrap justify-center gap-3 sm:gap-4 md:gap-6 lg:gap-10 xl:gap-14 text-xs sm:text-sm md:text-base lg:text-lg uppercase">
               {navigationLinks.map((item) => {
                 const isActive = isNavigationLinkActive(
@@ -235,7 +247,14 @@ function NavbarContent({ isPagination = true, hideMobilePaginationChrome = false
                 );
               })}
             </ul>
-            <div className="bg-[#A4A3C8] mt-4 sm:mt-3 w-full h-px"></div>
+            <div
+              aria-hidden="true"
+              data-testid="navbar-divider"
+              className={cn(
+                "mt-4 h-0 w-full border-t border-[#A4A3C8] sm:mt-3 sm:block",
+                showMobileDivider && !isMobileMenuOpen ? "block" : "hidden"
+              )}
+            ></div>
           </div>
         )}
       </div>

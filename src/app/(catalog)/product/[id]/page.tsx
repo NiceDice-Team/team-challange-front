@@ -5,7 +5,6 @@ import ReviewsProduct from "@/components/catalog/ReviewsProduct";
 import ReviewsComments from "@/components/catalog/ReviewsComments";
 import {
   ProductDetailMobileFooter,
-  ProductDetailMobileHeader,
 } from "@/components/catalog/ProductDetailMobileChrome";
 
 interface ProductDetailPageProps {
@@ -22,10 +21,8 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   const resolvedParams = await params;
 
   return (
-    <div className="py-4 sm:py-6">
-      <ProductDetailMobileHeader />
-
-      <div className="hidden px-4 sm:block sm:px-6 md:px-8 lg:px-12 xl:px-16">
+    <div className="sm:py-6">
+      <div className="sticky top-0 z-40 hidden bg-white px-4 sm:block sm:px-6 md:px-8 lg:px-12 xl:px-16">
         <Navbar />
       </div>
 

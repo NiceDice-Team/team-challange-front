@@ -120,22 +120,6 @@ export default function CartPage() {
       {/* Error Message */}
       {error && <div className="bg-red-100 mb-4 px-4 py-3 border border-red-400 rounded text-red-700">{error}</div>}
 
-      {/* Breadcrumb */}
-      <div className="sm:hidden">
-        <div className="mx-auto max-w-[396px] border-b border-[var(--color-light-purple-2)] py-6">
-          <div className="w-full overflow-x-auto no-scrollbar">
-            <CustomBreadcrumb
-              items={breadcrumbItems}
-              className="w-max"
-              listClassName="gap-2"
-              linkClassName="text-base leading-[19px]"
-              pageClassName="text-base leading-[19px]"
-              separatorClassName="mx-0"
-            />
-          </div>
-        </div>
-      </div>
-
       <div className="hidden py-6 sm:block">
         <CustomBreadcrumb items={breadcrumbItems} />
       </div>

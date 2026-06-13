@@ -12,7 +12,7 @@ export default function ProfileLayout({
   return (
     <>
       <div className="flex flex-col mx-auto min-h-screen container">
-        <div className="px-8 lg:px-16 py-6">
+        <div className="sticky top-0 z-40 bg-white px-8 lg:px-16 py-6">
           <Navbar isPagination={false} />
         </div>
 
