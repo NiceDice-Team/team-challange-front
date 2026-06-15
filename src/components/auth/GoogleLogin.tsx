@@ -11,6 +11,7 @@ import { useMutation } from "@tanstack/react-query";
 import { sendOAuthToken } from "@/services/oauthServices";
 import { useUserStore } from "@/store/user";
 import { setTokens, clearTokens } from "@/lib/tokenManager";
+import { showCustomToast } from "@/components/shared/Toast";
 
 interface GoogleAuthButtonProps {
   className?: string;
@@ -24,12 +25,14 @@ export const GoogleAuthButton: FC<GoogleAuthButtonProps> = ({
   const { data: session, update: updateSession } = useSession();
   const router = useRouter();
   const { setUserData } = useUserStore();
+  const oauthStartedRef = useRef(false);
   const oauthCompletedRef = useRef(false);
 
   const oauthMutation = useMutation({
     mutationFn: sendOAuthToken,
     onSuccess: (data) => {
       oauthCompletedRef.current = true;
+      oauthStartedRef.current = false;
       if (data.access_token) {
         setTokens(data.access_token, data.refresh_token);
       }
@@ -58,7 +61,16 @@ export const GoogleAuthButton: FC<GoogleAuthButtonProps> = ({
     },
     onError: (error) => {
       console.error("OAuth error:", error);
+      oauthStartedRef.current = false;
       oauthCompletedRef.current = false;
+      showCustomToast({
+        type: "error",
+        title: "Google login failed",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Please try again or use email login.",
+      });
       signOut({ redirect: false });
     },
   });
@@ -67,8 +79,10 @@ export const GoogleAuthButton: FC<GoogleAuthButtonProps> = ({
     if (
       session?.accessToken &&
       !oauthMutation.isPending &&
+      !oauthStartedRef.current &&
       !oauthCompletedRef.current
     ) {
+      oauthStartedRef.current = true;
       oauthMutation.mutate({
         provider: "google",
         token: session.accessToken,
@@ -84,13 +98,17 @@ export const GoogleAuthButton: FC<GoogleAuthButtonProps> = ({
   const handleGoogleAuth = async () => {
     setLoading(true);
     try {
+      oauthStartedRef.current = false;
       oauthCompletedRef.current = false;
 
-      await signIn("google", {
-        redirect: false,
-      });
+      await signIn("google");
     } catch (error) {
       console.error("Google auth error:", error);
+      showCustomToast({
+        type: "error",
+        title: "Google login failed",
+        description: "Please try again or use email login.",
+      });
     } finally {
       setLoading(false);
     }
@@ -99,6 +117,7 @@ export const GoogleAuthButton: FC<GoogleAuthButtonProps> = ({
   const handleSignOut = async () => {
     setLogoutLoading(true);
     try {
+      oauthStartedRef.current = false;
       oauthCompletedRef.current = false;
 
       const provider = session?.provider || "google";
