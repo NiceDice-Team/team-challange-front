@@ -33,9 +33,17 @@ describe("home game links", () => {
   test("points product promo links at existing catalog routes", () => {
     render(<NewArrivals />);
 
-    const hrefs = screen.getAllByRole("link").map((link) => link.getAttribute("href"));
+    const hrefs = screen
+      .getAllByRole("link")
+      .map((link) => link.getAttribute("href"))
+      .filter((href): href is string => href !== null);
 
-    expect(hrefs).toEqual(["/catalog?sort=newest", "/catalog?sort=bestsellers", "/catalog", "/catalog"]);
+    expect(hrefs).toEqual([
+      "/catalog?categories=1",
+      "/catalog?categories=2",
+      "/catalog?categories=4",
+      "/catalog",
+    ]);
     hrefs.forEach((href) => {
       expect(href).not.toMatch(/^\/products\//);
     });
