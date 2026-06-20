@@ -180,17 +180,6 @@ export function useRemoveFromCart() {
   return useMutation<boolean, Error, string, CartMutationContext>({
     mutationFn: (cartItemId: string) => cartServices.removeFromCart(cartItemId),
 
-    onMutate: async (cartItemId: string) => {
-      await queryClient.cancelQueries({ queryKey: CART_QUERY_KEY });
-      const previousCart = queryClient.getQueryData<CartItem[]>(CART_QUERY_KEY);
-
-      queryClient.setQueryData<CartItem[]>(CART_QUERY_KEY, (oldCart = []) =>
-        oldCart.filter((item) => !idsMatch(item.id, cartItemId)),
-      );
-
-      return { previousCart };
-    },
-
     onSuccess: async () => {
       await syncCartFromApi(queryClient);
     },

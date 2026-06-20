@@ -3,9 +3,9 @@
 import React, { useCallback, memo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { TrashIcon } from "@/svgs/icons";
+import { LoadingSpinner, TrashIcon } from "@/svgs/icons";
 
-function CartDropdownItem({ item, updateQuantity, removeItem }) {
+function CartDropdownItem({ item, updateQuantity, removeItem, isRemoving = false }) {
   const product = item.product || {};
   const price = parseFloat(product.price || 0);
   const imageUrl = product.images?.[0]?.url_sm || "/FirstPlaceholder.svg";
@@ -75,11 +75,13 @@ function CartDropdownItem({ item, updateQuantity, removeItem }) {
           <button
             type="button"
             onClick={handleRemoveItem}
-            className="flex h-5 w-5 items-center justify-center rounded-none text-[#C41313] transition-colors duration-150 hover:bg-[var(--color-error-border)] hover:text-[var(--color-red-price)] active:bg-[#ffd6db] active:text-[#9f1010]"
-            title="Remove item"
-            aria-label={`Remove ${product.name || 'product'} from cart`}
+            className="flex h-5 w-5 items-center justify-center rounded-none text-[#C41313] transition-colors duration-150 hover:bg-[var(--color-error-border)] hover:text-[var(--color-red-price)] active:bg-[#ffd6db] active:text-[#9f1010] disabled:cursor-wait disabled:hover:bg-transparent disabled:hover:text-[#C41313]"
+            title={isRemoving ? "Removing item" : "Remove item"}
+            aria-label={`${isRemoving ? "Removing" : "Remove"} ${product.name || 'product'} from cart`}
+            aria-busy={isRemoving}
+            disabled={isRemoving}
           >
-            <TrashIcon />
+            {isRemoving ? <LoadingSpinner className="h-4 w-4" /> : <TrashIcon />}
           </button>
         </div>
       </div>

@@ -13,6 +13,7 @@ export default function CartDropdown({
   const { data: cartItems = [] } = useCartQuery();
   const updateQuantityMutation = useUpdateCartQuantity();
   const removeItemMutation = useRemoveFromCart();
+  const removingItemId = removeItemMutation.isPending ? removeItemMutation.variables : null;
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -127,6 +128,7 @@ export default function CartDropdown({
                     item={item}
                     updateQuantity={updateQuantity}
                     removeItem={removeItem}
+                    isRemoving={item.id === removingItemId}
                   />
                 ))}
               </div>

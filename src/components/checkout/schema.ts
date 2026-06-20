@@ -34,7 +34,7 @@ const addressFields = {
     .string()
     .min(3, "Zip code must be at least 3 characters")
     .max(12, "Zip code must be at most 12 characters")
-    .regex(/^\d{5}(-\d{4})?$/, {
+    .regex(/^[a-zA-Z0-9]+$/, {
       message: "Only numbers and letters are allowed",
     }),
   city: z
