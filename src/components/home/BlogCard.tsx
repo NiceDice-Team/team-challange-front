@@ -11,13 +11,22 @@ interface BlogCardProps {
   blogUrl: string;
 }
 
-export default function BlogCard({ date, readingTime, name, category, imageSrc, blogUrl }: BlogCardProps) {
+export default function BlogCard({
+  date,
+  readingTime,
+  name,
+  category,
+  imageSrc,
+  blogUrl,
+}: BlogCardProps) {
   return (
     <article className=" flex flex-col ">
       {/* Blog Card Image */}
-      <div className="relative h-48 w-full">
-        <Image src={imageSrc} alt={name} fill className="object-cover" />
-      </div>
+      <Link href={blogUrl}>
+        <div className="relative h-48 w-full">
+          <Image src={imageSrc} alt={name} fill className="object-cover" />
+        </div>
+      </Link>
       {/* Blog Card Details */}
       <div className="flex flex-col justify-between mt-1">
         <p className="text-sm text-gray-500 mt-3">
@@ -25,7 +34,10 @@ export default function BlogCard({ date, readingTime, name, category, imageSrc, 
         </p>
         <h3 className="text-lg font-medium ">{name}</h3>
 
-        <Link href={blogUrl} className="text-sm mt-3  inline-block text-indigo-600 hover:underline">
+        <Link
+          href={blogUrl}
+          className="text-sm mt-3  inline-block text-indigo-600 hover:underline"
+        >
           Read full article<span className="inline-block ml-1">→</span>
         </Link>
       </div>
