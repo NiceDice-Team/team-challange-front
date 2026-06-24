@@ -1,7 +1,7 @@
 import { navigationLinks } from "./navigationLinks";
 
 const navigationHrefByLabel = new Map(
-  navigationLinks.map((item) => [item.label, item.href])
+  navigationLinks.map((item) => [item.label, item.href]),
 );
 
 const getNavigationHref = (label: string, fallback: string): string =>
@@ -61,11 +61,13 @@ export const footerSections = [
       },
       {
         label: "Shipping",
-        href: "/shipping",
+        href: "/policies#shipping",
+        isLinkable: true,
       },
       {
         label: "Returns",
-        href: "/returns",
+        href: "/policies#returns",
+        isLinkable: true,
       },
     ],
   },
@@ -80,17 +82,20 @@ export const footerSections = [
       {
         label: "Contact Us",
         mobileLabel: "Contact us",
-        href: "/contact",
+        href: "/policies#contact",
+        isLinkable: true,
       },
       {
         label: "Terms of Service",
         mobileLabel: "Terms of service",
-        href: "/terms-of-service",
+        href: "/policies#terms-of-service",
+        isLinkable: true,
       },
       {
         label: "Privacy Policy",
         mobileLabel: "Privacy policy",
-        href: "/privacy-policy",
+        href: "/policies#privacy-policy",
+        isLinkable: true,
       },
     ],
   },
@@ -101,7 +106,10 @@ export const footerNewsletter = {
   description:
     "Subscribe to our newsletter and be the first to know about new arrivals, special offers, and gaming news",
   consentLabel: "I agree to receiving marketing emails and special deals",
-  consentMobileLines: ["I agree to receiving marketing emails", "and special deals"],
+  consentMobileLines: [
+    "I agree to receiving marketing emails",
+    "and special deals",
+  ],
 };
 
 export const footerLegal = {
