@@ -12,7 +12,7 @@ export const navigationLinks: NavigationLink[] = [
   { label: "Board games", href: "/catalog" },
   { label: "Sale", href: "/catalog?categories=4", isSale: true },
   { label: "Coming soon", href: "/catalog?categories=5" },
-  { label: "Blog", href: "/#blog" },
+  { label: "Blog", href: "/blog" },
   { label: "Reviews", href: "/#reviews" },
   { label: "About", href: "/#about" },
 ];
@@ -33,7 +33,10 @@ export function isNavigationLinkActive(
     return false;
   }
 
-  if (linkUrl.pathname === "/catalog" && !linkUrl.searchParams.has("categories")) {
+  if (
+    linkUrl.pathname === "/catalog" &&
+    !linkUrl.searchParams.has("categories")
+  ) {
     return !searchParams.get("categories");
   }
 
