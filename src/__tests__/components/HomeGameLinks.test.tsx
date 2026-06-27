@@ -57,9 +57,15 @@ describe("home game links", () => {
       .map((link) => link.getAttribute("href"))
       .filter((href): href is string => href !== null);
 
-    expect(hrefs).toEqual(expect.arrayContaining(["/catalog?search=Catan", "/catalog?search=7%20Wonders"]));
+    expect(hrefs).toEqual(
+      expect.arrayContaining([
+        "/catalog?search=Catan",
+        "/catalog?search=7%20Wonders",
+        "/catalog?search=Azul",
+      ])
+    );
     hrefs.forEach((href) => {
-      expect(href).toMatch(/^\/catalog\?search=(Catan|7%20Wonders)$/);
+      expect(href).toMatch(/^\/catalog\?search=(Catan|7%20Wonders|Azul|Ticket%20to%20Ride)$/);
       expect(href).not.toMatch(/^\/games\//);
     });
   });
