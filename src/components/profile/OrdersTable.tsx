@@ -8,7 +8,6 @@ import {
   TableBody,
   TableCell,
 } from "../ui/table";
-import { BadgeProps } from "../ui/badge";
 import { useUserStore } from "@/store/user";
 import { useOrdersQuery } from "@/hooks/useOrdersQuery";
 import { Order } from "@/lib/definitions";
@@ -26,14 +25,6 @@ const formatDate = (dateString: string): string => {
   const month = (date.getMonth() + 1).toString().padStart(2, "0");
   const year = date.getFullYear();
   return `${day}.${month}.${year}`;
-};
-
-const mappingStatusesToVariant: Record<string, BadgeProps["variant"]> = {
-  delivered: "default",
-  shipped: "secondary",
-  processing: "outline",
-  pending: "destructive",
-  cancelled: "destructive",
 };
 
 function OrdersTable() {
@@ -75,8 +66,8 @@ function OrdersTable() {
           <TableHead className="w-[155px]">ORDER ID</TableHead>
           <TableHead>DATE</TableHead>
           <TableHead>STATUS</TableHead>
-          <TableHead className="hidden md:block">ITEMS</TableHead>
-          <TableHead className="hidden md:block">TOTAL</TableHead>
+          <TableHead className="hidden md:table-cell">ITEMS</TableHead>
+          <TableHead className="hidden md:table-cell">TOTAL</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody className="border-none text-black">
@@ -85,13 +76,17 @@ function OrdersTable() {
             <TableCell className="py-4">{order.id}</TableCell>
             <TableCell>{formatDate(order.created_at)}</TableCell>
             <TableCell>
-              <CustomBadge variant={mappingStatusesToVariant[order.status]}>
+              <CustomBadge status={order.status}>
                 {order?.status?.charAt(0).toUpperCase() +
                   order?.status?.slice(1)}
               </CustomBadge>
             </TableCell>
-            <TableCell className="hidden md:block">{formatItemsCount(order?.products?.length)}</TableCell>
-            <TableCell className="hidden md:block">${Number(order?.total_amount)?.toFixed(2)}</TableCell>
+            <TableCell className="hidden md:table-cell">
+              {formatItemsCount(order?.products?.length)}
+            </TableCell>
+            <TableCell className="hidden md:table-cell">
+              ${Number(order?.total_amount)?.toFixed(2)}
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>
