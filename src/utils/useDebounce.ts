@@ -56,7 +56,7 @@ function createDebouncedFunction<T extends (...args: never[]) => unknown>(
 export const useDebounce = <T extends (...args: never[]) => unknown>(
   callback: T,
   delay: number = 300
-): ((...args: Parameters<T>) => void) => {
+): DebouncedFunction<T> => {
   const callbackRef = useRef<T>(callback);
 
   // Update ref when callback changes to avoid stale closures
@@ -80,5 +80,5 @@ export const useDebounce = <T extends (...args: never[]) => unknown>(
     };
   }, [debouncedCallback]);
 
-  return debouncedCallback;
+  return debouncedCallback as DebouncedFunction<T>;
 };
