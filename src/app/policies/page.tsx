@@ -1,4 +1,12 @@
-const policySections = [
+import type { ReactNode } from "react";
+
+const policySections: {
+  id: string;
+  title: string;
+  paragraphs: ReactNode[];
+  listTitle?: string;
+  list?: string[];
+}[] = [
   {
     id: "shipping",
     title: "Shipping",
@@ -57,6 +65,16 @@ const policySections = [
     title: "Contact",
     paragraphs: [
       "If you have questions regarding these policies, please contact Dice & Decks customer support through the contact information provided on our website.",
+      <>
+        Write to us at email{" "}
+        <a
+          href="mailto:dicedecks2025@gmail.com"
+          className="text-[var(--color-orange)] underline-offset-4 transition-colors hover:underline"
+        >
+          dicedecks2025@gmail.com
+        </a>
+        .
+      </>,
     ],
   },
 ];
@@ -166,8 +184,8 @@ export default function PoliciesPage() {
                 </h2>
 
                 <div className="flex flex-col gap-4 text-base leading-7 text-gray-700">
-                  {section.paragraphs.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
+                  {section.paragraphs.map((paragraph, index) => (
+                    <p key={`${section.id}-${index}`}>{paragraph}</p>
                   ))}
 
                   {section.list && (
