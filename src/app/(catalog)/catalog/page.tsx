@@ -1,51 +1,44 @@
-"use client";
-import ProductsGrid from "../../../components/catalog/ProductsGrid";
-import FilterSideBar from "../../../components/catalog/FilterSideBar";
-import { useUrlFilters } from "../../../hooks/useUrlFilters";
-import { getCatalogPageTitle } from "@/lib/catalogQueryParams";
-import { Suspense, useMemo } from "react";
+import type { Metadata } from "next";
+import CatalogPageClient from "./CatalogPageClient";
+import {
+  getCatalogPageTitle,
+  parseCatalogFiltersFromSearchParams,
+} from "@/lib/catalogQueryParams";
 
-function CatalogContent() {
-  const { selectedFilters, setSelectedFilters, currentPage, setCurrentPage } =
-    useUrlFilters();
-  const pageTitle = useMemo(
-    () => getCatalogPageTitle(selectedFilters),
-    [selectedFilters],
-  );
+type CatalogPageProps = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
 
-  return (
-    <div className="px-4 pt-6 pb-6 sm:px-6 sm:pt-0 md:px-8 lg:px-12 lg:pb-12 xl:px-16">
-      <div className="max-w-[1320px] mx-auto">
-        <h2 className="hidden lg:flex w-full items-center justify-center mb-6 text-[40px] uppercase">
-          {pageTitle}
-        </h2>
-        <div className="flex flex-col gap-6 lg:flex-row">
-          <FilterSideBar
-            selectedFilters={selectedFilters}
-            setSelectedFilters={setSelectedFilters}
-          />
+function toUrlSearchParams(
+  searchParams: Record<string, string | string[] | undefined>,
+): URLSearchParams {
+  const params = new URLSearchParams();
 
-          <div className="flex-1 min-w-0 flex flex-col gap-6">
-            <h2 className="flex w-full items-center justify-center text-2xl leading-[29px] uppercase text-[#040404] lg:hidden">
-              {pageTitle}
-            </h2>
-            <ProductsGrid
-              selectedFilters={selectedFilters}
-              setSelectedFilters={setSelectedFilters}
-              currentPage={currentPage}
-              setCurrentPage={setCurrentPage}
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  for (const [key, value] of Object.entries(searchParams)) {
+    if (typeof value === "string") {
+      params.set(key, value);
+    } else if (Array.isArray(value)) {
+      params.set(key, value.join(","));
+    }
+  }
+
+  return params;
 }
 
-export default function Catalog() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <CatalogContent />
-    </Suspense>
+export async function generateMetadata({
+  searchParams,
+}: CatalogPageProps): Promise<Metadata> {
+  const resolvedSearchParams = await searchParams;
+  const filters = parseCatalogFiltersFromSearchParams(
+    toUrlSearchParams(resolvedSearchParams),
   );
+
+  return {
+    title: getCatalogPageTitle(filters),
+    description: "Browse board games, expansions, and accessories at Dice & Decks.",
+  };
+}
+
+export default function CatalogPage() {
+  return <CatalogPageClient />;
 }

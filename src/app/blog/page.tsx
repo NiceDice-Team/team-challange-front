@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import BlogCard from "@/components/home/BlogCard";
+
+export const metadata: Metadata = {
+  title: "Blog",
+  description: "Articles, reviews, and tabletop news from Dice & Decks.",
+};
 import { blogPostsPreview } from "./data/blogPosts";
 
 const BlogPage = () => {

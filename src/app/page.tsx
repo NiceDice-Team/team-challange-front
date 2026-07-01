@@ -1,4 +1,12 @@
+import type { Metadata } from "next";
 import About from "../components/layout/About";
+
+export const metadata: Metadata = {
+  title: {
+    absolute: "Dice & Decks",
+  },
+  description: "Discover board games, new arrivals, and bestsellers at Dice & Decks.",
+};
 import Footer from "../components/layout/Footer";
 import HeroScroller from "../components/home/HeroScroller";
 import MobileFooter from "../components/layout/MobileFooter";

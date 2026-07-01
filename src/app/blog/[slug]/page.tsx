@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -9,6 +10,25 @@ interface BlogArticlePageProps {
 
 export async function generateStaticParams() {
   return getAllBlogSlugs().map((slug) => ({ slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: BlogArticlePageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const post = getBlogPostBySlug(slug);
+
+  if (!post) {
+    return {
+      title: "Article not found",
+      description: "This blog article could not be found.",
+    };
+  }
+
+  return {
+    title: post.title,
+    description: post.excerpt,
+  };
 }
 
 export default async function BlogArticlePage({

@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
+
+export const metadata: Metadata = {
+  title: "Policies",
+  description: "Shipping, returns, privacy, and store policies for Dice & Decks.",
+};
 
 const policySections: {
   id: string;

@@ -1,14 +1,13 @@
-"use client";
-
 import React from "react";
+import type { ReactNode } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import MobileFooter from "@/components/layout/MobileFooter";
 
-export default function ProfileLayout({
+export default function CheckoutOrderLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <>
