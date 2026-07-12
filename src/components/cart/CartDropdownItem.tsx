@@ -4,10 +4,18 @@ import React, { useCallback, memo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { LoadingSpinner, TrashIcon } from "@/svgs/icons";
+import type { CartItem } from "@/types/cart";
 
-function CartDropdownItem({ item, updateQuantity, removeItem, isRemoving = false }) {
-  const product = item.product || {};
-  const price = parseFloat(product.price || 0);
+interface CartDropdownItemProps {
+  item: CartItem;
+  updateQuantity: (cartItemId: CartItem["id"], quantity: number) => void | Promise<void>;
+  removeItem: (cartItemId: CartItem["id"]) => void | Promise<void>;
+  isRemoving?: boolean;
+}
+
+function CartDropdownItem({ item, updateQuantity, removeItem, isRemoving = false }: CartDropdownItemProps) {
+  const product = item.product;
+  const price = parseFloat(String(product.price || 0));
   const imageUrl = product.images?.[0]?.url_sm || "/FirstPlaceholder.svg";
   const stock = Number(product.stock);
   const isAtStockLimit = Number.isFinite(stock) && item.quantity >= stock;

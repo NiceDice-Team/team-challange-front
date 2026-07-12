@@ -3,14 +3,11 @@ import { Checkbox } from "../ui/checkbox";
 import { cn } from "@/lib/utils";
 import { Label } from "../ui/label";
 
-interface CheckboxProps {
+interface CheckboxProps extends Omit<React.ComponentProps<typeof Checkbox>, "onCheckedChange"> {
   label?: React.ReactNode;
   id: string;
-  disabled?: boolean;
-  className?: string;
   variant?: "default" | "inverse";
   error?: string;
-  checked?: boolean;
   onCheckedChange?: (checked: boolean) => void;
   children?: React.ReactNode;
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import type { ComponentPropsWithoutRef } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import {
@@ -12,14 +13,29 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 
-export const CustomBreadcrumb = ({ className='', items = [], ...props }) => {
-  const {
-    listClassName = "",
-    linkClassName = "",
-    pageClassName = "",
-    separatorClassName = "",
-    ...restProps
-  } = props;
+export interface BreadcrumbEntry {
+  label: string;
+  href?: string;
+  current?: boolean;
+}
+
+interface CustomBreadcrumbProps extends ComponentPropsWithoutRef<"nav"> {
+  items?: BreadcrumbEntry[];
+  listClassName?: string;
+  linkClassName?: string;
+  pageClassName?: string;
+  separatorClassName?: string;
+}
+
+export const CustomBreadcrumb = ({
+  className = "",
+  items = [],
+  listClassName = "",
+  linkClassName = "",
+  pageClassName = "",
+  separatorClassName = "",
+  ...restProps
+}: CustomBreadcrumbProps) => {
 
   return (
     <Breadcrumb className={cn("", className)} {...restProps}>

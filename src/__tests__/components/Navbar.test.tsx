@@ -4,11 +4,13 @@ import Navbar from "@/components/layout/Navbar";
 import { MobileHeaderBreadcrumbs } from "@/components/catalog/ProductDetailMobileChrome";
 
 jest.mock("next/link", () => {
-  return ({ children, href, onClick, ...props }) => (
-    <a href={href} onClick={onClick} {...props}>
-      {children}
-    </a>
-  );
+  return function MockLink({ children, href, onClick, ...props }) {
+    return (
+      <a href={href} onClick={onClick} {...props}>
+        {children}
+      </a>
+    );
+  };
 });
 
 jest.mock("@/store/user", () => ({

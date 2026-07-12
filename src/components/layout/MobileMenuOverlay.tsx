@@ -18,7 +18,15 @@ const languages = [
   { id: "ua", label: "Ukrainian" },
 ];
 
-export default function MobileMenuOverlay({ isOpen, topOffset = 0, onClose }) {
+type Language = (typeof languages)[number];
+
+interface MobileMenuOverlayProps {
+  isOpen: boolean;
+  topOffset?: number;
+  onClose: () => void;
+}
+
+export default function MobileMenuOverlay({ isOpen, topOffset = 0, onClose }: MobileMenuOverlayProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
@@ -38,7 +46,7 @@ export default function MobileMenuOverlay({ isOpen, topOffset = 0, onClose }) {
     if (!isOpen) return undefined;
 
     const originalOverflow = document.body.style.overflow;
-    const handleEscape = (event) => {
+    const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         onClose();
       }
@@ -68,7 +76,7 @@ export default function MobileMenuOverlay({ isOpen, topOffset = 0, onClose }) {
     onClose();
   };
 
-  const handleLanguageSelect = (language) => {
+  const handleLanguageSelect = (language: Language) => {
     setSelectedLanguage(language);
     setIsLanguageOpen(false);
   };

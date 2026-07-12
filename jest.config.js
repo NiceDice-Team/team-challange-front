@@ -31,9 +31,9 @@ const customJestConfig = {
     "!src/**/*.spec.{js,jsx,ts,tsx}",
     "!src/**/*.d.ts",
     "!src/**/index.{js,ts}",
-    "!src/app/layout.js",
-    "!src/app/not-found.js",
-    "!src/middleware.js",
+    "!src/app/layout.{js,jsx,ts,tsx}",
+    "!src/app/not-found.{js,jsx,ts,tsx}",
+    "!src/middleware.{js,ts}",
   ],
   // coverageThreshold: {
   //   global: {

@@ -17,7 +17,14 @@ import {
   navigationLinks,
 } from "./navigationLinks";
 
-export default function Navbar(props) {
+export interface NavbarProps {
+  isPagination?: boolean;
+  hideMobilePaginationChrome?: boolean;
+  enableMobileInlineSearch?: boolean;
+  showMobileDivider?: boolean;
+}
+
+export default function Navbar(props: NavbarProps) {
   return (
     <Suspense fallback={null}>
       <NavbarContent {...props} />
@@ -30,7 +37,7 @@ function NavbarContent({
   hideMobilePaginationChrome = false,
   enableMobileInlineSearch = true,
   showMobileDivider = false,
-}) {
+}: NavbarProps) {
   const { userData } = useUserStore((state) => state);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -41,7 +48,7 @@ function NavbarContent({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [currentHash, setCurrentHash] = useState("");
-  const mobileHeaderRef = useRef(null);
+  const mobileHeaderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const syncHash = () => setCurrentHash(window.location.hash);
@@ -67,7 +74,7 @@ function NavbarContent({
   useEffect(() => {
     const mediaQuery = window.matchMedia("(min-width: 640px)");
 
-    const handleViewportChange = (event) => {
+    const handleViewportChange = (event: MediaQueryListEvent) => {
       if (event.matches) {
         setIsMobileMenuOpen(false);
         setIsMobileInlineSearchOpen(false);

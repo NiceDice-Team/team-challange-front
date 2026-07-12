@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { jwtDecode } from "jwt-decode";
 
 const NO_CACHE_PAGE_HEADER = "no-store, no-cache, must-revalidate";
@@ -12,35 +12,35 @@ const NO_CACHE_ROUTE_PREFIXES = [
   "/confirm-signup",
 ];
 
-function isNoCacheRoute(pathname) {
+function isNoCacheRoute(pathname: string): boolean {
   return NO_CACHE_ROUTE_PREFIXES.some(
     (route) => pathname === route || pathname.startsWith(`${route}/`),
   );
 }
 
-function withNoCachePageHeaders(response) {
+function withNoCachePageHeaders(response: NextResponse): NextResponse {
   response.headers.set("Cache-Control", NO_CACHE_PAGE_HEADER);
   return response;
 }
 
-function isTokenExpired(token) {
+function isTokenExpired(token?: string): boolean {
   if (!token) return true;
 
   try {
-    const decoded = jwtDecode(token);
+    const decoded = jwtDecode<{ exp?: number }>(token);
     const currentTime = Date.now() / 1000;
-    return decoded.exp <= currentTime + 60;
+    return typeof decoded.exp !== "number" || decoded.exp <= currentTime + 60;
   } catch (error) {
     return true;
   }
 }
 
-function isAuthenticated(request) {
+function isAuthenticated(request: NextRequest): boolean {
   const refreshToken = request.cookies.get("refresh_token")?.value;
-  return refreshToken && !isTokenExpired(refreshToken);
+  return Boolean(refreshToken && !isTokenExpired(refreshToken));
 }
 
-export default function middleware(request) {
+export default function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const protectedRoutes = ["/profile"];

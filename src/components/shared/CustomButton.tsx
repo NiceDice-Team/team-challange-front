@@ -5,7 +5,7 @@ import { Button } from "../ui/button";
 import { FC } from "react";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   className?: string;
   loading?: boolean;
   disabled?: boolean;

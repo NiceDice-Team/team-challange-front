@@ -14,10 +14,14 @@ import {
 import { useAddToCart } from "@/hooks/useCartQuery";
 import { roundRatingToNearestHalf } from "@/lib/reviewMetrics";
 import { CustomButton } from "@/components/shared/CustomButton";
+import type { Product } from "@/types/product";
 
-export default function CartProductCard({ product = {} }) {
+interface CartProductCardProps {
+  product: Product;
+}
+
+export default function CartProductCard({ product }: CartProductCardProps) {
   const [isFavorite, setIsFavorite] = useState(false);
-  const [isAddingToCart, setIsAddingToCart] = useState(false);
   const addToCartMutation = useAddToCart();
 
   // Create star rating display
@@ -49,11 +53,11 @@ export default function CartProductCard({ product = {} }) {
   };
 
   // Format price
-  const displayPrice = product?.price ? `$${parseFloat(product.price).toFixed(2)}` : "$0.00";
-  const originalPrice = product?.original_price ? `$${parseFloat(product.original_price).toFixed(2)}` : null;
+  const displayPrice = product?.price ? `$${parseFloat(String(product.price)).toFixed(2)}` : "$0.00";
+  const originalPrice = product?.original_price ? `$${parseFloat(String(product.original_price)).toFixed(2)}` : null;
 
   // Stock status
-  const stock = parseInt(product.stock, 10) || 0;
+  const stock = parseInt(String(product.stock), 10) || 0;
   const isOutOfStock = stock <= 0;
   let stockCircle;
   let stockMessage;
@@ -78,8 +82,6 @@ export default function CartProductCard({ product = {} }) {
   }
 
   const imageUrl = product.images?.[0]?.url_sm || '/FirstPlaceholder.svg';
-  const brandName = product.brand?.name || 'Unknown Brand';
-
   const handleAddToCart = async () => {
     if (addToCartMutation.isPending) return; // Prevent multiple rapid clicks
     
