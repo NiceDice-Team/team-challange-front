@@ -78,16 +78,16 @@ export default function ProductCard({ product = {} as Product, cardIndex = 0 }: 
       stars.push(
         <span key={i} className="relative block h-4 w-4">
           {isFilled ? (
-            <img src={StarFilledIcon} alt="filled star" className="h-4 w-4" />
+            <Image src={StarFilledIcon} alt="filled star" width={16} height={16} className="h-4 w-4" />
           ) : isHalfFilled ? (
             <>
-              <img src={StarEmptyIcon} alt="half star" className="h-4 w-4" />
+              <Image src={StarEmptyIcon} alt="half star" width={16} height={16} className="h-4 w-4" />
               <span className="absolute inset-0 block w-1/2 overflow-hidden" aria-hidden="true">
-                <img src={StarFilledIcon} alt="" className="h-4 w-4 max-w-none" />
+                <Image src={StarFilledIcon} alt="" width={16} height={16} className="h-4 w-4 max-w-none" />
               </span>
             </>
           ) : (
-            <img src={StarEmptyIcon} alt="empty star" className="h-4 w-4" />
+            <Image src={StarEmptyIcon} alt="empty star" width={16} height={16} className="h-4 w-4" />
           )}
         </span>
       );
@@ -114,19 +114,19 @@ export default function ProductCard({ product = {} as Product, cardIndex = 0 }: 
   let stockStyle;
   if (stock === 0) {
     stockMessage = "Sold out";
-    stockCircle = <img src={CircleGrayIcon} alt="sold out" className="h-2 w-2" />;
+    stockCircle = <Image src={CircleGrayIcon} alt="sold out" width={8} height={8} className="h-2 w-2" />;
     stockStyle = "text-[#717171]";
   } else if (stock <= 5) {
     stockMessage = "Very low stock (1-5 units)";
-    stockCircle = <img src={CircleRedIcon} alt="very low stock" className="h-2 w-2" />;
+    stockCircle = <Image src={CircleRedIcon} alt="very low stock" width={8} height={8} className="h-2 w-2" />;
     stockStyle = "text-[#EC3535]";
   } else if (stock <= 10) {
     stockMessage = `Low stock (6-10 units)`;
-    stockCircle = <img src={CircleOrangeIcon} alt="low stock" className="h-2 w-2" />;
+    stockCircle = <Image src={CircleOrangeIcon} alt="low stock" width={8} height={8} className="h-2 w-2" />;
     stockStyle = "text-[#FF7C40]";
   } else {
     stockMessage = `In stock (>11)`;
-    stockCircle = <img src={CircleGreenIcon} alt="in stock" className="h-2 w-2" />;
+    stockCircle = <Image src={CircleGreenIcon} alt="in stock" width={8} height={8} className="h-2 w-2" />;
     stockStyle = "text-[#3A9B25]";
   }
 
