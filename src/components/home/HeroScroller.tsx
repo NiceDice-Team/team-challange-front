@@ -10,6 +10,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@/svgs/icons";
 interface ScrollerItem {
   id: number;
   image: StaticImageData;
+  objectPosition?: string;
   category: string;
   title: string;
   description: string;
@@ -21,6 +22,7 @@ export const HERO_SCROLLER_ITEMS: ScrollerItem[] = [
   {
     id: 1,
     image: HERO_IMG1,
+    objectPosition: "50% 25%",
     category: "NEW ARRIVALS",
     title: "Heat: Pedal to the metal - The ultimate racing board game!",
     description:
@@ -218,6 +220,7 @@ export default function HeroScroller() {
                   alt={`Slide ${item.id}`}
                   fill
                   className="object-cover"
+                  style={{ objectPosition: item.objectPosition }}
                   priority={item.id === 1}
                   sizes="100vw"
                 />
