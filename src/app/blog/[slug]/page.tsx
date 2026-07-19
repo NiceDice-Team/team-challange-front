@@ -33,14 +33,12 @@ export default async function BlogArticlePage({
 
       <h1 className="mt-4 text-3xl font-semibold uppercase">{post.title}</h1>
 
-      <div className="relative mt-8 aspect-[2/1] w-full overflow-hidden sm:aspect-auto sm:h-[320px]">
+      <div className="relative mt-8 h-[320px] w-full">
         <Image
           src={post.imageSrc}
           alt={post.title}
           fill
-          sizes="(max-width: 639px) calc(100vw - 2rem), 768px"
           className="object-cover"
-          priority
         />
       </div>
 
@@ -48,24 +46,26 @@ export default async function BlogArticlePage({
 
       <div className="mt-6 space-y-4 text-base leading-7 text-[#040404]">
         {post.content.map((paragraph, index) => (
-          <div key={index}>
-            <h2 className="text-2xl font-bold">{paragraph.title}</h2>
+          <>
+            <div>
+              <h2 className="text-2xl font-bold">{paragraph.title}</h2>
 
-            {paragraph.content.map((content, index) => (
-              <p key={index} className="mt-4">
-                {content}
-              </p>
-            ))}
-            {paragraph.imageSrc && (
-              <Image
-                src={paragraph.imageSrc}
-                alt={paragraph.title}
-                width={1000}
-                height={1000}
-                className="mt-4"
-              />
-            )}
-          </div>
+              {paragraph.content.map((content, index) => (
+                <p key={index} className="mt-4">
+                  {content}
+                </p>
+              ))}
+              {paragraph.imageSrc && (
+                <Image
+                  src={paragraph.imageSrc}
+                  alt={paragraph.title}
+                  width={1000}
+                  height={1000}
+                  className="mt-4"
+                />
+              )}
+            </div>
+          </>
         ))}
       </div>
     </article>
