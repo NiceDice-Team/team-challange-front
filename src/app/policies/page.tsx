@@ -94,35 +94,35 @@ const shippingOptions = [
 
 export default function PoliciesPage() {
   return (
-    <main className="px-8 lg:px-50 mb-25">
-      <div className="container mx-auto">
-        <section className="mb-10 max-w-4xl">
-          <p className="mb-3 text-sm uppercase tracking-[0.24em] text-gray-500">
+    <main className="mb-16 px-4 sm:mb-20 sm:px-6 md:px-8 lg:mb-25 lg:px-20">
+      <div className="container mx-auto min-w-0 max-w-full">
+        <section className="mb-6 max-w-4xl sm:mb-8 lg:mb-10">
+          <p className="mb-2 text-xs uppercase tracking-[0.24em] text-gray-500 sm:mb-3 sm:text-sm">
             Dice &amp; Decks
           </p>
-          <h1 className="mb-5 text-title font-semibold tracking-wide uppercase">
+          <h1 className="mb-3 text-2xl font-semibold tracking-wide uppercase sm:mb-4 sm:text-3xl md:mb-5 md:text-title">
             Policies
           </h1>
-          <p className="text-base leading-7 text-gray-700 md:text-lg">
+          <p className="text-sm leading-6 text-gray-700 sm:text-base sm:leading-7 md:text-lg">
             Here you can find our shipping, returns, terms of service, and
             privacy policy information.
           </p>
         </section>
 
-        <div className="grid gap-10 lg:grid-cols-[260px_1fr]">
+        <div className="grid min-w-0 w-full gap-6 sm:gap-8 lg:grid-cols-[minmax(0,260px)_minmax(0,1fr)] lg:gap-10">
           <nav
             aria-label="Policies navigation"
-            className="h-fit bg-gray-50 p-5 lg:sticky lg:top-8"
+            className="min-w-0 h-fit bg-gray-50 p-4 sm:p-5 lg:sticky lg:top-8"
           >
-            <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-gray-500">
+            <h2 className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-gray-500 sm:mb-4 sm:text-sm">
               On this page
             </h2>
-            <ul className="flex flex-col gap-3">
+            <ul className="flex min-w-0 flex-row gap-x-4 gap-y-2 overflow-x-auto pb-1 sm:flex-col sm:gap-3 sm:overflow-visible sm:pb-0">
               {policySections.map((section) => (
-                <li key={section.id}>
+                <li key={section.id} className="shrink-0">
                   <a
                     href={`#${section.id}`}
-                    className="text-base text-gray-800 underline-offset-4 transition-colors hover:text-[var(--color-orange)] hover:underline"
+                    className="whitespace-nowrap text-sm text-gray-800 underline-offset-4 transition-colors hover:text-[var(--color-orange)] hover:underline sm:text-base"
                   >
                     {section.title}
                   </a>
@@ -131,19 +131,38 @@ export default function PoliciesPage() {
             </ul>
           </nav>
 
-          <div className="flex flex-col gap-8">
+          <div className="flex min-w-0 flex-col gap-5 sm:gap-6 lg:gap-8">
             <section
               aria-labelledby="delivery-options-title"
-              className="bg-white p-6 shadow-sm ring-1 ring-black/5"
+              className="bg-white p-4 shadow-sm ring-1 ring-black/5 sm:p-6"
             >
               <h2
                 id="delivery-options-title"
-                className="mb-5 text-2xl font-semibold uppercase tracking-wide"
+                className="mb-4 text-xl font-semibold uppercase tracking-wide sm:mb-5 sm:text-2xl"
               >
                 Available Delivery Options
               </h2>
-              <div className="overflow-x-auto">
-                <table className="w-full min-w-[560px] border-collapse text-left">
+
+              <div className="flex flex-col gap-3 md:hidden">
+                {shippingOptions.map((option) => (
+                  <div
+                    key={option.method}
+                    className="flex flex-col gap-2 border border-gray-100 p-4"
+                  >
+                    <p className="font-medium text-gray-900">{option.method}</p>
+                    <div className="flex flex-wrap items-baseline justify-between gap-2 text-sm text-gray-700">
+                      <span>
+                        <span className="text-gray-500">Price: </span>
+                        {option.price}
+                      </span>
+                      <span>{option.deliveryTime}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="hidden overflow-x-auto md:block">
+                <table className="w-full border-collapse text-left">
                   <thead>
                     <tr className="border-b border-gray-200 text-sm uppercase tracking-wide text-gray-500">
                       <th className="py-3 pr-4 font-medium">Shipping Method</th>
@@ -177,13 +196,13 @@ export default function PoliciesPage() {
               <section
                 key={section.id}
                 id={section.id}
-                className="scroll-mt-8 bg-white p-6 shadow-sm ring-1 ring-black/5"
+                className="scroll-mt-20 bg-white p-4 shadow-sm ring-1 ring-black/5 sm:p-6 lg:scroll-mt-8"
               >
-                <h2 className="mb-4 text-2xl font-semibold uppercase tracking-wide">
+                <h2 className="mb-3 text-xl font-semibold uppercase tracking-wide sm:mb-4 sm:text-2xl">
                   {section.title}
                 </h2>
 
-                <div className="flex flex-col gap-4 text-base leading-7 text-gray-700">
+                <div className="flex flex-col gap-3 text-sm leading-6 text-gray-700 sm:gap-4 sm:text-base sm:leading-7">
                   {section.paragraphs.map((paragraph, index) => (
                     <p key={`${section.id}-${index}`}>{paragraph}</p>
                   ))}
