@@ -104,7 +104,10 @@ export default function HeroScroller() {
       setTimeout(() => {
         const nextIndex = currentSection + directionRef.current;
         const sectionWidth = scroller.clientWidth; // Width of each section
-        scroller.scrollTo({ left: sectionWidth * nextIndex, behavior: "smooth" });
+        scroller.scrollTo({
+          left: sectionWidth * nextIndex,
+          behavior: "smooth",
+        });
         setCurrentSection(nextIndex);
 
         // Show the card again with new content
@@ -128,7 +131,10 @@ export default function HeroScroller() {
         const sectionWidth = scrollerRef.current?.clientWidth || 0; // Width of each section
 
         setIsScrollable(false);
-        scrollerRef.current?.scrollTo({ left: sectionWidth * newIndex, behavior: "smooth" });
+        scrollerRef.current?.scrollTo({
+          left: sectionWidth * newIndex,
+          behavior: "smooth",
+        });
       }, 300);
     }
   }
@@ -146,7 +152,10 @@ export default function HeroScroller() {
         const sectionWidth = scrollerRef.current?.clientWidth || 0; // Width of each section
         setIsScrollable(false);
 
-        scrollerRef.current?.scrollTo({ left: sectionWidth * newIndex, behavior: "smooth" });
+        scrollerRef.current?.scrollTo({
+          left: sectionWidth * newIndex,
+          behavior: "smooth",
+        });
       }, 300);
     }
   }
@@ -173,7 +182,9 @@ export default function HeroScroller() {
           <h4 className="text-lg md:text-xl lg:text-2xl mb-3 font-semibold leading-tight line-clamp-2">
             {scrollerData[currentSection].title}
           </h4>
-          <p className="text-base md:text-lg mb-4 line-clamp-3">{scrollerData[currentSection].description}</p>
+          <p className="text-base md:text-lg mb-4 line-clamp-3">
+            {scrollerData[currentSection].description}
+          </p>
           <Link
             href={scrollerData[currentSection].buttonHref}
             className="inline-block w-auto bg-white px-6 py-2.5 text-base font-medium text-slate-700 transition-all duration-150 hover:bg-[#FF5F00]/80 hover:text-white md:px-8 md:py-3"
@@ -212,12 +223,15 @@ export default function HeroScroller() {
         >
           {scrollerData.map((item) => {
             return (
-              <div key={item.id} className="shrink-0 w-full h-full snap-center snap-always relative">
+              <div
+                key={item.id}
+                className="shrink-0 w-full h-full snap-center snap-always relative"
+              >
                 <Image
                   src={item.image}
                   alt={`Slide ${item.id}`}
                   fill
-                  className="object-cover"
+                  className="object-fill"
                   priority={item.id === 1}
                   sizes="100vw"
                 />
