@@ -10,7 +10,7 @@ import { useEffect } from "react";
 function ConfirmSignUpContent() {
   useEffect(() => {
     // Only run on client-side
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       showCustomToast({
         type: "success",
         title: "Success! You are registered.",
@@ -30,7 +30,7 @@ function ConfirmSignUpContent() {
         Please click the link in that email to activate your account.
       </p>
       <p className="mb-12 text-base">
-        Check the message for 5-10 minutes. If you don&apos;t find the list,
+        Check the message for 5-10 minutes. If you don&apos;t find the email,
         please check your spam folder and resend it again.
       </p>
       <Link href="/catalog" className="flex gap-1">
