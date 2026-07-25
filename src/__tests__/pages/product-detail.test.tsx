@@ -230,6 +230,31 @@ describe("ProductDetailPage", () => {
     });
   });
 
+  test("renders coming soon without an in-stock label or stock progress", async () => {
+    mockedProductServices.getProductById.mockResolvedValue({
+      ...product,
+      id: 34,
+      stock: -1,
+    } as any);
+
+    const page = await ProductDetailPage({
+      params: Promise.resolve({ id: "34" }),
+    });
+
+    renderWithQueryClient(page);
+
+    await waitFor(() => {
+      expect(screen.getAllByText("Coming soon").length).toBeGreaterThan(0);
+    });
+
+    expect(screen.queryByText("In stock")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("stock-progress")).not.toBeInTheDocument();
+    screen
+      .getAllByRole("button", { name: "COMING SOON" })
+      .forEach((button) => expect(button).toBeDisabled());
+    expect(mockMutateAsync).not.toHaveBeenCalled();
+  });
+
   test("redirects legacy catalog product URLs to the canonical product route", async () => {
     await LegacyProductDetailPage({
       params: Promise.resolve({ id: "catan special" }),

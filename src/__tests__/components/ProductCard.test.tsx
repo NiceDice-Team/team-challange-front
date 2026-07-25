@@ -182,4 +182,20 @@ describe("ProductCard", () => {
     expect(screen.getByText("$15.99")).toHaveClass("line-through");
     expect(mockedReviewServices.getAllProductReviews).not.toHaveBeenCalled();
   });
+
+  test("renders coming soon status and disables purchase for stock -1", () => {
+    renderWithQueryClient({
+      ...product,
+      id: 34,
+      stock: -1,
+      reviews: [],
+      stars: "4.00",
+    });
+
+    expect(screen.getByText("Coming soon")).toBeInTheDocument();
+    expect(screen.queryByText(/in stock/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/very low stock/i)).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "COMING SOON" })).toBeDisabled();
+    expect(mockedReviewServices.getAllProductReviews).not.toHaveBeenCalled();
+  });
 });

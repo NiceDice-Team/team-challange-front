@@ -20,6 +20,11 @@ import {
 } from "@/svgs/icons";
 import StarsLine from "../layout/StarsLine";
 import { calculateAverageRating, normalizeReviewRating, roundRatingToNearestHalf } from "@/lib/reviewMetrics";
+import {
+  getProductAvailability,
+  getProductAvailabilityMessage,
+  type ProductAvailabilityStatus,
+} from "@/lib/productAvailability";
 import { useViewportIsDesktop } from "@/hooks/useViewport";
 
 const PRODUCT_MAIN_IMAGE_SIZES = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 600px";
@@ -36,8 +41,16 @@ interface ProductPageProps {
 interface StockStatus {
   message: string;
   color: string;
-  status: 'sold-out' | 'very-low' | 'low' | 'in-stock';
+  status: ProductAvailabilityStatus;
 }
+
+const STOCK_STATUS_COLORS: Record<ProductAvailabilityStatus, string> = {
+  "coming-soon": "var(--color-gray-2)",
+  "sold-out": "var(--color-gray-2)",
+  "very-low": "var(--color-red-stock)",
+  low: "var(--color-orange)",
+  "in-stock": "var(--color-green)",
+};
 
 const getNumericId = (value: unknown): number | null => {
   const parsedValue = typeof value === "number" ? value : Number(value);
@@ -56,7 +69,7 @@ const buildCatalogBrandHref = (brandName: string): string => {
 };
 
 const getStockProgressPercent = (stock: number, status: StockStatus["status"]): number => {
-  if (status === "sold-out") {
+  if (status === "coming-soon" || status === "sold-out") {
     return 0;
   }
 
@@ -227,41 +240,22 @@ export default function ProductPage({ params }: ProductPageProps) {
     }
   };
 
-  const stockQuantity = parseInt(String(product.stock), 10) || 0;
-  const isInStock = stockQuantity > 0;
-
-  // Determine stock status based on quantity
-  const getStockStatus = (stock: number): StockStatus => {
-    if (stock === 0) {
-      return {
-        message: "Sold out",
-        color: "var(--color-gray-2)",
-        status: "sold-out",
-      };
-    } else if (stock >= 1 && stock <= 5) {
-      return {
-        message: `Very low stock (${stock} unit${stock === 1 ? "" : "s"})`,
-        color: "var(--color-red-stock)",
-        status: "very-low",
-      };
-    } else if (stock >= 6 && stock <= 10) {
-      return {
-        message: `Low stock (${stock} units)`,
-        color: "var(--color-orange)",
-        status: "low",
-      };
-    } else {
-      return {
-        message: "In stock",
-        color: "var(--color-green)",
-        status: "in-stock",
-      };
-    }
+  const availability = getProductAvailability(product.stock);
+  const stockQuantity = availability.stockQuantity;
+  const isInStock = availability.isPurchasable;
+  const isComingSoon = availability.status === "coming-soon";
+  const stockStatus: StockStatus = {
+    message: getProductAvailabilityMessage(availability, "exact"),
+    color: STOCK_STATUS_COLORS[availability.status],
+    status: availability.status,
   };
-
-  const stockStatus = getStockStatus(stockQuantity);
   const stockProgressPercent = getStockProgressPercent(stockQuantity, stockStatus.status);
   const stockProgressColor = stockStatus.status === "very-low" ? "#F36060" : stockStatus.color;
+  const addToCartLabel = isComingSoon
+    ? "COMING SOON"
+    : addToCartMutation.isPending
+      ? "ADDING..."
+      : "ADD TO CART";
 
   const discountPrice =
     product.discount && parseFloat(String(product.discount)) > 0
@@ -446,7 +440,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                 styleType="productCart"
                 className="h-12 whitespace-nowrap px-3 text-sm min-[380px]:px-6 min-[428px]:px-8 min-[428px]:text-base"
               >
-                {addToCartMutation.isPending ? "ADDING..." : "ADD TO CART"}
+                {addToCartLabel}
               </CustomButton>
             </div>
           </div>
@@ -580,16 +574,18 @@ export default function ProductPage({ params }: ProductPageProps) {
                     {stockStatus.message}
                   </span>
                 </div>
-                <div className="relative h-0 w-full" aria-hidden="true" data-testid="stock-progress">
-                  <div className="absolute left-0 top-0 h-[3px] w-full bg-[#D9D9D9]" />
-                  <div
-                    className="absolute left-0 top-0 h-[3px]"
-                    style={{
-                      width: `${stockProgressPercent}%`,
-                      backgroundColor: stockProgressColor,
-                    }}
-                  />
-                </div>
+                {!isComingSoon && (
+                  <div className="relative h-0 w-full" aria-hidden="true" data-testid="stock-progress">
+                    <div className="absolute left-0 top-0 h-[3px] w-full bg-[#D9D9D9]" />
+                    <div
+                      className="absolute left-0 top-0 h-[3px]"
+                      style={{
+                        width: `${stockProgressPercent}%`,
+                        backgroundColor: stockProgressColor,
+                      }}
+                    />
+                  </div>
+                )}
               </div>
 
               <div className="space-y-3 sm:space-y-4">
@@ -626,7 +622,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                     styleType="productCart"
                     className="h-12 flex-1 whitespace-nowrap px-4 text-sm leading-[17px] sm:min-w-[179px] sm:px-6 sm:text-base sm:leading-[19px] 2xl:w-[422px] 2xl:min-w-0 2xl:flex-none"
                   >
-                    {addToCartMutation.isPending ? "ADDING..." : "ADD TO CART"}
+                    {addToCartLabel}
                   </CustomButton>
                 </div>
               </div>
