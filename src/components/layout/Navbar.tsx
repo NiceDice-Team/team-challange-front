@@ -1,5 +1,6 @@
 "use client";
 import MobileMenuOverlay from "./MobileMenuOverlay";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useUserStore } from "@/store/user";
@@ -17,7 +18,14 @@ import {
   navigationLinks,
 } from "./navigationLinks";
 
-export default function Navbar(props) {
+export interface NavbarProps {
+  isPagination?: boolean;
+  hideMobilePaginationChrome?: boolean;
+  enableMobileInlineSearch?: boolean;
+  showMobileDivider?: boolean;
+}
+
+export default function Navbar(props: NavbarProps) {
   return (
     <Suspense fallback={null}>
       <NavbarContent {...props} />
@@ -30,7 +38,7 @@ function NavbarContent({
   hideMobilePaginationChrome = false,
   enableMobileInlineSearch = true,
   showMobileDivider = false,
-}) {
+}: NavbarProps) {
   const { userData } = useUserStore((state) => state);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -41,7 +49,7 @@ function NavbarContent({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [currentHash, setCurrentHash] = useState("");
-  const mobileHeaderRef = useRef(null);
+  const mobileHeaderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const syncHash = () => setCurrentHash(window.location.hash);
@@ -67,7 +75,7 @@ function NavbarContent({
   useEffect(() => {
     const mediaQuery = window.matchMedia("(min-width: 640px)");
 
-    const handleViewportChange = (event) => {
+    const handleViewportChange = (event: MediaQueryListEvent) => {
       if (event.matches) {
         setIsMobileMenuOpen(false);
         setIsMobileInlineSearchOpen(false);
@@ -141,9 +149,12 @@ function NavbarContent({
       <div className="mx-auto w-full max-w-[1320px]">
         <div ref={mobileHeaderRef} className="flex min-h-11 flex-row items-center justify-between gap-0 sm:min-h-0 sm:gap-3 md:gap-4">
           <Link href="/" className="min-w-0 shrink">
-            <img
+            <Image
               src={LogoIcon}
               alt="DICE DECKS Logo"
+              width={330}
+              height={54}
+              priority
               className="h-auto w-[min(13.75rem,calc(100vw-13rem))] sm:w-auto sm:h-10 md:h-12"
             />
           </Link>
@@ -169,7 +180,7 @@ function NavbarContent({
               href={userData ? "/profile" : "/login"}
               className="flex h-11 w-11 shrink-0 flex-col items-center justify-center gap-1 rounded transition-colors hover:bg-gray-100 sm:h-auto sm:w-auto sm:p-1 cursor-pointer"
             >
-              <img src={ProfileIcon} alt="Profile" className="w-6 h-6 shrink-0" />
+              <Image src={ProfileIcon} alt="Profile" width={24} height={24} className="w-6 h-6 shrink-0" />
             </Link>
             {/* Cart Button */}
             <div className="relative">
@@ -179,7 +190,7 @@ function NavbarContent({
                 aria-label="Open cart"
                 className="flex h-11 w-11 shrink-0 justify-center items-center rounded transition-colors hover:bg-gray-100 sm:h-auto sm:w-auto sm:p-1 cursor-pointer"
               >
-                <img src={CartIcon} alt="Cart" className="w-6 h-6 shrink-0" />
+                <Image src={CartIcon} alt="Cart" width={24} height={24} className="w-6 h-6 shrink-0" />
                 {itemCount > 0 && (
                   <span
                     key={itemCount} // This triggers re-render with animation on count change
@@ -200,7 +211,7 @@ function NavbarContent({
               {isMobileMenuOpen ? (
                 <CloseIcon className="w-6 h-6 shrink-0 text-black" strokeWidth={1.5} />
               ) : (
-                <img src={BurgerMenuIcon} alt="Menu" className="w-6 h-6 shrink-0" />
+                <Image src={BurgerMenuIcon} alt="Menu" width={24} height={24} className="w-6 h-6 shrink-0" />
               )}
             </button>
           </div>

@@ -7,7 +7,6 @@ import { productServices } from "@/services/productServices";
 jest.mock("next/image", () => ({
   __esModule: true,
   default: ({ alt, className, src }: { alt: string; className?: string; src: string }) => {
-    // eslint-disable-next-line @next/next/no-img-element
     return <img alt={alt} className={className} src={src} />;
   },
 }));

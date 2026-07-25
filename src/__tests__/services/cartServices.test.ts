@@ -7,13 +7,9 @@ jest.mock('../../services/cartServices', () => ({
   clearCart: jest.fn(),
 }));
 
-import { 
-  addToCart, 
-  removeFromCart, 
-  updateCartItem, 
-  getCart, 
-  clearCart 
-} from '../../services/cartServices';
+const { addToCart, removeFromCart, updateCartItem, getCart, clearCart } = jest.requireMock(
+  '../../services/cartServices',
+) as Record<'addToCart' | 'removeFromCart' | 'updateCartItem' | 'getCart' | 'clearCart', jest.Mock>;
 
 describe('Cart Services', () => {
   beforeEach(() => {

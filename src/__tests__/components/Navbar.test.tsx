@@ -4,11 +4,13 @@ import Navbar from "@/components/layout/Navbar";
 import { MobileHeaderBreadcrumbs } from "@/components/catalog/ProductDetailMobileChrome";
 
 jest.mock("next/link", () => {
-  return ({ children, href, onClick, ...props }) => (
-    <a href={href} onClick={onClick} {...props}>
-      {children}
-    </a>
-  );
+  return function MockLink({ children, href, onClick, ...props }) {
+    return (
+      <a href={href} onClick={onClick} {...props}>
+        {children}
+      </a>
+    );
+  };
 });
 
 jest.mock("@/store/user", () => ({
@@ -159,6 +161,7 @@ describe("Navbar mobile menu", () => {
     expect(screen.getByTestId("navbar-mobile-breadcrumb")).toHaveTextContent("Home");
     expect(screen.getByTestId("navbar-mobile-breadcrumb")).toHaveTextContent("Board games");
     expect(screen.getByTestId("navbar-mobile-breadcrumb")).toHaveClass("px-4", "pt-6", "sm:hidden");
+    expect(screen.getByTestId("navbar-mobile-breadcrumb-scroll")).toHaveClass("overflow-x-auto", "py-1");
     expect(screen.getByTestId("navbar-mobile-breadcrumb-divider")).toHaveClass("mt-6", "h-0", "w-full", "border-t");
   });
 

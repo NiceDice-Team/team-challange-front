@@ -7,7 +7,6 @@ import ReviewSection from "@/components/home/ReviewSection";
 jest.mock("next/image", () => ({
   __esModule: true,
   default: ({ alt }: { alt: string }) => {
-    // eslint-disable-next-line @next/next/no-img-element
     return <img alt={alt} />;
   },
 }));

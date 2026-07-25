@@ -54,7 +54,7 @@ describe('Custom UI Components with 0% Coverage', () => {
         { label: 'Option 2', value: 'option2' },
       ];
 
-      render(<MockCustomSelect options={options} placeholder="Choose option" />);
+      render(<MockCustomSelect options={options} placeholder="Choose option" onChange={jest.fn()} />);
 
       expect(screen.getByTestId('custom-select')).toBeInTheDocument();
       expect(screen.getByText('Choose option')).toBeInTheDocument();
@@ -239,7 +239,7 @@ describe('Custom UI Components with 0% Coverage', () => {
         </div>
       );
 
-      render(<MockPagination currentPage={1} totalPages={5} />);
+      render(<MockPagination currentPage={1} totalPages={5} onPageChange={jest.fn()} />);
 
       expect(screen.getByTestId('pagination')).toBeInTheDocument();
       expect(screen.getByText('Page 1 of 5')).toBeInTheDocument();

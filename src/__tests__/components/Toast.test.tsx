@@ -26,7 +26,7 @@ jest.mock('lucide-react', () => ({
 const { showCustomToast } = require('../../components/shared/Toast');
 
 describe('Toast', () => {
-  let originalWindow;
+  let originalWindow: typeof global.window;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -35,7 +35,7 @@ describe('Toast', () => {
     global.window = {
       document: {},
       navigator: {},
-    };
+    } as unknown as typeof global.window;
   });
 
   afterEach(() => {

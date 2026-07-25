@@ -13,6 +13,11 @@ export interface ProductImage {
   sort?: number;
 }
 
+export interface ProductBrand {
+  id?: number;
+  name: string;
+}
+
 // Product review types
 export interface ProductReview {
   id: number;
@@ -55,9 +60,11 @@ export interface Product {
   deliveryAndPayment?: ProductDeliveryAndPayment;
   price: string | number;
   discount?: string | number;
-  brand?: string | number;
+  brand?: string | number | ProductBrand;
   stock: string | number;
   stars?: string | number;
+  original_price?: string | number;
+  review_count?: number;
   images?: ProductImage[];
   reviews?: ProductReviewReference[];
   categories?: number[];

@@ -6,12 +6,9 @@ jest.mock('../../services/productServices', () => ({
   getProductsByCategory: jest.fn(),
 }));
 
-import { 
-  getProducts, 
-  getProductById, 
-  searchProducts, 
-  getProductsByCategory 
-} from '../../services/productServices';
+const { getProducts, getProductById, searchProducts, getProductsByCategory } = jest.requireMock(
+  '../../services/productServices',
+) as Record<'getProducts' | 'getProductById' | 'searchProducts' | 'getProductsByCategory', jest.Mock>;
 
 describe('Product Services', () => {
   beforeEach(() => {

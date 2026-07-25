@@ -40,7 +40,6 @@ jest.mock("../../components/shared/CustomRadio", () => ({
 jest.mock("next/image", () => ({
   __esModule: true,
   default: ({ src, alt, className }) => (
-    // eslint-disable-next-line @next/next/no-img-element
     <img src={src} alt={alt} className={className} data-testid="info-icon" />
   ),
 }));

@@ -121,7 +121,7 @@ jest.mock("../../components/shared/CustomCheckbox", () => ({
 jest.mock("../../components/shared/CustomButton", () => ({
   CustomButton: ({ children, type = "button", disabled, loading, ...props }) => (
     <button
-      type={type}
+      type={type as "button" | "submit" | "reset"}
       disabled={disabled || loading}
       data-testid="submit-button"
       {...props}

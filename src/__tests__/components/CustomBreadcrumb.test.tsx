@@ -5,11 +5,13 @@ import { CustomBreadcrumb } from '../../components/shared/CustomBreadcrumb';
 
 // Mock the Next.js Link component
 jest.mock('next/link', () => {
-  return ({ children, href, ...props }) => (
+  return function MockLink({ children, href, ...props }) {
+    return (
     <a href={href} {...props}>
       {children}
     </a>
-  );
+    );
+  };
 });
 
 describe('CustomBreadcrumb', () => {

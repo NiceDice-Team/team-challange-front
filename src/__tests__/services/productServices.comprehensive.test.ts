@@ -6,6 +6,8 @@ jest.mock('../../services/api', () => ({
   fetchAPI: jest.fn(),
 }));
 
+const mockedFetchAPI = jest.mocked(fetchAPI);
+
 // Mock console.error to avoid test output noise
 jest.spyOn(console, 'error').mockImplementation(() => {});
 
@@ -24,7 +26,7 @@ describe('productServices', () => {
         count: 2,
       };
 
-      fetchAPI.mockResolvedValue(mockProducts);
+      mockedFetchAPI.mockResolvedValue(mockProducts);
 
       const result = await productServices.getProducts();
 
@@ -34,7 +36,7 @@ describe('productServices', () => {
 
     test('fetches products with custom pagination', async () => {
       const mockProducts = { results: [], count: 0 };
-      fetchAPI.mockResolvedValue(mockProducts);
+      mockedFetchAPI.mockResolvedValue(mockProducts);
 
       await productServices.getProducts(2, 12, { headers: { 'Custom': 'header' } });
 
@@ -42,7 +44,7 @@ describe('productServices', () => {
     });
 
     test('calculates offset correctly for different pages', async () => {
-      fetchAPI.mockResolvedValue({ results: [], count: 0 });
+      mockedFetchAPI.mockResolvedValue({ results: [], count: 0 });
 
       // Page 3 with pageSize 10 should have offset 20
       await productServices.getProducts(3, 10);
@@ -54,7 +56,7 @@ describe('productServices', () => {
   describe('getProductsWithFilters', () => {
     test('applies sorting correctly', async () => {
       const mockProducts = { results: [], count: 0 };
-      fetchAPI.mockResolvedValue(mockProducts);
+      mockedFetchAPI.mockResolvedValue(mockProducts);
 
       // Test price high to low
       await productServices.getProductsWithFilters(1, 8, 'price-high-low');
@@ -94,7 +96,7 @@ describe('productServices', () => {
 
     test('applies category filters', async () => {
       const mockProducts = { results: [], count: 0 };
-      fetchAPI.mockResolvedValue(mockProducts);
+      mockedFetchAPI.mockResolvedValue(mockProducts);
 
       const filters = {
         categories: ['dice', 'board-games', 'card-games'],
@@ -110,7 +112,7 @@ describe('productServices', () => {
 
     test('applies game type filters', async () => {
       const mockProducts = { results: [], count: 0 };
-      fetchAPI.mockResolvedValue(mockProducts);
+      mockedFetchAPI.mockResolvedValue(mockProducts);
 
       const filters = {
         gameTypes: ['strategy', 'adventure'],
@@ -126,7 +128,7 @@ describe('productServices', () => {
 
     test('applies audience filters', async () => {
       const mockProducts = { results: [], count: 0 };
-      fetchAPI.mockResolvedValue(mockProducts);
+      mockedFetchAPI.mockResolvedValue(mockProducts);
 
       const filters = {
         audiences: ['adults', 'kids'],
@@ -142,7 +144,7 @@ describe('productServices', () => {
 
     test('applies brand filter (only first brand)', async () => {
       const mockProducts = { results: [], count: 0 };
-      fetchAPI.mockResolvedValue(mockProducts);
+      mockedFetchAPI.mockResolvedValue(mockProducts);
 
       const filters = {
         brands: ['wizards-of-the-coast', 'hasbro', 'other-brand'],
@@ -162,7 +164,7 @@ describe('productServices', () => {
 
     test('applies search filter', async () => {
       const mockProducts = { results: [], count: 0 };
-      fetchAPI.mockResolvedValue(mockProducts);
+      mockedFetchAPI.mockResolvedValue(mockProducts);
 
       const filters = {
         search: 'dungeons and dragons',
@@ -178,7 +180,7 @@ describe('productServices', () => {
 
     test('applies price range filters', async () => {
       const mockProducts = { results: [], count: 0 };
-      fetchAPI.mockResolvedValue(mockProducts);
+      mockedFetchAPI.mockResolvedValue(mockProducts);
 
       const filters = {
         priceRange: { min: 10, max: 75 },
@@ -186,14 +188,14 @@ describe('productServices', () => {
 
       await productServices.getProductsWithFilters(1, 8, 'relevance', filters);
 
-      const expectedCall = fetchAPI.mock.calls[0][0];
+      const expectedCall = mockedFetchAPI.mock.calls[0][0];
       expect(expectedCall).toContain('min_price=10');
       expect(expectedCall).toContain('max_price=75');
     });
 
     test('omits max price when it is unbounded', async () => {
       const mockProducts = { results: [], count: 0 };
-      fetchAPI.mockResolvedValue(mockProducts);
+      mockedFetchAPI.mockResolvedValue(mockProducts);
 
       const filters = {
         priceRange: { min: 10, max: Number.POSITIVE_INFINITY },
@@ -201,14 +203,14 @@ describe('productServices', () => {
 
       await productServices.getProductsWithFilters(1, 8, 'relevance', filters);
 
-      const expectedCall = fetchAPI.mock.calls[0][0];
+      const expectedCall = mockedFetchAPI.mock.calls[0][0];
       expect(expectedCall).toContain('min_price=10');
       expect(expectedCall).not.toContain('max_price=');
     });
 
     test('combines multiple filters correctly', async () => {
       const mockProducts = { results: [], count: 0 };
-      fetchAPI.mockResolvedValue(mockProducts);
+      mockedFetchAPI.mockResolvedValue(mockProducts);
 
       const filters = {
         categories: ['dice'],
@@ -220,7 +222,7 @@ describe('productServices', () => {
 
       await productServices.getProductsWithFilters(1, 8, 'price-high-low', filters);
 
-      const expectedCall = fetchAPI.mock.calls[0][0];
+      const expectedCall = mockedFetchAPI.mock.calls[0][0];
       expect(expectedCall).toContain('categories=dice');
       expect(expectedCall).toContain('types=strategy');
       expect(expectedCall).toContain('audiences=adults');
@@ -231,20 +233,20 @@ describe('productServices', () => {
 
     test('handles pagination with filters', async () => {
       const mockProducts = { results: [], count: 0 };
-      fetchAPI.mockResolvedValue(mockProducts);
+      mockedFetchAPI.mockResolvedValue(mockProducts);
 
       const filters = { categories: ['dice'] };
 
       await productServices.getProductsWithFilters(3, 6, 'newest', filters);
 
-      const expectedCall = fetchAPI.mock.calls[0][0];
+      const expectedCall = mockedFetchAPI.mock.calls[0][0];
       expect(expectedCall).toContain('offset=12'); // (3-1) * 6
       expect(expectedCall).toContain('limit=6');
     });
 
     test('handles empty filters', async () => {
       const mockProducts = { results: [], count: 0 };
-      fetchAPI.mockResolvedValue(mockProducts);
+      mockedFetchAPI.mockResolvedValue(mockProducts);
 
       await productServices.getProductsWithFilters(1, 8, 'relevance', {});
 
@@ -256,7 +258,7 @@ describe('productServices', () => {
 
     test('handles unknown sort option', async () => {
       const mockProducts = { results: [], count: 0 };
-      fetchAPI.mockResolvedValue(mockProducts);
+      mockedFetchAPI.mockResolvedValue(mockProducts);
 
       await productServices.getProductsWithFilters(1, 8, 'unknown-sort');
 
@@ -268,7 +270,7 @@ describe('productServices', () => {
 
     test('passes through options parameter', async () => {
       const mockProducts = { results: [], count: 0 };
-      fetchAPI.mockResolvedValue(mockProducts);
+      mockedFetchAPI.mockResolvedValue(mockProducts);
 
       const customOpts = {
         headers: { 'Authorization': 'Bearer token' },
@@ -294,7 +296,7 @@ describe('productServices', () => {
         images: ['image1.jpg'],
       };
 
-      fetchAPI.mockResolvedValue(mockProduct);
+      mockedFetchAPI.mockResolvedValue(mockProduct);
 
       const result = await productServices.getProductById(1);
 
@@ -321,7 +323,7 @@ describe('productServices', () => {
         delivery_and_payments: 'Backend delivery information',
       };
 
-      fetchAPI.mockResolvedValue(mockProduct);
+      mockedFetchAPI.mockResolvedValue(mockProduct);
 
       const result = await productServices.getProductById(9);
 
@@ -342,7 +344,7 @@ describe('productServices', () => {
 
     test('fetches product with custom options', async () => {
       const mockProduct = { id: 2, name: 'Another Product' };
-      fetchAPI.mockResolvedValue(mockProduct);
+      mockedFetchAPI.mockResolvedValue(mockProduct);
 
       const customOpts = {
         headers: { 'Cache-Control': 'no-cache' },
@@ -356,7 +358,7 @@ describe('productServices', () => {
 
     test('handles product not found error', async () => {
       const error = new Error('Product not found');
-      fetchAPI.mockRejectedValue(error);
+      mockedFetchAPI.mockRejectedValue(error);
 
       await expect(productServices.getProductById(999)).rejects.toThrow('Product not found');
       
@@ -365,7 +367,7 @@ describe('productServices', () => {
 
     test('handles network error', async () => {
       const networkError = new Error('Network Error');
-      fetchAPI.mockRejectedValue(networkError);
+      mockedFetchAPI.mockRejectedValue(networkError);
 
       await expect(productServices.getProductById(1)).rejects.toThrow('Network Error');
       
@@ -374,7 +376,7 @@ describe('productServices', () => {
 
     test('handles string ID parameter', async () => {
       const mockProduct = { id: 123, name: 'String ID Product' };
-      fetchAPI.mockResolvedValue(mockProduct);
+      mockedFetchAPI.mockResolvedValue(mockProduct);
 
       await productServices.getProductById('123');
 

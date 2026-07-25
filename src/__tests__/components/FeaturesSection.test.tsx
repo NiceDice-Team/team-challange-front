@@ -5,7 +5,6 @@ import FeatureSection from "../../components/home/FeaturesSection";
 jest.mock("next/image", () => ({
   __esModule: true,
   default: ({ src, alt, className }: any) => {
-    // eslint-disable-next-line @next/next/no-img-element
     return <img src={src} alt={alt} className={className} data-testid={`image-${alt}`} />;
   },
 }));

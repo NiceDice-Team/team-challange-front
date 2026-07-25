@@ -45,6 +45,9 @@ jest.mock("../../components/auth/RouteGuards", () => ({
 
 const mockFetch = jest.fn();
 global.fetch = mockFetch;
+const mockedUseRouter = jest.mocked(useRouter);
+const mockedUseSearchParams = jest.mocked(useSearchParams);
+const mockedGetTokens = jest.mocked(getTokens);
 
 describe("Login Page", () => {
   const mockPush = jest.fn();
@@ -53,14 +56,14 @@ describe("Login Page", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     
-    useRouter.mockReturnValue({
+    mockedUseRouter.mockReturnValue({
       push: mockPush,
       refresh: jest.fn(),
-    });
+    } as unknown as ReturnType<typeof useRouter>);
     
-    useSearchParams.mockReturnValue(mockSearchParams);
+    mockedUseSearchParams.mockReturnValue(mockSearchParams as ReturnType<typeof useSearchParams>);
     
-    getTokens.mockReturnValue({
+    mockedGetTokens.mockReturnValue({
       refreshToken: null,
       accessToken: null,
     });
@@ -246,8 +249,9 @@ describe("Login Page", () => {
     });
 
     test("redirects to home page after successful login", async () => {
-      getTokens.mockReturnValue({
+      mockedGetTokens.mockReturnValue({
         refreshToken: "test-token",
+        accessToken: null,
       });
       
       render(<LoginPage />);

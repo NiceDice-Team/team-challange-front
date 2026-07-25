@@ -26,7 +26,7 @@ describe("CartItem", () => {
       name: "Catan",
       price: "49.99",
       stock: "2",
-      images: [{ url_sm: "/catan.jpg" }],
+      images: [{ id: 1, url_sm: "/catan.jpg" }],
       brand: { name: "Kosmos" },
     },
   };

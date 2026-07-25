@@ -4,12 +4,21 @@ import React, { useCallback, memo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { MinusIcon, PlusIcon, CloseIcon } from "@/svgs/icons";
+import type { CartItem as CartItemType } from "@/types/cart";
 
-function CartItem({ item, index, updateQuantity, removeItem }) {
-  const product = item.product || {};
-  const price = parseFloat(product.price || 0);
+interface CartItemProps {
+  item: CartItemType;
+  index: number;
+  updateQuantity: (cartItemId: CartItemType["id"], quantity: number) => void | Promise<void>;
+  removeItem: (cartItemId: CartItemType["id"]) => void | Promise<void>;
+}
+
+function CartItem({ item, index, updateQuantity, removeItem }: CartItemProps) {
+  const product = item.product;
+  const price = parseFloat(String(product.price || 0));
   const imageUrl = product.images?.[0]?.url_sm || "/FirstPlaceholder.svg";
-  const brandName = product.brand?.name || "Unknown Brand";
+  const brandName =
+    typeof product.brand === "object" ? product.brand.name : "Unknown Brand";
   const stock = Number(product.stock);
   const isAtStockLimit = Number.isFinite(stock) && item.quantity >= stock;
 

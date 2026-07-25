@@ -38,7 +38,10 @@ export function MobileHeaderBreadcrumbs({ items }: { items: MobileBreadcrumbItem
   return (
     <div data-testid="navbar-mobile-breadcrumb" className="px-4 pt-6 sm:hidden">
       <div className="mx-auto w-full max-w-[1320px]">
-        <div className="w-full overflow-x-auto no-scrollbar">
+        <div
+          data-testid="navbar-mobile-breadcrumb-scroll"
+          className="w-full overflow-x-auto py-1 no-scrollbar"
+        >
           <CustomBreadcrumb
             items={items}
             className="w-max"

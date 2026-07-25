@@ -14,6 +14,8 @@ const mockUserData = {
 
 const mockFetchUserData = jest.fn();
 const mockSetUserData = jest.fn();
+const mockedGetValidAccessToken = jest.mocked(getValidAccessToken);
+const mockedIsAuthenticated = jest.mocked(isAuthenticated);
 
 let mockStoreState = {
   userData: mockUserData,
@@ -146,8 +148,8 @@ jest.mock("../../assets/icons/mail.svg", () => "mail-icon.svg");
 describe("Profile Page", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    getValidAccessToken.mockReturnValue("test-token");
-    isAuthenticated.mockReturnValue(true);
+    mockedGetValidAccessToken.mockResolvedValue("test-token");
+    mockedIsAuthenticated.mockReturnValue(true);
     mockUpdateProfile.isPending = false;
     mockUpdateProfile.isError = false;
     mockUpdateProfile.isSuccess = false;
@@ -562,7 +564,7 @@ describe("Profile Page", () => {
 
   describe("Edge Cases", () => {
     test("handles empty user data", () => {
-      mockStoreState.userData = { id: "user-123" };
+      mockStoreState.userData = { id: "user-123", first_name: "", last_name: "", email: "" };
 
       render(<ProfilePage />);
 
@@ -593,7 +595,7 @@ describe("Profile Page", () => {
       expect(changePasswordButton).toBeDisabled();
     });
     test("fetches user data when authenticated but data is incomplete", () => {
-      mockStoreState.userData = { id: "user-123" };
+      mockStoreState.userData = { id: "user-123", first_name: "", last_name: "", email: "" };
 
       render(<ProfilePage />);
 

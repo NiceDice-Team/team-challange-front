@@ -2,7 +2,6 @@ import { jwtDecode } from "jwt-decode";
 import { getCookie, deleteCookie } from "@/utils/auth";
 import { API_ENDPOINTS, buildApiUrl } from '@/config/api';
 import { mergeNoCacheHeaders } from '@/lib/noCacheHeaders';
-import { AuthTokens } from '@/types/api';
 
 export const AUTH_TOKENS_CHANGED_EVENT = "auth-tokens-changed";
 
@@ -83,7 +82,7 @@ function isTokenExpired(token: string | null): boolean {
 /**
  * Обновляет access token используя refresh token
  */
-async function refreshAccessToken(): Promise<AuthTokens> {
+async function refreshAccessToken(): Promise<string> {
   const { refreshToken } = getTokens();
 
   if (!refreshToken) {
@@ -132,7 +131,7 @@ async function refreshAccessToken(): Promise<AuthTokens> {
   }
 }
 
-export async function getValidAccessToken() {
+export async function getValidAccessToken(): Promise<string> {
   const { accessToken, refreshToken } = getTokens();
 
   if (!refreshToken) {

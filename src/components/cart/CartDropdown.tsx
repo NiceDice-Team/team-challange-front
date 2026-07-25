@@ -1,23 +1,29 @@
 "use client";
 
 import React, { useEffect, useRef, useMemo } from "react";
+import type { CartItem } from "@/types/cart";
 import Link from "next/link";
 import { useCartQuery, useUpdateCartQuantity, useRemoveFromCart } from "@/hooks/useCartQuery";
 import CartDropdownItem from "./CartDropdownItem";
 
+interface CartDropdownProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
 export default function CartDropdown({
   isOpen,
   onClose,
-}) {
-  const dropdownRef = useRef(null);
+}: CartDropdownProps) {
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const { data: cartItems = [] } = useCartQuery();
   const updateQuantityMutation = useUpdateCartQuantity();
   const removeItemMutation = useRemoveFromCart();
   const removingItemId = removeItemMutation.isPending ? removeItemMutation.variables : null;
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         onClose();
       }
     };
@@ -31,7 +37,7 @@ export default function CartDropdown({
     };
   }, [isOpen, onClose]);
 
-  const updateQuantity = async (cartItemId, newQuantity) => {
+  const updateQuantity = async (cartItemId: CartItem["id"], newQuantity: number) => {
     try {
       if (newQuantity <= 0) {
         await removeItemMutation.mutateAsync(cartItemId);
@@ -43,7 +49,7 @@ export default function CartDropdown({
     }
   };
 
-  const removeItem = async (cartItemId) => {
+  const removeItem = async (cartItemId: CartItem["id"]) => {
     try {
       await removeItemMutation.mutateAsync(cartItemId);
     } catch (err) {
@@ -54,7 +60,7 @@ export default function CartDropdown({
   // Calculate totals with useMemo optimization
   const { subtotal, remainingForFreeShipping, shippingProgress } = useMemo(() => {
     const calculatedSubtotal = cartItems.reduce((sum, item) => {
-      const price = parseFloat(item.product?.price || 0);
+      const price = parseFloat(String(item.product?.price || 0));
       return sum + price * item.quantity;
     }, 0);
 

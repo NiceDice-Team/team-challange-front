@@ -37,7 +37,7 @@ describe('Auth Pages with 0% Coverage', () => {
             <input placeholder="Enter confirmation code" />
             <button type="submit">Confirm</button>
           </form>
-          <p>Didn't receive a code? <a href="/resend">Resend</a></p>
+          <p>Didn&apos;t receive a code? <a href="/resend">Resend</a></p>
         </div>
       );
 

@@ -1,3 +1,15 @@
+import type { ChangeEventHandler, ReactNode } from "react";
+
+interface RadioButtonProps {
+  id: string;
+  name: string;
+  value: string;
+  checked?: boolean;
+  onChange?: ChangeEventHandler<HTMLInputElement>;
+  children?: ReactNode;
+  className?: string;
+}
+
 export const RadioButton = ({
   id,
   name,
@@ -6,11 +18,10 @@ export const RadioButton = ({
   onChange,
   children,
   className = "",
-}) => {
+}: RadioButtonProps) => {
   return (
     <label
       className={`flex items-center cursor-pointer ${className}`}
-      onClick={onChange}
     >
       <div className="relative">
         <input

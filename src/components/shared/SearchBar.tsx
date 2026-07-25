@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { SearchIcon, CloseIcon, LoadingSpinner } from "@/svgs/icons";
@@ -233,7 +234,7 @@ export default function SearchBar({
           )}
           type="submit"
         >
-          <img src={SearchIcon} alt="Search" className="w-5 h-5 sm:w-6 sm:h-6" />
+          <Image src={SearchIcon} alt="Search" width={22} height={24} className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
       </form>
 

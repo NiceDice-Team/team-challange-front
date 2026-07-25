@@ -3,7 +3,7 @@ import { getValidAccessToken, logout } from "@/lib/tokenManager";
 
 export function useTokenManager() {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   const getToken = useCallback(async () => {
     try {
@@ -12,23 +12,23 @@ export function useTokenManager() {
 
       const token = await getValidAccessToken();
       return token;
-    } catch (err) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to get access token");
       throw err;
     } finally {
       setIsLoading(false);
     }
   }, []);
 
-  const executeWithToken = useCallback(async (apiCall) => {
+  const executeWithToken = useCallback(async <T>(apiCall: () => Promise<T>): Promise<T> => {
     try {
       setIsLoading(true);
       setError(null);
 
       const result = await apiCall();
       return result;
-    } catch (err) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Authenticated request failed");
       throw err;
     } finally {
       setIsLoading(false);

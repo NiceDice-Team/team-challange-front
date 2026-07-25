@@ -26,8 +26,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx",
-    "src/components/ui/accordion.jsx",
-    "src/components/shared/CustomAccordion.jsx"
-, "src/app/(checkout)/checkout/page.js", "jest.config.js"  ],
+    "jest.config.js"
+  ],
   "exclude": ["node_modules"]
 }

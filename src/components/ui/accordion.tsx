@@ -4,17 +4,31 @@ import { ChevronDown } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-const Accordion = React.forwardRef(({ type = "multiple", ...props }, ref) => (
-  <AccordionPrimitive.Root ref={ref} type={type} {...props} />
-));
+type AccordionProps =
+  | AccordionPrimitive.AccordionSingleProps
+  | (Omit<AccordionPrimitive.AccordionMultipleProps, "type"> & { type?: "multiple" });
+
+const Accordion = (props: AccordionProps) => {
+  if (props.type === "single") {
+    return <AccordionPrimitive.Root {...props} />;
+  }
+
+  return <AccordionPrimitive.Root {...props} type="multiple" />;
+};
 Accordion.displayName = "Accordion";
 
-const AccordionItem = React.forwardRef(({ className, ...props }, ref) => (
+const AccordionItem = React.forwardRef<
+  React.ElementRef<typeof AccordionPrimitive.Item>,
+  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
+>(({ className, ...props }, ref) => (
   <AccordionPrimitive.Item ref={ref} className={cn("", className)} {...props} />
 ));
 AccordionItem.displayName = "AccordionItem";
 
-const AccordionTrigger = React.forwardRef(({ className, children, ...props }, ref) => (
+const AccordionTrigger = React.forwardRef<
+  React.ElementRef<typeof AccordionPrimitive.Trigger>,
+  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>
+>(({ className, children, ...props }, ref) => (
   <AccordionPrimitive.Header className="flex">
     <AccordionPrimitive.Trigger
       ref={ref}
@@ -31,7 +45,14 @@ const AccordionTrigger = React.forwardRef(({ className, children, ...props }, re
 ));
 AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName;
 
-const AccordionContent = React.forwardRef(({ className, rootClassName, children, ...props }, ref) => (
+type AccordionContentProps = React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content> & {
+  rootClassName?: string;
+};
+
+const AccordionContent = React.forwardRef<
+  React.ElementRef<typeof AccordionPrimitive.Content>,
+  AccordionContentProps
+>(({ className, rootClassName, children, ...props }, ref) => (
   <AccordionPrimitive.Content
     ref={ref}
     className={cn(

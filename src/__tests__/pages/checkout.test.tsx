@@ -27,16 +27,18 @@ jest.mock("../../components/checkout/ShippingForm", () => ({
 
 jest.mock("../../components/checkout/ProductsTable", () => {
   const React = require("react");
+  function MockProductsTable({ setSubtotal }) {
+    React.useEffect(() => {
+      if (setSubtotal) {
+        setSubtotal(100);
+      }
+    }, [setSubtotal]);
+    return <div data-testid="products-table">Products Table</div>;
+  }
+
   return {
     __esModule: true,
-    default: ({ setSubtotal }) => {
-      React.useEffect(() => {
-        if (setSubtotal) {
-          setSubtotal(100);
-        }
-      }, [setSubtotal]);
-      return <div data-testid="products-table">Products Table</div>;
-    },
+    default: MockProductsTable,
   };
 });
 

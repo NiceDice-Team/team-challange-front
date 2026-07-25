@@ -26,7 +26,7 @@ describe('RollingDice Component', () => {
     // Check if the main dice elements are rendered
     const diceWrapper = document.querySelector('.dice-wrapper');
     const diceContainer = document.querySelector('.dice-container');
-    const diceCube = document.querySelector('.dice-cube');
+    const diceCube = document.querySelector<HTMLElement>('.dice-cube');
     const diceFaces = document.querySelectorAll('.dice-face');
     
     expect(diceWrapper).toBeInTheDocument();
@@ -61,11 +61,11 @@ describe('RollingDice Component', () => {
   test('applies different transforms for different values', () => {
     const { rerender } = render(<RollingDice {...defaultProps} value={1} isRolling={false} />);
     
-    const diceCube = document.querySelector('.dice-cube');
+    const diceCube = document.querySelector<HTMLElement>('.dice-cube');
     const value1Transform = diceCube.style.transform;
     
     rerender(<RollingDice {...defaultProps} value={2} isRolling={false} />);
-    const value2Transform = diceCube.style.transform;
+    const value2Transform = (diceCube as HTMLElement).style.transform;
     
     // Transforms should be different for different values
     expect(value2Transform).not.toBe(value1Transform);
@@ -74,12 +74,12 @@ describe('RollingDice Component', () => {
   test('applies rolling animation when isRolling is true', () => {
     const { rerender } = render(<RollingDice {...defaultProps} value={3} isRolling={false} />);
     
-    const diceCube = document.querySelector('.dice-cube');
+    const diceCube = document.querySelector<HTMLElement>('.dice-cube');
     const staticTransform = diceCube.style.transform;
     
     // Start rolling
     rerender(<RollingDice {...defaultProps} value={3} isRolling={true} />);
-    const rollingTransform = diceCube.style.transform;
+    const rollingTransform = (diceCube as HTMLElement).style.transform;
     
     // Transform should change when rolling
     expect(rollingTransform).not.toBe(staticTransform);
@@ -139,7 +139,7 @@ describe('RollingDice Component', () => {
   test('renders all 6 dice faces with correct transforms', () => {
     render(<RollingDice {...defaultProps} />);
     
-    const diceFaces = document.querySelectorAll('.dice-face');
+    const diceFaces = document.querySelectorAll<HTMLElement>('.dice-face');
     expect(diceFaces).toHaveLength(6);
     
     // Check that each face has a transform style
