@@ -1,4 +1,5 @@
 import type { CartItem } from "@/types/cart";
+import { isComingSoonStock } from "@/lib/productAvailability";
 
 type CartProductLike = {
   id?: string | number;
@@ -18,6 +19,10 @@ export class CartStockError extends Error {
 }
 
 export function parseStockQuantity(stock: unknown): number | null {
+  if (isComingSoonStock(stock)) {
+    return 0;
+  }
+
   const parsedStock = Number(stock);
 
   if (!Number.isFinite(parsedStock) || parsedStock < 0) {

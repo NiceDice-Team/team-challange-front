@@ -16,6 +16,10 @@ import { Heart } from "lucide-react";
 import { useAddToCart } from "@/hooks/useCartQuery";
 import { CustomButton } from "@/components/shared/CustomButton";
 import { calculateAverageRating, normalizeReviewRating, roundRatingToNearestHalf } from "@/lib/reviewMetrics";
+import {
+  getProductAvailability,
+  getProductAvailabilityMessage,
+} from "@/lib/productAvailability";
 import { productServices } from "@/services/productServices";
 import { reviewServices } from "@/services/reviewServices";
 import type { Product, ProductReview } from "@/types/product";
@@ -106,29 +110,25 @@ export default function ProductCard({ product = {} as Product, cardIndex = 0 }: 
 
   const productName = product?.name || "PRODUCT NAME";
 
-  const parsedStock = parseInt(String(product.stock ?? 0), 10);
-  const stock = Number.isNaN(parsedStock) ? 0 : parsedStock;
-  const isOutOfStock = stock <= 0;
+  const availability = getProductAvailability(product.stock);
+  const isComingSoon = availability.status === "coming-soon";
+  const isOutOfStock = !availability.isPurchasable;
   let stockCircle;
-  let stockMessage;
   let stockStyle;
-  if (stock === 0) {
-    stockMessage = "Sold out";
-    stockCircle = <Image src={CircleGrayIcon} alt="sold out" width={8} height={8} className="h-2 w-2" />;
+  if (availability.status === "coming-soon" || availability.status === "sold-out") {
+    stockCircle = <Image src={CircleGrayIcon} alt="" width={8} height={8} className="h-2 w-2" />;
     stockStyle = "text-[#717171]";
-  } else if (stock <= 5) {
-    stockMessage = "Very low stock (1-5 units)";
+  } else if (availability.status === "very-low") {
     stockCircle = <Image src={CircleRedIcon} alt="very low stock" width={8} height={8} className="h-2 w-2" />;
     stockStyle = "text-[#EC3535]";
-  } else if (stock <= 10) {
-    stockMessage = `Low stock (6-10 units)`;
+  } else if (availability.status === "low") {
     stockCircle = <Image src={CircleOrangeIcon} alt="low stock" width={8} height={8} className="h-2 w-2" />;
     stockStyle = "text-[#FF7C40]";
   } else {
-    stockMessage = `In stock (>11)`;
     stockCircle = <Image src={CircleGreenIcon} alt="in stock" width={8} height={8} className="h-2 w-2" />;
     stockStyle = "text-[#3A9B25]";
   }
+  const stockMessage = getProductAvailabilityMessage(availability, "range");
 
   const availableImages = product?.images?.slice(0, 3) || [];
   const imageCount = availableImages.length;
@@ -367,7 +367,13 @@ export default function ProductCard({ product = {} as Product, cardIndex = 0 }: 
             className="h-12 w-full shrink-0 gap-2 bg-[#494791] px-8 py-4 text-center sm:mt-4"
           >
             <span className="text-base font-medium leading-[19px] text-white uppercase">
-              {isOutOfStock ? "SOLD OUT" : addToCartMutation.isPending ? "ADDING..." : "ADD TO CART"}
+              {isComingSoon
+                ? "COMING SOON"
+                : isOutOfStock
+                  ? "SOLD OUT"
+                  : addToCartMutation.isPending
+                    ? "ADDING..."
+                    : "ADD TO CART"}
             </span>
           </CustomButton>
         </div>

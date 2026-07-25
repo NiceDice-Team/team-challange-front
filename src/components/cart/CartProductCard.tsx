@@ -13,6 +13,10 @@ import {
 } from "@/svgs/icons";
 import { useAddToCart } from "@/hooks/useCartQuery";
 import { roundRatingToNearestHalf } from "@/lib/reviewMetrics";
+import {
+  getProductAvailability,
+  getProductAvailabilityMessage,
+} from "@/lib/productAvailability";
 import { CustomButton } from "@/components/shared/CustomButton";
 import type { Product } from "@/types/product";
 
@@ -57,29 +61,26 @@ export default function CartProductCard({ product }: CartProductCardProps) {
   const originalPrice = product?.original_price ? `$${parseFloat(String(product.original_price)).toFixed(2)}` : null;
 
   // Stock status
-  const stock = parseInt(String(product.stock), 10) || 0;
-  const isOutOfStock = stock <= 0;
+  const availability = getProductAvailability(product.stock);
+  const isComingSoon = availability.status === "coming-soon";
+  const isOutOfStock = !availability.isPurchasable;
   let stockCircle;
-  let stockMessage;
   let stockStyle;
   
-  if (stock === 0) {
-    stockMessage = "Sold out";
-    stockCircle = <Image src={CircleGrayIcon} alt="sold out" width={8} height={8} className="h-2 w-2" />;
+  if (availability.status === "coming-soon" || availability.status === "sold-out") {
+    stockCircle = <Image src={CircleGrayIcon} alt="" width={8} height={8} className="h-2 w-2" />;
     stockStyle = "text-[#717171]";
-  } else if (stock <= 5) {
-    stockMessage = `Very low stock (${stock} unit${stock > 1 ? 's' : ''})`;
+  } else if (availability.status === "very-low") {
     stockCircle = <Image src={CircleRedIcon} alt="very low stock" width={8} height={8} className="h-2 w-2" />;
     stockStyle = "text-[#EC3535]";
-  } else if (stock <= 10) {
-    stockMessage = `In stock`;
+  } else if (availability.status === "low") {
     stockCircle = <Image src={CircleOrangeIcon} alt="medium stock" width={8} height={8} className="h-2 w-2" />;
     stockStyle = "text-[#FF7C40]";
   } else {
-    stockMessage = `In stock`;
     stockCircle = <Image src={CircleGreenIcon} alt="high stock" width={8} height={8} className="h-2 w-2" />;
     stockStyle = "text-[#3A9B25]";
   }
+  const stockMessage = getProductAvailabilityMessage(availability, "simple");
 
   const imageUrl = product.images?.[0]?.url_sm || '/FirstPlaceholder.svg';
   const handleAddToCart = async () => {
@@ -183,7 +184,13 @@ export default function CartProductCard({ product }: CartProductCardProps) {
           onClick={handleAddToCart}
           disabled={addToCartMutation.isPending || isOutOfStock}
         >
-          {isOutOfStock ? 'SOLD OUT' : addToCartMutation.isPending ? 'ADDING...' : 'ADD TO CART'}
+          {isComingSoon
+            ? "COMING SOON"
+            : isOutOfStock
+              ? "SOLD OUT"
+              : addToCartMutation.isPending
+                ? "ADDING..."
+                : "ADD TO CART"}
         </CustomButton>
       </div>
     </div>
