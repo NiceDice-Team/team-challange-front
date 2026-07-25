@@ -161,6 +161,7 @@ describe("Navbar mobile menu", () => {
     expect(screen.getByTestId("navbar-mobile-breadcrumb")).toHaveTextContent("Home");
     expect(screen.getByTestId("navbar-mobile-breadcrumb")).toHaveTextContent("Board games");
     expect(screen.getByTestId("navbar-mobile-breadcrumb")).toHaveClass("px-4", "pt-6", "sm:hidden");
+    expect(screen.getByTestId("navbar-mobile-breadcrumb-scroll")).toHaveClass("overflow-x-auto", "py-1");
     expect(screen.getByTestId("navbar-mobile-breadcrumb-divider")).toHaveClass("mt-6", "h-0", "w-full", "border-t");
   });
 
