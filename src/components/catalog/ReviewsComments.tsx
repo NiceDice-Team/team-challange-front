@@ -4,9 +4,10 @@ import { Pagination } from "../ui/pagination";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { CustomSelect } from "../shared/CustomSelect";
-import { productServices } from "@/services/productServices";
 import { reviewServices } from "@/services/reviewServices";
 import { getReviewAuthorName } from "@/lib/reviewAuthor";
+import { queryKeys } from "@/lib/queryKeys";
+import { useProductQuery } from "@/hooks/useProductQueries";
 
 const REVIEWS_PER_PAGE = 2;
 const SORT_TO_ORDERING: Record<string, string> = {
@@ -46,23 +47,14 @@ export default function ReviewsComments({ productId, children }: ReviewsComments
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState("most-recent");
 
-  const { data: product } = useQuery({
-    queryKey: ["product", productId],
-    queryFn: ({ signal }) => productServices.getProductById(productId, { signal }),
-    enabled: !!productId,
-    staleTime: 15 * 60 * 1000,
-    gcTime: 60 * 60 * 1000,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    retry: 1,
-  });
+  const { data: product } = useProductQuery(productId);
 
   const {
     data: reviewsData,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["product-reviews", productId, sortBy],
+    queryKey: queryKeys.productReviews.list(productId, sortBy),
     queryFn: ({ signal }) =>
       reviewServices.getAllProductReviews(
         productId,

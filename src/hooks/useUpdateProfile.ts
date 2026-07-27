@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "@/lib/axiosInstance";
+import { queryKeys } from "@/lib/queryKeys";
 
 interface UpdateProfileData {
   first_name: string;
@@ -32,9 +33,9 @@ export const useUpdateProfile = () => {
       return response.data;
     },
     onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["user", variables.userId] });
-      queryClient.setQueryData(["user", variables.userId], data);
-      queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.userDetail(variables.userId) });
+      queryClient.setQueryData(queryKeys.userDetail(variables.userId), data);
+      queryClient.invalidateQueries({ queryKey: queryKeys.user });
     },
     onError: (error) => {
       console.error("Error updating profile:", error);

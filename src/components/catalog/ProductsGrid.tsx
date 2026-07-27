@@ -9,6 +9,7 @@ import { Pagination } from "../ui/pagination";
 import { CustomSelect } from "../shared/CustomSelect";
 import type { SelectedFilters } from "@/types/catalog";
 import type { Product } from "@/types/product";
+import { queryKeys } from "@/lib/queryKeys";
 
 // Component props
 interface ProductsGridProps {
@@ -77,13 +78,10 @@ export default function ProductsGrid({
     isFetching,
     error,
   } = useQuery({
-    queryKey: [
-      "products",
-      {
-        sortBy,
-        ...nonPriceFilters,
-      },
-    ],
+    queryKey: queryKeys.products.list({
+      sortBy,
+      ...nonPriceFilters,
+    }),
     queryFn: async ({ signal }) => {
       const countResponse = await catalogServices.getProductCount(nonPriceFilters, { signal });
       const totalCount = countResponse.count;

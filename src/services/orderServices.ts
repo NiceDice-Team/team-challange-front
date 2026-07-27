@@ -10,6 +10,16 @@ export interface PaymentMethod {
   description: string;
 }
 
+type ApiListResponse<T> = {
+  results?: T[];
+} | T[];
+
+type ApiRecord = Record<string, unknown>;
+
+function getListItems<T>(response: ApiListResponse<T>): T[] {
+  return Array.isArray(response) ? response : response.results ?? [];
+}
+
 export const orderServices = {
   async getOrders(userId?: string | null) {
     const { accessToken } = getTokens() || {};
@@ -19,13 +29,13 @@ export const orderServices = {
     }
 
     try {
-      const response = await fetchAPI("orders/?user_id=" + userId, {
+      const response = await fetchAPI<ApiListResponse<unknown>>("orders/?user_id=" + userId, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      return response.results || response;
+      return getListItems(response);
     } catch (error) {
       console.error("Error fetching orders:", error);
       throw error;
@@ -35,14 +45,14 @@ export const orderServices = {
   async getDeliveryOptions() {
     const { accessToken } = getTokens() || {};
 
-    const response = await fetchAPI("orders/delivery-options/", {
+    const response = await fetchAPI<ApiListResponse<ApiRecord>>("orders/delivery-options/", {
       method: "GET",
       headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
     });
 
-    const rawItems: any[] = (response as any)?.results || (response as any);
+    const rawItems = getListItems(response);
 
-    return (rawItems || []).map((item: any): DeliveryOption => ({
+    return rawItems.map((item): DeliveryOption => ({
       id: Number(item.id),
       name: String(item.name ?? ""),
       price: Number(item.price),
@@ -55,14 +65,14 @@ export const orderServices = {
   async getPaymentMethods() {
     const { accessToken } = getTokens() || {};
 
-    const response = await fetchAPI("orders/payment-methods/", {
+    const response = await fetchAPI<ApiListResponse<ApiRecord>>("orders/payment-methods/", {
       method: "GET",
       headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
     });
 
-    const rawItems: any[] = (response as any)?.results || (response as any);
+    const rawItems = getListItems(response);
 
-    return (rawItems || []).map((item: any): PaymentMethod => ({
+    return rawItems.map((item): PaymentMethod => ({
       id: Number(item.id),
       name: String(item.name ?? ""),
       description: String(item.description ?? ""),

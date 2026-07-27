@@ -12,7 +12,7 @@ const compat = new FlatCompat({
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals"),
   {
-    files: ["src/__tests__/**/*.{js,jsx,ts,tsx}", "tests/**/*.{js,jsx,ts,tsx}"],
+    files: ["src/__tests__/**/*.{ts,tsx}", "tests/**/*.{ts,tsx}"],
     rules: {
       "@next/next/no-img-element": "off",
     },

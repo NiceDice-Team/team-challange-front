@@ -10,6 +10,7 @@ import { CustomSelect } from "@/components/shared/CustomSelect";
 import { reviewServices } from "@/services/reviewServices";
 import { isAuthenticated } from "@/lib/tokenManager";
 import { showCustomToast } from "@/components/shared/Toast";
+import { queryKeys } from "@/lib/queryKeys";
 
 interface ProductReviewDialogProps {
   productId: string;
@@ -46,9 +47,9 @@ export default function ProductReviewDialog({
       }),
     onSuccess: async () => {
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["product", productId] }),
-        queryClient.invalidateQueries({ queryKey: ["product-reviews-summary", productId] }),
-        queryClient.invalidateQueries({ queryKey: ["product-reviews", productId] }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.products.detail(productId) }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.productReviews.summary(productId) }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.productReviews.allForProduct(productId) }),
       ]);
 
       showCustomToast({

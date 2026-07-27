@@ -15,16 +15,14 @@ coverage
 .nyc_output
 .vscode
 .eslintcache
-**/*.test.js
 **/*.test.ts
 **/*.test.tsx
-**/*.spec.js
 **/*.spec.ts
 **/*.spec.tsx
 tests
 test
 __tests__
-jest.config.js
+jest.config.ts
 jest.setup.ts
 playwright.config.ts
 e2e

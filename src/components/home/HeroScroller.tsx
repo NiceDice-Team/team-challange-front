@@ -119,7 +119,7 @@ export default function HeroScroller() {
     return () => {
       clearInterval(timer);
     };
-  }, [currentSection, scrollerData.length]);
+  }, [currentSection, isScrollable, scrollerData.length]);
 
   function handleLeftClick() {
     if (currentSection > 0) {

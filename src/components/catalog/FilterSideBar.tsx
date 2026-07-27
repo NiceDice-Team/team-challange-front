@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { FilterCheckmarkIcon, ChevronDownIcon, CloseIcon } from "../../svgs/icons";
 import FilterSideBarSkeleton from "./FilterSideBarSkeleton";
 import type { SelectedFilters, FilterItem, Category } from "@/types/catalog";
+import { queryKeys } from "@/lib/queryKeys";
 
 const FEATURED_CATEGORY_CONFIG = [
   { label: "New arrivals", names: ["new arrivals", "new arrival"] },
@@ -59,7 +60,7 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
 
   // Fetch all filter data
   const { data: categories = [], isLoading: categoriesLoading } = useQuery({
-    queryKey: ["categories"],
+    queryKey: queryKeys.catalog.categories,
     queryFn: ({ signal }) => catalogServices.getCategories({}, { signal }),
     staleTime: 24 * 60 * 60 * 1000, // 24 hours
     gcTime: 24 * 60 * 60 * 1000,
@@ -89,7 +90,7 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
 
   // Fetch product counts for all categories (includes search filter)
   const { data: categoryCounts = {} as Record<number, number>, isLoading: countsLoading } = useQuery({
-    queryKey: ["category-counts", featuredCategoryIds, selectedFilters.search],
+    queryKey: queryKeys.catalog.categoryCounts(featuredCategoryIds, selectedFilters.search),
     queryFn: async ({ signal }) => {
       if (featuredCategories.length === 0) return {};
 
@@ -122,7 +123,7 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
   });
 
   const { data: audiences = [], isLoading: audiencesLoading } = useQuery({
-    queryKey: ["audiences"],
+    queryKey: queryKeys.catalog.audiences,
     queryFn: ({ signal }) => catalogServices.getAudiences({}, { signal }),
     staleTime: 24 * 60 * 60 * 1000,
     gcTime: 24 * 60 * 60 * 1000,
@@ -132,7 +133,7 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
   });
 
   const { data: gameTypes = [], isLoading: gameTypesLoading } = useQuery({
-    queryKey: ["game-types"],
+    queryKey: queryKeys.catalog.gameTypes,
     queryFn: ({ signal }) => catalogServices.getGameTypes({}, { signal }),
     staleTime: 24 * 60 * 60 * 1000,
     gcTime: 24 * 60 * 60 * 1000,
@@ -142,7 +143,7 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
   });
 
   const { data: brands = [], isLoading: brandsLoading } = useQuery({
-    queryKey: ["brands"],
+    queryKey: queryKeys.catalog.brands,
     queryFn: ({ signal }) => catalogServices.getBrands({}, { signal }),
     staleTime: 24 * 60 * 60 * 1000,
     gcTime: 24 * 60 * 60 * 1000,
@@ -152,10 +153,7 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
   });
 
   const { data: priceBounds = { max: 0 }, isLoading: priceBoundsLoading } = useQuery({
-    queryKey: [
-      "price-bounds",
-      priceBoundsFilters,
-    ],
+    queryKey: queryKeys.catalog.priceBounds(priceBoundsFilters),
     queryFn: async ({ signal }) => {
       const response = await productServices.getProductsWithFilters(1, 1, "price-high-low", priceBoundsFilters, { signal });
       const max = parseFloat(String(response?.results?.[0]?.price ?? 0));

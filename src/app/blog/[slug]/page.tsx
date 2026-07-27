@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getAllBlogSlugs, getBlogPostBySlug } from "../data/ blogPosts";
+import { getAllBlogSlugs, getBlogPostBySlug } from "../data/blogPosts";
 
 interface BlogArticlePageProps {
   params: Promise<{ slug: string }>;

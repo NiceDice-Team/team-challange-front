@@ -94,7 +94,7 @@ export default function OrderReviewPage() {
     isLoading: paymentMethodsLoading,
     error: paymentMethodsError,
   } = useQuery({
-    queryKey: ["payment-methods"],
+    queryKey: queryKeys.checkout.paymentMethods,
     queryFn: () => orderServices.getPaymentMethods(),
     refetchOnWindowFocus: false,
   });

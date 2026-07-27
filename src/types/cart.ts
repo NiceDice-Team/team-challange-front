@@ -108,25 +108,3 @@ export interface CartSummary {
   isEmpty: boolean;
 }
 
-export interface CartContextValue {
-  cartItems: CartItem[];
-  cartItemCount: number;
-  isLoading: boolean;
-  loadCartItems: () => Promise<void>;
-  addToCartOptimistic: (
-    productId: string | number,
-    quantity?: number,
-    productData?: Product | null
-  ) => Promise<void>;
-  updateQuantityOptimistic: (
-    cartItemId: string,
-    newQuantity: number
-  ) => Promise<void>;
-  removeItemOptimistic: (cartItemId: string) => Promise<void>;
-  clearCartOptimistic: () => void;
-}
-
-export interface AddToCartResponse {
-  success: boolean;
-  error?: string;
-}

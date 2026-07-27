@@ -1,15 +1,19 @@
 import About from "../components/layout/About";
-import BlogSection from "../components/home/BlogSection";
 import Footer from "../components/layout/Footer";
 import HeroScroller from "../components/home/HeroScroller";
 import MobileFooter from "../components/layout/MobileFooter";
 import Navbar from "../components/layout/Navbar";
 import NewArrivals from "../components/home/NewArrivals";
-import PartnersScroller from "../components/home/PartnersScroller";
-import ReviewSection from "../components/home/ReviewSection";
 import FeatureSection from "../components/home/FeaturesSection";
 import FeatureSectionBottom from "../components/home/FeatureSectionBottom";
 import CommingSoonSection from "../components/home/CommingSoonSection";
+import dynamic from "next/dynamic";
+
+const ReviewSection = dynamic(() => import("../components/home/ReviewSection"));
+const BlogSection = dynamic(() => import("../components/home/BlogSection"));
+const PartnersScroller = dynamic(
+  () => import("../components/home/PartnersScroller"),
+);
 
 /**
  * Home page component

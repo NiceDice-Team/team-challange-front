@@ -1,10 +1,11 @@
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosError, AxiosInstance } from "axios";
 import { getValidAccessToken } from "./tokenManager";
 import {
   NO_CACHE_CONTROL_VALUE,
   shouldAttachNoCacheHeaders,
 } from "./noCacheHeaders";
 import { API_CONFIG } from '@/config/api';
+import { getApiErrorMessage } from "./apiError";
 
 const axiosInstance: AxiosInstance = axios.create(API_CONFIG);
 
@@ -33,12 +34,21 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   function (error) {
-    if (error.response?.status === 401) {
+    const axiosError = error as AxiosError;
+
+    if (axiosError.response?.status === 401) {
       // TODO add toast
       console.error("Unauthorized request - tokens may be invalid");
     }
 
-    return Promise.reject(error);
+    if (axiosError.response?.data) {
+      axiosError.message = getApiErrorMessage(
+        axiosError.response.data,
+        axiosError.message,
+      );
+    }
+
+    return Promise.reject(axiosError);
   }
 );
 

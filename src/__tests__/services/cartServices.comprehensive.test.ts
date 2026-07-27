@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { cartServices, productServices, ensureGuestCart, deleteGuestCart, mergeGuestCartIntoUserCart } from '../../services/cartServices';
 import { fetchAPI } from '../../services/api';
 import { getValidAccessToken, isAuthenticated } from '@/lib/tokenManager';
