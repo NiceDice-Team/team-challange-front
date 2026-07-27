@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import HERO_IMG1 from "../../../public/HeroScroller/HeroScroll1.png";
+import HERO_IMG1 from "../../../public/HeroScroller/HeroScroll4.png";
 import HERO_IMG2 from "../../../public/HeroScroller/HeroScroll2.png";
 import HERO_IMG3 from "../../../public/HeroScroller/HeroScroll3.png";
 import Image, { StaticImageData } from "next/image";
