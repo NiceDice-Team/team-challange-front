@@ -19,33 +19,46 @@ jest.mock("next/navigation", () => ({
   }),
 }));
 
-jest.mock("../../store/checkout", () => ({
-  useCheckoutFormData: jest.fn(() => ({
-    shippingCountry: "",
-    shippingFirstName: "",
-    shippingLastName: "",
-    shippingAddress: "",
-    shippingApartment: "",
-    shippingZipCode: "",
-    shippingCity: "",
-    shippingEmail: "",
-    shippingPhone: "",
-    billingCountry: "",
-    billingFirstName: "",
-    billingLastName: "",
-    billingAddress: "",
-    billingApartment: "",
-    billingZipCode: "",
-    billingCity: "",
-    billingEmail: "",
-    billingPhone: "",
-    copyBilling: false,
-  })),
-  useCheckoutStore: jest.fn(() => ({
-    setFormData: mockSetFormData,
-    setPaymentMethod: mockSetPaymentMethod,
-  })),
-}));
+const mockUpdateFormData = jest.fn();
+
+const mockEmptyCheckoutFormData = {
+  shippingCountry: "",
+  shippingFirstName: "",
+  shippingLastName: "",
+  shippingAddress: "",
+  shippingApartment: "",
+  shippingZipCode: "",
+  shippingCity: "",
+  shippingEmail: "",
+  shippingPhone: "",
+  billingCountry: "",
+  billingFirstName: "",
+  billingLastName: "",
+  billingAddress: "",
+  billingApartment: "",
+  billingZipCode: "",
+  billingCity: "",
+  billingEmail: "",
+  billingPhone: "",
+  copyBilling: true,
+};
+
+jest.mock("../../store/checkout", () => {
+  const useCheckoutStore = Object.assign(jest.fn(), {
+    getState: () => ({
+      checkoutUserData: mockEmptyCheckoutFormData,
+    }),
+  });
+
+  return {
+    useCheckoutStore,
+    useCheckoutActions: jest.fn(() => ({
+      setFormData: mockSetFormData,
+      updateFormData: mockUpdateFormData,
+      setPaymentMethod: mockSetPaymentMethod,
+    })),
+  };
+});
 
 jest.mock("../../components/shared/CustomInput", () => ({
   CustomInput: ({ label, id, name, placeholder, error, ...props }) => (
