@@ -28,7 +28,7 @@ export default function ForgotPasswordPage() {
         receive a password reset link shortly
       </p>
       <p className="mb-12 text-base">
-        Check the message for 5-10 minutes. If you don&apos;t find the list,
+        Check the message for 5-10 minutes. If you don&apos;t find the email,
         please check your spam folder and resend it again.
       </p>
       <div className="flex flex-row justify-center items-center gap-1 mb-12">
