@@ -89,7 +89,7 @@ const initialFormData: CheckoutFormData = {
   billingCity: "",
   billingEmail: "",
   billingPhone: "",
-  copyBilling: false,
+  copyBilling: true,
 };
 
 export const useCheckoutStore = create<CheckoutState>()((set, get) => ({

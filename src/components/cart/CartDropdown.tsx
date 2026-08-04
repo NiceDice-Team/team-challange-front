@@ -3,7 +3,11 @@
 import React, { useEffect, useRef, useMemo } from "react";
 import type { CartItem } from "@/types/cart";
 import Link from "next/link";
-import { useCartQuery, useUpdateCartQuantity, useRemoveFromCart } from "@/hooks/useCartQuery";
+import {
+  useCartQuery,
+  useUpdateCartQuantity,
+  useRemoveFromCart,
+} from "@/hooks/useCartQuery";
 import CartDropdownItem from "./CartDropdownItem";
 
 interface CartDropdownProps {
@@ -11,19 +15,21 @@ interface CartDropdownProps {
   onClose: () => void;
 }
 
-export default function CartDropdown({
-  isOpen,
-  onClose,
-}: CartDropdownProps) {
+export default function CartDropdown({ isOpen, onClose }: CartDropdownProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { data: cartItems = [] } = useCartQuery();
   const updateQuantityMutation = useUpdateCartQuantity();
   const removeItemMutation = useRemoveFromCart();
-  const removingItemId = removeItemMutation.isPending ? removeItemMutation.variables : null;
+  const removingItemId = removeItemMutation.isPending
+    ? removeItemMutation.variables
+    : null;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         onClose();
       }
     };
@@ -37,12 +43,18 @@ export default function CartDropdown({
     };
   }, [isOpen, onClose]);
 
-  const updateQuantity = async (cartItemId: CartItem["id"], newQuantity: number) => {
+  const updateQuantity = async (
+    cartItemId: CartItem["id"],
+    newQuantity: number,
+  ) => {
     try {
       if (newQuantity <= 0) {
         await removeItemMutation.mutateAsync(cartItemId);
       } else {
-        await updateQuantityMutation.mutateAsync({ cartItemId, quantity: newQuantity });
+        await updateQuantityMutation.mutateAsync({
+          cartItemId,
+          quantity: newQuantity,
+        });
       }
     } catch (err) {
       console.error("Failed to update quantity:", err);
@@ -58,22 +70,29 @@ export default function CartDropdown({
   };
 
   // Calculate totals with useMemo optimization
-  const { subtotal, remainingForFreeShipping, shippingProgress } = useMemo(() => {
-    const calculatedSubtotal = cartItems.reduce((sum, item) => {
-      const price = parseFloat(String(item.product?.price || 0));
-      return sum + price * item.quantity;
-    }, 0);
+  const { subtotal, remainingForFreeShipping, shippingProgress } =
+    useMemo(() => {
+      const calculatedSubtotal = cartItems.reduce((sum, item) => {
+        const price = parseFloat(String(item.product?.price || 0));
+        return sum + price * item.quantity;
+      }, 0);
 
-    const freeShippingThreshold = 60;
-    const calculatedRemaining = Math.max(0, freeShippingThreshold - calculatedSubtotal);
-    const calculatedProgress = Math.min(100, (calculatedSubtotal / freeShippingThreshold) * 100);
+      const freeShippingThreshold = 60;
+      const calculatedRemaining = Math.max(
+        0,
+        freeShippingThreshold - calculatedSubtotal,
+      );
+      const calculatedProgress = Math.min(
+        100,
+        (calculatedSubtotal / freeShippingThreshold) * 100,
+      );
 
-    return {
-      subtotal: calculatedSubtotal,
-      remainingForFreeShipping: calculatedRemaining,
-      shippingProgress: calculatedProgress
-    };
-  }, [cartItems]);
+      return {
+        subtotal: calculatedSubtotal,
+        remainingForFreeShipping: calculatedRemaining,
+        shippingProgress: calculatedProgress,
+      };
+    }, [cartItems]);
 
   if (!isOpen) return null;
 
@@ -93,10 +112,13 @@ export default function CartDropdown({
             <div className="text-center">
               {remainingForFreeShipping > 0 ? (
                 <p className="text-sm sm:text-base lg:text-lg text-black font-normal leading-tight">
-                  You&apos;re just ${remainingForFreeShipping.toFixed(2)} away from FREE shipping
+                  You&apos;re just ${remainingForFreeShipping.toFixed(2)} away
+                  from FREE shipping
                 </p>
               ) : (
-                <p className="text-sm sm:text-base lg:text-lg text-[#494791] font-medium">🎉 FREE SHIPPING</p>
+                <p className="text-sm sm:text-base lg:text-lg text-[#494791] font-medium">
+                  🎉 FREE SHIPPING
+                </p>
               )}
             </div>
 
@@ -115,7 +137,9 @@ export default function CartDropdown({
           {/* Cart Items */}
           {cartItems.length === 0 ? (
             <div className="w-full text-center py-6 sm:py-8">
-              <p className="text-black text-base sm:text-lg mb-4">Your cart is empty</p>
+              <p className="text-black text-base sm:text-lg mb-4">
+                Your cart is empty
+              </p>
               <Link
                 href="/catalog"
                 onClick={onClose}
@@ -142,8 +166,12 @@ export default function CartDropdown({
               {/* Subtotal */}
               <div className="w-full border-t border-[#494791]/50 pt-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-lg text-black font-normal uppercase">SUBTOTAL</span>
-                  <span className="text-lg text-black font-normal">${subtotal.toFixed(2)}</span>
+                  <span className="text-lg text-black font-normal uppercase">
+                    SUBTOTAL
+                  </span>
+                  <span className="text-lg text-black font-normal">
+                    ${subtotal.toFixed(2)}
+                  </span>
                 </div>
                 <div className="w-full border-t border-[#494791]/50 mt-2" />
               </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -14,12 +14,83 @@ import { CustomButton } from "../shared/CustomButton";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
+  CheckoutFormData,
   DeliveryOption,
-  useCheckoutFormData,
+  useCheckoutActions,
   useCheckoutStore,
 } from "@/store/checkout";
 
 export type CombinedFormData = z.infer<typeof combinedFormSchema>;
+
+function getDefaultValuesFromStore(): CombinedFormData {
+  const checkoutUserData = useCheckoutStore.getState().checkoutUserData;
+  const hasStoredData = Boolean(
+    checkoutUserData.shippingCountry ||
+      checkoutUserData.shippingFirstName ||
+      checkoutUserData.shippingLastName ||
+      checkoutUserData.shippingAddress ||
+      checkoutUserData.shippingApartment ||
+      checkoutUserData.shippingZipCode ||
+      checkoutUserData.shippingCity ||
+      checkoutUserData.shippingEmail ||
+      checkoutUserData.shippingPhone ||
+      checkoutUserData.billingCountry ||
+      checkoutUserData.billingFirstName ||
+      checkoutUserData.billingLastName ||
+      checkoutUserData.billingAddress ||
+      checkoutUserData.billingApartment ||
+      checkoutUserData.billingZipCode ||
+      checkoutUserData.billingCity ||
+      checkoutUserData.billingEmail ||
+      checkoutUserData.billingPhone,
+  );
+
+  if (!hasStoredData) {
+    return {
+      shippingCountry: "",
+      shippingFirstName: "",
+      shippingLastName: "",
+      shippingAddress: "",
+      shippingApartment: "",
+      shippingZipCode: "",
+      shippingCity: "",
+      shippingEmail: "",
+      shippingPhone: "",
+      billingCountry: "",
+      billingFirstName: "",
+      billingLastName: "",
+      billingAddress: "",
+      billingApartment: "",
+      billingZipCode: "",
+      billingCity: "",
+      billingEmail: "",
+      billingPhone: "",
+      copyBilling: true,
+    };
+  }
+
+  return {
+    shippingCountry: checkoutUserData.shippingCountry,
+    shippingFirstName: checkoutUserData.shippingFirstName,
+    shippingLastName: checkoutUserData.shippingLastName,
+    shippingAddress: checkoutUserData.shippingAddress,
+    shippingApartment: checkoutUserData.shippingApartment ?? "",
+    shippingZipCode: checkoutUserData.shippingZipCode,
+    shippingCity: checkoutUserData.shippingCity,
+    shippingEmail: checkoutUserData.shippingEmail,
+    shippingPhone: checkoutUserData.shippingPhone,
+    billingCountry: checkoutUserData.billingCountry ?? "",
+    billingFirstName: checkoutUserData.billingFirstName ?? "",
+    billingLastName: checkoutUserData.billingLastName ?? "",
+    billingAddress: checkoutUserData.billingAddress ?? "",
+    billingApartment: checkoutUserData.billingApartment ?? "",
+    billingZipCode: checkoutUserData.billingZipCode ?? "",
+    billingCity: checkoutUserData.billingCity ?? "",
+    billingEmail: checkoutUserData.billingEmail ?? "",
+    billingPhone: checkoutUserData.billingPhone ?? "",
+    copyBilling: checkoutUserData.copyBilling,
+  };
+}
 
 export default function ShippingForm({
   paymentMethod,
@@ -29,94 +100,14 @@ export default function ShippingForm({
   children?: React.ReactNode;
 }) {
   const router = useRouter();
-  const checkoutUserData = useCheckoutFormData();
+  const { setFormData, updateFormData, setPaymentMethod } = useCheckoutActions();
+  const [defaultValues] = useState(getDefaultValuesFromStore);
 
-  const shouldUseStoredDefaults = useMemo(
-    () =>
-      Boolean(
-        checkoutUserData.shippingCountry ||
-        checkoutUserData.shippingFirstName ||
-        checkoutUserData.shippingLastName ||
-        checkoutUserData.shippingAddress ||
-        checkoutUserData.shippingApartment ||
-        checkoutUserData.shippingZipCode ||
-        checkoutUserData.shippingCity ||
-        checkoutUserData.shippingEmail ||
-        checkoutUserData.shippingPhone,
-      ),
-    [checkoutUserData],
-  );
-
-  const defaultValues: CombinedFormData = useMemo(
-    () => ({
-      shippingCountry: shouldUseStoredDefaults
-        ? checkoutUserData.shippingCountry
-        : "",
-      shippingFirstName: shouldUseStoredDefaults
-        ? checkoutUserData.shippingFirstName
-        : "",
-      shippingLastName: shouldUseStoredDefaults
-        ? checkoutUserData.shippingLastName
-        : "",
-      shippingAddress: shouldUseStoredDefaults
-        ? checkoutUserData.shippingAddress
-        : "",
-      shippingApartment: shouldUseStoredDefaults
-        ? (checkoutUserData.shippingApartment ?? "")
-        : "",
-      shippingZipCode: shouldUseStoredDefaults
-        ? checkoutUserData.shippingZipCode
-        : "",
-      shippingCity: shouldUseStoredDefaults
-        ? checkoutUserData.shippingCity
-        : "",
-      shippingEmail: shouldUseStoredDefaults
-        ? checkoutUserData.shippingEmail
-        : "",
-      shippingPhone: shouldUseStoredDefaults
-        ? checkoutUserData.shippingPhone
-        : "",
-
-      billingCountry: shouldUseStoredDefaults
-        ? (checkoutUserData.billingCountry ?? "")
-        : "",
-      billingFirstName: shouldUseStoredDefaults
-        ? (checkoutUserData.billingFirstName ?? "")
-        : "",
-      billingLastName: shouldUseStoredDefaults
-        ? (checkoutUserData.billingLastName ?? "")
-        : "",
-      billingAddress: shouldUseStoredDefaults
-        ? (checkoutUserData.billingAddress ?? "")
-        : "",
-      billingApartment: shouldUseStoredDefaults
-        ? (checkoutUserData.billingApartment ?? "")
-        : "",
-      billingZipCode: shouldUseStoredDefaults
-        ? (checkoutUserData.billingZipCode ?? "")
-        : "",
-      billingCity: shouldUseStoredDefaults
-        ? (checkoutUserData.billingCity ?? "")
-        : "",
-      billingEmail: shouldUseStoredDefaults
-        ? (checkoutUserData.billingEmail ?? "")
-        : "",
-      billingPhone: shouldUseStoredDefaults
-        ? (checkoutUserData.billingPhone ?? "")
-        : "",
-
-      copyBilling: shouldUseStoredDefaults
-        ? checkoutUserData.copyBilling
-        : true,
-    }),
-    [checkoutUserData, shouldUseStoredDefaults],
-  );
   const {
     register,
     watch,
     setValue,
     handleSubmit,
-    trigger,
     formState: { errors, isSubmitting },
   } = useForm<CombinedFormData>({
     resolver: zodResolver(combinedFormSchema),
@@ -124,7 +115,6 @@ export default function ShippingForm({
     reValidateMode: "onChange",
     defaultValues,
   });
-  const { setFormData, setPaymentMethod } = useCheckoutStore();
 
   const copyBilling = watch("copyBilling");
   const shippingCountry = watch("shippingCountry");
@@ -136,6 +126,13 @@ export default function ShippingForm({
   const shippingCity = watch("shippingCity");
   const shippingEmail = watch("shippingEmail");
   const shippingPhone = watch("shippingPhone");
+
+  useEffect(() => {
+    const subscription = watch((value) => {
+      updateFormData(value as Partial<CheckoutFormData>);
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, updateFormData]);
 
   useEffect(() => {
     if (!copyBilling) return;
@@ -166,8 +163,10 @@ export default function ShippingForm({
   ]);
 
   const onSubmit = (data: CombinedFormData) => {
-    setFormData(data as any);
-    setPaymentMethod(paymentMethod);
+    setFormData(data as CheckoutFormData);
+    if (paymentMethod) {
+      setPaymentMethod(paymentMethod);
+    }
 
     router.push("/checkout-order/order-review");
   };
