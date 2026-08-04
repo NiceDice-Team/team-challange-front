@@ -1,5 +1,5 @@
 import BlogCard from "@/components/home/BlogCard";
-import { blogPostsPreview } from "./data/ blogPosts";
+import { blogPostsPreview } from "./data/blogPosts";
 
 const BlogPage = () => {
   return (

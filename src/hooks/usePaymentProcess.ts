@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useStripe, useElements } from "@stripe/react-stripe-js";
+import { queryKeys } from "@/lib/queryKeys";
 
 export interface CreatePaymentIntentRequest {
   amount: number; // amount in cents
@@ -111,7 +112,7 @@ export const useConfirmPayment = () => {
     onSuccess: (data) => {
       console.log("Payment confirmed successfully:", data);
 
-      queryClient.invalidateQueries({ queryKey: ["orders"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.orders });
     },
     onError: (error) => {
       console.error("Error:", error);

@@ -1,12 +1,13 @@
 "use client";
 
 import { useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
 import StarRating from "../layout/StarsLine";
-import { productServices } from "@/services/productServices";
-import { reviewServices } from "@/services/reviewServices";
 import ProductReviewDialog from "./ProductReviewDialog";
 import { calculateAverageRating, normalizeReviewRating, roundRatingToNearestHalf } from "@/lib/reviewMetrics";
+import {
+  useProductQuery,
+  useProductReviewsSummaryQuery,
+} from "@/hooks/useProductQueries";
 
 interface ReviewsProductProps {
   productId: string;
@@ -16,27 +17,9 @@ interface ReviewsProductProps {
 const STAR_DISTRIBUTION = [5, 4, 3, 2, 1];
 
 export default function ReviewsProduct({ productId, children }: ReviewsProductProps) {
-  const { data: product } = useQuery({
-    queryKey: ["product", productId],
-    queryFn: ({ signal }) => productServices.getProductById(productId, { signal }),
-    enabled: !!productId,
-    staleTime: 15 * 60 * 1000,
-    gcTime: 60 * 60 * 1000,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    retry: 1,
-  });
+  const { data: product } = useProductQuery(productId);
 
-  const { data: reviewsData } = useQuery({
-    queryKey: ["product-reviews-summary", productId],
-    queryFn: ({ signal }) => reviewServices.getAllProductReviews(productId, {}, { signal }),
-    enabled: !!productId,
-    staleTime: 15 * 60 * 1000,
-    gcTime: 60 * 60 * 1000,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    retry: 1,
-  });
+  const { data: reviewsData } = useProductReviewsSummaryQuery(productId);
 
   const fetchedReviewCount = reviewsData?.count ?? 0;
   const reviewCount = fetchedReviewCount || (Array.isArray(product?.reviews) ? product.reviews.length : 0);

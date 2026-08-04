@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -21,8 +21,9 @@ import {
   getProductAvailabilityMessage,
 } from "@/lib/productAvailability";
 import { productServices } from "@/services/productServices";
-import { reviewServices } from "@/services/reviewServices";
 import type { Product, ProductReview } from "@/types/product";
+import { queryKeys } from "@/lib/queryKeys";
+import { useProductReviewsSummaryQuery } from "@/hooks/useProductQueries";
 
 const PRODUCT_CARD_IMAGE_SIZES = "(max-width: 640px) 100vw, 240px";
 
@@ -57,12 +58,8 @@ export default function ProductCard({ product = {} as Product, cardIndex = 0 }: 
     embeddedReviews.length < productReviewCount &&
     catalogRating <= 0;
 
-  const { data: reviewsData } = useQuery({
-    queryKey: ["product-reviews-summary", productId],
-    queryFn: ({ signal }) => reviewServices.getAllProductReviews(productId, {}, { signal }),
+  const { data: reviewsData } = useProductReviewsSummaryQuery(productId, {
     enabled: shouldFetchReviewSummary,
-    staleTime: 15 * 60 * 1000,
-    gcTime: 60 * 60 * 1000,
   });
 
   const reviewCount = reviewsData?.count ?? productReviewCount;
@@ -181,7 +178,7 @@ export default function ProductCard({ product = {} as Product, cardIndex = 0 }: 
     if (!productId) return;
 
     void queryClient.prefetchQuery({
-      queryKey: ["product", productId],
+      queryKey: queryKeys.products.detail(productId),
       queryFn: ({ signal }) => productServices.getProductById(productId, { signal }),
       staleTime: 15 * 60 * 1000,
     });

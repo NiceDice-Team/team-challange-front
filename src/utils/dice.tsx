@@ -1,47 +1,82 @@
 "use client";
 import { useState, useEffect } from "react";
 
+type DiceValue = 1 | 2 | 3 | 4 | 5 | 6;
+
+interface RollingDiceProps {
+  value: number;
+  isRolling: boolean;
+  onClick?: () => void;
+}
+
+const DICE_ROTATIONS: Record<DiceValue, string> = {
+  1: "rotateX(0deg) rotateY(0deg)",
+  2: "rotateX(0deg) rotateY(90deg)",
+  3: "rotateX(0deg) rotateY(180deg)",
+  4: "rotateX(0deg) rotateY(270deg)",
+  5: "rotateX(90deg) rotateY(0deg)",
+  6: "rotateX(270deg) rotateY(0deg)",
+};
+
+const RANDOM_ROTATIONS = [
+  "rotateX(720deg) rotateY(720deg) rotateZ(360deg)",
+  "rotateX(-720deg) rotateY(720deg) rotateZ(-360deg)",
+  "rotateX(720deg) rotateY(-720deg) rotateZ(360deg)",
+  "rotateX(1080deg) rotateY(360deg) rotateZ(720deg)",
+  "rotateX(360deg) rotateY(1080deg) rotateZ(-720deg)",
+  "rotateX(-1080deg) rotateY(-720deg) rotateZ(540deg)",
+] as const;
+
+const DOT_POSITIONS: Record<DiceValue, Array<[number, number]>> = {
+  1: [[50, 50]], // center
+  2: [
+    [30, 30],
+    [70, 70],
+  ], // diagonal
+  3: [
+    [25, 25],
+    [50, 50],
+    [75, 75],
+  ], // diagonal with center
+  4: [
+    [30, 30],
+    [70, 30],
+    [30, 70],
+    [70, 70],
+  ], // corners
+  5: [
+    [30, 30],
+    [70, 30],
+    [50, 50],
+    [30, 70],
+    [70, 70],
+  ], // corners + center
+  6: [
+    [30, 25],
+    [70, 25],
+    [30, 50],
+    [70, 50],
+    [30, 75],
+    [70, 75],
+  ], // two columns
+};
+
+function getRandomRotation() {
+  return RANDOM_ROTATIONS[Math.floor(Math.random() * RANDOM_ROTATIONS.length)];
+}
+
+function normalizeDiceValue(value: number): DiceValue {
+  return value >= 1 && value <= 6 ? (value as DiceValue) : 1;
+}
+
 // 3D Dice Component
-export default function RollingDice({ value, isRolling, onClick }) {
+export default function RollingDice({ value, isRolling, onClick }: RollingDiceProps) {
   const [currentRotation, setCurrentRotation] = useState("");
   const [animationRotation, setAnimationRotation] = useState("");
+  const normalizedValue = normalizeDiceValue(value);
 
-  const renderDots = (num) => {
-    const dotPositions = {
-      1: [[50, 50]], // center
-      2: [
-        [30, 30],
-        [70, 70],
-      ], // diagonal
-      3: [
-        [25, 25],
-        [50, 50],
-        [75, 75],
-      ], // diagonal with center
-      4: [
-        [30, 30],
-        [70, 30],
-        [30, 70],
-        [70, 70],
-      ], // corners
-      5: [
-        [30, 30],
-        [70, 30],
-        [50, 50],
-        [30, 70],
-        [70, 70],
-      ], // corners + center
-      6: [
-        [30, 25],
-        [70, 25],
-        [30, 50],
-        [70, 50],
-        [30, 75],
-        [70, 75],
-      ], // two columns
-    };
-
-    return dotPositions[num]?.map((pos, index) => (
+  const renderDots = (num: DiceValue) => {
+    return DOT_POSITIONS[num].map((pos, index) => (
       <div
         key={index}
         className="absolute bg-gray-900 rounded-full"
@@ -56,38 +91,13 @@ export default function RollingDice({ value, isRolling, onClick }) {
     ));
   };
 
-  // Different rotation angles for each dice value
-  const diceRotations = {
-    1: "rotateX(0deg) rotateY(0deg)",
-    2: "rotateX(0deg) rotateY(90deg)",
-    3: "rotateX(0deg) rotateY(180deg)",
-    4: "rotateX(0deg) rotateY(270deg)",
-    5: "rotateX(90deg) rotateY(0deg)",
-    6: "rotateX(270deg) rotateY(0deg)",
-  };
-
-  // Random rotation directions for rolling animation
-  const randomRotations = [
-    "rotateX(720deg) rotateY(720deg) rotateZ(360deg)",
-    "rotateX(-720deg) rotateY(720deg) rotateZ(-360deg)",
-    "rotateX(720deg) rotateY(-720deg) rotateZ(360deg)",
-    "rotateX(1080deg) rotateY(360deg) rotateZ(720deg)",
-    "rotateX(360deg) rotateY(1080deg) rotateZ(-720deg)",
-    "rotateX(-1080deg) rotateY(-720deg) rotateZ(540deg)",
-  ];
-
-  // Get random rotation for current roll
-  const getRandomRotation = () => {
-    return randomRotations[Math.floor(Math.random() * randomRotations.length)];
-  };
-
   useEffect(() => {
     if (isRolling) {
       setAnimationRotation(getRandomRotation());
     } else {
-      setCurrentRotation(diceRotations[value]);
+      setCurrentRotation(DICE_ROTATIONS[normalizedValue]);
     }
-  }, [isRolling, value]);
+  }, [isRolling, normalizedValue]);
 
   return (
     <>

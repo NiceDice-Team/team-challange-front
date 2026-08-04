@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { orderServices } from "@/services/orderServices";
 import { useCheckoutActions, usePaymentMethod } from "@/store/checkout";
+import { queryKeys } from "@/lib/queryKeys";
 
 export type DeliveryOption = import("@/store/checkout").DeliveryOption;
 
@@ -22,7 +23,7 @@ const DeliveryOptions = ({
     isLoading: deliveryOptionsLoading,
     error,
   } = useQuery({
-    queryKey: ["delivery-options"],
+    queryKey: queryKeys.checkout.deliveryOptions,
     queryFn: () => orderServices.getDeliveryOptions(),
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,

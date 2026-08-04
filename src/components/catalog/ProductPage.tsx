@@ -1,8 +1,4 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
-import { productServices } from "../../services/productServices";
-import { reviewServices } from "@/services/reviewServices";
-import { catalogServices } from "@/services/catalogServices";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { ProductAccordion } from "./ProductPageAccordion";
@@ -26,6 +22,11 @@ import {
   type ProductAvailabilityStatus,
 } from "@/lib/productAvailability";
 import { useViewportIsDesktop } from "@/hooks/useViewport";
+import {
+  useBrandQuery,
+  useProductQuery,
+  useProductReviewsSummaryQuery,
+} from "@/hooks/useProductQueries";
 
 const PRODUCT_MAIN_IMAGE_SIZES = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 600px";
 const PRODUCT_THUMB_IMAGE_SIZES = "(max-width: 640px) 80px, 104px";
@@ -98,48 +99,18 @@ export default function ProductPage({ params }: ProductPageProps) {
     data: product,
     isLoading,
     error,
-  } = useQuery({
-    queryKey: ["product", productId],
-    queryFn: ({ signal }) => productServices.getProductById(productId, { signal }),
-    enabled: !!productId && !isInvalidId,
-    staleTime: 15 * 60 * 1000,
-    gcTime: 60 * 60 * 1000,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    retry: 1,
-  });
+  } = useProductQuery(productId, { enabled: !!productId && !isInvalidId });
 
-  const { data: reviewsData } = useQuery({
-    queryKey: ["product-reviews-summary", productId],
-    queryFn: ({ signal }) => reviewServices.getAllProductReviews(productId, {}, { signal }),
+  const { data: reviewsData } = useProductReviewsSummaryQuery(productId, {
     enabled: !!productId && !isInvalidId,
-    staleTime: 15 * 60 * 1000,
-    gcTime: 60 * 60 * 1000,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    retry: 1,
   });
 
   const productBrandId = getNumericId(product?.brand);
   const publisherId = getNumericId(product?.gameInformation?.publisher);
 
-  const { data: productBrandData } = useQuery({
-    queryKey: ["brand", productBrandId],
-    queryFn: ({ signal }) => catalogServices.getBrandById(productBrandId as number, { signal }),
-    enabled: productBrandId !== null,
-    staleTime: 24 * 60 * 60 * 1000,
-    gcTime: 24 * 60 * 60 * 1000,
-    retry: 1,
-  });
+  const { data: productBrandData } = useBrandQuery(productBrandId);
 
-  const { data: publisherBrandData } = useQuery({
-    queryKey: ["brand", publisherId],
-    queryFn: ({ signal }) => catalogServices.getBrandById(publisherId as number, { signal }),
-    enabled: publisherId !== null,
-    staleTime: 24 * 60 * 60 * 1000,
-    gcTime: 24 * 60 * 60 * 1000,
-    retry: 1,
-  });
+  const { data: publisherBrandData } = useBrandQuery(publisherId);
 
   // Handle invalid product ID redirect
   useEffect(() => {

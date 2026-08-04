@@ -1,12 +1,20 @@
 "use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useEffect, useState } from "react";
 import { SessionProvider } from "next-auth/react";
+import dynamic from "next/dynamic";
 import { AUTH_TOKENS_CHANGED_EVENT } from "@/lib/tokenManager";
 import { queryKeys } from "@/lib/queryKeys";
 import { useGuestCartInit } from "@/hooks/useGuestCartInit";
+
+const ReactQueryDevtools = dynamic(
+  () =>
+    import("@tanstack/react-query-devtools").then(
+      (mod) => mod.ReactQueryDevtools,
+    ),
+  { ssr: false },
+);
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -53,7 +61,9 @@ export default function Providers({ children }: ProvidersProps): React.ReactElem
     <SessionProvider>
       <QueryClientProvider client={queryClient}>
         {children}
-        <ReactQueryDevtools initialIsOpen={false} />
+        {process.env.NODE_ENV === "development" && (
+          <ReactQueryDevtools initialIsOpen={false} />
+        )}
       </QueryClientProvider>
     </SessionProvider>
   );

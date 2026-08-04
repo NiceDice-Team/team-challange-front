@@ -3,7 +3,7 @@
  */
 
 // Common API response wrapper
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   data?: T;
   message?: string;
   success?: boolean;
@@ -77,7 +77,7 @@ export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 export interface ApiRequestOptions {
   method?: HttpMethod;
   headers?: Record<string, string>;
-  body?: any;
+  body?: unknown;
   params?: Record<string, string | number>;
   signal?: AbortSignal;
 }
