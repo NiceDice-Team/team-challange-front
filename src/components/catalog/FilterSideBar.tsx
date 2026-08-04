@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { catalogServices } from "../../services/catalogServices";
 import { productServices } from "../../services/productServices";
 import { useQuery } from "@tanstack/react-query";
@@ -8,6 +8,7 @@ import { FilterCheckmarkIcon, ChevronDownIcon, CloseIcon } from "../../svgs/icon
 import FilterSideBarSkeleton from "./FilterSideBarSkeleton";
 import type { SelectedFilters, FilterItem, Category } from "@/types/catalog";
 import { queryKeys } from "@/lib/queryKeys";
+import { Info } from "lucide-react";
 
 const FEATURED_CATEGORY_CONFIG = [
   { label: "New arrivals", names: ["new arrivals", "new arrival"] },
@@ -22,6 +23,55 @@ interface FilterSideBarProps {
   selectedFilters: SelectedFilters;
   setSelectedFilters: React.Dispatch<React.SetStateAction<SelectedFilters>>;
 }
+
+interface TruncatedFilterLabelProps {
+  text: string;
+}
+
+const TruncatedFilterLabel = ({ text }: TruncatedFilterLabelProps) => {
+  const labelRef = useRef<HTMLSpanElement>(null);
+  const tooltipId = useId();
+  const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+
+  const showTooltipIfTruncated = () => {
+    const label = labelRef.current;
+    setIsTooltipVisible(Boolean(label && label.scrollWidth > label.clientWidth));
+  };
+
+  return (
+    <span className="relative min-w-0 flex-1">
+      <span
+        ref={labelRef}
+        tabIndex={0}
+        aria-describedby={isTooltipVisible ? tooltipId : undefined}
+        className="block min-w-0 truncate outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-light-purple-2)] focus-visible:ring-offset-1"
+        onMouseEnter={showTooltipIfTruncated}
+        onMouseLeave={() => setIsTooltipVisible(false)}
+        onFocus={showTooltipIfTruncated}
+        onBlur={() => setIsTooltipVisible(false)}
+      >
+        {text}
+      </span>
+
+      {isTooltipVisible && (
+        <span
+          id={tooltipId}
+          role="tooltip"
+          className="pointer-events-none absolute left-0 top-full z-50 mt-2 w-max max-w-[min(320px,calc(100vw-32px))] bg-[linear-gradient(90deg,#494791_7.69%,#b23b30_99.52%),linear-gradient(106.44deg,rgba(104,102,167,0.9)_-1.37%,#494791_48.83%,rgba(125,123,184,0.9)_95.22%)] px-3 py-3 text-left text-sm font-normal leading-5 text-white shadow-[0px_13px_28px_rgba(0,0,0,0.1)]"
+        >
+          <span
+            aria-hidden="true"
+            className="absolute -top-1 left-4 h-2.5 w-2.5 rotate-45 bg-[var(--color-purple)]"
+          />
+          <span className="relative flex items-start gap-2">
+            <Info aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0" />
+            <span className="break-all">{text}</span>
+          </span>
+        </span>
+      )}
+    </span>
+  );
+};
 
 export default function FilterSideBar({ selectedFilters, setSelectedFilters }: FilterSideBarProps) {
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
@@ -281,12 +331,13 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
 
   // Render filter tag with remove button
   const FilterTag = ({ name, filterType, value }: { name: string; filterType: string; value: number | string }) => (
-    <div className="bg-white border-[1px] border-[var(--color-light-purple-2)] p-2 text-[var(--color-purple)] text-sm flex justify-center items-center gap-2">
-      {name}
+    <div className="flex max-w-full min-w-0 items-center justify-center gap-2 border-[1px] border-[var(--color-light-purple-2)] bg-white p-2 text-sm text-[var(--color-purple)]">
+      <TruncatedFilterLabel text={name} />
       <button
         type="button"
         tabIndex={-1}
-        className="h-3 w-3 inline-block ml-1 cursor-pointer text-current hover:opacity-70"
+        aria-label={`Remove ${name} filter`}
+        className="ml-1 inline-block h-3 w-3 shrink-0 cursor-pointer text-current hover:opacity-70"
         onClick={(e) => toggleFilter(filterType, value, e)}
       >
         <CloseIcon className="h-3 w-3" />
@@ -422,7 +473,7 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
             </div>
 
             {/* Active Filters */}
-            <div className="flex flex-wrap gap-2" style={{ overflowAnchor: "none" }}>
+            <div className="flex max-w-full min-w-0 flex-wrap gap-2" style={{ overflowAnchor: "none" }}>
               {selectedFilters.categories.map((id: number) => {
                 const category = featuredCategories.find((cat: Category) => cat.id === id);
                 return category && <FilterTag key={id} name={category.name} filterType="categories" value={id} />;
@@ -437,12 +488,13 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
                 <FilterTag key={name} name={name} filterType="brands" value={name} />
               ))}
               {selectedFilters.search && (
-                <div className="bg-white border-[1px] border-[var(--color-light-purple-2)] p-2 text-[var(--color-purple)] text-sm flex justify-center items-center gap-2">
-                  Search: &quot;{selectedFilters.search}&quot;
+                <div className="flex max-w-full min-w-0 items-center justify-center gap-2 border-[1px] border-[var(--color-light-purple-2)] bg-white p-2 text-sm text-[var(--color-purple)]">
+                  <TruncatedFilterLabel text={`Search: "${selectedFilters.search}"`} />
                   <button
                     type="button"
                     tabIndex={-1}
-                    className="h-3 w-3 inline-block ml-1 cursor-pointer text-current hover:opacity-70"
+                    aria-label="Remove search filter"
+                    className="ml-1 inline-block h-3 w-3 shrink-0 cursor-pointer text-current hover:opacity-70"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();

@@ -5,7 +5,7 @@ import { ProductAccordion } from "./ProductPageAccordion";
 import { CustomBreadcrumb } from "../shared/CustomBreadcrumb";
 import { CustomButton } from "../shared/CustomButton";
 import { ProductDetailMobileHeader } from "./ProductDetailMobileChrome";
-import { useAddToCart } from "@/hooks/useCartQuery";
+import { useAddToCart, useCartQuery } from "@/hooks/useCartQuery";
 import {
   CircleChevronLeft,
   CircleChevronRight,
@@ -21,6 +21,8 @@ import {
   getProductAvailabilityMessage,
   type ProductAvailabilityStatus,
 } from "@/lib/productAvailability";
+import { getDiscountedPrice } from "@/lib/productPricing";
+import { getCartProductQuantity } from "@/lib/cartStock";
 import { useViewportIsDesktop } from "@/hooks/useViewport";
 import {
   useBrandQuery,
@@ -90,6 +92,7 @@ export default function ProductPage({ params }: ProductPageProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
   const addToCartMutation = useAddToCart();
+  const { data: cartItems = [], isLoading: isCartLoading } = useCartQuery();
   const isDesktop = useViewportIsDesktop();
 
   const productId = params?.id;
@@ -111,6 +114,33 @@ export default function ProductPage({ params }: ProductPageProps) {
   const { data: productBrandData } = useBrandQuery(productBrandId);
 
   const { data: publisherBrandData } = useBrandQuery(publisherId);
+
+  const productAvailability = getProductAvailability(product?.stock);
+  const productCartQuantity = product
+    ? getCartProductQuantity(cartItems, product.id)
+    : 0;
+  const remainingStockQuantity = productAvailability.isPurchasable
+    ? Math.max(productAvailability.stockQuantity - productCartQuantity, 0)
+    : productAvailability.stockQuantity;
+  const availability = productAvailability.isPurchasable
+    ? getProductAvailability(remainingStockQuantity)
+    : productAvailability;
+  const stockQuantity = availability.stockQuantity;
+  const isInStock = availability.isPurchasable && !isCartLoading;
+
+  useEffect(() => {
+    if (isLoading || isCartLoading) {
+      return;
+    }
+
+    setQuantity((currentQuantity) => {
+      if (!availability.isPurchasable) {
+        return 1;
+      }
+
+      return Math.max(1, Math.min(stockQuantity, currentQuantity));
+    });
+  }, [availability.isPurchasable, isCartLoading, isLoading, stockQuantity]);
 
   // Handle invalid product ID redirect
   useEffect(() => {
@@ -198,7 +228,7 @@ export default function ProductPage({ params }: ProductPageProps) {
   }
 
   const handleAddToCart = async () => {
-    if (addToCartMutation.isPending) return; // Prevent multiple rapid clicks
+    if (!isInStock || addToCartMutation.isPending) return; // Prevent invalid or rapid submissions
 
     try {
       await addToCartMutation.mutateAsync({
@@ -211,9 +241,6 @@ export default function ProductPage({ params }: ProductPageProps) {
     }
   };
 
-  const availability = getProductAvailability(product.stock);
-  const stockQuantity = availability.stockQuantity;
-  const isInStock = availability.isPurchasable;
   const isComingSoon = availability.status === "coming-soon";
   const stockStatus: StockStatus = {
     message: getProductAvailabilityMessage(availability, "exact"),
@@ -228,10 +255,7 @@ export default function ProductPage({ params }: ProductPageProps) {
       ? "ADDING..."
       : "ADD TO CART";
 
-  const discountPrice =
-    product.discount && parseFloat(String(product.discount)) > 0
-      ? (parseFloat(String(product.price)) * (1 - parseFloat(String(product.discount)) / 100)).toFixed(2)
-      : null;
+  const discountPrice = getDiscountedPrice(product.price, product.discount);
 
   const fetchedReviewCount = reviewsData?.count ?? 0;
   const reviewCount = fetchedReviewCount || (Array.isArray(product.reviews) ? product.reviews.length : 0);

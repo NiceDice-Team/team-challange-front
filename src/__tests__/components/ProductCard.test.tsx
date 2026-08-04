@@ -183,6 +183,23 @@ describe("ProductCard", () => {
     expect(mockedReviewServices.getAllProductReviews).not.toHaveBeenCalled();
   });
 
+  test("does not render a sale price when the discount rounds to the original price", () => {
+    renderWithQueryClient({
+      ...product,
+      id: 35,
+      price: "24.00",
+      discount: "0.01",
+      reviews: [],
+      stars: "4.00",
+    });
+
+    const prices = screen.getAllByText("$24.00");
+
+    expect(prices).toHaveLength(1);
+    expect(prices[0]).not.toHaveClass("line-through");
+    expect(mockedReviewServices.getAllProductReviews).not.toHaveBeenCalled();
+  });
+
   test("renders coming soon status and disables purchase for stock -1", () => {
     renderWithQueryClient({
       ...product,

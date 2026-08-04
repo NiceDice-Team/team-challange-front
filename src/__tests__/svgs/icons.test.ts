@@ -1,3 +1,7 @@
+import React from "react";
+import { render } from "@testing-library/react";
+import { FacebookIcon, InstagramIcon, TikTokIcon } from "@/svgs/icons";
+
 // Mock SVG icons functionality
 describe('SVG Icons with 0% Coverage', () => {
   test('exports icon components', () => {
@@ -69,5 +73,27 @@ describe('SVG Icons with 0% Coverage', () => {
     expect(solidIcon).toContain('fill="currentColor"');
     expect(outlineIcon).toContain('stroke="currentColor"');
     expect(outlineIcon).toContain('fill="none"');
+  });
+
+  test("uses unique SVG definition IDs across repeated social icon groups", () => {
+    const socialIcons = [InstagramIcon, TikTokIcon, FacebookIcon];
+    const iconElements = socialIcons.flatMap((Icon, iconIndex) => [
+      React.createElement(Icon, { key: `${iconIndex}-desktop` }),
+      React.createElement(Icon, { key: `${iconIndex}-mobile` }),
+    ]);
+    const { container } = render(React.createElement(React.Fragment, null, ...iconElements));
+    const ids = Array.from(container.querySelectorAll("[id]"), (element) => element.id);
+
+    expect(ids.length).toBeGreaterThan(0);
+    expect(new Set(ids).size).toBe(ids.length);
+
+    const referencedIds = Array.from(
+      container.querySelectorAll("[clip-path], [fill^='url(']"),
+      (element) => element.getAttribute("clip-path") ?? element.getAttribute("fill"),
+    )
+      .map((reference) => reference?.match(/^url\(#(.+)\)$/)?.[1])
+      .filter((reference): reference is string => Boolean(reference));
+
+    referencedIds.forEach((reference) => expect(ids).toContain(reference));
   });
 });

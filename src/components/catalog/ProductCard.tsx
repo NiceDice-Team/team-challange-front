@@ -20,6 +20,7 @@ import {
   getProductAvailability,
   getProductAvailabilityMessage,
 } from "@/lib/productAvailability";
+import { getDiscountedPrice } from "@/lib/productPricing";
 import { productServices } from "@/services/productServices";
 import type { Product, ProductReview } from "@/types/product";
 import { queryKeys } from "@/lib/queryKeys";
@@ -98,12 +99,9 @@ export default function ProductCard({ product = {} as Product, cardIndex = 0 }: 
 
   // Format price
   const priceValue = parseFloat(String(product.price));
-  const discountPercent = parseFloat(String(product.discount));
   const displayPrice = Number.isFinite(priceValue) ? `$${priceValue.toFixed(2)}` : "$35.99";
-  const discountPrice =
-    Number.isFinite(priceValue) && Number.isFinite(discountPercent) && discountPercent > 0
-      ? `$${(priceValue * (1 - discountPercent / 100)).toFixed(2)}`
-      : null;
+  const discountedPriceValue = getDiscountedPrice(product.price, product.discount);
+  const discountPrice = discountedPriceValue ? `$${discountedPriceValue}` : null;
 
   const productName = product?.name || "PRODUCT NAME";
 
