@@ -10,6 +10,7 @@ import { catalogServices } from "@/services/catalogServices";
 const mockRedirect = jest.fn();
 const mockMutateAsync = jest.fn();
 const mockUseAddToCart = jest.fn();
+const mockUseCartQuery = jest.fn();
 
 jest.mock("next/navigation", () => ({
   redirect: (...args: unknown[]) => mockRedirect(...args),
@@ -62,6 +63,7 @@ jest.mock("@/components/catalog/ReviewsComments", () => ({
 
 jest.mock("@/hooks/useCartQuery", () => ({
   useAddToCart: () => mockUseAddToCart(),
+  useCartQuery: () => mockUseCartQuery(),
 }));
 
 jest.mock("@/services/productServices", () => ({
@@ -143,6 +145,10 @@ describe("ProductDetailPage", () => {
     mockUseAddToCart.mockReturnValue({
       mutateAsync: mockMutateAsync,
       isPending: false,
+    });
+    mockUseCartQuery.mockReturnValue({
+      data: [],
+      isLoading: false,
     });
   });
 
@@ -227,6 +233,107 @@ describe("ProductDetailPage", () => {
         quantity: 2,
         productData: product,
       });
+    });
+  });
+
+  test("limits the selected quantity to stock remaining after cart items", async () => {
+    const lowStockProduct = { ...product, stock: "4" };
+    mockedProductServices.getProductById.mockResolvedValue(lowStockProduct as any);
+    mockUseCartQuery.mockReturnValue({
+      data: [
+        {
+          id: "cart-item-7",
+          product: lowStockProduct,
+          quantity: 1,
+        },
+      ],
+      isLoading: false,
+    });
+
+    const page = await ProductDetailPage({
+      params: Promise.resolve({ id: "7" }),
+    });
+
+    renderWithQueryClient(page);
+
+    await waitFor(() => {
+      expect(screen.getAllByText("Very low stock (3 units)").length).toBeGreaterThan(0);
+    });
+
+    const quantityInput = screen.getByRole("spinbutton");
+    expect(quantityInput).toHaveAttribute("max", "3");
+
+    fireEvent.change(quantityInput, { target: { value: "4" } });
+    expect(quantityInput).toHaveValue(3);
+
+    fireEvent.click(screen.getAllByRole("button", { name: /add to cart/i })[0]);
+
+    await waitFor(() => {
+      expect(mockMutateAsync).toHaveBeenCalledWith({
+        productId: 7,
+        quantity: 3,
+        productData: lowStockProduct,
+      });
+    });
+  });
+
+  test("disables adding when the cart already contains all available stock", async () => {
+    const lowStockProduct = { ...product, stock: "4" };
+    mockedProductServices.getProductById.mockResolvedValue(lowStockProduct as any);
+    mockUseCartQuery.mockReturnValue({
+      data: [
+        {
+          id: "cart-item-7",
+          product: lowStockProduct,
+          quantity: 4,
+        },
+      ],
+      isLoading: false,
+    });
+
+    const page = await ProductDetailPage({
+      params: Promise.resolve({ id: "7" }),
+    });
+
+    renderWithQueryClient(page);
+
+    await waitFor(() => {
+      expect(screen.getAllByText("Sold out").length).toBeGreaterThan(0);
+    });
+
+    screen
+      .getAllByRole("button", { name: /add to cart/i })
+      .forEach((button) => expect(button).toBeDisabled());
+    expect(screen.getByRole("spinbutton")).toBeDisabled();
+    expect(mockMutateAsync).not.toHaveBeenCalled();
+  });
+
+  test("does not render a sale price when the discount rounds to the original price", async () => {
+    mockedProductServices.getProductById.mockResolvedValue({
+      ...product,
+      id: 5,
+      name: "Yummy Yummy Monster Tummy",
+      price: "24.00",
+      discount: "0.01",
+    } as any);
+
+    const page = await ProductDetailPage({
+      params: Promise.resolve({ id: "5" }),
+    });
+
+    renderWithQueryClient(page);
+
+    await waitFor(() => {
+      expect(
+        screen.getAllByRole("heading", {
+          name: /yummy yummy monster tummy/i,
+        }).length,
+      ).toBeGreaterThan(0);
+    });
+
+    screen.getAllByText("$24.00").forEach((price) => {
+      expect(price).not.toHaveClass("line-through");
+      expect(price).not.toHaveClass("text-[var(--color-red-price)]");
     });
   });
 
