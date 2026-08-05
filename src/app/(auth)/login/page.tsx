@@ -52,20 +52,29 @@ function LoginPageContent() {
     if (message) {
       switch (activationStatus) {
         case "success":
+        case "already_activated":
           showCustomToast({
             type: "success",
             title: "Success! You are logged in.",
           });
           break;
-        case "error":
-          showCustomToast({
-            type: "error",
-            title: "Error! You are not logged in.",
-          });
-          break;
       }
     }
   }, [message, activationStatus]);
+
+  useEffect(() => {
+    if (!activationStatus) return;
+    if (
+      activationStatus === "already_activated" ||
+      activationStatus === "success"
+    ) {
+      return;
+    }
+
+    router.push(
+      `/register?message=activation&activation_status=${activationStatus}`,
+    );
+  }, [activationStatus, router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
