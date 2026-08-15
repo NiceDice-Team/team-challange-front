@@ -36,114 +36,110 @@ describe("ForgotPassword Success Page", () => {
     });
   });
 
-  test('displays main heading', async () => {
-        render(<ForgotPasswordSuccess />);
+  test("displays main heading", async () => {
+    render(<ForgotPasswordSuccess />);
 
-        await waitFor(() => {
-            expect(
-                screen.getByText(/✉️ Check Your Inbox/i)
-            ).toBeInTheDocument();
-        });
+    await waitFor(() => {
+      expect(screen.getByText(/✉️ Check Your Inbox/i)).toBeInTheDocument();
+    });
+  });
+
+  test("displays success messages", async () => {
+    render(<ForgotPasswordSuccess />);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(
+          /If the email address you entered is associated with an account/i,
+        ),
+      ).toBeInTheDocument();
     });
 
-    test('displays success messages', async () => {
-        render(<ForgotPasswordSuccess />);
+    expect(
+      screen.getByText(/Check the message for 5-10 minutes/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/If you don't find the email/i),
+    ).toBeInTheDocument();
+  });
 
-        await waitFor(() => {
-            expect(
-                screen.getByText(
-                    /If the email address you entered is associated with an account/i
-                )
-            ).toBeInTheDocument();
-        });
+  test("displays resend link", async () => {
+    render(<ForgotPasswordSuccess />);
 
-        expect(
-            screen.getByText(/Check the message for 5-10 minutes/i)
-        ).toBeInTheDocument();
-        expect(
-            screen.getByText(/If you don't find the list/i)
-        ).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText("Resend")).toBeInTheDocument();
     });
 
-    test('displays resend link', async () => {
-        render(<ForgotPasswordSuccess />);
+    const resendLink = screen.getByText("Resend").closest("a");
+    expect(resendLink).toHaveAttribute("href", "/forgot-password");
+  });
 
-        await waitFor(() => {
-            expect(screen.getByText('Resend')).toBeInTheDocument();
-        });
+  test("displays continue shopping link", async () => {
+    render(<ForgotPasswordSuccess />);
 
-        const resendLink = screen.getByText('Resend').closest('a');
-        expect(resendLink).toHaveAttribute('href', '/forgot-password');
+    await waitFor(() => {
+      expect(screen.getByText("Continue shopping")).toBeInTheDocument();
     });
 
-    test('displays continue shopping link', async () => {
-        render(<ForgotPasswordSuccess />);
+    const catalogLink = screen.getByText("Continue shopping").closest("a");
+    expect(catalogLink).toHaveAttribute("href", "/catalog");
+  });
 
-        await waitFor(() => {
-            expect(screen.getByText('Continue shopping')).toBeInTheDocument();
-        });
+  test("calls showCustomToast on mount", async () => {
+    render(<ForgotPasswordSuccess />);
 
-        const catalogLink = screen.getByText('Continue shopping').closest('a');
-        expect(catalogLink).toHaveAttribute('href', '/catalog');
+    await waitFor(() => {
+      expect(showCustomToast).toHaveBeenCalledWith({
+        type: "success",
+        title: "Success!",
+        description: "A password reset link has been sent to your inbox.",
+      });
+    });
+  });
+
+  test("renders all text elements", async () => {
+    render(<ForgotPasswordSuccess />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Check Your Inbox/i)).toBeInTheDocument();
     });
 
-    test('calls showCustomToast on mount', async () => {
-        render(<ForgotPasswordSuccess />);
+    expect(
+      screen.getByText(
+        /If the email address you entered is associated with an account/i,
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Check the message for 5-10 minutes/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/If you don't find the email/i),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Resend")).toBeInTheDocument();
+    expect(screen.getByText("Continue shopping")).toBeInTheDocument();
+  });
 
-        await waitFor(() => {
-            expect(showCustomToast).toHaveBeenCalledWith({
-                type: 'success',
-                title: 'Success!',
-                description:
-                    'A password reset link has been sent to your inbox.',
-            });
-        });
+  test("has proper heading structure", async () => {
+    render(<ForgotPasswordSuccess />);
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("heading", { name: /Check Your Inbox/i }),
+      ).toBeInTheDocument();
+    });
+  });
+
+  test("has proper link accessibility", async () => {
+    render(<ForgotPasswordSuccess />);
+
+    await waitFor(() => {
+      expect(screen.getByText("Resend")).toBeInTheDocument();
     });
 
-    test('renders all text elements', async () => {
-        render(<ForgotPasswordSuccess />);
+    const resendLink = screen.getByText("Resend").closest("a");
+    expect(resendLink).toHaveAttribute("href");
 
-        await waitFor(() => {
-            expect(screen.getByText(/Check Your Inbox/i)).toBeInTheDocument();
-        });
-
-        expect(
-            screen.getByText(
-                /If the email address you entered is associated with an account/i
-            )
-        ).toBeInTheDocument();
-        expect(
-            screen.getByText(/Check the message for 5-10 minutes/i)
-        ).toBeInTheDocument();
-        expect(
-            screen.getByText(/If you don't find the list/i)
-        ).toBeInTheDocument();
-        expect(screen.getByText('Resend')).toBeInTheDocument();
-        expect(screen.getByText('Continue shopping')).toBeInTheDocument();
-    });
-
-    test('has proper heading structure', async () => {
-        render(<ForgotPasswordSuccess />);
-
-        await waitFor(() => {
-            expect(
-                screen.getByRole('heading', { name: /Check Your Inbox/i })
-            ).toBeInTheDocument();
-        });
-    });
-
-    test('has proper link accessibility', async () => {
-        render(<ForgotPasswordSuccess />);
-
-        await waitFor(() => {
-            expect(screen.getByText('Resend')).toBeInTheDocument();
-        });
-
-        const resendLink = screen.getByText('Resend').closest('a');
-        expect(resendLink).toHaveAttribute('href');
-
-        const catalogLink = screen.getByText('Continue shopping').closest('a');
-        expect(catalogLink).toHaveAttribute('href');
-    });
+    const catalogLink = screen.getByText("Continue shopping").closest("a");
+    expect(catalogLink).toHaveAttribute("href");
+  });
 });
-

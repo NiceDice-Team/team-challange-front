@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CustomInput } from "@/components/shared/CustomInput";
 import CustomCheckbox from "@/components/shared/CustomCheckbox";
@@ -17,6 +17,7 @@ import {
 import { CustomButton } from "@/components/shared/CustomButton";
 import { PasswordInput } from "@/components/shared/PasswordInput";
 import { PublicRoute } from "@/components/auth/RouteGuards";
+import { showCustomToast } from "@/components/shared/Toast";
 import { API_BASE_URL } from "@/config/api";
 import { mergeNoCacheHeaders } from "@/lib/noCacheHeaders";
 
@@ -29,6 +30,23 @@ function RegisterPageContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [serverErrors, setServerErrors] = useState<FormState["errors"]>({});
   const router = useRouter();
+  const params = useSearchParams();
+  const activationStatus = params.get("activation_status");
+
+  useEffect(() => {
+    if (!activationStatus) return;
+    if (
+      activationStatus === "already_activated" ||
+      activationStatus === "success"
+    ) {
+      return;
+    }
+
+    showCustomToast({
+      type: "error",
+      title: "Activation failed. Try again",
+    });
+  }, [activationStatus]);
 
   const {
     register,
@@ -471,7 +489,15 @@ function RegisterPageContent() {
 export default function RegisterPage() {
   return (
     <PublicRoute>
-      <RegisterPageContent />
+      <Suspense
+        fallback={
+          <div className="flex justify-center items-center min-h-screen">
+            Loading...
+          </div>
+        }
+      >
+        <RegisterPageContent />
+      </Suspense>
     </PublicRoute>
   );
 }

@@ -379,17 +379,16 @@ describe("Login Page", () => {
       });
     });
 
-    test("shows error toast for failed activation", async () => {
+    test("redirects to register for failed activation", async () => {
       mockSearchParams.set("message", "activation");
       mockSearchParams.set("activation_status", "error");
       
       render(<LoginPage />);
       
       await waitFor(() => {
-        expect(showCustomToast).toHaveBeenCalledWith({
-          type: "error",
-          title: "Error! You are not logged in.",
-        });
+        expect(mockPush).toHaveBeenCalledWith(
+          "/register?message=activation&activation_status=error",
+        );
       });
     });
   });
