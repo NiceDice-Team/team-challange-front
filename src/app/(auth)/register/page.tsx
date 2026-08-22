@@ -20,6 +20,7 @@ import { PublicRoute } from "@/components/auth/RouteGuards";
 import { showCustomToast } from "@/components/shared/Toast";
 import { API_BASE_URL } from "@/config/api";
 import { mergeNoCacheHeaders } from "@/lib/noCacheHeaders";
+import { GoogleAuthButton } from "@/components/auth/GoogleLogin";
 
 const trimValue = (value: unknown) =>
   typeof value === "string" ? value.trim() : value;
@@ -140,6 +141,7 @@ function RegisterPageContent() {
       password: validatedFields.data.password,
       password_confirm: validatedFields.data.confirmPassword,
       privacy_policy: true,
+      subscribe_news: isSubscribed,
     };
 
     try {
@@ -472,6 +474,10 @@ function RegisterPageContent() {
           >
             REGISTER
           </CustomButton>
+          <div className="flex flex-col gap-3 w-full">
+            <GoogleAuthButton />
+            {/* <FacebookAuthButton /> */}
+          </div>
         </form>
 
         <Link href="/login" className="flex flex-col items-center">

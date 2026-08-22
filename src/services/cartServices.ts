@@ -655,6 +655,23 @@ export const cartServices = {
     }
   },
 
+  async clearAuthCartItems(): Promise<void> {
+    try {
+      const accessToken = await getValidAccessToken();
+
+      await fetchAPI("cart/clear/", {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+    } catch (error) {
+      console.error("Error clearing cart:", error);
+
+      throw error;
+    }
+  },
+
   async clearGuestCartItems(): Promise<void> {
     if (hasValidAuthSession()) {
       return;
@@ -669,6 +686,15 @@ export const cartServices = {
 
       throw error;
     }
+  },
+
+  async clearCartItems(): Promise<void> {
+    if (hasValidAuthSession()) {
+      await cartServices.clearAuthCartItems();
+      return;
+    }
+
+    await cartServices.clearGuestCartItems();
   },
 
   clearLocalCartItems(): void {

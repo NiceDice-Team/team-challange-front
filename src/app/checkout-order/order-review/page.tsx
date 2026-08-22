@@ -177,9 +177,9 @@ export default function OrderReviewPage() {
       });
 
       try {
-        await cartServices.clearGuestCartItems();
+        await cartServices.clearCartItems();
       } catch (error) {
-        console.error("Failed to clear guest cart after order:", error);
+        console.error("Failed to clear cart after order:", error);
       }
 
       await queryClient.cancelQueries({ queryKey: queryKeys.cart });
