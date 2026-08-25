@@ -19,6 +19,14 @@ import { getTokens, setTokens } from "@/lib/tokenManager";
 import { API_BASE_URL } from "@/config/api";
 import { mergeNoCacheHeaders } from "@/lib/noCacheHeaders";
 
+function formatLoginServerError(error: string | string[]): string {
+  const message = Array.isArray(error) ? error.join(", ") : error;
+  if (message === "Account not activated") {
+    return "Your account was not activated within 3 days, so it has been deleted. Please register again";
+  }
+  return message;
+}
+
 function LoginPageContent() {
   const params = useSearchParams();
   const router = useRouter();
@@ -330,9 +338,7 @@ function LoginPageContent() {
           {serverErrors?.serverError && (
             <div className="bg-red-50 mb-2 p-3 border border-red-200 rounded">
               <p className="text-error text-sm">
-                {Array.isArray(serverErrors.serverError)
-                  ? serverErrors.serverError.join(", ")
-                  : serverErrors.serverError}
+                {formatLoginServerError(serverErrors.serverError)}
               </p>
             </div>
           )}
