@@ -231,4 +231,4 @@ export const orderSchema = z.object({
 
 export type OrderStatus = z.infer<typeof orderStatusSchema>;
 export type OrderItem = z.infer<typeof orderItemSchema>;
-export type Order = z.infer<typeof orderItemSchema>;
+export type Order = z.infer<typeof orderSchema>;

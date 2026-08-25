@@ -3,6 +3,7 @@ import { getTokens, isAuthenticated } from "@/lib/tokenManager";
 import { getGuestToken } from "@/store/guestCart";
 import { cartServices } from "./cartServices";
 import type { CheckoutFormData, DeliveryOption } from "@/store/checkout";
+import type { Order } from "@/lib/definitions";
 
 export interface PaymentMethod {
   id: number;
@@ -21,7 +22,7 @@ function getListItems<T>(response: ApiListResponse<T>): T[] {
 }
 
 export const orderServices = {
-  async getOrders(userId?: string | null) {
+  async getOrders(userId?: string | null): Promise<Order[]> {
     const { accessToken } = getTokens() || {};
     
     if (!userId) {
@@ -29,7 +30,7 @@ export const orderServices = {
     }
 
     try {
-      const response = await fetchAPI<ApiListResponse<unknown>>("orders/?user_id=" + userId, {
+      const response = await fetchAPI<ApiListResponse<Order>>("orders/?user_id=" + userId, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${accessToken}`,

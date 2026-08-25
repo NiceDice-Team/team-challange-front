@@ -32,7 +32,7 @@ function OrdersTable() {
   const userId = userData?.id;
 
   const { data: orders = [], isLoading, error } = useOrdersQuery(userId);
-
+  console.log(orders);
   if (isLoading) {
     return (
       <div className="flex justify-center items-center py-8">
@@ -82,7 +82,7 @@ function OrdersTable() {
               </CustomBadge>
             </TableCell>
             <TableCell className="hidden md:table-cell">
-              {formatItemsCount(order?.products?.length)}
+              {formatItemsCount(order?.items?.length)}
             </TableCell>
             <TableCell className="hidden md:table-cell">
               ${Number(order?.total_amount)?.toFixed(2)}

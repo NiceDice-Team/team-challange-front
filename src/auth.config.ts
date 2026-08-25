@@ -1,27 +1,30 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import FacebookProvider from "next-auth/providers/facebook";
 
 const authSecret =
   process.env.AUTH_SECRET ||
+  process.env.NEXTAUTH_SECRET ||
   (process.env.NODE_ENV === "development" ? "dev-secret" : undefined) ||
   (process.env.NEXT_PHASE === "phase-production-build"
     ? "build-placeholder"
     : undefined);
 
 if (!authSecret) {
-  throw new Error("❌ AUTH_SECRET missed !");
+  throw new Error("AUTH_SECRET or NEXTAUTH_SECRET is required in production");
+}
+
+const googleClientId = process.env.GOOGLE_CLIENT_ID;
+const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+
+if (!googleClientId || !googleClientSecret) {
+  throw new Error("GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET are required");
 }
 
 const handler = NextAuth({
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
-    FacebookProvider({
-      clientId: process.env.FACEBOOK_CLIENT_ID!,
-      clientSecret: process.env.FACEBOOK_CLIENT_SECRET!,
+      clientId: googleClientId,
+      clientSecret: googleClientSecret,
     }),
   ],
 
