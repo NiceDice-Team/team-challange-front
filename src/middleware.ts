@@ -1,5 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { jwtDecode } from "jwt-decode";
+import {
+  applyCorsHeaders,
+  handleCorsPreflightRequest,
+  rejectDisallowedCrossOriginApiRequest,
+} from "@/lib/cors";
+import { applySecurityHeaders } from "@/lib/securityHeaders";
 
 const NO_CACHE_PAGE_HEADER = "no-store, no-cache, must-revalidate";
 
@@ -23,6 +29,11 @@ function withNoCachePageHeaders(response: NextResponse): NextResponse {
   return response;
 }
 
+function finalizeResponse(response: NextResponse): NextResponse {
+  applySecurityHeaders(response);
+  return response;
+}
+
 function isTokenExpired(token?: string): boolean {
   if (!token) return true;
 
@@ -40,8 +51,27 @@ function isAuthenticated(request: NextRequest): boolean {
   return Boolean(refreshToken && !isTokenExpired(refreshToken));
 }
 
+function handleApiRoute(request: NextRequest): NextResponse {
+  const preflightResponse = handleCorsPreflightRequest(request);
+  if (preflightResponse) {
+    return finalizeResponse(preflightResponse);
+  }
+
+  const rejectedResponse = rejectDisallowedCrossOriginApiRequest(request);
+  if (rejectedResponse) {
+    return finalizeResponse(rejectedResponse);
+  }
+
+  const response = applyCorsHeaders(request, NextResponse.next());
+  return finalizeResponse(response);
+}
+
 export default function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  if (pathname.startsWith("/api/")) {
+    return handleApiRoute(request);
+  }
 
   const protectedRoutes = ["/profile"];
   const publicRoutes = [
@@ -52,38 +82,41 @@ export default function middleware(request: NextRequest) {
   ];
 
   const isPublicRoute = publicRoutes.some((route) =>
-    pathname.startsWith(route)
+    pathname.startsWith(route),
   );
 
   const isProtectedRoute = protectedRoutes.some((route) =>
-    pathname.startsWith(route)
+    pathname.startsWith(route),
   );
 
   if (isProtectedRoute) {
     if (!isAuthenticated(request)) {
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("returnUrl", pathname);
-      return withNoCachePageHeaders(NextResponse.redirect(loginUrl));
+      return finalizeResponse(
+        withNoCachePageHeaders(NextResponse.redirect(loginUrl)),
+      );
     }
   }
 
   if (isPublicRoute) {
     if (isAuthenticated(request)) {
-      return NextResponse.redirect(new URL("/", request.url));
+      return finalizeResponse(NextResponse.redirect(new URL("/", request.url)));
     }
   }
 
   const response = NextResponse.next();
 
   if (isNoCacheRoute(pathname) || isProtectedRoute) {
-    return withNoCachePageHeaders(response);
+    return finalizeResponse(withNoCachePageHeaders(response));
   }
 
-  return response;
+  return finalizeResponse(response);
 }
 
 export const config = {
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/api/:path*",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
