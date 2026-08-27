@@ -48,6 +48,9 @@ export async function logoutAction({ provider }: LogoutActionParams = {}) {
     };
   } catch (error) {
     console.error("Error in logout action:", error);
-    throw new Error("Error in logout action");
+    return {
+      success: false,
+      needsOAuthLogout: false,
+    };
   }
 }
