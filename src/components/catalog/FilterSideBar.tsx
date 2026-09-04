@@ -6,6 +6,7 @@ import { productServices } from "../../services/productServices";
 import { useQuery } from "@tanstack/react-query";
 import { FilterCheckmarkIcon, ChevronDownIcon, CloseIcon } from "../../svgs/icons";
 import FilterSideBarSkeleton from "./FilterSideBarSkeleton";
+import PriceRangeInputs from "./PriceRangeInputs";
 import type { SelectedFilters, FilterItem, Category } from "@/types/catalog";
 import { queryKeys } from "@/lib/queryKeys";
 import { Info } from "lucide-react";
@@ -523,23 +524,33 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
                 </div>
               )}
               {hasPriceFilter && (
-                <div className="bg-white border-[1px] border-[var(--color-light-purple-2)] p-2 text-[var(--color-purple)] text-sm flex justify-center items-center gap-2">
-                  Price: ${clampedMinPrice} - ${clampedMaxPrice}
-                  <button
-                    type="button"
-                    tabIndex={-1}
-                    className="h-3 w-3 inline-block ml-1 cursor-pointer text-current hover:opacity-70"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setSelectedFilters((prev: SelectedFilters) => ({
-                        ...prev,
-                        priceRange: { min: 0, max: Number.POSITIVE_INFINITY },
-                      }));
-                    }}
-                  >
-                    <CloseIcon className="h-3 w-3" />
-                  </button>
+                <div className="flex w-full flex-col items-start gap-2">
+                  <span className="text-base font-medium uppercase text-black font-['Noto_Sans_JP']">Price</span>
+                  <div className="flex w-full items-center gap-2">
+                    <PriceRangeInputs
+                      minValue={clampedMinPrice}
+                      maxValue={clampedMaxPrice}
+                      priceCeiling={priceCeiling}
+                      onMinChange={(value) => updatePriceRange(value, clampedMaxPrice)}
+                      onMaxChange={(value) => updatePriceRange(clampedMinPrice, value)}
+                    />
+                    <button
+                      type="button"
+                      tabIndex={-1}
+                      aria-label="Remove price filter"
+                      className="inline-block h-3 w-3 shrink-0 cursor-pointer text-[var(--color-purple)] hover:opacity-70"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setSelectedFilters((prev: SelectedFilters) => ({
+                          ...prev,
+                          priceRange: { min: 0, max: Number.POSITIVE_INFINITY },
+                        }));
+                      }}
+                    >
+                      <CloseIcon className="h-3 w-3" />
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -560,31 +571,13 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
           <div className="flex flex-row justify-between items-center w-full">
             <h4 className="text-base font-medium uppercase text-black font-['Noto_Sans_JP']">Price</h4>
           </div>
-          <div className="flex items-center justify-between gap-2 w-full">
-            <input
-              type="number"
-              min="0"
-              max={priceCeiling}
-              placeholder="Min"
-              value={clampedMinPrice}
-              onChange={(e) => {
-                const parsedValue = parseFloat(e.target.value);
-                updatePriceRange(Number.isNaN(parsedValue) ? 0 : parsedValue, clampedMaxPrice);
-              }}
-              className="h-8 w-[88px] border border-[#494791] px-3 py-[6px] text-base font-normal focus:outline-none focus:ring-2 focus:ring-[#494791] lg:h-10 lg:flex-1"
-            />
-            <span aria-hidden="true" className="block h-px w-[12px] bg-black" />
-            <input
-              type="number"
-              min="0"
-              max={priceCeiling}
-              placeholder="Max"
-              value={clampedMaxPrice}
-              onChange={(e) => {
-                const parsedValue = parseFloat(e.target.value);
-                updatePriceRange(clampedMinPrice, Number.isNaN(parsedValue) ? priceCeiling : parsedValue);
-              }}
-              className="h-8 w-[88px] border border-[#494791] px-3 py-[6px] text-base font-normal focus:outline-none focus:ring-2 focus:ring-[#494791] lg:h-10 lg:flex-1"
+          <div className="flex w-full items-center gap-2">
+            <PriceRangeInputs
+              minValue={clampedMinPrice}
+              maxValue={clampedMaxPrice}
+              priceCeiling={priceCeiling}
+              onMinChange={(value) => updatePriceRange(value, clampedMaxPrice)}
+              onMaxChange={(value) => updatePriceRange(clampedMinPrice, value)}
             />
           </div>
           <div className="relative h-4 w-full lg:hidden">
