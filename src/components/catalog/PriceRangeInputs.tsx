@@ -10,7 +10,7 @@ export interface PriceRangeInputsProps {
 }
 
 const defaultInputClassName =
-  "h-8 w-[88px] border border-[#494791] px-3 py-[6px] text-base font-normal focus:outline-none focus:ring-2 focus:ring-[#494791] lg:h-10 lg:flex-1";
+  "h-8 w-[88px] border border-[#494791] px-3 py-[6px] text-base font-normal focus:outline-none focus:ring-1 focus:ring-[#494791] lg:h-10 lg:flex-1";
 
 export default function PriceRangeInputs({
   minValue,
@@ -34,7 +34,10 @@ export default function PriceRangeInputs({
         }}
         className={inputClassName}
       />
-      <span aria-hidden="true" className="shrink-0 text-base font-normal text-black">
+      <span
+        aria-hidden="true"
+        className="shrink-0 text-base font-normal text-black"
+      >
         —
       </span>
       <input
