@@ -41,9 +41,15 @@ function buildContentSecurityPolicy(isProduction: boolean): string {
     connectSources.push(backendOrigin);
   }
 
+  const scriptSrcParts = ["'self'", "'unsafe-inline'"];
+  if (!isProduction) {
+    scriptSrcParts.push("'unsafe-eval'");
+  }
+  scriptSrcParts.push(...TRUSTED_SCRIPT_ORIGINS);
+
   const directives = [
     "default-src 'self'",
-    `script-src 'self' 'unsafe-inline' ${TRUSTED_SCRIPT_ORIGINS.join(" ")}`,
+    `script-src ${scriptSrcParts.join(" ")}`,
     "style-src 'self' 'unsafe-inline'",
     "font-src 'self' data:",
     `img-src 'self' data: blob: ${TRUSTED_IMAGE_ORIGINS.join(" ")}`,

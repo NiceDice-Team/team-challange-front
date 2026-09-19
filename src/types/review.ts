@@ -32,6 +32,12 @@ export interface ReviewListResponse {
 }
 
 export interface CreateProductReviewPayload {
+  product_id: number;
   rating: string;
   comment?: string;
 }
+
+export type CreateProductReviewInput = Omit<
+  CreateProductReviewPayload,
+  "product_id"
+>;
