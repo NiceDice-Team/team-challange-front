@@ -13,8 +13,14 @@ if (!authSecret) {
   throw new Error("AUTH_SECRET or NEXTAUTH_SECRET is required in production");
 }
 
-const googleClientId = process.env.GOOGLE_CLIENT_ID;
-const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+const isBuildPhase = process.env.NEXT_PHASE === "phase-production-build";
+
+const googleClientId =
+  process.env.GOOGLE_CLIENT_ID ||
+  (isBuildPhase ? "build-placeholder" : undefined);
+const googleClientSecret =
+  process.env.GOOGLE_CLIENT_SECRET ||
+  (isBuildPhase ? "build-placeholder" : undefined);
 
 if (!googleClientId || !googleClientSecret) {
   throw new Error("GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET are required");
