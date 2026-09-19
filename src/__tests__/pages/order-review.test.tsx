@@ -33,6 +33,9 @@ jest.mock("next/link", () => ({
 }));
 
 // Checkout store
+// Note: the checkout store uses `paymentMethod` to store the *delivery* option that was
+// selected on the checkout page. `usePaymentMethod` therefore returns delivery data.
+// This naming lives in the source store (src/store/checkout.ts) and is intentional.
 let mockCheckoutUserData = {
   shippingFirstName: "John",
   shippingLastName: "Doe",
@@ -508,12 +511,8 @@ describe("5. Order Summary", () => {
   });
 
   test("displays 'No items in cart' when cart is empty", () => {
-    jest.mock("@/hooks/useCartQuery", () => ({
-      useCartQuery: () => ({ data: [], isLoading: false }),
-    }));
-    // Re-render with empty cart using temporary override
+    // Temporarily empty the shared cart array (same reference used by the mock)
     const savedItems = mockCartItems.splice(0);
-    mockCartItems.length = 0;
     setup();
     expect(screen.getByText("No items in cart")).toBeInTheDocument();
     // Restore
@@ -527,7 +526,6 @@ describe("5. Order Summary", () => {
 describe("6. Place Order", () => {
   test("Place Order button is disabled when card payment and form is invalid", async () => {
     setup();
-    const user = userEvent.setup({ delay: null });
     // Make form invalid
     fireEvent.click(screen.getByTestId("set-payment-invalid"));
     const placeOrderBtn = screen.getByTestId("custom-button");
@@ -536,7 +534,6 @@ describe("6. Place Order", () => {
 
   test("Place Order button is enabled when card payment form is valid", async () => {
     setup();
-    const user = userEvent.setup({ delay: null });
     fireEvent.click(screen.getByTestId("set-payment-valid"));
     const placeOrderBtn = screen.getByTestId("custom-button");
     expect(placeOrderBtn).not.toBeDisabled();
@@ -682,9 +679,11 @@ describe("8. Quality Gate", () => {
   });
 
   test("no console errors during render (quality gate: clean render)", () => {
+    // Spy specifically for this render to avoid interference from other tests
+    const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
     setup();
-    // jest.setup.ts replaces console.error with jest.fn() — ensure no errors were logged
-    expect(console.error).not.toHaveBeenCalled();
+    expect(consoleSpy).not.toHaveBeenCalled();
+    consoleSpy.mockRestore();
   });
 
   test("Place Order button is present and accessible", () => {
