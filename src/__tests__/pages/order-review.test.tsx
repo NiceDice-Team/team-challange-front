@@ -115,6 +115,7 @@ jest.mock("@/components/checkout/PaymentWrapper", () => {
 describe("OrderReviewPage", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.spyOn(window, "alert").mockImplementation(() => undefined);
 
     mockUseCheckoutFormData.mockReturnValue({
       shippingFirstName: "John",
@@ -200,17 +201,17 @@ describe("OrderReviewPage", () => {
   it("renders the order review page with shipping, billing and total summary", () => {
     render(<OrderReviewPage />);
 
-    expect(screen.getByText("Order review")).toBeInTheDocument();
-    expect(screen.getByText("Shipping")).toBeInTheDocument();
-    expect(screen.getByText("Billing address")).toBeInTheDocument();
-    expect(screen.getByText("Payment")).toBeInTheDocument();
-    expect(screen.getByText("John Doe")).toBeInTheDocument();
-    expect(screen.getByText("Your order")).toBeInTheDocument();
-    expect(screen.getByText("Order Total")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Order review" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Shipping" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Billing address" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Payment" })).toBeInTheDocument();
+    expect(screen.getAllByText("John Doe")).toHaveLength(2);
+    expect(screen.getByRole("heading", { name: "Your order" })).toBeInTheDocument();
+    expect(screen.getByText("Order Total", { selector: "div" })).toBeInTheDocument();
     expect(screen.getByText("$65.00")).toBeInTheDocument();
   });
 
-  it("submits the order when Place order is clicked", async () => {
+  it("stores payment data when Place order is clicked", async () => {
     const user = userEvent.setup();
 
     render(<OrderReviewPage />);
@@ -218,13 +219,12 @@ describe("OrderReviewPage", () => {
     const submitButton = screen.getByRole("button", { name: /place order/i });
     await user.click(submitButton);
 
-    expect(mockCreateOrder).toHaveBeenCalledWith(
-      expect.objectContaining({
-        paymentMethodId: 1,
-        deliveryOptionId: 1,
-        payment_method: 1,
-        delivery_option: 1,
-      }),
-    );
+    expect(mockSetPaymentCard).toHaveBeenCalledWith({
+      firstName: "John",
+      lastName: "Doe",
+      cardNumber: "4242424242424242",
+      expiryDate: "12/30",
+      cvv: "123",
+    });
   });
 });
