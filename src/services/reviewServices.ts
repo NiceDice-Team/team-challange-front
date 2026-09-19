@@ -3,7 +3,12 @@ import axiosInstance from "@/lib/axiosInstance";
 import { buildApiUrl } from "@/config/api";
 import { mergeNoCacheHeaders } from "@/lib/noCacheHeaders";
 import { ApiRequestOptions } from "@/types/api";
-import { CreateProductReviewPayload, ProductReviewApi, ReviewListResponse } from "@/types/review";
+import {
+  CreateProductReviewInput,
+  CreateProductReviewPayload,
+  ProductReviewApi,
+  ReviewListResponse,
+} from "@/types/review";
 
 interface ProductReviewsParams {
   ordering?: string;
@@ -98,10 +103,18 @@ export const reviewServices = {
 
   createProductReview: async (
     productId: number | string,
-    payload: CreateProductReviewPayload
+    payload: CreateProductReviewInput
   ): Promise<ProductReviewApi> => {
+    const body: CreateProductReviewPayload = {
+      product_id: Number(productId),
+      ...payload,
+    };
+
     try {
-      const response = await axiosInstance.post<ProductReviewApi>(`products/products/${productId}/reviews/`, payload);
+      const response = await axiosInstance.post<ProductReviewApi>(
+        `products/products/${productId}/reviews/`,
+        body
+      );
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
