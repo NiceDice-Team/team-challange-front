@@ -3,12 +3,26 @@
 import { cn } from "@/lib/utils";
 import { Info } from "lucide-react";
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ComponentProps } from "react";
 import "react-phone-number-input/style.css";
 
-const PhoneInput = dynamic(() => import("react-phone-number-input"), {
-  ssr: false,
-});
+const PhoneInput = dynamic(
+  () =>
+    Promise.all([
+      import("react-phone-number-input"),
+      import("react-phone-number-input/flags"),
+    ]).then(([phoneModule, flagsModule]) => {
+      const BasePhoneInput = phoneModule.default;
+      const flags = flagsModule.default;
+
+      return function PhoneInputWithFlags(
+        props: ComponentProps<typeof BasePhoneInput>
+      ) {
+        return <BasePhoneInput {...props} flags={flags} />;
+      };
+    }),
+  { ssr: false }
+);
 
 interface PhoneNumberInputProps {
   error?: string[];
