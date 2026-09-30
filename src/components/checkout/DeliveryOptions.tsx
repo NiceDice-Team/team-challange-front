@@ -13,8 +13,8 @@ export type DeliveryOption = import("@/store/checkout").DeliveryOption;
 const DeliveryOptions = ({
   onPaymentMethodChange,
 }: {
-  onPaymentMethodChange: (method: DeliveryOption) => void;
-}) => {
+  onPaymentMethodChange?: (method: DeliveryOption) => void;
+} = {}) => {
   const payment = usePaymentMethod();
   const { setPaymentMethod } = useCheckoutActions();
 
@@ -41,7 +41,7 @@ const DeliveryOptions = ({
 
     if (!payment || !isPaymentValid) {
       setPaymentMethod(first);
-      onPaymentMethodChange(first);
+      onPaymentMethodChange?.(first);
     }
   }, [
     deliveryOptions,
@@ -60,7 +60,7 @@ const DeliveryOptions = ({
     if (!method) return;
 
     setPaymentMethod(method);
-    onPaymentMethodChange(method);
+    onPaymentMethodChange?.(method);
   };
 
   return (
