@@ -1,10 +1,12 @@
 "use client";
 import { CustomBreadcrumb } from "@/components/shared/CustomBreadcrumb";
 import ShippingForm from "@/components/checkout/ShippingForm";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import ProductsTable from "@/components/checkout/ProductsTable";
-import DeliveryOptions, { DeliveryOption } from "@/components/checkout/DeliveryOptions";
+import DeliveryOptions from "@/components/checkout/DeliveryOptions";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { useCartQuery } from "@/hooks/useCartQuery";
+import { usePaymentMethod } from "@/store/checkout";
 
 const breadcrumbItems = [
   { label: "Home", href: "/" },
@@ -14,8 +16,17 @@ const breadcrumbItems = [
 ];
 
 function CheckoutPage() {
-  const [paymentMethod, setPaymentMethod] = useState<DeliveryOption | null>(null);
-  const [subtotal, setSubtotal] = useState<number>(0);
+  const paymentMethod = usePaymentMethod();
+  const { data: cartItems = [] } = useCartQuery();
+  const subtotal = useMemo(
+    () =>
+      cartItems.reduce((sum, item) => {
+        const price = Number(item.product?.price) || 0;
+        return sum + price * item.quantity;
+      }, 0),
+    [cartItems],
+  );
+  const orderTotal = subtotal + (Number(paymentMethod?.price) || 0);
   const [isSummaryOpen, setIsSummaryOpen] = useState(false);
 
   return (
@@ -39,8 +50,7 @@ function CheckoutPage() {
             {isSummaryOpen && (
               <div className="w-full mt-4">
                 <ProductsTable
-                    setSubtotal={setSubtotal}
-                    shippingPrice={paymentMethod?.price || 0}
+                    shippingPrice={Number(paymentMethod?.price) || 0}
                     paymentMethod={paymentMethod}
                     hideTitle={true}
                   />
@@ -57,11 +67,11 @@ function CheckoutPage() {
             <ShippingForm paymentMethod={paymentMethod}>
               {/* Mobile-only sections inside the form to ensure they appear before the button */}
               <div className="md:hidden flex flex-col gap-10 mt-12 mb-6">
-                <DeliveryOptions onPaymentMethodChange={setPaymentMethod} />
+                <DeliveryOptions />
                 <div className="flex justify-between items-center -mt-4 text-purple">
                   <div className="font-bold text-foreground text-base uppercase">Order Total</div>
                   <div className="font-bold text-foreground text-base ">
-                    ${((paymentMethod?.price || 0) + subtotal).toFixed(2)}
+                    ${orderTotal.toFixed(2)}
                   </div>
                 </div>
               </div>
@@ -70,12 +80,12 @@ function CheckoutPage() {
 
           {/* Desktop-only Side Column (Summary & Delivery) */}
           <div className="hidden md:flex flex-col gap-10 p-6 border border-[#A4A3C8] w-[648px] h-fit ">
-            <ProductsTable setSubtotal={setSubtotal} />
-            <DeliveryOptions onPaymentMethodChange={setPaymentMethod} />
+            <ProductsTable />
+            <DeliveryOptions />
             <div className="flex justify-between items-center -mt-4 h-10 text-purple px-6">
               <div className="font-bold text-[#494791] text-base uppercase">Order Total</div>
               <div className="font-bold text-[#494791] text-lg">
-                ${((paymentMethod?.price || 0) + subtotal).toFixed(2)}
+                ${orderTotal.toFixed(2)}
               </div>
             </div>
           </div>

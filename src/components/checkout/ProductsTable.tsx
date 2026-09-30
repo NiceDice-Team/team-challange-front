@@ -5,17 +5,17 @@ import { useMemo, useEffect } from "react";
 import type { DeliveryOption } from "@/store/checkout";
 
 interface ProductsTableProps {
-  setSubtotal: (subtotal: number) => void;
+  setSubtotal?: (subtotal: number) => void;
   shippingPrice?: number;
   paymentMethod?: DeliveryOption | null;
   hideTitle?: boolean;
 }
 
-const ProductsTable = ({ 
-  setSubtotal, 
-  shippingPrice, 
+const ProductsTable = ({
+  setSubtotal,
+  shippingPrice,
   paymentMethod,
-  hideTitle = false 
+  hideTitle = false,
 }: ProductsTableProps) => {
   const { data: cartItems = [], isLoading: cartLoading } = useCartQuery();
 
@@ -29,7 +29,7 @@ const ProductsTable = ({
   }, [cartItems]);
 
   useEffect(() => {
-    setSubtotal(subtotal);
+    setSubtotal?.(subtotal);
   }, [subtotal, setSubtotal]);
 
   const total = subtotal + (shippingPrice || 0);

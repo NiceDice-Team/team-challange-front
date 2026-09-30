@@ -1,6 +1,14 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import CheckoutPage from "../../app/checkout-order/page";
+import { useCheckoutStore } from "@/store/checkout";
+
+jest.mock("@/hooks/useCartQuery", () => ({
+  useCartQuery: () => ({
+    data: [{ id: 1, quantity: 1, product: { price: 100 } }],
+    isLoading: false,
+  }),
+}));
 
 jest.mock("../../components/shared/CustomBreadcrumb", () => ({
   CustomBreadcrumb: ({ items }) => (
@@ -50,7 +58,10 @@ jest.mock("../../components/checkout/DeliveryOptions", () => ({
       <div data-testid="delivery-options">
         <button
           data-testid="select-delivery-option"
-          onClick={() => onPaymentMethodChange(mockOption)}
+          onClick={() => {
+            useCheckoutStore.getState().setPaymentMethod(mockOption);
+            onPaymentMethodChange?.(mockOption);
+          }}
         >
           Select DHL
         </button>
@@ -62,6 +73,7 @@ jest.mock("../../components/checkout/DeliveryOptions", () => ({
 describe("CheckoutPage", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    useCheckoutStore.getState().resetCheckout();
   });
 
   describe("Rendering", () => {
