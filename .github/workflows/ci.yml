@@ -2,7 +2,7 @@ name: CI Pipeline
 
 on:
   push:
-    # Run on pushes to any branch (no branch restriction)
+    branches: [ main ]
   pull_request:
     branches: [ main, master, develop ]
     types: [opened, synchronize, reopened]
