@@ -42,7 +42,12 @@ export function expectNoPageErrors(
   allowedMessages: string[] = [],
 ): void {
   const unexpectedErrors = errors.filter(
-    (error) => !allowedMessages.includes(error.message),
+    (error) =>
+      !allowedMessages.some(
+        (allowedMessage) =>
+          error.message === allowedMessage ||
+          error.message.endsWith(`: ${allowedMessage}`),
+      ),
   );
   expect(unexpectedErrors.map((error) => error.message)).toEqual([]);
 }

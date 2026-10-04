@@ -12,7 +12,8 @@ test('test critical home elements', async ({ page }) => {
   await page.goto(BASE_URL);
   // assertions
   await expect(page).toHaveURL(BASE_URL);
-  await expect(page.getByRole('heading', { name: 'NEW ARRIVALS' })).toBeVisible();
+  // Allow the first WebKit request enough time for Next.js to compile the page.
+  await expect(page.getByRole('heading', { name: 'NEW ARRIVALS' })).toBeVisible({ timeout: 15_000 });
   await expect(page.getByRole('link', { name: 'BESTSELLERS Shop now →' })).toBeVisible();
   await expect(page.getByRole('link', { name: /^board games$/i }).first()).toBeVisible();
   await expect(page.getByRole('link', { name: /^sale$/i }).first()).toBeVisible();
