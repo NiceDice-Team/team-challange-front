@@ -3,16 +3,19 @@
 // and their functionality
 
 import { test, expect } from '@playwright/test';
+import { capturePageErrors, expectNoPageErrors } from './smoke/support';
 
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3000';
 
 
 test('test critical home elements', async ({ page }) => {
+  const errors = await capturePageErrors(page);
   // steps
   await page.goto(BASE_URL);
   // assertions
   await expect(page).toHaveURL(BASE_URL);
-  await expect(page.getByRole('heading', { name: 'NEW ARRIVALS' })).toBeVisible();
+  // Allow the first WebKit request enough time for Next.js to compile the page.
+  await expect(page.getByRole('heading', { name: 'NEW ARRIVALS' })).toBeVisible({ timeout: 15_000 });
   await expect(page.getByRole('link', { name: 'BESTSELLERS Shop now →' })).toBeVisible();
   await expect(page.getByRole('link', { name: /^board games$/i }).first()).toBeVisible();
   await expect(page.getByRole('link', { name: /^sale$/i }).first()).toBeVisible();
@@ -30,10 +33,12 @@ test('test critical home elements', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Game Title 1' })).toHaveCount(0);
   await page.getByRole('link', { name: /^about$/i }).first().click();
   await expect(page).toHaveURL(`${BASE_URL}/#about`);
+  expectNoPageErrors(errors);
 });
 
 
 test('test user can open login page', async ({ page }) => {
+  const errors = await capturePageErrors(page);
   // steps
   await page.goto(BASE_URL);
   await page.getByRole('link', { name: 'Profile' }).click();
@@ -49,5 +54,6 @@ test('test user can open login page', async ({ page }) => {
   await expect(page.getByRole('link', { name: 'Continue as a guest' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'SIGN IN' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Enter with Google' })).toBeVisible();
+  expectNoPageErrors(errors);
 
 });

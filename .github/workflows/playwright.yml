@@ -2,7 +2,7 @@ name: E2E Tests (Playwright)
 
 on:
   push:
-    # Run on pushes to any branch (no branch restriction)
+    branches: [ main ]
   pull_request:
     # Run on ALL pull requests regardless of source/target branches
     types: [ opened, synchronize, reopened, ready_for_review ]
@@ -67,6 +67,13 @@ jobs:
       run: npm run dev &
       env:
         NEXT_PUBLIC_BACKEND_URL: http://localhost:8000/api/
+        # The order-review module initializes Stripe at import time. Use a
+        # non-secret test key; smoke tests block Stripe's script request.
+        NEXT_PUBLIC_STRIPE_KEY: pk_test_frontend_smoke
+        # NextAuth validates these at module load. Smoke tests never initiate
+        # OAuth, so deterministic non-secret placeholders are sufficient.
+        GOOGLE_CLIENT_ID: frontend-smoke-client
+        GOOGLE_CLIENT_SECRET: frontend-smoke-secret
         
     - name: Wait for frontend to be ready
       run: npx wait-on http://localhost:3000 --timeout 120000
