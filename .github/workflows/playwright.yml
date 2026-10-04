@@ -2,7 +2,7 @@ name: E2E Tests (Playwright)
 
 on:
   push:
-    # Run on pushes to any branch (no branch restriction)
+    branches: [ main ]
   pull_request:
     # Run on ALL pull requests regardless of source/target branches
     types: [ opened, synchronize, reopened, ready_for_review ]
