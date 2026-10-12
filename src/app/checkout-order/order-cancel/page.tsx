@@ -1,3 +1,10 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Order cancelled",
+  description: "Your order was cancelled at Dice & Decks.",
+};
+
 const OrderCancel = () => {
   return (
     <div className="flex flex-col items-center mt-23 mb-65 px-4">

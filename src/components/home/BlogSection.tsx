@@ -27,7 +27,7 @@ export default function BlogSection() {
     {
       id: 3,
       date: "May 27, 2026",
-      readingTime: 40,
+      readingTime: 7,
       name: "A new edition of Catan is coming!",
       category: "Game Review",
       imageSrc:

@@ -1,4 +1,6 @@
+import type { Metadata } from "next";
 import ProductPage from "@/components/catalog/ProductPage";
+import { productServices } from "@/services/productServices";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ReviewsProduct from "@/components/catalog/ReviewsProduct";
@@ -11,6 +13,28 @@ interface ProductDetailPageProps {
   params: Promise<{
     id: string;
   }>;
+}
+
+export async function generateMetadata({
+  params,
+}: ProductDetailPageProps): Promise<Metadata> {
+  const resolvedParams = await params;
+
+  try {
+    const product = await productServices.getProductById(resolvedParams.id);
+
+    return {
+      title: product.name,
+      description:
+        product.shortDescription ??
+        `Shop ${product.name} at Dice & Decks.`,
+    };
+  } catch {
+    return {
+      title: "Product",
+      description: "Product details at Dice & Decks.",
+    };
+  }
 }
 
 /**

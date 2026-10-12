@@ -1,10 +1,21 @@
 "use client";
 import Image from "next/image";
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { catalogServices } from "../../services/catalogServices";
 import { productServices } from "../../services/productServices";
 import { useQuery } from "@tanstack/react-query";
-import { FilterCheckmarkIcon, ChevronDownIcon, CloseIcon } from "../../svgs/icons";
+import {
+  FilterCheckmarkIcon,
+  ChevronDownIcon,
+  CloseIcon,
+} from "../../svgs/icons";
 import FilterSideBarSkeleton from "./FilterSideBarSkeleton";
 import PriceRangeInputs from "./PriceRangeInputs";
 import type { SelectedFilters, FilterItem, Category } from "@/types/catalog";
@@ -17,7 +28,8 @@ const FEATURED_CATEGORY_CONFIG = [
   { label: "Coming soon", names: ["coming soon"] },
 ];
 
-const normalizeCategoryName = (name: string) => name.trim().toLowerCase().replace(/\s+/g, " ");
+const normalizeCategoryName = (name: string) =>
+  name.trim().toLowerCase().replace(/\s+/g, " ");
 
 // Component props
 interface FilterSideBarProps {
@@ -36,7 +48,9 @@ const TruncatedFilterLabel = ({ text }: TruncatedFilterLabelProps) => {
 
   const showTooltipIfTruncated = () => {
     const label = labelRef.current;
-    setIsTooltipVisible(Boolean(label && label.scrollWidth > label.clientWidth));
+    setIsTooltipVisible(
+      Boolean(label && label.scrollWidth > label.clientWidth),
+    );
   };
 
   return (
@@ -74,7 +88,10 @@ const TruncatedFilterLabel = ({ text }: TruncatedFilterLabelProps) => {
   );
 };
 
-export default function FilterSideBar({ selectedFilters, setSelectedFilters }: FilterSideBarProps) {
+export default function FilterSideBar({
+  selectedFilters,
+  setSelectedFilters,
+}: FilterSideBarProps) {
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const normalizedCategories = useMemo(
     () => [...selectedFilters.categories].sort((a, b) => a - b),
@@ -123,7 +140,9 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
   const featuredCategories = useMemo(
     () =>
       FEATURED_CATEGORY_CONFIG.flatMap(({ label, names }) => {
-        const category = categories.find((item: Category) => names.includes(normalizeCategoryName(item.name)));
+        const category = categories.find((item: Category) =>
+          names.includes(normalizeCategoryName(item.name)),
+        );
         return category ? [{ ...category, name: label }] : [];
       }),
     [categories],
@@ -140,8 +159,14 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
   );
 
   // Fetch product counts for all categories (includes search filter)
-  const { data: categoryCounts = {} as Record<number, number>, isLoading: countsLoading } = useQuery({
-    queryKey: queryKeys.catalog.categoryCounts(featuredCategoryIds, selectedFilters.search),
+  const {
+    data: categoryCounts = {} as Record<number, number>,
+    isLoading: countsLoading,
+  } = useQuery({
+    queryKey: queryKeys.catalog.categoryCounts(
+      featuredCategoryIds,
+      selectedFilters.search,
+    ),
     queryFn: async ({ signal }) => {
       if (featuredCategories.length === 0) return {};
 
@@ -154,7 +179,10 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
             },
             { signal },
           )
-          .then((response: { count: number }) => ({ id: category.id, count: response.count }))
+          .then((response: { count: number }) => ({
+            id: category.id,
+            count: response.count,
+          }))
           .catch(() => ({ id: category.id, count: 0 })),
       );
 
@@ -203,25 +231,41 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
     retry: 1,
   });
 
-  const { data: priceBounds = { max: 0 }, isLoading: priceBoundsLoading } = useQuery({
-    queryKey: queryKeys.catalog.priceBounds(priceBoundsFilters),
-    queryFn: async ({ signal }) => {
-      const response = await productServices.getProductsWithFilters(1, 1, "price-high-low", priceBoundsFilters, { signal });
-      const max = parseFloat(String(response?.results?.[0]?.price ?? 0));
+  const { data: priceBounds = { max: 0 }, isLoading: priceBoundsLoading } =
+    useQuery({
+      queryKey: queryKeys.catalog.priceBounds(priceBoundsFilters),
+      queryFn: async ({ signal }) => {
+        const response = await productServices.getProductsWithFilters(
+          1,
+          1,
+          "price-high-low",
+          priceBoundsFilters,
+          { signal },
+        );
+        const max = parseFloat(String(response?.results?.[0]?.price ?? 0));
 
-      return { max: Number.isFinite(max) ? Math.ceil(max) : 0 };
-    },
-    placeholderData: (previousData) => previousData,
-    staleTime: 60 * 1000,
-    retry: 1,
-  });
+        return { max: Number.isFinite(max) ? Math.ceil(max) : 0 };
+      },
+      placeholderData: (previousData) => previousData,
+      staleTime: 60 * 1000,
+      retry: 1,
+    });
 
   const isLoading =
-    categoriesLoading || audiencesLoading || gameTypesLoading || brandsLoading || countsLoading || priceBoundsLoading;
+    categoriesLoading ||
+    audiencesLoading ||
+    gameTypesLoading ||
+    brandsLoading ||
+    countsLoading ||
+    priceBoundsLoading;
 
   const priceCeiling = Math.max(0, priceBounds.max);
-  const displayedMaxPrice = Number.isFinite(selectedFilters.priceRange.max) ? selectedFilters.priceRange.max : priceCeiling;
-  const hasPriceFilter = selectedFilters.priceRange.min > 0 || Number.isFinite(selectedFilters.priceRange.max);
+  const displayedMaxPrice = Number.isFinite(selectedFilters.priceRange.max)
+    ? selectedFilters.priceRange.max
+    : priceCeiling;
+  const hasPriceFilter =
+    selectedFilters.priceRange.min > 0 ||
+    Number.isFinite(selectedFilters.priceRange.max);
 
   const normalizeStoredMaxPrice = useCallback(
     (value: number) => {
@@ -247,11 +291,20 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
   useEffect(() => {
     if (priceBoundsLoading) return;
 
-    const nextMin = Math.max(0, Math.min(selectedFilters.priceRange.min, priceCeiling));
-    const nextDisplayedMax = Math.max(nextMin, Math.min(displayedMaxPrice, priceCeiling));
+    const nextMin = Math.max(
+      0,
+      Math.min(selectedFilters.priceRange.min, priceCeiling),
+    );
+    const nextDisplayedMax = Math.max(
+      nextMin,
+      Math.min(displayedMaxPrice, priceCeiling),
+    );
     const nextStoredMax = normalizeStoredMaxPrice(nextDisplayedMax);
 
-    if (nextMin !== selectedFilters.priceRange.min || nextStoredMax !== selectedFilters.priceRange.max) {
+    if (
+      nextMin !== selectedFilters.priceRange.min ||
+      nextStoredMax !== selectedFilters.priceRange.max
+    ) {
       setSelectedFilters({
         ...selectedFilters,
         priceRange: {
@@ -282,10 +335,19 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
         categories: sanitizedCategories,
       }));
     }
-  }, [categoriesLoading, selectedFilters.categories, setSelectedFilters, validCategoryIds]);
+  }, [
+    categoriesLoading,
+    selectedFilters.categories,
+    setSelectedFilters,
+    validCategoryIds,
+  ]);
 
   // Toggle filter value with scroll position preservation
-  const toggleFilter = (filterType: string, value: number | string, event?: React.SyntheticEvent): void => {
+  const toggleFilter = (
+    filterType: string,
+    value: number | string,
+    event?: React.SyntheticEvent,
+  ): void => {
     if (event) {
       event.preventDefault();
       event.stopPropagation();
@@ -295,7 +357,9 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
     const filterArray = Array.isArray(currentFilter) ? currentFilter : [];
 
     const hasValue = filterArray.some((item) => item === value);
-    const newFilterArray = hasValue ? filterArray.filter((item) => item !== value) : [...filterArray, value as never];
+    const newFilterArray = hasValue
+      ? filterArray.filter((item) => item !== value)
+      : [...filterArray, value as never];
 
     setSelectedFilters({
       ...selectedFilters,
@@ -325,13 +389,29 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
     selectedFilters.search ||
     (selectedFilters.sortBy && selectedFilters.sortBy !== "relevance");
 
-  const clampedMinPrice = Math.max(0, Math.min(selectedFilters.priceRange.min, priceCeiling));
-  const clampedMaxPrice = Math.max(clampedMinPrice, Math.min(displayedMaxPrice, priceCeiling));
-  const minPricePercent = priceCeiling > 0 ? (clampedMinPrice / priceCeiling) * 100 : 0;
-  const maxPricePercent = priceCeiling > 0 ? (clampedMaxPrice / priceCeiling) * 100 : 0;
+  const clampedMinPrice = Math.max(
+    0,
+    Math.min(selectedFilters.priceRange.min, priceCeiling),
+  );
+  const clampedMaxPrice = Math.max(
+    clampedMinPrice,
+    Math.min(displayedMaxPrice, priceCeiling),
+  );
+  const minPricePercent =
+    priceCeiling > 0 ? (clampedMinPrice / priceCeiling) * 100 : 0;
+  const maxPricePercent =
+    priceCeiling > 0 ? (clampedMaxPrice / priceCeiling) * 100 : 0;
 
   // Render filter tag with remove button
-  const FilterTag = ({ name, filterType, value }: { name: string; filterType: string; value: number | string }) => (
+  const FilterTag = ({
+    name,
+    filterType,
+    value,
+  }: {
+    name: string;
+    filterType: string;
+    value: number | string;
+  }) => (
     <div className="flex max-w-full min-w-0 items-center justify-center gap-2 border-[1px] border-[var(--color-light-purple-2)] bg-white p-2 text-sm text-[var(--color-purple)]">
       <TruncatedFilterLabel text={name} />
       <button
@@ -347,7 +427,13 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
   );
 
   // Render checkbox for filter option
-  const FilterCheckbox = ({ item, filterType }: { item: FilterItem; filterType: string }) => {
+  const FilterCheckbox = ({
+    item,
+    filterType,
+  }: {
+    item: FilterItem;
+    filterType: string;
+  }) => {
     const value = item.id || item.name;
     const isChecked = selectedFilters[filterType]?.includes(value);
 
@@ -396,13 +482,23 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
             {item.name}
           </button>
         </div>
-        {count !== null && <span className="text-base font-normal text-[#717171]">{count}</span>}
+        {count !== null && (
+          <span className="text-base font-normal text-[#717171]">{count}</span>
+        )}
       </div>
     );
   };
 
   // Render filter section with collapsible functionality
-  const FilterSection = ({ title, items, filterType }: { title: string; items: FilterItem[]; filterType: string }) => {
+  const FilterSection = ({
+    title,
+    items,
+    filterType,
+  }: {
+    title: string;
+    items: FilterItem[];
+    filterType: string;
+  }) => {
     const [isExpanded, setIsExpanded] = useState(true);
 
     const handleToggleExpanded = (e: React.MouseEvent) => {
@@ -415,7 +511,9 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
       <div className="flex w-full flex-col items-start gap-6 bg-white p-4 shadow-[0px_4px_4px_rgba(0,0,0,0.05)] lg:w-[247px]">
         {/* Header with toggle arrow */}
         <div className="flex flex-row justify-between items-center w-full">
-          <h4 className="text-base font-medium uppercase text-black font-['Noto_Sans_JP']">{title}</h4>
+          <h4 className="text-base font-medium uppercase text-black font-['Noto_Sans_JP']">
+            {title}
+          </h4>
           <button
             type="button"
             onClick={handleToggleExpanded}
@@ -429,7 +527,11 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
         {isExpanded && (
           <div className="flex flex-col items-start gap-2 w-full">
             {items.map((item) => (
-              <FilterCheckbox key={item.id || item.name} item={item} filterType={filterType} />
+              <FilterCheckbox
+                key={item.id || item.name}
+                item={item}
+                filterType={filterType}
+              />
             ))}
           </div>
         )}
@@ -450,14 +552,29 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
         className="mb-6 flex h-12 w-full items-center justify-between  border border-[#494791] bg-white px-4 lg:hidden"
       >
         <div className="flex items-center gap-2">
-          <Image src="/icons/filter.svg" alt="" width={20} height={20} className="h-5 w-5" aria-hidden="true" />
-          <span className="text-base font-medium uppercase text-black">Filters</span>
+          <Image
+            src="/icons/filter.svg"
+            alt=""
+            width={20}
+            height={20}
+            className="h-5 w-5"
+            aria-hidden="true"
+          />
+          <span className="text-base font-medium uppercase text-black">
+            Filters
+          </span>
         </div>
-        <ChevronDownIcon className="w-6 h-6" isExpanded={!isMobileFiltersOpen} />
+        <ChevronDownIcon
+          className="w-6 h-6"
+          isExpanded={!isMobileFiltersOpen}
+        />
       </button>
 
       {/* Filter content - hidden on mobile unless toggled */}
-      <div id="catalog-filter-content" className={`${isMobileFiltersOpen ? "flex" : "hidden"} flex-col gap-6 lg:flex`}>
+      <div
+        id="catalog-filter-content"
+        className={`${isMobileFiltersOpen ? "flex" : "hidden"} flex-col gap-6 lg:flex`}
+      >
         {/* Active Filters Display Card */}
         {hasActiveFilters && (
           <div className="flex flex-col gap-6 bg-white p-4 shadow-[0px_4px_4px_rgba(0,0,0,0.05)]">
@@ -474,23 +591,54 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
             </div>
 
             {/* Active Filters */}
-            <div className="flex max-w-full min-w-0 flex-wrap gap-2" style={{ overflowAnchor: "none" }}>
+            <div
+              className="flex max-w-full min-w-0 flex-wrap gap-2"
+              style={{ overflowAnchor: "none" }}
+            >
               {selectedFilters.categories.map((id: number) => {
-                const category = featuredCategories.find((cat: Category) => cat.id === id);
-                return category && <FilterTag key={id} name={category.name} filterType="categories" value={id} />;
+                const category = featuredCategories.find(
+                  (cat: Category) => cat.id === id,
+                );
+                return (
+                  category && (
+                    <FilterTag
+                      key={id}
+                      name={category.name}
+                      filterType="categories"
+                      value={id}
+                    />
+                  )
+                );
               })}
               {selectedFilters.gameTypes.map((name) => (
-                <FilterTag key={name} name={name} filterType="gameTypes" value={name} />
+                <FilterTag
+                  key={name}
+                  name={name}
+                  filterType="gameTypes"
+                  value={name}
+                />
               ))}
               {selectedFilters.audiences.map((name) => (
-                <FilterTag key={name} name={name} filterType="audiences" value={name} />
+                <FilterTag
+                  key={name}
+                  name={name}
+                  filterType="audiences"
+                  value={name}
+                />
               ))}
               {selectedFilters.brands.map((name) => (
-                <FilterTag key={name} name={name} filterType="brands" value={name} />
+                <FilterTag
+                  key={name}
+                  name={name}
+                  filterType="brands"
+                  value={name}
+                />
               ))}
               {selectedFilters.search && (
                 <div className="flex max-w-full min-w-0 items-center justify-center gap-2 border-[1px] border-[var(--color-light-purple-2)] bg-white p-2 text-sm text-[var(--color-purple)]">
-                  <TruncatedFilterLabel text={`Search: "${selectedFilters.search}"`} />
+                  <TruncatedFilterLabel
+                    text={`Search: "${selectedFilters.search}"`}
+                  />
                   <button
                     type="button"
                     tabIndex={-1}
@@ -499,40 +647,56 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      setSelectedFilters((prev: SelectedFilters) => ({ ...prev, search: "" }));
+                      setSelectedFilters((prev: SelectedFilters) => ({
+                        ...prev,
+                        search: "",
+                      }));
                     }}
                   >
                     <CloseIcon className="h-3 w-3" />
                   </button>
                 </div>
               )}
-              {selectedFilters.sortBy && selectedFilters.sortBy !== "relevance" && (
-                <div className="bg-white border-[1px] border-[var(--color-light-purple-2)] p-2 text-[var(--color-purple)] text-sm flex justify-center items-center gap-2">
-                  Sort: {selectedFilters.sortBy.replace("-", " ").replace(/\b\w/g, (l: string) => l.toUpperCase())}
-                  <button
-                    type="button"
-                    tabIndex={-1}
-                    className="h-3 w-3 inline-block ml-1 cursor-pointer text-current hover:opacity-70"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setSelectedFilters((prev: SelectedFilters) => ({ ...prev, sortBy: "relevance" }));
-                    }}
-                  >
-                    <CloseIcon className="h-3 w-3" />
-                  </button>
-                </div>
-              )}
+              {selectedFilters.sortBy &&
+                selectedFilters.sortBy !== "relevance" && (
+                  <div className="bg-white border-[1px] border-[var(--color-light-purple-2)] p-2 text-[var(--color-purple)] text-sm flex justify-center items-center gap-2">
+                    Sort:{" "}
+                    {selectedFilters.sortBy
+                      .replace("-", " ")
+                      .replace(/\b\w/g, (l: string) => l.toUpperCase())}
+                    <button
+                      type="button"
+                      tabIndex={-1}
+                      className="h-3 w-3 inline-block ml-1 cursor-pointer text-current hover:opacity-70"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setSelectedFilters((prev: SelectedFilters) => ({
+                          ...prev,
+                          sortBy: "relevance",
+                        }));
+                      }}
+                    >
+                      <CloseIcon className="h-3 w-3" />
+                    </button>
+                  </div>
+                )}
               {hasPriceFilter && (
                 <div className="flex w-full flex-col items-start gap-2">
-                  <span className="text-base font-medium uppercase text-black font-['Noto_Sans_JP']">Price</span>
+                  <span className="text-base font-medium uppercase text-black font-['Noto_Sans_JP']">
+                    Price, $
+                  </span>
                   <div className="flex w-full items-center gap-2">
                     <PriceRangeInputs
                       minValue={clampedMinPrice}
                       maxValue={clampedMaxPrice}
                       priceCeiling={priceCeiling}
-                      onMinChange={(value) => updatePriceRange(value, clampedMaxPrice)}
-                      onMaxChange={(value) => updatePriceRange(clampedMinPrice, value)}
+                      onMinChange={(value) =>
+                        updatePriceRange(value, clampedMaxPrice)
+                      }
+                      onMaxChange={(value) =>
+                        updatePriceRange(clampedMinPrice, value)
+                      }
                     />
                     <button
                       type="button"
@@ -558,18 +722,32 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
         )}
 
         {/* Filter Sections as Cards */}
-        <FilterSection title="FEATURED" items={featuredCategories} filterType="categories" />
+        <FilterSection
+          title="FEATURED"
+          items={featuredCategories}
+          filterType="categories"
+        />
 
-        <FilterSection title="Game Types" items={gameTypes} filterType="gameTypes" />
+        <FilterSection
+          title="Game Types"
+          items={gameTypes}
+          filterType="gameTypes"
+        />
 
-        <FilterSection title="Audience" items={audiences} filterType="audiences" />
+        <FilterSection
+          title="Audience"
+          items={audiences}
+          filterType="audiences"
+        />
 
         <FilterSection title="Brands" items={brands} filterType="brands" />
 
         {/* Price Filter Card */}
         <div className="flex w-full flex-col items-start gap-4 bg-white p-4 shadow-[0px_4px_4px_rgba(0,0,0,0.05)] lg:w-[247px] lg:gap-6">
           <div className="flex flex-row justify-between items-center w-full">
-            <h4 className="text-base font-medium uppercase text-black font-['Noto_Sans_JP']">Price</h4>
+            <h4 className="text-base font-medium uppercase text-black font-['Noto_Sans_JP']">
+              Price, $
+            </h4>
           </div>
           <div className="flex w-full items-center gap-2">
             <PriceRangeInputs
@@ -580,14 +758,16 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
               onMaxChange={(value) => updatePriceRange(clampedMinPrice, value)}
             />
           </div>
-          <div className="relative h-4 w-full lg:hidden">
+          <div className="relative h-10 w-full">
             <input
               type="range"
               min="0"
               max={priceCeiling}
               value={clampedMinPrice}
               disabled={priceCeiling === 0}
-              onChange={(e) => updatePriceRange(parseFloat(e.target.value), clampedMaxPrice)}
+              onChange={(e) =>
+                updatePriceRange(parseFloat(e.target.value), clampedMaxPrice)
+              }
               className="price-range-slider absolute inset-0 z-20 h-full w-full"
             />
             <input
@@ -596,25 +776,32 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
               max={priceCeiling}
               value={clampedMaxPrice}
               disabled={priceCeiling === 0}
-              onChange={(e) => updatePriceRange(clampedMinPrice, parseFloat(e.target.value))}
+              onChange={(e) =>
+                updatePriceRange(clampedMinPrice, parseFloat(e.target.value))
+              }
               className="price-range-slider absolute inset-0 z-30 h-full w-full"
             />
-            <div className="absolute left-0 right-0 top-1/2 h-[6px] -translate-y-1/2 bg-[#A4A3C8]" />
             <div
-              className="absolute top-1/2 h-[6px] -translate-y-1/2 bg-[#494791]"
-              style={{
-                left: `${minPricePercent}%`,
-                width: `${Math.max(maxPricePercent - minPricePercent, 0)}%`,
-              }}
-            />
-            <div
-              className="absolute top-1/2 h-4 w-[18px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#494791]"
-              style={{ left: `${minPricePercent}%` }}
-            />
-            <div
-              className="absolute top-1/2 h-4 w-[18px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#494791]"
-              style={{ left: `${maxPricePercent}%` }}
-            />
+              className="pointer-events-none absolute inset-0"
+              aria-hidden="true"
+            >
+              <div className="absolute left-0 right-0 top-1/2 h-[6px] -translate-y-1/2 bg-[#A4A3C8]" />
+              <div
+                className="absolute top-1/2 h-[6px] -translate-y-1/2 bg-[#494791]"
+                style={{
+                  left: `${minPricePercent}%`,
+                  width: `${Math.max(maxPricePercent - minPricePercent, 0)}%`,
+                }}
+              />
+              <div
+                className="absolute top-1/2 h-4 w-[18px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#494791]"
+                style={{ left: `${minPricePercent}%` }}
+              />
+              <div
+                className="absolute top-1/2 h-4 w-[18px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#494791]"
+                style={{ left: `${maxPricePercent}%` }}
+              />
+            </div>
           </div>
           <style jsx>{`
             .price-range-slider {
@@ -622,6 +809,7 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
               -webkit-appearance: none;
               background: transparent;
               pointer-events: none;
+              touch-action: none;
             }
 
             .price-range-slider::-webkit-slider-runnable-track {
@@ -637,8 +825,8 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
             .price-range-slider::-webkit-slider-thumb {
               appearance: none;
               -webkit-appearance: none;
-              height: 16px;
-              width: 18px;
+              height: 44px;
+              width: 44px;
               border: 0;
               border-radius: 9999px;
               background: transparent;
@@ -648,8 +836,8 @@ export default function FilterSideBar({ selectedFilters, setSelectedFilters }: F
             }
 
             .price-range-slider::-moz-range-thumb {
-              height: 16px;
-              width: 18px;
+              height: 44px;
+              width: 44px;
               border: 0;
               border-radius: 9999px;
               background: transparent;

@@ -1,5 +1,6 @@
 import {
   DEFAULT_CATALOG_PAGE_TITLE,
+  getCatalogBreadcrumbItems,
   getCatalogPageTitle,
   parseCatalogFiltersFromSearchParams,
   parsePositiveIntList,
@@ -30,7 +31,9 @@ describe("catalogQueryParams", () => {
 
     test("rejects crafted XSS payloads in categories", () => {
       expect(parsePositiveIntList('1"><script>alert(1)</script>')).toEqual([]);
-      expect(parsePositiveIntList("1,<img src=x onerror=alert(1)>")).toEqual([1]);
+      expect(parsePositiveIntList("1,<img src=x onerror=alert(1)>")).toEqual([
+        1,
+      ]);
       expect(parsePositiveIntList("abc")).toEqual([]);
       expect(parsePositiveIntList("1.5")).toEqual([]);
       expect(parsePositiveIntList("-1")).toEqual([]);
@@ -44,8 +47,13 @@ describe("catalogQueryParams", () => {
 
   describe("parseSafeFilterTokenList", () => {
     test("rejects unsafe filter tokens", () => {
-      expect(parseSafeFilterTokenList('dice"><script>alert(1)</script>')).toEqual([]);
-      expect(parseSafeFilterTokenList("family,co-op")).toEqual(["family", "co-op"]);
+      expect(
+        parseSafeFilterTokenList('dice"><script>alert(1)</script>'),
+      ).toEqual([]);
+      expect(parseSafeFilterTokenList("family,co-op")).toEqual([
+        "family",
+        "co-op",
+      ]);
     });
   });
 
@@ -142,7 +150,9 @@ describe("catalogQueryParams", () => {
     });
 
     test("falls back to the default board games title", () => {
-      expect(getCatalogPageTitle(emptyFilters)).toBe(DEFAULT_CATALOG_PAGE_TITLE);
+      expect(getCatalogPageTitle(emptyFilters)).toBe(
+        DEFAULT_CATALOG_PAGE_TITLE,
+      );
       expect(getCatalogPageTitle({ ...emptyFilters, categories: [1, 2] })).toBe(
         DEFAULT_CATALOG_PAGE_TITLE,
       );
@@ -152,9 +162,26 @@ describe("catalogQueryParams", () => {
     });
   });
 
+  describe("getCatalogBreadcrumbItems", () => {
+    test("builds home and dynamic category crumb from filters", () => {
+      expect(getCatalogBreadcrumbItems(emptyFilters)).toEqual([
+        { label: "Home", href: "/" },
+        { label: DEFAULT_CATALOG_PAGE_TITLE, current: true },
+      ]);
+      expect(
+        getCatalogBreadcrumbItems({ ...emptyFilters, categories: [4] }),
+      ).toEqual([
+        { label: "Home", href: "/" },
+        { label: "Sale", current: true },
+      ]);
+    });
+  });
+
   describe("shouldNormalizeCatalogQuery", () => {
     test("detects unsafe query strings", () => {
-      const params = new URLSearchParams('categories=1"><script>alert(1)</script>');
+      const params = new URLSearchParams(
+        'categories=1"><script>alert(1)</script>',
+      );
 
       expect(shouldNormalizeCatalogQuery(params)).toBe(true);
     });
