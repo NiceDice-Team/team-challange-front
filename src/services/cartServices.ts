@@ -31,6 +31,29 @@ function isNotFoundApiError(error: unknown): boolean {
   return error.message.includes("status: 404");
 }
 
+function isGuestCartUnavailableError(error: unknown): boolean {
+  if (isNotFoundApiError(error)) {
+    return true;
+  }
+
+  if (error instanceof TypeError) {
+    return true;
+  }
+
+  if (!(error instanceof Error)) {
+    return false;
+  }
+
+  const message = error.message.toLowerCase();
+
+  return (
+    message.includes("networkerror") ||
+    message.includes("failed to fetch") ||
+    message.includes("load failed") ||
+    message.includes("cors")
+  );
+}
+
 function disableGuestCartApi(): void {
   guestCartApiDisabled = true;
 
@@ -199,7 +222,7 @@ export async function ensureGuestCart(): Promise<void> {
 
     useGuestCartStore.getState().setToken(response.token);
   } catch (error) {
-    if (isNotFoundApiError(error)) {
+    if (isGuestCartUnavailableError(error)) {
       disableGuestCartApi();
       return;
     }
@@ -215,13 +238,23 @@ async function fetchGuestCartItemsByToken(
     return useGuestCartStore.getState().items;
   }
 
-  const response = await fetch(`${API_URL}cart/guest/`, {
-    headers: mergeNoCacheHeaders({
-      "Content-Type": "application/json",
-      "X-Guest-Token": token,
-    }),
-    cache: "no-store",
-  });
+  let response: Response;
+
+  try {
+    response = await fetch(`${API_URL}cart/guest/`, {
+      headers: mergeNoCacheHeaders({
+        "Content-Type": "application/json",
+        "X-Guest-Token": token,
+      }),
+      cache: "no-store",
+    });
+  } catch (error) {
+    if (isGuestCartUnavailableError(error)) {
+      disableGuestCartApi();
+      return useGuestCartStore.getState().items;
+    }
+    throw error;
+  }
 
   if (!response.ok) {
     if (response.status === 404) {
@@ -285,23 +318,32 @@ async function guestFetch<T = unknown>(
 
   const url = `${API_URL}${endpoint}`;
 
-  const response = await fetch(url, {
-    method: options.method || "GET",
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      method: options.method || "GET",
 
-    headers: mergeNoCacheHeaders({
-      "Content-Type": "application/json",
+      headers: mergeNoCacheHeaders({
+        "Content-Type": "application/json",
 
-      "X-Guest-Token": token,
+        "X-Guest-Token": token,
 
-      ...options.headers,
-    }),
+        ...options.headers,
+      }),
 
-    body: options.body ? JSON.stringify(options.body) : null,
+      body: options.body ? JSON.stringify(options.body) : null,
 
-    signal: options.signal,
+      signal: options.signal,
 
-    cache: "no-store",
-  });
+      cache: "no-store",
+    });
+  } catch (error) {
+    if (isGuestCartUnavailableError(error)) {
+      disableGuestCartApi();
+      return undefined;
+    }
+    throw error;
+  }
 
   if (!response.ok) {
     if (response.status === 404) {
@@ -488,7 +530,7 @@ export const cartServices = {
 
         return items;
       } catch (error) {
-        if (isNotFoundApiError(error)) {
+        if (isGuestCartUnavailableError(error)) {
           disableGuestCartApi();
           return useGuestCartStore.getState().items;
         }
