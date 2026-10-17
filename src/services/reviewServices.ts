@@ -16,25 +16,56 @@ interface ProductReviewsParams {
   search?: string;
 }
 
+const normalizeProductReviews = (
+  productId: number | string,
+  reviews: unknown,
+): ReviewListResponse => {
+  if (!Array.isArray(reviews)) {
+    return {
+      count: 0,
+      next: null,
+      previous: null,
+      results: [],
+    };
+  }
+
+  const normalizedResults: ProductReviewApi[] = reviews
+    .map((review, index) => {
+      if (!review || typeof review !== "object") {
+        return null;
+      }
+
+      const raw = review as Record<string, unknown>;
+      const ratingValue = raw.rating;
+      const commentValue = raw.comment;
+      const createdAtValue = raw.created_at;
+      const idValue = raw.id;
+
+      return {
+        id:
+          typeof idValue === "number" && Number.isFinite(idValue)
+            ? idValue
+            : Number(productId) * 1000 + index + 1,
+        rating: typeof ratingValue === "string" ? ratingValue : String(ratingValue ?? "0"),
+        comment: typeof commentValue === "string" ? commentValue : "",
+        created_at:
+          typeof createdAtValue === "string" && createdAtValue
+            ? createdAtValue
+            : new Date(0).toISOString(),
+      };
+    })
+    .filter((review): review is ProductReviewApi => review !== null);
+
+  return {
+    count: normalizedResults.length,
+    next: null,
+    previous: null,
+    results: normalizedResults,
+  };
+};
+
 const buildProductReviewsUrl = (productId: number | string, params: ProductReviewsParams = {}): string => {
-  const searchParams = new URLSearchParams();
-
-  if (params.ordering) {
-    searchParams.set("ordering", params.ordering);
-  }
-
-  if (typeof params.page === "number") {
-    searchParams.set("page", params.page.toString());
-  }
-
-  if (params.search) {
-    searchParams.set("search", params.search);
-  }
-
-  const queryString = searchParams.toString();
-  const endpoint = `products/products/${productId}/reviews/${queryString ? `?${queryString}` : ""}`;
-
-  return buildApiUrl(endpoint);
+  return buildApiUrl(`products/${productId}/`);
 };
 
 const parseErrorResponse = async (response: Response): Promise<string> => {
@@ -65,7 +96,12 @@ const fetchReviewPage = async (url: string, options: ApiRequestOptions = {}): Pr
     throw new Error(await parseErrorResponse(response));
   }
 
-  return response.json() as Promise<ReviewListResponse>;
+  const product = (await response.json()) as {
+    reviews?: unknown;
+    id?: number;
+  };
+
+  return normalizeProductReviews(product.id ?? 0, product.reviews);
 };
 
 export const reviewServices = {
@@ -112,7 +148,7 @@ export const reviewServices = {
 
     try {
       const response = await axiosInstance.post<ProductReviewApi>(
-        `products/products/${productId}/reviews/`,
+        `reviews/`,
         body
       );
       return response.data;
