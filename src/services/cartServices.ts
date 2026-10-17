@@ -11,9 +11,10 @@ import { fetchAPI, API_URL } from "./api";
 const AUTH_CART_ENDPOINT = API_ENDPOINTS.cart;
 const AUTH_CART_ITEM_ENDPOINT = API_ENDPOINTS.cartItem;
 const LOCAL_GUEST_CART_TOKEN = "local-guest-cart";
+const GUEST_CART_MODE = process.env.NEXT_PUBLIC_GUEST_CART_MODE?.toLowerCase();
 
 export const CART_CLEARED_EVENT = "cart-cleared";
-let guestCartApiDisabled = false;
+let guestCartApiDisabled = GUEST_CART_MODE === "local";
 
 function notifyCartCleared(): void {
   if (typeof window === "undefined") {
@@ -55,6 +56,10 @@ function isGuestCartUnavailableError(error: unknown): boolean {
 }
 
 function disableGuestCartApi(): void {
+  if (GUEST_CART_MODE === "api") {
+    return;
+  }
+
   guestCartApiDisabled = true;
 
   if (!getGuestToken()) {
@@ -208,7 +213,7 @@ export async function ensureGuestCart(): Promise<void> {
     return;
   }
 
-  if (guestCartApiDisabled) {
+  if (guestCartApiDisabled || GUEST_CART_MODE === "local") {
     useGuestCartStore.getState().setToken(LOCAL_GUEST_CART_TOKEN);
     return;
   }
