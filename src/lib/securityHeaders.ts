@@ -3,8 +3,14 @@ type SecurityHeader = {
   value: string;
 };
 
+type SecurityHeaderOptions = {
+  nonce?: string;
+};
+
 const TRUSTED_IMAGE_ORIGINS = [
   "https://cdn.bgshop.work.gd",
+  "http://minio:9000",
+  "http://127.0.0.1:9000",
   "https://placehold.co",
   "https://cdn.shopify.com",
 ];
@@ -33,24 +39,61 @@ function getBackendOrigin(): string | null {
   }
 }
 
-function buildContentSecurityPolicy(isProduction: boolean): string {
+function shouldUpgradeInsecureRequests(): boolean {
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+  if (!backendUrl) {
+    return true;
+  }
+
+  try {
+    return new URL(backendUrl).protocol === "https:";
+  } catch {
+    return true;
+  }
+}
+
+function getCspMode(): "strict" | "compat" {
+  const mode = process.env.CSP_MODE?.toLowerCase();
+  return mode === "strict" ? "strict" : "compat";
+}
+
+function isCspReportOnlyEnabled(): boolean {
+  const value = process.env.CSP_REPORT_ONLY?.toLowerCase();
+  return value === "1" || value === "true" || value === "yes" || value === "on";
+}
+
+function buildContentSecurityPolicy(
+  isProduction: boolean,
+  options: SecurityHeaderOptions = {},
+): string {
   const backendOrigin = getBackendOrigin();
   const connectSources = ["'self'", ...TRUSTED_CONNECT_ORIGINS];
+  const cspMode = getCspMode();
 
   if (backendOrigin) {
     connectSources.push(backendOrigin);
   }
 
-  const scriptSrcParts = ["'self'", "'unsafe-inline'"];
-  if (!isProduction) {
+  const scriptSrcParts = ["'self'"];
+  if (cspMode === "strict" && options.nonce) {
+    scriptSrcParts.push(`'nonce-${options.nonce}'`);
+    scriptSrcParts.push("'strict-dynamic'");
+  } else {
+    scriptSrcParts.push("'unsafe-inline'");
+  }
+  if (!isProduction && cspMode !== "strict") {
     scriptSrcParts.push("'unsafe-eval'");
   }
   scriptSrcParts.push(...TRUSTED_SCRIPT_ORIGINS);
 
+  const styleSrc = cspMode === "strict" && options.nonce
+    ? `style-src 'self' 'nonce-${options.nonce}'`
+    : "style-src 'self' 'unsafe-inline'";
+
   const directives = [
     "default-src 'self'",
     `script-src ${scriptSrcParts.join(" ")}`,
-    "style-src 'self' 'unsafe-inline'",
+    styleSrc,
     "font-src 'self' data:",
     `img-src 'self' data: blob: ${TRUSTED_IMAGE_ORIGINS.join(" ")}`,
     `connect-src ${connectSources.join(" ")}`,
@@ -61,7 +104,7 @@ function buildContentSecurityPolicy(isProduction: boolean): string {
     "frame-ancestors 'none'",
   ];
 
-  if (isProduction) {
+  if (isProduction && shouldUpgradeInsecureRequests()) {
     directives.push("upgrade-insecure-requests");
   }
 
@@ -70,11 +113,16 @@ function buildContentSecurityPolicy(isProduction: boolean): string {
 
 export function buildSecurityHeaders(
   isProduction = process.env.NODE_ENV === "production",
+  options: SecurityHeaderOptions = {},
 ): SecurityHeader[] {
+  const cspHeaderName = isCspReportOnlyEnabled()
+    ? "Content-Security-Policy-Report-Only"
+    : "Content-Security-Policy";
+
   const headers: SecurityHeader[] = [
     {
-      key: "Content-Security-Policy",
-      value: buildContentSecurityPolicy(isProduction),
+      key: cspHeaderName,
+      value: buildContentSecurityPolicy(isProduction, options),
     },
     {
       key: "X-Frame-Options",
@@ -105,7 +153,9 @@ export function buildSecurityHeaders(
 }
 
 export function applySecurityHeaders<T extends Response>(response: T): T {
-  for (const header of buildSecurityHeaders()) {
+  const nonce = response.headers.get("x-nonce") ?? undefined;
+
+  for (const header of buildSecurityHeaders(process.env.NODE_ENV === "production", { nonce })) {
     response.headers.set(header.key, header.value);
   }
 

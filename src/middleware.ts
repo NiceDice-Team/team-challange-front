@@ -18,6 +18,13 @@ const NO_CACHE_ROUTE_PREFIXES = [
   "/confirm-signup",
 ];
 
+function createCspNonce(): string {
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  const binary = Array.from(bytes, (byte) => String.fromCharCode(byte)).join("");
+  return btoa(binary);
+}
+
 function isNoCacheRoute(pathname: string): boolean {
   return NO_CACHE_ROUTE_PREFIXES.some(
     (route) => pathname === route || pathname.startsWith(`${route}/`),
@@ -29,8 +36,12 @@ function withNoCachePageHeaders(response: NextResponse): NextResponse {
   return response;
 }
 
-function finalizeResponse(response: NextResponse): NextResponse {
+function finalizeResponse(response: NextResponse, nonce?: string): NextResponse {
+  if (nonce) {
+    response.headers.set("x-nonce", nonce);
+  }
   applySecurityHeaders(response);
+  response.headers.delete("x-nonce");
   return response;
 }
 
@@ -68,6 +79,9 @@ function handleApiRoute(request: NextRequest): NextResponse {
 
 export default function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const nonce = createCspNonce();
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-nonce", nonce);
 
   if (pathname.startsWith("/api/")) {
     return handleApiRoute(request);
@@ -95,23 +109,28 @@ export default function middleware(request: NextRequest) {
       loginUrl.searchParams.set("returnUrl", pathname);
       return finalizeResponse(
         withNoCachePageHeaders(NextResponse.redirect(loginUrl)),
+        nonce,
       );
     }
   }
 
   if (isPublicRoute) {
     if (isAuthenticated(request)) {
-      return finalizeResponse(NextResponse.redirect(new URL("/", request.url)));
+      return finalizeResponse(NextResponse.redirect(new URL("/", request.url)), nonce);
     }
   }
 
-  const response = NextResponse.next();
+  const response = NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
 
   if (isNoCacheRoute(pathname) || isProtectedRoute) {
-    return finalizeResponse(withNoCachePageHeaders(response));
+    return finalizeResponse(withNoCachePageHeaders(response), nonce);
   }
 
-  return finalizeResponse(response);
+  return finalizeResponse(response, nonce);
 }
 
 export const config = {
