@@ -11,6 +11,12 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
+        protocol: 'http',
+        hostname: 'minio',
+        port: '9000',
+        pathname: '/bg-shop-images/**',
+      },
+      {
         protocol: 'https',
         hostname: 'cdn.bgshop.work.gd',
       },
