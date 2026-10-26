@@ -507,6 +507,24 @@ async function validateCartItemStock(cartItemId: string, quantity: number) {
   }
 }
 
+async function addLocalGuestCartItem(
+  productId: number | string,
+  quantity: number,
+): Promise<CartItem> {
+  const product = await productServices.getProductById(productId);
+  const existing = useGuestCartStore
+    .getState()
+    .items.find((item) => idsMatch(item.product?.id, productId));
+  const fallbackItem: CartItem = {
+    id: String(product.id),
+    product,
+    quantity: (existing?.quantity ?? 0) + quantity,
+  };
+
+  useGuestCartStore.getState().upsertItem(fallbackItem);
+  return fallbackItem;
+}
+
 // Cart API services
 
 export const cartServices = {
@@ -593,18 +611,7 @@ export const cartServices = {
         await validateAddToCartStock(productId, quantity);
 
         if (guestCartApiDisabled) {
-          const product = await productServices.getProductById(productId);
-          const existing = useGuestCartStore
-            .getState()
-            .items.find((item) => idsMatch(item.product?.id, productId));
-          const nextQuantity = (existing?.quantity ?? 0) + quantity;
-          const fallbackItem = {
-            id: String(product.id),
-            product,
-            quantity: nextQuantity,
-          };
-          useGuestCartStore.getState().upsertItem(fallbackItem);
-          return fallbackItem;
+          return addLocalGuestCartItem(productId, quantity);
         }
 
         const response = await guestFetch<GuestCartItemResponse>(
@@ -633,22 +640,14 @@ export const cartServices = {
           return item;
         }
 
-        return { success: true };
+        // guestFetch disables an unavailable guest-cart API and returns no
+        // response. Persist the item locally instead of discarding the
+        // optimistic React Query update during the subsequent sync.
+        return addLocalGuestCartItem(productId, quantity);
       } catch (error) {
         if (isNotFoundApiError(error)) {
           disableGuestCartApi();
-          const product = await productServices.getProductById(productId);
-          const existing = useGuestCartStore
-            .getState()
-            .items.find((item) => idsMatch(item.product?.id, productId));
-          const nextQuantity = (existing?.quantity ?? 0) + quantity;
-          const fallbackItem = {
-            id: String(product.id),
-            product,
-            quantity: nextQuantity,
-          };
-          useGuestCartStore.getState().upsertItem(fallbackItem);
-          return fallbackItem;
+          return addLocalGuestCartItem(productId, quantity);
         }
         console.error("Error adding to guest cart:", error);
 
