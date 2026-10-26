@@ -545,6 +545,10 @@ export const cartServices = {
           signal: options.signal,
         });
 
+        if (guestCartApiDisabled || response === undefined) {
+          return useGuestCartStore.getState().items;
+        }
+
         const apiItems = parseCartListResponse(response);
 
         const items = apiItems.map(mapGuestCartItemToCartItem);
