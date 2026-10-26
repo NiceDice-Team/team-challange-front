@@ -5,7 +5,10 @@ import {
   handleCorsPreflightRequest,
   rejectDisallowedCrossOriginApiRequest,
 } from "@/lib/cors";
-import { applySecurityHeaders } from "@/lib/securityHeaders";
+import {
+  applySecurityHeaders,
+  buildContentSecurityPolicyHeader,
+} from "@/lib/securityHeaders";
 
 const NO_CACHE_PAGE_HEADER = "no-store, no-cache, must-revalidate";
 
@@ -81,7 +84,12 @@ export default function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const nonce = createCspNonce();
   const requestHeaders = new Headers(request.headers);
+  const cspHeader = buildContentSecurityPolicyHeader(
+    process.env.NODE_ENV === "production",
+    { nonce },
+  );
   requestHeaders.set("x-nonce", nonce);
+  requestHeaders.set(cspHeader.key, cspHeader.value);
 
   if (pathname.startsWith("/api/")) {
     return handleApiRoute(request);

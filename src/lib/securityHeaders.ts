@@ -3,7 +3,7 @@ type SecurityHeader = {
   value: string;
 };
 
-type SecurityHeaderOptions = {
+export type SecurityHeaderOptions = {
   nonce?: string;
 };
 
@@ -150,6 +150,21 @@ export function buildSecurityHeaders(
   }
 
   return headers;
+}
+
+export function buildContentSecurityPolicyHeader(
+  isProduction = process.env.NODE_ENV === "production",
+  options: SecurityHeaderOptions = {},
+): SecurityHeader {
+  const header = buildSecurityHeaders(isProduction, options).find(
+    ({ key }) => key.startsWith("Content-Security-Policy"),
+  );
+
+  if (!header) {
+    throw new Error("Content Security Policy header is not configured");
+  }
+
+  return header;
 }
 
 export function applySecurityHeaders<T extends Response>(response: T): T {
