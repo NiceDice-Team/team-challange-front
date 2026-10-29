@@ -13,10 +13,10 @@ const SORT_OPTIONS: readonly SortOption[] = [
 ] as const;
 
 const CATEGORY_PAGE_TITLES: Record<number, string> = {
-  1: "New arrivals",
-  2: "Bestsellers",
-  4: "Sale",
-  5: "Coming soon",
+  6: "New arrivals",
+  7: "Bestsellers",
+  8: "Sale",
+  9: "Coming soon",
 };
 
 export const DEFAULT_CATALOG_PAGE_TITLE = "Board games";

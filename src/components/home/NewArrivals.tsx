@@ -10,9 +10,9 @@ interface CaptionProps {
 }
 
 const HOME_CATALOG_LINKS = {
-  newArrivals: "/catalog?categories=1",
-  bestsellers: "/catalog?categories=2",
-  sale: "/catalog?categories=4",
+  newArrivals: "/catalog?categories=6",
+  bestsellers: "/catalog?categories=7",
+  sale: "/catalog?categories=8",
   boardGames: "/catalog",
 };
 
