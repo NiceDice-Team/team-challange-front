@@ -32,7 +32,7 @@ const demo: Review[] = [
   {
     rating: 5,
     date: "March 28, 2025",
-    avatarSrc: PERSON1_IMG,
+    avatarSrc: PERSON2_IMG,
     name: "Daniel T.",
     aboutHref: "/catalog?search=Catan",
     aboutText: "Catan",
@@ -43,7 +43,7 @@ const demo: Review[] = [
   {
     rating: 5,
     date: "March 19, 2025",
-    avatarSrc: PERSON2_IMG,
+    avatarSrc: PERSON1_IMG,
     name: "Emma R.",
     aboutHref: "/catalog?search=7%20Wonders",
     aboutText: "7 Wonders",
@@ -85,7 +85,12 @@ const PrevArrow = ({ className = "", ...rest }: ArrowProps) => (
     className={`h-10 w-10 rounded-full transition hover:scale-105 focus:outline-none disabled:cursor-not-allowed ${className}`}
     {...rest}
   >
-    <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      width="40"
+      height="40"
+      viewBox="0 0 40 40"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <rect
         x="40"
         y="40"
@@ -110,7 +115,12 @@ const NextArrow = ({ className = "", ...rest }: ArrowProps) => (
     className={`h-10 w-10 rounded-full transition hover:scale-105 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
     {...rest}
   >
-    <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      width="40"
+      height="40"
+      viewBox="0 0 40 40"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <rect width="40" height="40" rx="20" fill="#494791" />
       <path
         d="M15.8785 29.3079L14.8145 28.2439L23.0595 19.9999L14.8145 11.7559L15.8785 10.6919L25.1865 19.9999L15.8785 29.3079Z"
@@ -134,16 +144,24 @@ export default function ReviewSection({ reviews = [] }: ReviewSectionProps) {
   const [desktopPage, setDesktopPage] = useState(0);
   const [mobilePage, setMobilePage] = useState(0);
 
-  const maxDesktopPage = Math.max(0, Math.ceil(data.length / DESKTOP_PAGE_SIZE) - 1);
+  const maxDesktopPage = Math.max(
+    0,
+    Math.ceil(data.length / DESKTOP_PAGE_SIZE) - 1,
+  );
   const maxMobilePage = Math.max(0, data.length - 1);
   const desktopSliceStart = desktopPage * DESKTOP_PAGE_SIZE;
-  const visibleDesktop = data.slice(desktopSliceStart, desktopSliceStart + DESKTOP_PAGE_SIZE);
+  const visibleDesktop = data.slice(
+    desktopSliceStart,
+    desktopSliceStart + DESKTOP_PAGE_SIZE,
+  );
   const visibleMobile = data[Math.min(mobilePage, maxMobilePage)];
 
   const prev = () => setDesktopPage((p) => Math.max(0, p - 1));
   const next = () => setDesktopPage((p) => Math.min(maxDesktopPage, p + 1));
-  const showPreviousMobileReview = () => setMobilePage((p) => Math.max(0, p - 1));
-  const showNextMobileReview = () => setMobilePage((p) => Math.min(maxMobilePage, p + 1));
+  const showPreviousMobileReview = () =>
+    setMobilePage((p) => Math.max(0, p - 1));
+  const showNextMobileReview = () =>
+    setMobilePage((p) => Math.min(maxMobilePage, p + 1));
 
   const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
     const touch = event.touches[0];
@@ -166,7 +184,10 @@ export default function ReviewSection({ reviews = [] }: ReviewSectionProps) {
     const deltaX = touch.clientX - start.x;
     const deltaY = touch.clientY - start.y;
 
-    if (Math.abs(deltaX) < SWIPE_THRESHOLD_PX || Math.abs(deltaX) <= Math.abs(deltaY)) {
+    if (
+      Math.abs(deltaX) < SWIPE_THRESHOLD_PX ||
+      Math.abs(deltaX) <= Math.abs(deltaY)
+    ) {
       return;
     }
 
@@ -178,7 +199,10 @@ export default function ReviewSection({ reviews = [] }: ReviewSectionProps) {
   };
 
   return (
-    <section id="reviews" className="mb-25 px-0 sm:px-6 md:px-8 lg:px-12 xl:px-[60px] 2xl:px-0">
+    <section
+      id="reviews"
+      className="mb-25 px-0 sm:px-6 md:px-8 lg:px-12 xl:px-[60px] 2xl:px-0"
+    >
       <div className="mx-auto flex w-full max-w-[424px] flex-col items-center gap-5 sm:max-w-[1320px] sm:items-stretch sm:gap-10">
         <div className="flex h-6 w-full items-center justify-between px-4 sm:h-12 sm:px-0">
           <h2 className="text-[20px] font-normal leading-6 uppercase text-[#040404] sm:text-[40px] sm:leading-[48px]">
@@ -186,13 +210,20 @@ export default function ReviewSection({ reviews = [] }: ReviewSectionProps) {
           </h2>
           <div className="hidden gap-2 sm:flex">
             <PrevArrow onClick={prev} disabled={desktopPage === 0} />
-            <NextArrow onClick={next} disabled={desktopPage === maxDesktopPage} />
+            <NextArrow
+              onClick={next}
+              disabled={desktopPage === maxDesktopPage}
+            />
           </div>
         </div>
 
         <div className="hidden gap-6 sm:grid sm:grid-cols-2 xl:grid-cols-3">
           {visibleDesktop.map((review, idx) => (
-            <ReviewCard key={desktopSliceStart + idx} variant="figma" {...review} />
+            <ReviewCard
+              key={desktopSliceStart + idx}
+              variant="figma"
+              {...review}
+            />
           ))}
         </div>
 
@@ -218,7 +249,9 @@ export default function ReviewSection({ reviews = [] }: ReviewSectionProps) {
                         aria-current={idx === mobilePage ? "true" : undefined}
                         onClick={() => setMobilePage(idx)}
                         className={`h-2 w-2 rounded-full ${
-                          idx === mobilePage ? "bg-[var(--color-purple)]" : "bg-[var(--color-light-purple-2)]"
+                          idx === mobilePage
+                            ? "bg-[var(--color-purple)]"
+                            : "bg-[var(--color-light-purple-2)]"
                         }`}
                       />
                     ))}
