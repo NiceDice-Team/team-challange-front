@@ -1,79 +1,61 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import { useQueries, useQuery } from "@tanstack/react-query";
 import ReviewCard from "../../components/home/ReviewCard";
-import PERSON1_IMG from "../../../public/Reviews/person1.png";
-import PERSON2_IMG from "../../../public/Reviews/person2.png";
-import PERSON3_IMG from "../../../public/Reviews/person3.png";
-import REVIEW_1_IMG1 from "../../../public/Reviews/review1_1.png";
-import REVIEW_1_IMG2 from "../../../public/Reviews/review1_2.png";
-import REVIEW_1_IMG3 from "../../../public/Reviews/review1_3.png";
-import REVIEW_1_IMG4 from "../../../public/Reviews/review1_4.png";
-import REVIEW_2_IMG1 from "../../../public/Reviews/review2_1.png";
-import REVIEW_2_IMG2 from "../../../public/Reviews/review2_2.png";
-import REVIEW_3_IMG1 from "../../../public/Reviews/review3_1.png";
-import REVIEW_3_IMG2 from "../../../public/Reviews/review3_2.png";
-import REVIEW_3_IMG3 from "../../../public/Reviews/review3_3.png";
-import { StaticImageData } from "next/image";
+import { queryKeys } from "@/lib/queryKeys";
+import { getReviewAuthorName } from "@/lib/reviewAuthor";
+import { productServices } from "@/services/productServices";
+import { reviewServices } from "@/services/reviewServices";
+import type { ProductReviewApi } from "@/types/review";
 
 interface Review {
+  id: number;
   rating: number;
-  date: string;
-  avatarSrc: StaticImageData | string;
+  date?: string;
   name: string;
-  aboutHref: string;
-  aboutText: string;
+  aboutHref?: string;
+  aboutText?: string;
   title: string;
   body: string;
-  images: (StaticImageData | string)[];
 }
 
-const demo: Review[] = [
-  {
-    rating: 5,
-    date: "March 28, 2025",
-    avatarSrc: PERSON2_IMG,
-    name: "Daniel T.",
-    aboutHref: "/catalog?search=Catan",
-    aboutText: "Catan",
-    title: "Exquisite !",
-    body: "Awesome product. Prepare yourself. This one does really big hugs to your gaming table. 36 X 60 Inch. Awesome luxurious and sober table presence and fully reversible. A nice transport bag is already included in the package.",
-    images: [REVIEW_1_IMG1, REVIEW_1_IMG2, REVIEW_1_IMG3, REVIEW_1_IMG4],
-  },
-  {
-    rating: 5,
-    date: "March 19, 2025",
-    avatarSrc: PERSON1_IMG,
-    name: "Emma R.",
-    aboutHref: "/catalog?search=7%20Wonders",
-    aboutText: "7 Wonders",
-    title: "Perfect for game night",
-    body: "The components feel sturdy and the setup is quick enough that we can get a full group playing without losing momentum. It has become our regular Friday pick.",
-    images: [REVIEW_2_IMG1, REVIEW_2_IMG2],
-  },
-  {
-    rating: 4,
-    date: "February 14, 2025",
-    avatarSrc: PERSON3_IMG,
-    name: "Michael P.",
-    aboutHref: "/catalog?search=Azul",
-    aboutText: "Azul",
-    title: "Beautiful table presence",
-    body: "The colors look even better in person, and the turns stay fast once everyone understands the scoring. I would only add a larger player aid for first-timers.",
-    images: [REVIEW_3_IMG1, REVIEW_3_IMG2, REVIEW_3_IMG3],
-  },
-  {
-    rating: 5,
-    date: "January 31, 2025",
-    avatarSrc: "/700x700.svg",
-    name: "Sophia K.",
-    aboutHref: "/catalog?search=Ticket%20to%20Ride",
-    aboutText: "Ticket to Ride",
-    title: "Easy to teach",
-    body: "This was the first game my family asked to replay immediately. The rules are simple, the route choices stay interesting, and the box arrived in excellent condition.",
-    images: ["/700x700.svg", "/700x700.svg", "/700x700.svg", "/700x700.svg"],
-  },
-];
+const formatReviewDate = (value?: string): string | undefined => {
+  if (!value) return undefined;
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  }).format(date);
+};
+
+const normalizeRating = (value: string | number | undefined): number => {
+  const parsed = Number(value ?? 0);
+  return Math.max(0, Math.min(5, Math.round(Number.isFinite(parsed) ? parsed : 0)));
+};
+
+const mapReview = (review: ProductReviewApi, productName?: string): Review => {
+  const rating = normalizeRating(review.rating);
+  const comment = review.comment?.trim();
+
+  return {
+    id: review.id,
+    rating,
+    date: formatReviewDate(review.created_at),
+    name: getReviewAuthorName(review),
+    aboutHref: review.product_id ? `/product/${review.product_id}` : undefined,
+    aboutText: productName,
+    title: comment ? `Rated ${rating} out of 5` : `Rating: ${rating} out of 5`,
+    body: comment || "This customer left a star rating without a written comment.",
+  };
+};
 
 interface ArrowProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string;
@@ -130,15 +112,58 @@ const NextArrow = ({ className = "", ...rest }: ArrowProps) => (
   </button>
 );
 
-interface ReviewSectionProps {
-  reviews?: Review[];
-}
-
 const DESKTOP_PAGE_SIZE = 3;
+const HOME_REVIEWS_LIMIT = 6;
 const SWIPE_THRESHOLD_PX = 48;
+const EMPTY_REVIEWS: ProductReviewApi[] = [];
 
-export default function ReviewSection({ reviews = [] }: ReviewSectionProps) {
-  const data = reviews.length ? reviews : demo;
+export default function ReviewSection() {
+  const {
+    data: reviewsData,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: queryKeys.reviews.all,
+    queryFn: ({ signal }) => reviewServices.getReviews({ signal }),
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    retry: 1,
+  });
+
+  const reviewResults = useMemo(
+    () => (reviewsData?.results ?? EMPTY_REVIEWS).slice(0, HOME_REVIEWS_LIMIT),
+    [reviewsData?.results],
+  );
+  const productIds = useMemo(
+    () => [...new Set(reviewResults.flatMap((review) => (review.product_id ? [review.product_id] : [])))],
+    [reviewResults],
+  );
+
+  const productQueries = useQueries({
+    queries: productIds.map((productId) => ({
+      queryKey: queryKeys.products.detail(productId),
+      queryFn: ({ signal }: { signal: AbortSignal }) => productServices.getProductById(productId, { signal }),
+      staleTime: 15 * 60 * 1000,
+      gcTime: 60 * 60 * 1000,
+      retry: 1,
+    })),
+  });
+
+  const data = useMemo(() => {
+    const productNameById = new Map<number, string>();
+
+    productQueries.forEach((query) => {
+      if (query.data?.id && query.data.name) {
+        productNameById.set(query.data.id, query.data.name);
+      }
+    });
+
+    return reviewResults.map((review) =>
+      mapReview(review, review.product_id ? productNameById.get(review.product_id) : undefined),
+    );
+  }, [productQueries, reviewResults]);
 
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
   const [desktopPage, setDesktopPage] = useState(0);
@@ -154,7 +179,7 @@ export default function ReviewSection({ reviews = [] }: ReviewSectionProps) {
     desktopSliceStart,
     desktopSliceStart + DESKTOP_PAGE_SIZE,
   );
-  const visibleMobile = data[Math.min(mobilePage, maxMobilePage)];
+  const visibleMobileReview = data[Math.min(mobilePage, maxMobilePage)];
 
   const prev = () => setDesktopPage((p) => Math.max(0, p - 1));
   const next = () => setDesktopPage((p) => Math.min(maxDesktopPage, p + 1));
@@ -217,10 +242,20 @@ export default function ReviewSection({ reviews = [] }: ReviewSectionProps) {
           </div>
         </div>
 
+        {isLoading && <p className="px-4 text-base text-[#717171] sm:px-0">Loading reviews...</p>}
+
+        {!isLoading && error && (
+          <p className="px-4 text-base text-red-500 sm:px-0">Unable to load reviews right now.</p>
+        )}
+
+        {!isLoading && !error && data.length === 0 && (
+          <p className="px-4 text-base text-[#717171] sm:px-0">No reviews yet.</p>
+        )}
+
         <div className="hidden gap-6 sm:grid sm:grid-cols-2 xl:grid-cols-3">
-          {visibleDesktop.map((review, idx) => (
+          {visibleDesktop.map(({ id, ...review }) => (
             <ReviewCard
-              key={desktopSliceStart + idx}
+              key={id}
               variant="figma"
               {...review}
             />
@@ -236,14 +271,21 @@ export default function ReviewSection({ reviews = [] }: ReviewSectionProps) {
           }}
         >
           <div className="w-full px-[14px]">
-            {visibleMobile && (
+            {visibleMobileReview && (
               <ReviewCard
                 variant="figma"
+                rating={visibleMobileReview.rating}
+                date={visibleMobileReview.date}
+                name={visibleMobileReview.name}
+                aboutHref={visibleMobileReview.aboutHref}
+                aboutText={visibleMobileReview.aboutText}
+                title={visibleMobileReview.title}
+                body={visibleMobileReview.body}
                 footer={
                   <div className="flex h-2 items-center justify-center gap-5">
                     {data.map((review, idx) => (
                       <button
-                        key={`${review.name}-${idx}`}
+                        key={review.id}
                         type="button"
                         aria-label={`Show review ${idx + 1}`}
                         aria-current={idx === mobilePage ? "true" : undefined}
@@ -257,7 +299,6 @@ export default function ReviewSection({ reviews = [] }: ReviewSectionProps) {
                     ))}
                   </div>
                 }
-                {...visibleMobile}
               />
             )}
           </div>

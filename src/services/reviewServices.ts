@@ -69,6 +69,10 @@ const fetchReviewPage = async (url: string, options: ApiRequestOptions = {}): Pr
 };
 
 export const reviewServices = {
+  getReviews: async (options: ApiRequestOptions = {}): Promise<ReviewListResponse> => {
+    return fetchReviewPage(buildApiUrl("reviews/"), options);
+  },
+
   getProductReviews: async (
     productId: number | string,
     params: ProductReviewsParams = {},

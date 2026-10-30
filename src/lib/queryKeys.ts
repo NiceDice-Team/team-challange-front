@@ -12,6 +12,9 @@ export const queryKeys = {
     detail: (productId: string | number | null | undefined) =>
       ["product", String(productId ?? "")] as const,
   },
+  reviews: {
+    all: ["reviews"] as const,
+  },
   productReviews: {
     summary: (productId: string | number | null | undefined) =>
       ["product-reviews-summary", String(productId ?? "")] as const,
