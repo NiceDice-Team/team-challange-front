@@ -14,13 +14,14 @@ export interface ReviewAuthorApi {
 
 export interface ProductReviewApi extends ReviewAuthorApi {
   id: number;
+  product_id?: number;
   user_id?: number;
   author?: string | ReviewAuthorApi | null;
   user?: string | number | ReviewAuthorApi | null;
   customer?: string | number | ReviewAuthorApi | null;
   reviewer?: string | number | ReviewAuthorApi | null;
-  rating: string;
-  comment: string;
+  rating: string | number;
+  comment?: string | null;
   created_at: string;
 }
 
