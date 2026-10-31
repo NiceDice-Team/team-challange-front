@@ -9,6 +9,7 @@ import { useCartQuery, useUpdateCartQuantity, useRemoveFromCart } from "../../..
 import { productServices } from "../../../services/cartServices";
 import CheckoutModal from "@/components/cart/CheckoutModal";
 import { isAuthenticated } from "@/lib/tokenManager";
+import { getEffectiveUnitPrice } from "@/lib/productPricing";
 import { useRouter } from "next/navigation";
 
 export default function CartPage() {
@@ -86,7 +87,7 @@ export default function CartPage() {
   // Calculate totals
   const { subtotal, remainingForFreeShipping, shippingProgress } = useMemo(() => {
     const calculatedSubtotal = cartItems.reduce((sum, item) => {
-      const price = parseFloat(String(item.product?.price || 0));
+      const price = getEffectiveUnitPrice(item.product?.price, item.product?.discount);
       return sum + price * item.quantity;
     }, 0);
 
@@ -162,7 +163,7 @@ export default function CartPage() {
               <div className="hidden md:flex justify-between items-center mb-6 pb-4 border-[#494791]/50 border-b">
                 <div className="flex-1 font-normal text-[#040404] text-sm md:text-base uppercase">Product</div>
                 <div className="flex items-center gap-6 md:gap-8 lg:gap-16">
-                  <span className="w-12 md:w-16 font-normal text-[#040404] text-sm md:text-base uppercase">Price</span>
+                  <span className="w-24 font-normal text-[#040404] text-sm md:text-base uppercase">Price</span>
                   <span className="w-16 md:w-20 font-normal text-[#040404] text-sm md:text-base uppercase">
                     Quantity
                   </span>

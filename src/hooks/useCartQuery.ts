@@ -11,6 +11,7 @@ import {
   idsMatch,
   parseStockQuantity,
 } from "@/lib/cartStock";
+import { getEffectiveUnitPrice } from "@/lib/productPricing";
 import { cartServices } from "@/services/cartServices";
 import { showCustomToast } from "@/components/shared/Toast";
 import { queryKeys } from "@/lib/queryKeys";
@@ -198,10 +199,7 @@ export function useCartSummary(): CartSummary {
 
   const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = cartItems.reduce((sum, item) => {
-    const price =
-      typeof item.product?.price === "string"
-        ? parseFloat(item.product.price)
-        : (item.product?.price ?? 0);
+    const price = getEffectiveUnitPrice(item.product?.price, item.product?.discount);
     return sum + price * item.quantity;
   }, 0);
 

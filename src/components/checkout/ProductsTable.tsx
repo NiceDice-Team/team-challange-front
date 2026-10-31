@@ -1,6 +1,7 @@
 "use client";
 
 import { useCartQuery } from "@/hooks/useCartQuery";
+import { getEffectiveUnitPrice } from "@/lib/productPricing";
 import { useMemo, useEffect } from "react";
 import type { DeliveryOption } from "@/store/checkout";
 
@@ -21,7 +22,7 @@ const ProductsTable = ({
 
   const subtotal = useMemo(() => {
     const calculatedSubtotal = cartItems.reduce((sum, item) => {
-      const price = Number(item.product?.price) || 0;
+      const price = getEffectiveUnitPrice(item.product?.price, item.product?.discount);
       return sum + price * item.quantity;
     }, 0);
 
@@ -63,7 +64,8 @@ const ProductsTable = ({
                     <div className="w-20 text-right shrink-0">
                       $
                       {(
-                        (Number(item.product?.price) || 0) * item.quantity
+                        getEffectiveUnitPrice(item.product?.price, item.product?.discount) *
+                        item.quantity
                       ).toFixed(2)}
                     </div>
                   </div>

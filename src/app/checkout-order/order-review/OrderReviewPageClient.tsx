@@ -22,6 +22,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { orderServices, type PaymentMethod } from "@/services/orderServices";
 import { cartServices } from "@/services/cartServices";
 import { showCustomToast } from "@/components/shared/Toast";
+import { getEffectiveUnitPrice } from "@/lib/productPricing";
 import { queryKeys } from "@/lib/queryKeys";
 
 interface SectionProps {
@@ -120,7 +121,7 @@ export default function OrderReviewPage() {
   // Calculate totals using the same logic as cart page
   const { subtotal, shipping, total } = useMemo(() => {
     const calculatedSubtotal = cartItems.reduce((sum, item) => {
-      const price = Number(item.product?.price) || 0;
+      const price = getEffectiveUnitPrice(item.product?.price, item.product?.discount);
       return sum + price * item.quantity;
     }, 0);
 
@@ -428,7 +429,8 @@ export default function OrderReviewPage() {
                         <div className="w-16 sm:w-24 text-right shrink-0">
                           $
                           {(
-                            (Number(item.product?.price) || 0) * item.quantity
+                            getEffectiveUnitPrice(item.product?.price, item.product?.discount) *
+                            item.quantity
                           ).toFixed(2)}
                         </div>
                       </div>

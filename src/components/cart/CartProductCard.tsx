@@ -12,6 +12,7 @@ import {
   HeartEmptyIcon,
 } from "@/svgs/icons";
 import { useAddToCart } from "@/hooks/useCartQuery";
+import { getDiscountedPrice } from "@/lib/productPricing";
 import { roundRatingToNearestHalf } from "@/lib/reviewMetrics";
 import {
   getProductAvailability,
@@ -56,9 +57,10 @@ export default function CartProductCard({ product }: CartProductCardProps) {
     return stars;
   };
 
-  // Format price
-  const displayPrice = product?.price ? `$${parseFloat(String(product.price)).toFixed(2)}` : "$0.00";
-  const originalPrice = product?.original_price ? `$${parseFloat(String(product.original_price)).toFixed(2)}` : null;
+  const priceValue = parseFloat(String(product?.price ?? 0));
+  const displayPrice = Number.isFinite(priceValue) ? `$${priceValue.toFixed(2)}` : "$0.00";
+  const discountedPriceValue = getDiscountedPrice(product?.price, product?.discount);
+  const discountPrice = discountedPriceValue ? `$${discountedPriceValue}` : null;
 
   // Stock status
   const availability = getProductAvailability(product.stock);
@@ -157,12 +159,18 @@ export default function CartProductCard({ product }: CartProductCardProps) {
           {/* Price Section - Fixed height */}
           <div className="mb-2 h-[32px] flex items-end">
             <div className="flex items-end gap-2">
-              <span className="text-2xl font-medium text-black">
-                {displayPrice}
-              </span>
-              {originalPrice && (
-                <span className="text-sm text-[#717171] line-through">
-                  {originalPrice}
+              {discountPrice ? (
+                <>
+                  <span className="text-2xl font-medium text-[var(--color-red-price)]">
+                    {discountPrice}
+                  </span>
+                  <span className="text-sm text-[var(--color-gray-2)] line-through">
+                    {displayPrice}
+                  </span>
+                </>
+              ) : (
+                <span className="text-2xl font-medium text-black">
+                  {displayPrice}
                 </span>
               )}
             </div>
