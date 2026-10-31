@@ -4,6 +4,7 @@ import React, { useCallback, memo, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { LoadingSpinner, TrashIcon } from "@/svgs/icons";
+import { getEffectiveUnitPrice } from "@/lib/productPricing";
 import type { CartItem } from "@/types/cart";
 
 interface CartDropdownItemProps {
@@ -24,7 +25,10 @@ function CartDropdownItem({
 }: CartDropdownItemProps) {
   const product = item.product;
   const [quantityInput, setQuantityInput] = useState(String(item.quantity));
-  const price = parseFloat(String(product.price || 0));
+  const originalPrice = Number(product.price);
+  const price = getEffectiveUnitPrice(product.price, product.discount);
+  const hasDiscount =
+    Number.isFinite(originalPrice) && price < Number(originalPrice.toFixed(2));
   const imageUrl = product.images?.[0]?.url_sm || "/FirstPlaceholder.svg";
   const stock = Number(product.stock);
   const maxQuantity = Number.isFinite(stock) ? stock : undefined;
@@ -137,8 +141,15 @@ function CartDropdownItem({
               {product.name || "Unknown Product"}
             </h3>
           </Link>
-          <p className="text-sm sm:text-base md:text-lg font-medium text-black">
-            ${price.toFixed(2)}
+          <p className="flex items-end gap-2 text-sm sm:text-base md:text-lg font-medium">
+            <span className={hasDiscount ? "text-[var(--color-red-price)]" : "text-black"}>
+              ${price.toFixed(2)}
+            </span>
+            {hasDiscount && (
+              <span className="text-sm text-[var(--color-gray-2)] line-through">
+                ${originalPrice.toFixed(2)}
+              </span>
+            )}
           </p>
         </div>
 

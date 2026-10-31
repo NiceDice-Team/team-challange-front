@@ -6,6 +6,7 @@ import ProductsTable from "@/components/checkout/ProductsTable";
 import DeliveryOptions from "@/components/checkout/DeliveryOptions";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useCartQuery } from "@/hooks/useCartQuery";
+import { getEffectiveUnitPrice } from "@/lib/productPricing";
 import { usePaymentMethod } from "@/store/checkout";
 
 const breadcrumbItems = [
@@ -21,7 +22,7 @@ function CheckoutPage() {
   const subtotal = useMemo(
     () =>
       cartItems.reduce((sum, item) => {
-        const price = Number(item.product?.price) || 0;
+        const price = getEffectiveUnitPrice(item.product?.price, item.product?.discount);
         return sum + price * item.quantity;
       }, 0),
     [cartItems],

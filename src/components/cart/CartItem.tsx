@@ -4,6 +4,7 @@ import React, { useCallback, memo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { MinusIcon, PlusIcon, CloseIcon } from "@/svgs/icons";
+import { getEffectiveUnitPrice } from "@/lib/productPricing";
 import type { CartItem as CartItemType } from "@/types/cart";
 
 interface CartItemProps {
@@ -15,7 +16,10 @@ interface CartItemProps {
 
 function CartItem({ item, index, updateQuantity, removeItem }: CartItemProps) {
   const product = item.product;
-  const price = parseFloat(String(product.price || 0));
+  const originalPrice = Number(product.price);
+  const price = getEffectiveUnitPrice(product.price, product.discount);
+  const hasDiscount =
+    Number.isFinite(originalPrice) && price < Number(originalPrice.toFixed(2));
   const imageUrl = product.images?.[0]?.url_sm || "/FirstPlaceholder.svg";
   const brandName =
     typeof product.brand === "object" ? product.brand.name : "Unknown Brand";
@@ -60,15 +64,33 @@ function CartItem({ item, index, updateQuantity, removeItem }: CartItemProps) {
               </div>
             </Link>
             {/* Mobile Price Display */}
-            <div className="md:hidden text-base sm:text-lg font-medium text-black">${price.toFixed(2)}</div>
+            <div className="md:hidden flex items-end gap-2">
+              <span className={`text-base sm:text-lg font-medium ${hasDiscount ? "text-[var(--color-red-price)]" : "text-black"}`}>
+                ${price.toFixed(2)}
+              </span>
+              {hasDiscount && (
+                <span className="text-sm text-[var(--color-gray-2)] line-through">
+                  ${originalPrice.toFixed(2)}
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
         {/* Price, Quantity, Total - Desktop Layout */}
         <div className="hidden md:flex items-start gap-4 md:gap-6 lg:gap-8 xl:gap-16">
           {/* Price */}
-          <div className="w-12 md:w-16">
-            <span className="text-base md:text-lg font-normal text-black">${price.toFixed(2)}</span>
+          <div className="w-24">
+            <div className="flex flex-col">
+              <span className={`text-base md:text-lg font-normal ${hasDiscount ? "text-[var(--color-red-price)]" : "text-black"}`}>
+                ${price.toFixed(2)}
+              </span>
+              {hasDiscount && (
+                <span className="text-sm text-[var(--color-gray-2)] line-through">
+                  ${originalPrice.toFixed(2)}
+                </span>
+              )}
+            </div>
           </div>
 
           {/* Quantity Controls */}

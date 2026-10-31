@@ -16,6 +16,7 @@ import { Info } from "lucide-react";
 import { forwardRef, useEffect, useImperativeHandle, useMemo } from "react";
 import { usePaymentProcess } from "@/hooks/usePaymentProcess";
 import { useCartQuery } from "@/hooks/useCartQuery";
+import { getEffectiveUnitPrice } from "@/lib/productPricing";
 import { showCustomToast } from "../shared/Toast";
 import { CustomButton } from "../shared/CustomButton";
 
@@ -113,7 +114,8 @@ const PaymentForm = forwardRef<PaymentFormHandle, PaymentFormProps>(
   const { processPayment, isProcessing, error } = usePaymentProcess();
   const { data: cartItems = [], isLoading: cartLoading } = useCartQuery();
   const amountInCents = cartItems.reduce(
-    (acc, item) => acc + Number(item.product.price) * item.quantity,
+    (acc, item) =>
+      acc + getEffectiveUnitPrice(item.product?.price, item.product?.discount) * item.quantity,
     0
   );
   const formData = watch();

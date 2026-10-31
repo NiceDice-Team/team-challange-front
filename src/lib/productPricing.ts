@@ -25,3 +25,16 @@ export function getDiscountedPrice(
     ? formattedDiscountedPrice
     : null;
 }
+
+export function getEffectiveUnitPrice(
+  price: unknown,
+  discount?: unknown,
+): number {
+  const discountedPrice = getDiscountedPrice(price, discount);
+  if (discountedPrice !== null) {
+    return Number(discountedPrice);
+  }
+
+  const priceValue = Number(price);
+  return Number.isFinite(priceValue) && priceValue > 0 ? priceValue : 0;
+}

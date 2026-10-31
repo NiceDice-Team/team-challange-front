@@ -8,6 +8,7 @@ import {
   useUpdateCartQuantity,
   useRemoveFromCart,
 } from "@/hooks/useCartQuery";
+import { getEffectiveUnitPrice } from "@/lib/productPricing";
 import CartDropdownItem from "./CartDropdownItem";
 
 interface CartDropdownProps {
@@ -73,7 +74,7 @@ export default function CartDropdown({ isOpen, onClose }: CartDropdownProps) {
   const { subtotal, remainingForFreeShipping, shippingProgress } =
     useMemo(() => {
       const calculatedSubtotal = cartItems.reduce((sum, item) => {
-        const price = parseFloat(String(item.product?.price || 0));
+        const price = getEffectiveUnitPrice(item.product?.price, item.product?.discount);
         return sum + price * item.quantity;
       }, 0);
 
