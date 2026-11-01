@@ -40,6 +40,11 @@ const isProductReview = (review: NonNullable<Product["reviews"]>[number]): revie
 export default function ProductCard({ product = {} as Product, cardIndex = 0 }: ProductCardProps) {
   const [activeImage, setActiveImage] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
+  // Keep the first card in the server-rendered response for a fast LCP. The
+  // observer adds the remaining cards according to the actual viewport size.
+  const [isNearViewport, setIsNearViewport] = useState(cardIndex === 0);
+  const [hasGalleryIntent, setHasGalleryIntent] = useState(false);
+  const cardRef = useRef<HTMLElement | null>(null);
   const galleryRef = useRef<HTMLDivElement | null>(null);
   const queryClient = useQueryClient();
   const addToCartMutation = useAddToCart();
@@ -131,7 +136,34 @@ export default function ProductCard({ product = {} as Product, cardIndex = 0 }: 
   // Reset active image when product changes
   useEffect(() => {
     setActiveImage(0);
+    setHasGalleryIntent(false);
   }, [product?.id]);
+
+  useEffect(() => {
+    const card = cardRef.current;
+    if (!card || isNearViewport) return;
+    if (typeof IntersectionObserver === "undefined") {
+      setIsNearViewport(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+
+        setIsNearViewport(true);
+        observer.disconnect();
+      },
+      {
+        // Start the next row before it becomes visible without requesting the
+        // entire catalog on the initial page load.
+        rootMargin: "500px 0px",
+      },
+    );
+
+    observer.observe(card);
+    return () => observer.disconnect();
+  }, [isNearViewport]);
 
   const goToPrevImage = () => {
     if (activeImage > 0) {
@@ -163,6 +195,8 @@ export default function ProductCard({ product = {} as Product, cardIndex = 0 }: 
 
   // Function to scroll to a specific image
   const scrollToImage = (index: number): void => {
+    setHasGalleryIntent(true);
+    setActiveImage(index);
     if (galleryRef.current) {
       galleryRef.current.scrollTo({
         left: index * galleryRef.current.clientWidth,
@@ -182,6 +216,11 @@ export default function ProductCard({ product = {} as Product, cardIndex = 0 }: 
     });
   }, [productId, queryClient]);
 
+  const handleCardIntent = useCallback(() => {
+    setHasGalleryIntent(true);
+    prefetchProduct();
+  }, [prefetchProduct]);
+
   const handleAddToCart = async (e: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
     e.preventDefault();
     if (addToCartMutation.isPending) return; // Prevent multiple rapid clicks
@@ -200,10 +239,10 @@ export default function ProductCard({ product = {} as Product, cardIndex = 0 }: 
   return (
     <Link
       href={`/product/${product.id}`}
-      onMouseEnter={prefetchProduct}
-      onFocus={prefetchProduct}
+      onMouseEnter={handleCardIntent}
+      onFocus={handleCardIntent}
     >
-      <article className="mx-auto flex w-full max-w-[380px] min-w-0 flex-col bg-white shadow-[0px_4px_4px_rgba(0,0,0,0.1)] sm:h-[427px] sm:max-w-[240px]">
+      <article ref={cardRef} className="mx-auto flex w-full max-w-[380px] min-w-0 flex-col bg-white shadow-[0px_4px_4px_rgba(0,0,0,0.1)] sm:h-[427px] sm:max-w-[240px]">
         <div className="relative isolate flex h-[307px] w-full flex-col items-center pt-4 pb-4 sm:h-[190px]">
           {/* Image gallery container - hiding scrollbar */}
           <div
@@ -224,7 +263,10 @@ export default function ProductCard({ product = {} as Product, cardIndex = 0 }: 
             {/* Individual images - show only available images (max 3) */}
             {availableImages.length > 0 ? (
               availableImages.map((image, index) => {
-                const shouldLoadImage = Math.abs(index - activeImage) <= 1;
+                const shouldLoadImage =
+                  isNearViewport &&
+                  (index === activeImage ||
+                    (hasGalleryIntent && Math.abs(index - activeImage) <= 1));
 
                 return (
                   <div key={image.id || index} className="min-w-full h-full flex-shrink-0 relative snap-center">
@@ -235,10 +277,12 @@ export default function ProductCard({ product = {} as Product, cardIndex = 0 }: 
                         fill
                         sizes={PRODUCT_CARD_IMAGE_SIZES}
                         className="object-contain object-top"
-                        priority={shouldPrioritizeImage && index === activeImage}
+                        priority={shouldPrioritizeImage && index === activeImage && isNearViewport}
                         unoptimized={image.url_sm?.includes("placehold.co")}
                       />
-                    ) : null}
+                    ) : (
+                      <div className="h-full w-full animate-pulse bg-gray-100" aria-hidden="true" />
+                    )}
                   </div>
                 );
               })

@@ -10,8 +10,11 @@ import { fetchAPI, API_URL } from "./api";
 
 const AUTH_CART_ENDPOINT = API_ENDPOINTS.cart;
 const AUTH_CART_ITEM_ENDPOINT = API_ENDPOINTS.cartItem;
+const LOCAL_GUEST_CART_TOKEN = "local-guest-cart";
+const GUEST_CART_MODE = process.env.NEXT_PUBLIC_GUEST_CART_MODE?.toLowerCase();
 
 export const CART_CLEARED_EVENT = "cart-cleared";
+let guestCartApiDisabled = GUEST_CART_MODE === "local";
 
 function notifyCartCleared(): void {
   if (typeof window === "undefined") {
@@ -19,6 +22,49 @@ function notifyCartCleared(): void {
   }
 
   window.dispatchEvent(new Event(CART_CLEARED_EVENT));
+}
+
+function isNotFoundApiError(error: unknown): boolean {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+
+  return error.message.includes("status: 404");
+}
+
+function isGuestCartUnavailableError(error: unknown): boolean {
+  if (isNotFoundApiError(error)) {
+    return true;
+  }
+
+  if (error instanceof TypeError) {
+    return true;
+  }
+
+  if (!(error instanceof Error)) {
+    return false;
+  }
+
+  const message = error.message.toLowerCase();
+
+  return (
+    message.includes("networkerror") ||
+    message.includes("failed to fetch") ||
+    message.includes("load failed") ||
+    message.includes("cors")
+  );
+}
+
+function disableGuestCartApi(): void {
+  if (GUEST_CART_MODE === "api") {
+    return;
+  }
+
+  guestCartApiDisabled = true;
+
+  if (!getGuestToken()) {
+    useGuestCartStore.getState().setToken(LOCAL_GUEST_CART_TOKEN);
+  }
 }
 
 import {
@@ -134,6 +180,13 @@ async function recreateGuestCart(): Promise<void> {
     return;
   }
 
+  if (guestCartApiDisabled) {
+    if (!getGuestToken()) {
+      useGuestCartStore.getState().setToken(LOCAL_GUEST_CART_TOKEN);
+    }
+    return;
+  }
+
   removeGuestCartFromLocalStorage();
 
   const response = await fetchAPI<GuestCartCreateResponse>("cart/guest/", {
@@ -160,28 +213,60 @@ export async function ensureGuestCart(): Promise<void> {
     return;
   }
 
-  const response = await fetchAPI<GuestCartCreateResponse>("cart/guest/", {
-    method: "POST",
+  if (guestCartApiDisabled || GUEST_CART_MODE === "local") {
+    useGuestCartStore.getState().setToken(LOCAL_GUEST_CART_TOKEN);
+    return;
+  }
 
-    body: { email: "", phone: "" },
-  });
+  try {
+    const response = await fetchAPI<GuestCartCreateResponse>("cart/guest/", {
+      method: "POST",
 
-  useGuestCartStore.getState().setToken(response.token);
+      body: { email: "", phone: "" },
+    });
+
+    useGuestCartStore.getState().setToken(response.token);
+  } catch (error) {
+    if (isGuestCartUnavailableError(error)) {
+      disableGuestCartApi();
+      return;
+    }
+    throw error;
+  }
 }
 
 async function fetchGuestCartItemsByToken(
   token: string,
   isRetry = false,
 ): Promise<CartItem[]> {
-  const response = await fetch(`${API_URL}cart/guest/`, {
-    headers: mergeNoCacheHeaders({
-      "Content-Type": "application/json",
-      "X-Guest-Token": token,
-    }),
-    cache: "no-store",
-  });
+  if (guestCartApiDisabled) {
+    return useGuestCartStore.getState().items;
+  }
+
+  let response: Response;
+
+  try {
+    response = await fetch(`${API_URL}cart/guest/`, {
+      headers: mergeNoCacheHeaders({
+        "Content-Type": "application/json",
+        "X-Guest-Token": token,
+      }),
+      cache: "no-store",
+    });
+  } catch (error) {
+    if (isGuestCartUnavailableError(error)) {
+      disableGuestCartApi();
+      return useGuestCartStore.getState().items;
+    }
+    throw error;
+  }
 
   if (!response.ok) {
+    if (response.status === 404) {
+      disableGuestCartApi();
+      return useGuestCartStore.getState().items;
+    }
+
     let errorMessage = `Failed to fetch guest cart: ${response.status}`;
 
     try {
@@ -226,6 +311,10 @@ async function guestFetch<T = unknown>(
 ): Promise<T | void> {
   await ensureGuestCart();
 
+  if (guestCartApiDisabled) {
+    return undefined;
+  }
+
   const token = getGuestToken();
 
   if (!token) {
@@ -234,25 +323,39 @@ async function guestFetch<T = unknown>(
 
   const url = `${API_URL}${endpoint}`;
 
-  const response = await fetch(url, {
-    method: options.method || "GET",
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      method: options.method || "GET",
 
-    headers: mergeNoCacheHeaders({
-      "Content-Type": "application/json",
+      headers: mergeNoCacheHeaders({
+        "Content-Type": "application/json",
 
-      "X-Guest-Token": token,
+        "X-Guest-Token": token,
 
-      ...options.headers,
-    }),
+        ...options.headers,
+      }),
 
-    body: options.body ? JSON.stringify(options.body) : null,
+      body: options.body ? JSON.stringify(options.body) : null,
 
-    signal: options.signal,
+      signal: options.signal,
 
-    cache: "no-store",
-  });
+      cache: "no-store",
+    });
+  } catch (error) {
+    if (isGuestCartUnavailableError(error)) {
+      disableGuestCartApi();
+      return undefined;
+    }
+    throw error;
+  }
 
   if (!response.ok) {
+    if (response.status === 404) {
+      disableGuestCartApi();
+      return undefined;
+    }
+
     let errorMessage = `API Error! status: ${response.status}`;
 
     try {
@@ -404,11 +507,33 @@ async function validateCartItemStock(cartItemId: string, quantity: number) {
   }
 }
 
+async function addLocalGuestCartItem(
+  productId: number | string,
+  quantity: number,
+): Promise<CartItem> {
+  const product = await productServices.getProductById(productId);
+  const existing = useGuestCartStore
+    .getState()
+    .items.find((item) => idsMatch(item.product?.id, productId));
+  const fallbackItem: CartItem = {
+    id: String(product.id),
+    product,
+    quantity: (existing?.quantity ?? 0) + quantity,
+  };
+
+  useGuestCartStore.getState().upsertItem(fallbackItem);
+  return fallbackItem;
+}
+
 // Cart API services
 
 export const cartServices = {
   async getCartItems(options: ApiRequestOptions = {}): Promise<CartItem[]> {
     if (!hasValidAuthSession()) {
+      if (guestCartApiDisabled) {
+        return useGuestCartStore.getState().items;
+      }
+
       try {
         await ensureGuestCart();
 
@@ -420,6 +545,10 @@ export const cartServices = {
           signal: options.signal,
         });
 
+        if (guestCartApiDisabled || response === undefined) {
+          return useGuestCartStore.getState().items;
+        }
+
         const apiItems = parseCartListResponse(response);
 
         const items = apiItems.map(mapGuestCartItemToCartItem);
@@ -428,6 +557,10 @@ export const cartServices = {
 
         return items;
       } catch (error) {
+        if (isGuestCartUnavailableError(error)) {
+          disableGuestCartApi();
+          return useGuestCartStore.getState().items;
+        }
         console.error("Error fetching guest cart items:", error);
 
         return useGuestCartStore.getState().items;
@@ -481,6 +614,10 @@ export const cartServices = {
       try {
         await validateAddToCartStock(productId, quantity);
 
+        if (guestCartApiDisabled) {
+          return addLocalGuestCartItem(productId, quantity);
+        }
+
         const response = await guestFetch<GuestCartItemResponse>(
           "cart/guest/item/",
 
@@ -507,8 +644,15 @@ export const cartServices = {
           return item;
         }
 
-        return { success: true };
+        // guestFetch disables an unavailable guest-cart API and returns no
+        // response. Persist the item locally instead of discarding the
+        // optimistic React Query update during the subsequent sync.
+        return addLocalGuestCartItem(productId, quantity);
       } catch (error) {
+        if (isNotFoundApiError(error)) {
+          disableGuestCartApi();
+          return addLocalGuestCartItem(productId, quantity);
+        }
         console.error("Error adding to guest cart:", error);
 
         throw error;
@@ -551,6 +695,18 @@ export const cartServices = {
       try {
         await validateCartItemStock(cartItemId, quantity);
 
+        if (guestCartApiDisabled) {
+          const currentItem = findGuestCartItemById(cartItemId);
+          if (!currentItem) {
+            throw new Error(`Cart item ${cartItemId} not found`);
+          }
+          useGuestCartStore.getState().upsertItem({
+            ...currentItem,
+            quantity,
+          });
+          return { ...currentItem, quantity };
+        }
+
         const productId = resolveGuestProductId(cartItemId);
 
         const response = await guestFetch<GuestCartItemResponse>(
@@ -577,6 +733,18 @@ export const cartServices = {
 
         return { success: true };
       } catch (error) {
+        if (isNotFoundApiError(error)) {
+          disableGuestCartApi();
+          const currentItem = findGuestCartItemById(cartItemId);
+          if (!currentItem) {
+            throw error;
+          }
+          useGuestCartStore.getState().upsertItem({
+            ...currentItem,
+            quantity,
+          });
+          return { ...currentItem, quantity };
+        }
         console.error("Error updating guest cart item:", error);
 
         throw error;
@@ -615,6 +783,11 @@ export const cartServices = {
       try {
         const productId = resolveGuestProductId(cartItemId);
 
+        if (guestCartApiDisabled) {
+          useGuestCartStore.getState().removeItemByProductId(productId);
+          return true;
+        }
+
         await guestFetch("cart/guest/item/", {
           method: "DELETE",
 
@@ -625,6 +798,12 @@ export const cartServices = {
 
         return true;
       } catch (error) {
+        if (isNotFoundApiError(error)) {
+          disableGuestCartApi();
+          const productId = resolveGuestProductId(cartItemId);
+          useGuestCartStore.getState().removeItemByProductId(productId);
+          return true;
+        }
         console.error("Error removing from guest cart:", error);
 
         throw error;
@@ -678,10 +857,20 @@ export const cartServices = {
     }
 
     try {
+      if (guestCartApiDisabled) {
+        useGuestCartStore.getState().setItems([]);
+        return;
+      }
+
       await guestFetch("cart/guest/clear/", { method: "DELETE" });
 
       useGuestCartStore.getState().setItems([]);
     } catch (error) {
+      if (isNotFoundApiError(error)) {
+        disableGuestCartApi();
+        useGuestCartStore.getState().setItems([]);
+        return;
+      }
       console.error("Error clearing guest cart:", error);
 
       throw error;
