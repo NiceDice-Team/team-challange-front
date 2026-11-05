@@ -13,12 +13,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
 import { Info } from "lucide-react";
-import { forwardRef, useEffect, useImperativeHandle, useMemo } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { usePaymentProcess } from "@/hooks/usePaymentProcess";
 import { useCartQuery } from "@/hooks/useCartQuery";
 import { getEffectiveUnitPrice } from "@/lib/productPricing";
 import { showCustomToast } from "../shared/Toast";
 import { CustomButton } from "../shared/CustomButton";
+import WelcomePopup from "../home/WelcomePopup";
+
+const PAYMENT_WELCOME_MS = 3000;
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
@@ -149,15 +152,17 @@ const PaymentForm = forwardRef<PaymentFormHandle, PaymentFormProps>(
     return () => clearTimeout(handler);
   }, [stableFormData, onDataChange]);
 
+  const [welcomeOpen, setWelcomeOpen] = useState(false);
+  const [isWaitingToPay, setIsWaitingToPay] = useState(false);
+  const paymentTimerRef = useRef<number | null>(null);
+
   useEffect(() => {
-    if (initialData) {
-      Object.entries(initialData).forEach(([key, value]) => {
-        if (value !== undefined) {
-          setValue(key as keyof PaymentFormData, value);
-        }
-      });
-    }
-  }, [initialData, setValue]);
+    return () => {
+      if (paymentTimerRef.current !== null) {
+        window.clearTimeout(paymentTimerRef.current);
+      }
+    };
+  }, []);
 
   const handleSubmitForm = async (data: PaymentFormData) => {
     if (!stripe || !elements) return;
@@ -183,11 +188,31 @@ const PaymentForm = forwardRef<PaymentFormHandle, PaymentFormProps>(
     }
   };
 
+  const submitPayment = handleSubmit(handleSubmitForm);
+
+  const handlePaySubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (paymentTimerRef.current !== null) return;
+
+    setIsWaitingToPay(true);
+    setWelcomeOpen(true);
+    paymentTimerRef.current = window.setTimeout(() => {
+      paymentTimerRef.current = null;
+      setWelcomeOpen(false);
+      setIsWaitingToPay(false);
+      void submitPayment();
+    }, PAYMENT_WELCOME_MS);
+  };
+
   return (
     <>
+      <WelcomePopup
+        open={welcomeOpen}
+        onClose={() => setWelcomeOpen(false)}
+      />
       <form
         className="flex flex-col gap-4"
-        onSubmit={handleSubmit(handleSubmitForm)}
+        onSubmit={handlePaySubmit}
       >
         <CustomInput
           label="First Name"
@@ -195,10 +220,11 @@ const PaymentForm = forwardRef<PaymentFormHandle, PaymentFormProps>(
           name="firstName"
           placeholder="Enter your first name"
           blockClassName="gap-1"
-          {...register("firstName")}
-          onBlur={() => {
-            void trigger("firstName");
-          }}
+          {...register("firstName", {
+            onBlur: () => {
+              void trigger("firstName");
+            },
+          })}
           error={
             errors.firstName?.message ? [errors.firstName?.message] : undefined
           }
@@ -209,10 +235,11 @@ const PaymentForm = forwardRef<PaymentFormHandle, PaymentFormProps>(
           name="lastName"
           placeholder="Enter your last name"
           blockClassName="gap-1"
-          {...register("lastName")}
-          onBlur={() => {
-            void trigger("lastName");
-          }}
+          {...register("lastName", {
+            onBlur: () => {
+              void trigger("lastName");
+            },
+          })}
           error={
             errors.lastName?.message ? [errors.lastName?.message] : undefined
           }
@@ -288,7 +315,7 @@ const PaymentForm = forwardRef<PaymentFormHandle, PaymentFormProps>(
 
         <CustomButton
           type="submit"
-          disabled={isPayDisabled}
+          disabled={isPayDisabled || isWaitingToPay}
           loading={isProcessing}
           className="bg-purple hover:bg-purple/90 border border-purple w-full h-12 text-white text-base uppercase leading-[19px]"
         >
